@@ -1,0 +1,83 @@
+@import url("./global.css");
+
+.hero-header {
+    width: 100%;
+    background-color: rgb(214, 214, 214);
+    padding: 44px;
+    padding-inline: 120px;
+    height: 80vh;
+    
+    
+}
+
+header {
+    max-width: 1488px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+nav ul {
+    display: flex;
+    gap:24px;
+    
+}
+
+nav ul li a {
+    color: var(--color-text-header);
+}
+
+nav .btn-header {
+    background-color: var(--color-button);
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: var(--fontsize-btn-desktop);
+    color: var(--font-color-btn);
+
+}
+
+
+/*  Responsivos  */
+
+/* Extra pequeno: Smartphones antigos (até 320px) */
+@media (max-width: 320px) {
+  
+  }
+  
+  /* Pequeno: Smartphones modernos (até 480px) */
+  @media (max-width: 480px) {
+   
+  }
+  
+  /* Médio: Smartphones maiores e tablets em modo retrato (até 768px) */
+  @media (max-width: 768px) {
+
+  }
+  
+  /* Grande: Tablets em modo paisagem e notebooks pequenos (até 1024px) */
+  @media (max-width: 1024px) {
+ 
+  }
+  
+  /* Extra grande: Notebooks e desktops médios (até 1280px) */
+  @media (max-width: 1280px) {
+   .btn-header {
+    font-size: var(--fontsize-btn-notebook);
+   }
+  }
+  
+  /* Ultra grande: Telas grandes (até 1440px) */
+  @media (max-width: 1440px) {
+ 
+  }
+  
+  

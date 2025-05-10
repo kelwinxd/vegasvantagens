@@ -1,0 +1,29 @@
+.desc-ofertas {
+    width: 100%;
+    padding-inline: 120px;
+    padding-top: 120px;
+}
+
+.cards-descontos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: space-between;
+    align-items: stretch; 
+    padding-top: 44px;
+    width: 100%;
+}
+
+.card-desconto {
+    flex: 1 1 calc(25% - 24px);
+    min-width: 250px;
+    height: 300px;
+    background: #f1f1f1;
+    
+    text-align: center;
+
+    max-width: 200px;
+    border: 1px solid gray;
+    border-radius: 8px;
+    margin-top: 44px;
+}
