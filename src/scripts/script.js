@@ -1,28 +1,109 @@
 const searchInput = document.getElementById("searchInput");
-const btnLimpar = document.querySelector(".limpar")
+const btnLimpar = document.querySelector(".limpar");
 
 const cityData = {
   sp: {
     americana: {
-      center: { lat: -22.739444, lng: -47.331111 },
+      center: { lat: -22.740435, lng: -47.326196 },
       points: [
-        { name: "Academia BodyTech", type: "academia", card: ["visa", "mastercard"], address: "Av. Brasil, 1000 - Americana, SP", position: { lat: -22.735, lng: -47.328 } },
-        { name: "Farmácia São João", type: "farmacia", card: ["visa"], address: "Rua das Flores, 200 - Americana, SP", position: { lat: -22.740, lng: -47.330 } }
-      ]
-    },
-    osasco: {
-      center: { lat: -23.532, lng: -46.791 },
-      points: [
-        { name: "Academia Fit Osasco", type: "academia", card: ["mastercard"], address: "Rua Central, 50 - Osasco, SP", position: { lat: -23.530, lng: -46.790 } },
-        { name: "Drogaria Osasco", type: "farmacia", card: ["visa"], address: "Av. Principal, 300 - Osasco, SP", position: { lat: -23.533, lng: -46.792 } }
-      ]
-    }
-  },
-  rj: {
-    rio: {
-      center: { lat: -22.9068, lng: -43.1729 },
-      points: [
-        { name: "Academia Rio Fitness", type: "academia", card: ["visa"], address: "Copacabana, RJ", position: { lat: -22.91, lng: -43.17 } }
+        {
+          name: "Zanini",
+          type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
+          card: ["vegas day", "vegas plus"],
+          address: "Av. Dr. Antônio Lobo, 615 - Centro, Americana - SP, 13465-005",
+          position: { lat: -22.740250, lng: -47.328021 }
+        },
+        {
+          name: "Mercadão dos Óculos",
+          type: ["ótica"],
+          card: ["vegas day", "vegas plus"],
+          address: "Av. Dr. Antônio Lobo, 233 - Centro, Americana - SP, 13465-005",
+          position: { lat: -22.740082, lng: -47.330582 }
+        },
+        {
+          name: "Intensos Barbearia",
+          type: ["barbearia"],
+          card: ["vegas day", "vegas plus"],
+          address: "R. João Bernestein, 651 - Jardim São Vito, Americana - SP, 13473-200",
+          position: { lat: -22.737966, lng: -47.311791 }
+        },
+        {
+          name: "Cãochorro Petshop",
+          type: ["petshop"],
+          card: ["vegas day", "vegas plus"],
+          address: "R. das Paineiras, 305 - Jardim Paulistano, Americana - SP, 13474-450",
+          position: { lat: -22.717230, lng: -47.303097 }
+        },
+        {
+          name: "Betta Suplementos",
+          type: ["alimentação"],
+          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
+          address: "R. Sete de Setembro, 135 - Centro, Americana - SP, 13465-300",
+          position: { lat: -22.739187, lng: -47.327828 }
+        },
+        {
+          name: "Boi que Mia",
+          type: ["restaurante"],
+          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
+          address: "R. das Paineiras, 378 - Jardim Paulistano, Americana - SP, 13474-450",
+          position: { lat: -22.716999, lng: -47.303373 }
+        },
+        {
+          name: "Casa Florindo",
+          type: ["restaurante"],
+          card: ["vegas day", "vegas plus"],
+          address: "Av. Campos Salles, 181 - Centro, Americana - SP, 13465-400",
+          position: { lat: -22.738252, lng: -47.325693 }
+        },
+        {
+          name: "Deck Meia 13",
+          type: ["restaurante"],
+          card: ["vegas day", "vegas plus"],
+          address: "R. Fortunato Faraone, 242 - Vila Rehder, Americana - SP, 13465-450",
+          position: { lat: -22.737541, lng: -47.326669 }
+        },
+        {
+          name: "Danny Cosméticos",
+          type: ["cosméticos"],
+          card: ["vegas day", "vegas plus"],
+          address: "Av. Dr. Antônio Lobo, 455 - Centro, Americana - SP, 13465-005",
+          position: { lat: -22.739728, lng: -47.328574 }
+        },
+        {
+          name: "Vidrovan",
+          type: ["veículos"],
+          card: ["vegas day", "vegas plus"],
+          address: "Av. Paulista, 1015 - Vila Santa Catarina, Americana - SP, 13465-490",
+          position: { lat: -22.724245, lng: -47.323191 }
+        },
+        {
+          name: "Maryara Panificadora & Doçaria",
+          type: ["restaurante"],
+          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
+          address: "Av. Afonso Arinos, 249 - Jardim da Paz, Americana - SP, 13474-000",
+          position: { lat: -22.703432, lng: -47.293846 }
+        },
+        {
+          name: "Rede Ferrara",
+          type: ["posto de combustível"],
+          card: ["vegas day", "vegas plus", "vegas combustível"],
+          address: "Av. Nossa Sra. de Fátima, 373 - Parque Universitário, Americana - SP, 13468-280",
+          position: { lat: -22.716347, lng: -47.289679 }
+        },
+        {
+          name: "Casa de Carne Boi Forte",
+          type: ["açougue"],
+          card: ["vegas day", "vegas plus", "vegas alimentação"],
+          address: "R. São Vito, 65 - Jardim São Vito, Americana - SP, 13473-230",
+          position: { lat: -22.736031, lng: -47.312421 }
+        },
+        {
+          name: "Shopping das Utilidades",
+          type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
+          card: ["vegas day", "vegas plus", "vegas alimentação"],
+          address: "Av. Dr. Antônio Lobo, 275 - Centro, Americana - SP, 13465-005",
+          position: { lat: -22.739852, lng: -47.328970 }
+        }
       ]
     }
   }
@@ -49,49 +130,48 @@ function initMap() {
 }
 
 if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-  
-      // Usa a API de geocodificação reversa do Google para obter cidade/estado
-      const geocoder = new google.maps.Geocoder();
-      const latlng = { lat, lng };
-  
-      geocoder.geocode({ location: latlng }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          let cidadeDetectada = "";
-          let estadoDetectado = "";
-  
-          for (const comp of results[0].address_components) {
-            if (comp.types.includes("administrative_area_level_2")) {
-              cidadeDetectada = comp.long_name.toLowerCase();
-            }
-            if (comp.types.includes("administrative_area_level_1")) {
-              estadoDetectado = comp.short_name.toLowerCase(); // 'SP', 'RJ'...
-            }
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    // Usa a API de geocodificação reversa do Google para obter cidade/estado
+    const geocoder = new google.maps.Geocoder();
+    const latlng = { lat, lng };
+
+    geocoder.geocode({ location: latlng }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        let cidadeDetectada = "";
+        let estadoDetectado = "";
+
+        for (const comp of results[0].address_components) {
+          if (comp.types.includes("administrative_area_level_2")) {
+            cidadeDetectada = comp.long_name.toLowerCase();
           }
-  
-          // Se a cidade/estado detectados existirem no seu cityData, selecione
-          if (cityData[estadoDetectado] && cityData[estadoDetectado][cidadeDetectada]) {
-            filterState.value = estadoDetectado;
-  
-            // Atualiza as opções de cidade
-            filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-            Object.keys(cityData[estadoDetectado]).forEach(cidade => {
-              const opt = document.createElement("option");
-              opt.value = cidade;
-              opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-              filterCity.appendChild(opt);
-            });
-  
-            filterCity.value = cidadeDetectada;
-            filtrar(); // Aplica o filtro
+          if (comp.types.includes("administrative_area_level_1")) {
+            estadoDetectado = comp.short_name.toLowerCase(); // 'SP', 'RJ'...
           }
         }
-      });
+
+        // Se a cidade/estado detectados existirem no seu cityData, selecione
+        if (cityData[estadoDetectado] && cityData[estadoDetectado][cidadeDetectada]) {
+          filterState.value = estadoDetectado;
+
+          // Atualiza as opções de cidade
+          filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+          Object.keys(cityData[estadoDetectado]).forEach(cidade => {
+            const opt = document.createElement("option");
+            opt.value = cidade;
+            opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+            filterCity.appendChild(opt);
+          });
+
+          filterCity.value = cidadeDetectada;
+          filtrar(); // Aplica o filtro
+        }
+      }
     });
-  }
-  
+  });
+}
 
 // Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", () => {
@@ -111,68 +191,54 @@ filterState.addEventListener("change", () => {
 });
 
 function updateMapByCity(cidade, segmento, busca, cartao) {
-    // Limpa os marcadores do mapa
-    markers.forEach(m => m.setMap(null));
-    markers = [];
-  
-    // Limpa a lista de lojas
-    lojasList.innerHTML = "";
-  
-    for (const estado in cityData) {
-      if (cityData[estado][cidade]) {
-        const cidadeData = cityData[estado][cidade];
-        const pontos = cidadeData.points;
-  
-        map.setCenter(cidadeData.center);
-        map.setZoom(14);
-  
-        pontos.forEach(ponto => {
-          const nomeMatch = !busca || ponto.name.toLowerCase().includes(busca.toLowerCase());
-          const segMatch = !segmento || ponto.type === segmento;
-          const cardMatch = !cartao || ponto.card.includes(cartao); // Filtro por cartão
-  
-          if (nomeMatch && segMatch && cardMatch) {
-            // Cria marcador
-            const marker = new google.maps.Marker({
-              position: ponto.position,
-              map: map,
-              title: ponto.name
-            });
-            markers.push(marker);
-  
-            // Cria item da lista
-           // Criação do item da lista (card de lugar)
-           const li = document.createElement("li");
-           li.classList.add("place-card");
-           
-           // Defina os data-attributes para permitir filtragem
-           li.dataset.city = cidade;
-           li.dataset.state = estado;
-           li.dataset.seg = ponto.type;
-           li.dataset.card = ponto.card.join(",");
-           li.dataset.tags = `${ponto.name.toLowerCase()} ${ponto.address.toLowerCase()}`;
-           
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+  lojasList.innerHTML = "";
 
-li.innerHTML = `
-  <div class="place-image">
-    <img src="URL_DA_IMAGEM_AQUI" alt="${ponto.name}" onerror="this.onerror=null;this.src='default-image.jpg';">
-  </div>
-  <div class="place-details">
-    <h3>${ponto.name}</h3>
-    <p class="address">${ponto.address}</p>
-    <p class="distance">Distância: 5.0 km</p> <!-- Valor fictício de distância -->
-  </div>
-`;
+  for (const estado in cityData) {
+    if (cityData[estado][cidade]) {
+      const cidadeData = cityData[estado][cidade];
+      map.setCenter(cidadeData.center);
+      map.setZoom(14);
 
-lojasList.appendChild(li);
+      cidadeData.points.forEach(ponto => {
+        const nomeMatch = !busca || ponto.name.toLowerCase().includes(busca.toLowerCase());
+        const segMatch = !segmento || ponto.type.includes(segmento);
+        const cardMatch = !cartao || ponto.card.includes(cartao);
 
-          }
-        });
-      }
+        if (nomeMatch && segMatch && cardMatch) {
+          const marker = new google.maps.Marker({
+            position: ponto.position,
+            map: map,
+            title: ponto.name
+          });
+          markers.push(marker);
+
+          const li = document.createElement("li");
+          li.classList.add("place-card");
+          li.dataset.city = cidade;
+          li.dataset.state = estado;
+          li.dataset.seg = ponto.type.join(",");
+          li.dataset.card = ponto.card.join(",");
+          li.dataset.tags = `${ponto.name.toLowerCase()} ${ponto.address.toLowerCase()}`;
+
+          li.innerHTML = `
+            <div class="place-image">
+              <img src="URL_DA_IMAGEM_AQUI" alt="${ponto.name}" onerror="this.onerror=null;this.src='default-image.jpg';">
+            </div>
+            <div class="place-details">
+              <h3>${ponto.name}</h3>
+              <p class="address">${ponto.address}</p>
+              <p class="distance">Distância: 5.0 km</p>
+            </div>
+          `;
+
+          lojasList.appendChild(li);
+        }
+      });
     }
   }
-  
-  
+}
 
 // Filtro principal
 function filtrar() {
@@ -216,36 +282,34 @@ function filtrar() {
     const unicaCidade = [...cidadesFiltradas][0];
     updateMapByCity(unicaCidade, segmento, search, cartao);
   }
-  
 }
 
 function limparDados() {
-    // Resetar os selects e o campo de busca
-    filterState.value = "";
-    filterCity.innerHTML = '<option value="">Todas as Cidades</option>';
-    filterSegment.value = "";
-    filterCard.value = "";
-    searchInput.value = "";
-  
-    // Limpar lista de lojas e marcadores
-    lojasList.innerHTML = "";
-    markers.forEach(m => m.setMap(null));
-    markers = [];
-  
-    // Centralizar o mapa na posição padrão
-    const defaultCenter = { lat: -23.561684, lng: -46.625378 };
-    map.setCenter(defaultCenter);
-    map.setZoom(10);
-  
-    
-  }
-  
+  // Resetar os selects e o campo de busca
+  filterState.value = "";
+  filterCity.innerHTML = '<option value="">Todas as Cidades</option>';
+  filterSegment.value = "";
+  filterCard.value = "";
+  searchInput.value = "";
+
+  // Limpar lista de lojas e marcadores
+  lojasList.innerHTML = "";
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+
+  // Centralizar o mapa na posição padrão
+  const defaultCenter = { lat: -23.561684, lng: -46.625378 };
+  map.setCenter(defaultCenter);
+  map.setZoom(10);
+}
+
 // Eventos
 filterCity.addEventListener("change", filtrar);
 filterSegment.addEventListener("change", filtrar);
 filterCard.addEventListener("change", filtrar);
 searchInput.addEventListener("input", filtrar);
-btnLimpar.addEventListener("click", limparDados)
+btnLimpar.addEventListener("click", limparDados);
+
 
 
 
