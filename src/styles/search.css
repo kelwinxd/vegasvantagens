@@ -1,6 +1,6 @@
 .search {
     width: 100%;
-    padding-top: 80px;
+    padding-top: 5px;
     padding-bottom: 80px;
     
 
@@ -8,7 +8,7 @@
 
 
 .search-container {
-    max-width: 500px;
+    max-width: 600px;
     height: var(--search-height-desktop);
     border: 1px solid gray;
     border-radius: 8px;
@@ -52,4 +52,5 @@
 
 .title-categoria {
     color: #4B57A3;
+    font-size: 32px;
 }

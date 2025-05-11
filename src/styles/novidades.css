@@ -1,7 +1,7 @@
 .novidades {
     padding-inline: 120px;
     padding-top: 50px;
-    height: 912px;
+    min-height: 80vh;
     margin-top: 100px;
     margin-bottom: 50px;
     

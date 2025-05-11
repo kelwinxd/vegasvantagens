@@ -7,14 +7,14 @@
 .cards-descontos {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 14px;
     justify-content: space-between;
     align-items: stretch; 
     padding-top: 44px;
     width: 100%;
 }
 .card-desconto {
-    flex: 1 1 calc(25% - 24px);
+    flex: 1 1 calc(25% - 14px);
     min-width: 250px;
     height: 350px;
     background: #fff;
@@ -22,7 +22,7 @@
     max-width: 200px;
     border: 2.056px solid #CDCDCD;
     border-radius: 8px;
-    margin-top: 44px;
+    margin-top: 14px;
     display: flex;
     flex-direction: column;
     overflow: hidden; 
@@ -89,5 +89,6 @@ color: #fff;
 }
 
 .title-desc {
+    font-size: 32px;
     color: #4B57A3;
 }
