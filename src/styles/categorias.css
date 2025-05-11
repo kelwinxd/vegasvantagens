@@ -3,6 +3,8 @@
     padding-inline: 120px;
 }
 
+
+
 .cards-categorias {
     display: flex;
     flex-wrap: wrap;
@@ -13,22 +15,27 @@
 }
 
 .card-categoria {
-    flex: 1 1 calc(16.66% - 16px);
+    flex: 1 1 calc((100% - 8 * 16px) / 9); /* 9 cards com 8 gaps de 16px */
     min-width: 120px;
+    max-width: 140px; /* garante que não ultrapasse */
     height: 150px;
-    
+
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     flex-direction: column;
 
-    max-width: 200px;
     border: 2px solid #828EC5;
     border-radius: 8px;
 }
 
+.card-categoria img {
+    width: 35px;
+}
+
+
 .card-categoria h2 {
-    font-size: 20px;
+    font-size: 16px;
     color: #4B57A3;
 }

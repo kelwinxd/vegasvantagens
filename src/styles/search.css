@@ -11,7 +11,7 @@
     max-width: 500px;
     height: var(--search-height-desktop);
     border: 1px solid gray;
-    border-radius: 12px;
+    border-radius: 8px;
      margin: 0 auto;
 
     display: flex;
@@ -40,7 +40,7 @@
 .btn-buscar {
     background-color: var(--color-button);
     border: none;
-    border-radius: 0px 12px 12px 0px;
+    border-radius: 0px 8px 8px 0px;
     padding: 26px 35px;
     height: var(--search-height-desktop);
     display: flex;
@@ -48,4 +48,8 @@
     border: none;
     color: #fff;
     font-size: 16px;
+}
+
+.title-categoria {
+    color: #4B57A3;
 }

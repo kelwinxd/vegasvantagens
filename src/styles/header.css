@@ -49,6 +49,8 @@ nav .btn-header {
     border: none;
     font-size: var(--fontsize-btn-desktop);
     color: var(--font-color-btn);
+    cursor: pointer;
+
    
 
 }

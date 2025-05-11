@@ -11,14 +11,16 @@ const cityData = {
           type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
           card: ["vegas day", "vegas plus"],
           address: "Av. Dr. Antônio Lobo, 615 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.740250, lng: -47.328021 }
+          position: { lat: -22.740250, lng: -47.328021 },
+          image:"./imgs/comercios/zanini-est.webp"
         },
         {
           name: "Mercadão dos Óculos",
           type: ["ótica"],
           card: ["vegas day", "vegas plus"],
           address: "Av. Dr. Antônio Lobo, 233 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.740082, lng: -47.330582 }
+          position: { lat: -22.740082, lng: -47.330582 },
+          image:"./imgs/comercios/mercadaooculos.webp"
         },
         {
           name: "Intensos Barbearia",
@@ -32,7 +34,8 @@ const cityData = {
           type: ["petshop"],
           card: ["vegas day", "vegas plus"],
           address: "R. das Paineiras, 305 - Jardim Paulistano, Americana - SP, 13474-450",
-          position: { lat: -22.717230, lng: -47.303097 }
+          position: { lat: -22.717230, lng: -47.303097 },
+          image:"./imgs/comercios/cachorro.webp"
         },
         {
           name: "Betta Suplementos",
@@ -46,7 +49,8 @@ const cityData = {
           type: ["restaurante"],
           card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
           address: "R. das Paineiras, 378 - Jardim Paulistano, Americana - SP, 13474-450",
-          position: { lat: -22.716999, lng: -47.303373 }
+          position: { lat: -22.716999, lng: -47.303373 },
+          image:"./imgs/comercios/boimia.jpg"
         },
         {
           name: "Casa Florindo",
@@ -224,7 +228,7 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
 
           li.innerHTML = `
             <div class="place-image">
-              <img src="URL_DA_IMAGEM_AQUI" alt="${ponto.name}" onerror="this.onerror=null;this.src='default-image.jpg';">
+              <img src="${ponto.image}" alt="${ponto.name}" onerror="this.onerror=null;this.src='default-image.jpg';">
             </div>
             <div class="place-details">
               <h3>${ponto.name}</h3>
@@ -275,6 +279,8 @@ function filtrar() {
     }
   });
 
+
+
   // Atualizar o mapa baseado na(s) cidade(s) encontradas
   if (cidade) {
     updateMapByCity(cidade, segmento, search, cartao);
@@ -282,6 +288,17 @@ function filtrar() {
     const unicaCidade = [...cidadesFiltradas][0];
     updateMapByCity(unicaCidade, segmento, search, cartao);
   }
+
+    // Verifica se algum item está visível
+    const algumVisivel = Array.from(produtoLista).some(item => item.style.display !== "none");
+
+    // Mostra ou esconde a mensagem de "nenhum resultado"
+    const mensagemVazia = document.getElementById("mensagem-vazia");
+    if (!algumVisivel) {
+      mensagemVazia.style.display = "block";
+    } else {
+      mensagemVazia.style.display = "none";
+    }
 }
 
 function limparDados() {

@@ -1,0 +1,64 @@
+.novidades {
+    padding-inline: 120px;
+    padding-top: 50px;
+    height: 912px;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    
+}
+
+.flex-content {
+    display: flex;
+    gap: 100px;
+    margin-bottom: 100px;
+}
+
+.img-nov {
+    flex: 1;
+    
+}
+
+.img-nov img {
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content-nov {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-start;
+    text-align: left;
+    gap: 28px;
+}
+
+.content-nov-header {
+    display: flex;
+    justify-content: flex-start;
+    max-width: 200px;
+}
+
+.subtitle-nov {
+    color: #4B57A3;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.content-nov ul li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+    gap: 10px;
+}
+
+.content-nov ul li img {
+    width: 32px;
+    height: 32px;
+}
+
+.nov-call {
+    font-weight: 500;
+    color: #DBA092;
+}

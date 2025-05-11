@@ -87,3 +87,7 @@ align-self: flex-start ;
 margin-bottom: 20px;
 color: #fff;
 }
+
+.title-desc {
+    color: #4B57A3;
+}
