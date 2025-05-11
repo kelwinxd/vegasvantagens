@@ -4,6 +4,9 @@
 @import url('./descofertas.css');
 @import url('./descontos.css');
 @import url('./filterarea.css');
+@import url('./melhorcupom.css');
+@import url('./exclusivos.css');
+
 
 * {
     margin: 0;
