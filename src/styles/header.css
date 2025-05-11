@@ -2,13 +2,17 @@
 
 .hero-header {
     width: 100%;
-    background-color: rgb(214, 214, 214);
-    padding: 15px;
+   
+    padding: 25px;
     padding-inline: 120px;
     height: 90vh;
 
     
     
+}
+
+.logo img {
+    width: 200px;
 }
 
 header {
@@ -34,16 +38,18 @@ nav ul {
 }
 
 nav ul li a {
-    color: var(--color-text-header);
+    color:#4B57A3;
+    font-weight: bold;
 }
 
 nav .btn-header {
-    background-color: var(--color-button);
+    background: linear-gradient(90deg, #828EC5 0%, #DBA092 100%);
     padding: 8px 12px;
     border-radius: 8px;
     border: none;
     font-size: var(--fontsize-btn-desktop);
     color: var(--font-color-btn);
+   
 
 }
 

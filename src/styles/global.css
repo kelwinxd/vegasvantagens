@@ -18,7 +18,7 @@
 }
 
 :root {
-    --color-text-header:gray;
+    --color-text-header: #4b57a;
 
     /* layout geral */
     --padding-body-desktop: 120px;
@@ -27,11 +27,11 @@
 
 
     /* buttons */
-    --color-button:gray;
+    --color-button:#4B57A3;
     --font-color-btn:#fff;
-    --fontsize-btn-notebook:18px;
-    --fontsize-btn-desktop:18px;
-    --search-height-desktop:60px;
+    --fontsize-btn-notebook:14px;
+    --fontsize-btn-desktop:16px;
+    --search-height-desktop:50px;
     --search-height-notebook:70px;
 
 
