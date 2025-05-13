@@ -11,16 +11,22 @@
     display: flex;
     gap: 100px;
     margin-bottom: 100px;
+    height: 820px;
 }
 
 .img-nov {
-    flex: 1;
+    flex: 2;
+    
+    
     
 }
 
 .img-nov img {
     width: 100%;
-    border-radius: 15px;
+    border-radius: 8px;
+    height: 100%;
+    object-fit: cover;
+    
 }
 
 .content-nov {
@@ -37,6 +43,12 @@
     display: flex;
     justify-content: flex-start;
     max-width: 200px;
+    gap:10px;
+}
+
+.content-nov-header img {
+    width: 100%;
+    object-fit: contain;
 }
 
 .subtitle-nov {
@@ -61,4 +73,21 @@
 .nov-call {
     font-weight: 500;
     color: #DBA092;
+}
+
+
+.list-nov {
+
+height: 160px;
+padding: 48px 64px;
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: start;
+justify-content: center;
+flex-shrink: 0;
+border-radius: 12px;
+border: 2px solid #828EC5;
+
+background: #FFF;
 }

@@ -320,6 +320,30 @@ function limparDados() {
   map.setZoom(10);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const estadoPadrao = "sp";
+  const cidadePadrao = "americana";
+
+  // Define estado
+  filterState.value = estadoPadrao;
+
+  // Popular cidades com base no estado
+  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  Object.keys(cityData[estadoPadrao]).forEach(cidade => {
+    const opt = document.createElement("option");
+    opt.value = cidade;
+    opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    filterCity.appendChild(opt);
+  });
+
+  // Define cidade
+  filterCity.value = cidadePadrao;
+
+  // Aplica o filtro para mostrar resultados e atualizar o mapa
+  filtrar();
+});
+
+
 // Eventos
 filterCity.addEventListener("change", filtrar);
 filterSegment.addEventListener("change", filtrar);
