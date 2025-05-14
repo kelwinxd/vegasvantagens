@@ -39,13 +39,15 @@ nav ul {
 
 nav ul li a {
     color:#4B57A3;
-    font-weight: bold;
+    font-size: 16px;
+font-style: normal;
+font-weight: 500;
 }
 
 nav .btn-header {
     background: linear-gradient(90deg, #828EC5 0%, #DBA092 100%);
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 8px 30px;
+    border-radius: 30px;
     border: none;
     font-size: var(--fontsize-btn-desktop);
     color: var(--font-color-btn);
