@@ -18,14 +18,14 @@
                 <img src="./imgs/logo.png" alt="">
             </div>
             <ul>
-                <li><a href="#">Categorias</a></li>
+               
                 <li><a href="#">Sobre o Clube</a></li>
-                <li><a href="#">Contato</a></li>
+                <li><a href="#mp">Ofertas</a></li>
               
             </ul>
 
             <button class="btn-header">
-                Seja um Credenciado
+               Faça parte do Clube
             </button>
         </nav>
     </header>
@@ -52,8 +52,33 @@
 
      </section>
 
+      <section class="carrossel" id="carrossel">
+    <div class="carrossel-track" id="track">
+      <!-- 6 logos -->
+      <a href="#"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
+    <a href="#"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
+    <a href="#"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
+    <a href="#"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
+    <a href="#"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
+    <a href="#"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
+    <a href="#"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
+    <a href="#"><img src="./imgs/logos/oculosmercadao.png" alt="Logo Mercadão"></a>
 
-    <section class="search">
+    <!-- Duplicadas para efeito infinito -->
+    <a href="#"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
+    <a href="#"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
+    <a href="#"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
+    <a href="#"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
+    <a href="#"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
+    <a href="#"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
+    <a href="#"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
+    <a href="#"><img src="./imgs/logos/oculosmercadao.png" alt="Logo Mercadão"></a>
+    </div>
+  </section>
+
+
+     <!---
+      <section class="search">
               <div class="search-container">
                 <i class="fas fa-search icon-search"></i>
                 <input type="text" name="desc-input" id="desc-input">
@@ -65,39 +90,53 @@
     <section class="categorias">
         <h1 class="title-categoria">Categorias</h1>
         <div class="cards-categorias">
-            <div class="card-categoria" data-cat="alimentação">
-                <img src="./imgs/icons/cart.png" alt="">
+            <div class="card-categoria" data-cat="alimentacao">
+                <i class="fas fa-shopping-cart"></i>
+
                 <h2>Alimentação</h2>
             </div>
             <div class="card-categoria" data-cat="presentes">
-                <img src="./imgs/icons/gift.png" alt="">
+                <i class="fas fa-gift"></i>
+
                 <h2>Presentes</h2>
             </div>
             <div class="card-categoria" data-cat="oticas">
-                <img src="./imgs/icons/glass.png" alt="">
+               <i class="fas fa-glasses"></i>
+
                 <h2>Óticas</h2>
             </div>
             <div class="card-categoria">
-                <img src="./imgs/icons/barber.png" alt="">
-                <h2>Barbearia</h2>
+           <i class="fas fa-cut"></i>
+
+                <h2>Barbearias</h2>
             </div>
             <div class="card-categoria">
-                <img src="./imgs/icons/cart.png" alt="">
-                <h2>Alimentação</h2>
+       <i class="fas fa-dog"></i>
+                <h2>Petshop</h2>
             </div>
             <div class="card-categoria">
-                <img src="./imgs/icons/cart.png" alt="">
-                <h2>Alimentação</h2>
+                <i class="fas fa-utensils"></i>
+                <h2>Bares / Restaurantes</h2>
             </div>
 
             <div class="card-categoria">
-                <img src="./imgs/icons/cart.png" alt="">
-                <h2>Alimentação</h2>
+          <i class="fas fa-magic"></i> 
+
+
+                <h2>Cosméticos</h2>
             </div>
 
             <div class="card-categoria">
                 
-                <h2>Ver Mais</h2>
+               <i class="fas fa-car"></i>
+
+                <h2>Veículos</h2>
+            </div>
+
+                 <div class="card-categoria">
+                
+           
+                <h2>Mais</h2>
             </div>
 
             
@@ -156,7 +195,7 @@
                 <button>Ver Mais</button>
             </div>
 
-                  <div class="card-desconto" data-tag="alimentação">
+                  <div class="card-desconto" data-tag="alimentacao">
                 <div class="header-img">
                     <img src="./imgs/logos/beta-logo.png" alt="">
                 </div>
@@ -169,7 +208,7 @@
             </div>
 
 
-            <div class="card-desconto" data-tag="alimentação">
+            <div class="card-desconto" data-tag="alimentacao">
                 <div class="header-img">
                     <img src="./imgs/logos/boi-logo.png"  alt="">
                 </div>
@@ -208,7 +247,12 @@
     </section>
 
 
-    <section class="melhor-oferta">
+     
+     -->
+
+
+   
+    <section class="melhor-oferta" id="mp">
         <h1 class="title-mp">Encontre as melhores ofertas para você</h1>
         <div class="filter-area">
             <div class="container-limpar">
@@ -291,7 +335,8 @@
 
    <section class="novidades">
 
-    <div class="flex-content">
+    <div class="carrossel-nov">
+<div class="flex-content">
         <div class="img-nov">
             <img src="./imgs/raia-people.png" alt="" >
         </div>
@@ -343,8 +388,12 @@
             <img src="./imgs/totalpass-people.png" alt="" >
         </div>
     </div>
+    </div>
 
-     <div class="flex-content">
+   </section>
+
+   <section class="voce-sabia">
+ <div class="flex-content">
         <div class="img-nov">
             <img src="./imgs/womancel.png" alt="" >
         </div>
@@ -373,27 +422,32 @@
 
         </div>
     </div>
-
-
    </section>
+    
+
 
 
     
 
     <footer>
        <div class="content-brand">
-        <img src="./imgs/logo-white.png" class="logo-footer" alt="">
-        <p class="brand-info">Clube de Vantagens em benefícios para empresas e colaboradores. </p>
-        <div class="icons-footer">
-        <a href="" class="social-link"><img src="./imgs/icons/fb.png" alt=""></a>
-        <a href="" class="social-link"><img src="./imgs/icons/fb.png" alt=""></a>
-        <a href="" class="social-link"><img src="./imgs/icons/fb.png" alt=""></a>
-        </div>
-        
+        <img src="./imgs/logo-white.png" class="logo-footer" alt="" style="width:20%;">
+        <img src="./imgs/logos/logo-abbt 1.svg" alt="">
+        <img src="./imgs/logos/logo-empresa-brasileira.svg" alt="">
+       
        </div>
 
        <div class="menu-footer">
-        <div class="links-rapidos">
+        <div class="links-rapidos m-f">
+            <div class="card-footer">
+                <i class="fas fa-map-marker-alt"></i>
+                <h2>Americana</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et omnis nobis dignissimos </p>
+
+            </div>
+        </div>
+
+        <div class="links-rapidos m-f">
             <h1>Link Rapidos</h1>
             <ul>
                  <li><a href=""></a></li>
@@ -403,7 +457,17 @@
             </ul>
         </div>
 
-        <div class="contato">
+        <div class="links-rapidos m-f">
+            <h1>Link Rapidos</h1>
+            <ul>
+                 <li><a href=""></a></li>
+                 <li><a href=""></a></li>
+                 <li><a href=""></a></li>
+                 <li><a href=""></a></li>
+            </ul>
+        </div>
+
+        <div class="contato m-f">
             <h1>Contato</h1>
             <ul>
                 <li>Telefone: xxxxxx</li>
@@ -416,10 +480,7 @@
 
        
     </footer>
-    <div class="footer-info">
-        <p>Lorem ipsum dolor sit amet.</p>
-        <p>Lorem ipsum dolor sit amet.</p>
-       </div>
+
  
      
     <script src="./scripts/script.js"></script>

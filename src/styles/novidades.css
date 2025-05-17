@@ -91,3 +91,24 @@ border: 2px solid #828EC5;
 
 background: #FFF;
 }
+
+.carrossel-nov {
+  position: relative;
+  overflow: hidden;
+}
+
+.novidades .flex-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.novidades .flex-content.showing {
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
+}

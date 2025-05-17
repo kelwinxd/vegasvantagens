@@ -25,6 +25,7 @@
     align-items: center;
     text-align: center;
     flex-direction: column;
+    gap: 5px;
 
     border: 2px solid #828EC5;
     border-radius: 8px;
@@ -32,7 +33,25 @@
     cursor: pointer;
 }
 
-.card-categoria.active { background:#4B57A3; color:#fff; }
+.card-categoria i {
+    font-size: 30px;
+    color: #4B57A3;
+}
+
+.card-categoria.active {
+    
+    background:#4B57A3; 
+    color:#fff; 
+}
+
+.card-categoria.active h2 {
+    color: #ffff;
+}
+
+.card-categoria.active i {
+    color: #fff;
+}
+
 
 .card-categoria img {
     width: 35px;

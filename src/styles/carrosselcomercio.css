@@ -1,0 +1,45 @@
+.carrossel {
+      overflow: hidden;
+      background-color: white;
+      padding: 20px 0;
+    }
+
+    .carrossel-track {
+      display: flex;
+      width: calc(200px * 16); /* 6 imagens duplicadas = 12 */
+      animation: scroll 20s linear infinite;
+    }
+     
+    .carrossel-track img {
+      width: 150px;
+      
+      padding: 0 20px;
+      
+      transition: filter 0.3s;
+      cursor: pointer;
+      object-fit: contain;
+    }
+
+     .carrossel-track img:hover {
+      filter: brightness(1.5);
+     }
+
+    .carrossel:hover .carrossel-track {
+      animation-play-state: paused;
+    }
+
+    .carrossel a {
+      display: flex;
+      align-items: center;
+    }
+
+    
+
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }

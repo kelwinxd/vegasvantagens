@@ -9,6 +9,8 @@
 @import url('./melhorcupom.css');
 @import url('./exclusivos.css');
 @import url('./novidades.css');
+@import url('./carrosselcomercio.css');
+@import url('./voce-sabia.css');
 
 
 * {
@@ -18,6 +20,7 @@
     list-style: none;
     text-decoration: none;
     font-family: "Rubik", sans-serif;
+    scroll-behavior: smooth;
     
 }
 
@@ -66,18 +69,36 @@
 
 
       footer {
-        background: linear-gradient(90deg, #828EC5 0%, #DBA092 100%);
-        height: 300px;
+        background: #212121;
+     
         width: 100%;
         margin-top: 100px;
         padding-inline: 120px;
-        display: flex;
-        align-items: center;
+        
         border-bottom: #fff 1px solid;
       }
 
       .content-brand {
-        max-width: 300px;
+        padding-top: 30px;
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        padding-inline: 250px;
+        border-bottom: solid 1px #fff;
+
+      }
+
+      .content-brand img {
+        
+        object-fit: contain;
+
+      
+      }
+
+      .menu-footer {
+        margin-top: 50px;
+        display: flex;
+        justify-content: space-between;
       }
 
       .logo-footer {

@@ -438,11 +438,17 @@ startAutoplay();
     descontoCards.forEach(d => d.classList.remove('hidden'));
   }
 
+  const cardsDesc = document.querySelector(".cards-descontos")
+
   function filtrarPorCategoria(cat) {
     resetFiltragem();
     // destaca categoria
     const clicked = document.querySelector(`.card-categoria[data-cat="${cat}"]`);
-    if (clicked) clicked.classList.add('active');
+    if (clicked) {
+      clicked.classList.add('active');
+      cardsDesc.classList.add('classify-cards')
+
+    } 
 
     // filtra descontos
     descontoCards.forEach(d => {
@@ -451,14 +457,18 @@ startAutoplay();
   }
 
   // listener em cada categoria
-  categoriaCards.forEach(catCard => {
-    catCard.addEventListener('click', () => {
-      
-      const cat = catCard.dataset.cat;
-      location.hash = cat;            // muda o hash da URL
+ categoriaCards.forEach(catCard => {
+  catCard.addEventListener('click', (e) => {
+    e.preventDefault(); // caso algum clique em link
+    const cat = catCard.dataset.cat;
+    if (location.hash !== `#${cat}`) {
+      location.hash = cat; // Isso vai acionar o hashchange depois
+    } else {
+      // se o hash já for o mesmo, ainda assim forçamos o filtro
       filtrarPorCategoria(cat);
-    });
+    }
   });
+});
 
   // reage a mudanças de hash (back/forward e direto na URL)
   window.addEventListener('hashchange', () => {
@@ -472,4 +482,59 @@ startAutoplay();
     const cat = location.hash.replace('#','');
     if (cat) filtrarPorCategoria(cat);
   });
+
+
+
+
+  
+   const track = document.getElementById('track');
+  const carrossel = document.getElementById('carrossel');
+
+  // Duplica os itens para garantir continuidade
+  track.innerHTML += track.innerHTML;
+
+  let posX = 0;
+  let animationId;
+  const speed = 1; // pixels por frame
+
+  function animate() {
+    posX -= speed;
+    if (Math.abs(posX) >= track.scrollWidth / 2) {
+      posX = 0;
+    }
+    track.style.transform = `translateX(${posX}px)`;
+    animationId = requestAnimationFrame(animate);
+  }
+
+  animate(); // inicia animação
+
+  // Pausar ao passar mouse
+  carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
+  carrossel.addEventListener('mouseleave', () => animate());
+
+
+
+
+
+
+  const slides = document.querySelectorAll('.novidades .flex-content');
+  let currentIndex = 0;
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.remove('showing');
+    });
+    slides[index].classList.add('showing');
+  }
+
+  function startCarousel() {
+    showSlide(currentIndex);
+
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    }, 3000);
+  }
+
+  document.addEventListener("DOMContentLoaded", startCarousel);
 
