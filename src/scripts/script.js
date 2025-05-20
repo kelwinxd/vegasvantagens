@@ -227,6 +227,7 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
           li.dataset.tags = `${ponto.name.toLowerCase()} ${ponto.address.toLowerCase()}`;
 
           li.innerHTML = `
+         
             <div class="place-image">
               <img src="${ponto.image}" alt="${ponto.name}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
             </div>
@@ -235,9 +236,20 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
               <p class="address">${ponto.address}</p>
               <p class="distance">Distância: 5.0 km</p>
             </div>
+       
           `;
 
           lojasList.appendChild(li);
+          if(li){
+            li.addEventListener("click", () => {
+              // Formata a hash com base no nome, cidade e estado
+              const hash = encodeURIComponent(`${cidade}-${estado}-${ponto.name}`);
+              window.location.href = `detalhes.html#${hash}`;
+            });
+          }
+
+          
+          
         }
       });
     }

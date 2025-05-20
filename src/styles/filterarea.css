@@ -117,6 +117,7 @@
     transition: transform 0.3s ease;
     gap: 6px;
     border-radius: 8px;
+    cursor: pointer;
   }
   
   .place-card:hover {

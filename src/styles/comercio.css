@@ -1,0 +1,16 @@
+.comercio {
+    margin: 0 auto;
+    height: 800px;
+    width: 500px;
+    padding-inline: 120px;
+    padding-top: 80px;
+    border: 2px solid black;
+
+}
+
+.hero-detalhes {
+    width: 100%;
+   
+    padding: 25px;
+    padding-inline: 120px;
+}

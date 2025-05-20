@@ -11,7 +11,11 @@
 @import url('./novidades.css');
 @import url('./carrosselcomercio.css');
 @import url('./voce-sabia.css');
+@import url('./comercio.css');
 
+html {
+  scroll-behavior: smooth;
+}
 
 * {
     margin: 0;
@@ -76,6 +80,11 @@
         padding-inline: 120px;
         
         border-bottom: #fff 1px solid;
+        text-decoration: none;
+      }
+
+      .m-f {
+        width: 25%;
       }
 
       .content-brand {
@@ -83,14 +92,17 @@
         display: flex;
         width: 100%;
         justify-content: space-around;
-        padding-inline: 250px;
+        padding-inline: 100px;
         border-bottom: solid 1px #fff;
+        align-items: center;
+        padding-bottom: 30px;
 
       }
 
       .content-brand img {
         
-        object-fit: contain;
+      object-fit: contain;
+        
 
       
       }
@@ -99,6 +111,13 @@
         margin-top: 50px;
         display: flex;
         justify-content: space-between;
+        padding-inline: 10px;
+        gap: 20px;
+        color: #fff;
+
+      }
+      .menu-footer a {
+        color: #fff;
       }
 
       .logo-footer {
@@ -113,6 +132,22 @@
         color: #fff;
       }
 
+      .card-footer {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 40px;
+        align-items: center;
+      }
+
+      .card-footer i {
+        font-size: 28px;
+      }
+
+      .card-footer p {
+        font-size: 12px;
+        width: 80%;
+      }
+
       .footer-info {
                 background: linear-gradient(90deg, #828EC5 0%, #DBA092 100%);
 
@@ -123,12 +158,33 @@
         gap: 12px;
       }
 
-      .social-link {
-           width: 44px;
-           height: 44px;
-           background-color: #fff;
-           display: flex; 
-           align-items: center;
-           justify-content: center;
-           border-radius: 8px;
+      .social-media {
+           font-size: 30px;
+           
+      }
+      .midia-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .menus {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        padding-left: 30px;
+
+      }
+
+      .link-div {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        
+      }
+
+      .link-div ul {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-size: 12px;
       }
