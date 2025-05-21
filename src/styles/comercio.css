@@ -1,10 +1,11 @@
 .comercio {
-    margin: 0 auto;
+    
     height: 800px;
-    width: 500px;
+    width: 100%;
     padding-inline: 120px;
-    padding-top: 80px;
-    border: 2px solid black;
+    
+    margin: 0 auto;
+  
 
 }
 
@@ -13,4 +14,54 @@
    
     padding: 25px;
     padding-inline: 120px;
+}
+
+.comercio-container {
+    display: flex;
+    gap: 69px;
+}
+
+.main-img {
+    flex: 1;
+}
+
+.main-img img {
+    width: 100%;
+}
+
+.main-info {
+    flex: 1.2;
+    padding: 24px 0px;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+}
+
+.inner-info {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+.img-logo img {
+    width:130px;
+}
+
+.info-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.info-card {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+}
+
+.tag-comercio {
+    margin-bottom: 62px;
+    text-align: left;
 }

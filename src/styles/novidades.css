@@ -54,7 +54,7 @@
 .subtitle-nov {
     color: #4B57A3;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 35px;
 }
 
 .content-nov ul li {
@@ -112,3 +112,4 @@ background: #FFF;
   pointer-events: auto;
   position: relative;
 }
+
