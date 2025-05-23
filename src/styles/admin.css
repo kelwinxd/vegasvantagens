@@ -1,0 +1,81 @@
+.painel {
+    display: flex;
+    width: 800px;
+    margin: 0 auto;
+    justify-content: space-around;
+}
+
+header {
+    padding: 20px 120px;
+    border-bottom: 1px solid #4B57A3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+header i {
+    font-size: 24px;
+    color: #4B57A3;
+    cursor: pointer;
+}
+
+.logo-container img {
+width: 200px;
+
+}
+
+.banner-desc {
+    padding-inline: 120px;
+    margin-bottom: 50px;
+    text-align: center;
+    
+}
+
+.painel button {
+    width: 150px;
+    height: 80px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    border: 1px solid #4B57A3;
+    color: #4B57A3;
+    font-weight:500;
+}
+
+.painel button:hover {
+    background-color:#878fc9;
+
+}
+
+.telas > div {
+  display: none;
+}
+
+.telas > .active {
+  display: flex;
+  justify-content: center;
+}
+
+button.active {
+   background-color: #4B57A3;
+   color: #fff;
+
+}
+
+.telas {
+    padding-inline: 120px;
+    margin-top: 30px;
+    
+}
+
+.telas div {
+ border: 1px solid rgb(206, 206, 206);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* sombra suave */
+    border-radius: 8px; /* opcional: cantos arredondados para melhorar o visual */
+    background-color: #fff;
+    padding: 20px 30px;
+    
+    
+}

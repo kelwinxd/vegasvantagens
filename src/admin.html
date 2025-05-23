@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <title>Admin Vegas Benefícios</title>
+</head>
+<body>
+    
+<header>
+
+  <div class="perfil">
+    <i class="fa-solid fa-user"></i>
+  </div>
+    <div class="logo-container">
+        <img src="./imgs/logo.png" alt="">
+    </div>
+<div class="config">
+  <i class="fa-solid fa-gear"></i>
+
+</div>
+    
+</header>
+
+
+<section class="banner-desc">
+    <h2>Bem-vindo ao Painel Clube de Vegas</h2>
+    <p> Aqui você gerencia os comércios parceiros e mantém as promoções sempre atualizadas para
+os nossos clientes!</p>
+</section>
+
+<section class="painel">
+  <div class="novo-comercio">
+    <button data-target="novocom">Novo Comercio</button>
+  </div>
+  <div class="editar-comercios">
+    <button data-target="comercio-ex">Editar Comercios</button>
+  </div>
+  <div class="ger-promo">
+    <button data-target="promocoes">Gerenciar Promocoes</button>
+  </div>
+  <div class="promo-vencidas">
+    <button data-target="vencidas">Promocoes Vencidas</button>
+  </div>
+</section>
+
+
+<section class="telas">
+    <div class="novocom-info" data-tag="novocom">
+      <p>novo comercio info</p>
+    </div>
+
+    <div class="comercio-existentes" data-tag="comercio-ex">
+   <p>comercios existentes</p>
+    </div>
+
+    <div class="promocoes" data-tag="promocoes">
+   <p>Gerenciar promocoes</p>
+    </div>
+
+    <div class="vencidas" data-tag="vencidas">
+   <p>Promocoes vencidas</p>
+    </div>
+</section>
+
+
+<script src="./scripts/admin.js"></script>
+</body>
+</html>
