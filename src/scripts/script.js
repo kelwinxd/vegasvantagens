@@ -132,7 +132,7 @@ function initMap() {
     center: defaultCenter,
   });
 }
-
+/*
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(async (position) => {
     const lat = position.coords.latitude;
@@ -176,7 +176,7 @@ if (navigator.geolocation) {
     });
   });
 }
-
+*/
 // Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", () => {
   const estado = filterState.value;
