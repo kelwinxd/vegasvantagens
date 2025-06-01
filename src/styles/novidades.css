@@ -11,11 +11,11 @@
     display: flex;
     gap: 100px;
     margin-bottom: 100px;
-    height: 820px;
+    height: 720px;
 }
 
 .img-nov {
-    flex: 2;
+    flex: 1.5;
     
     
     
@@ -111,5 +111,25 @@ background: #FFF;
   opacity: 1;
   pointer-events: auto;
   position: relative;
+}
+
+.carrossel-bullets {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.carrossel-bullets .bullet {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.carrossel-bullets .bullet.active {
+  background-color: #333;
 }
 

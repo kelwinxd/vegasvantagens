@@ -2,25 +2,26 @@
 
 .hero-header {
     width: 100%;
-   
     padding: 25px;
     padding-inline: 120px;
-    height: 600px;
+    height: 600px;   
 
-    
-    
 }
 
 .logo img {
-    width: 200px;
+    width: 200px;  
 }
 
 header {
-    max-width: 1488px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 20px;
+    border: none;
+    box-shadow: none;
+   
+   
 }
 
 nav {
@@ -28,17 +29,20 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    
     
 }
 
 nav ul {
     display: flex;
+    justify-content: space-between;
     gap:24px;
     
 }
 
 nav ul li a {
-    color:#4B57A3;
+    color:gray;
     font-size: 16px;
 font-style: normal;
 font-weight: 500;
@@ -57,9 +61,6 @@ nav .btn-header {
 
 }
 
-.banner-hero {
-    width: 100%;
-}
 
 .banner-hero img {
     width: 100%;

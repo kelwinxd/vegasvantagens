@@ -235,6 +235,7 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
               <h3>${ponto.name}</h3>
               <p class="address">${ponto.address}</p>
               <p class="distance">Distância: 5.0 km</p>
+              <button class ="btn-card-map"> Saiba Mais </button>
             </div>
        
           `;
@@ -529,24 +530,51 @@ startAutoplay();
 
 
 
-  const slides = document.querySelectorAll('.novidades .flex-content');
-  let currentIndex = 0;
 
-  function showSlide(index) {
-    slides.forEach((slide, i) => {
-      slide.classList.remove('showing');
+  // Carrossel Novidades
+ const slides = document.querySelectorAll('.novidades .flex-content');
+let currentIndex = 0;
+const bulletsContainer = document.querySelector(".carrossel-bullets");
+const bullets2= []; // <- CRIA o array que será usado no updateBullets
+
+function updateBullets(index) {
+  bullets2.forEach((bullet, i) => {
+    bullet.classList.toggle("active", i === index);
+  });
+}
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.classList.remove('showing');
+  });
+  slides[index].classList.add('showing');
+  updateBullets(index); // <- Atualiza os bullets sempre que muda o slide
+}
+
+function startCarousel() {
+  showSlide(currentIndex);
+
+  // Criar os bullets dinamicamente e guardar no array
+  slides.forEach((_, index) => {
+    const bullet = document.createElement("span");
+    bullet.classList.add("bullet");
+    if (index === 0) bullet.classList.add("active");
+
+    bullet.addEventListener("click", () => {
+      currentIndex = index;
+      showSlide(currentIndex); // <- Mostra o slide ao clicar no bullet
     });
-    slides[index].classList.add('showing');
-  }
 
-  function startCarousel() {
+    bulletsContainer.appendChild(bullet);
+    bullets2.push(bullet); // <- Armazena o bullet no array
+  });
+
+  // Muda os slides automaticamente
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % slides.length;
     showSlide(currentIndex);
+  }, 3000);
+}
 
-    setInterval(() => {
-      currentIndex = (currentIndex + 1) % slides.length;
-      showSlide(currentIndex);
-    }, 3000);
-  }
-
-  document.addEventListener("DOMContentLoaded", startCarousel);
+document.addEventListener("DOMContentLoaded", startCarousel);
 
