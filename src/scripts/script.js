@@ -1,3 +1,13 @@
+window.initMap = function () {
+  const defaultCenter = { lat: -23.561684, lng: -46.625378 };
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 10,
+    center: defaultCenter,
+  });
+}
+
+
+
 const searchInput = document.getElementById("searchInput");
 const btnLimpar = document.querySelector(".limpar");
 
@@ -125,13 +135,7 @@ const lojasList = document.querySelector(".produtoLista");
 const mapContainer = document.getElementById("map"); // Certifique-se que esse ID existe
 
 // Inicializa o mapa
-function initMap() {
-  const defaultCenter = { lat: -23.561684, lng: -46.625378 };
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 10,
-    center: defaultCenter,
-  });
-}
+
 /*
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(async (position) => {
@@ -202,8 +206,11 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
   for (const estado in cityData) {
     if (cityData[estado][cidade]) {
       const cidadeData = cityData[estado][cidade];
-      map.setCenter(cidadeData.center);
-      map.setZoom(14);
+      if (cidadeData.center && cidadeData.points.length > 0) {
+  map.setCenter(cidadeData.center);
+  map.setZoom(13);
+}
+      
 
       cidadeData.points.forEach(ponto => {
         const nomeMatch = !busca || ponto.name.toLowerCase().includes(busca.toLowerCase());
@@ -401,7 +408,7 @@ function startAutoplay() {
         document.getElementById(`slide${currentSlide}`).checked = true;
         updateSlidePosition();
         updateBulletClasses();
-    }, 3000);
+    }, 4000);
 }
 
 // Para o autoplay (caso queira parar em algum evento)
@@ -414,22 +421,40 @@ slide1.addEventListener('change', () => {
     currentSlide = 1;
     updateSlidePosition();
     updateBulletClasses();
-    stopAutoplay(); // Para o autoplay quando o usuário interagir
 });
 
 slide2.addEventListener('change', () => {
     currentSlide = 2;
     updateSlidePosition();
     updateBulletClasses();
-    stopAutoplay();
 });
 
 slide3.addEventListener('change', () => {
     currentSlide = 3;
     updateSlidePosition();
     updateBulletClasses();
-    stopAutoplay();
 });
+
+const btnLeft = document.querySelector('.btn-left');
+const btnRight = document.querySelector('.btn-right');
+
+btnLeft.addEventListener('click', () => {
+    currentSlide = currentSlide === 1 ? 3 : currentSlide - 1;
+    document.getElementById(`slide${currentSlide}`).checked = true;
+    updateSlidePosition();
+    updateBulletClasses();
+    // Não parar autoplay!
+});
+
+btnRight.addEventListener('click', () => {
+    currentSlide = currentSlide === 3 ? 1 : currentSlide + 1;
+    document.getElementById(`slide${currentSlide}`).checked = true;
+    updateSlidePosition();
+    updateBulletClasses();
+    // Não parar autoplay!
+});
+
+
 
 // Inicializa a posição do slide
 updateSlidePosition();
@@ -578,3 +603,22 @@ function startCarousel() {
 
 document.addEventListener("DOMContentLoaded", startCarousel);
 
+
+
+//Menu-mobile 
+const menuMobile = document.querySelector(".menu-hamb")
+const mainMenus = document.querySelector(".main-menus")
+const closeMenu = document.querySelector(".close-menu")
+
+closeMenu.addEventListener('click', () => {
+   mainMenus.classList.remove("active")
+   menuMobile.style.display = 'block'
+   closeMenu.style.display = 'none'
+
+})
+
+menuMobile.addEventListener("click", () => {
+   mainMenus.classList.add("active")
+   menuMobile.style.display = 'none'
+   closeMenu.style.display = 'block'
+})

@@ -2,9 +2,10 @@
       overflow: hidden;
       background-color: white;
       padding: 20px 0;
-      width: 80%;
+      width: 85%;
       margin: 0 auto;
-      padding-inline: 120px;
+      padding-inline: var(--padding-body-desktop);
+    
      
     }
 
@@ -12,6 +13,8 @@
       display: flex;
       width: calc(200px * 16); /* 6 imagens duplicadas = 12 */
       animation: scroll 20s linear infinite;
+     
+      
      
     }
      

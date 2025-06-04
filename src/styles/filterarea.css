@@ -1,5 +1,5 @@
 .melhor-oferta {
-    padding-inline: 120px;
+    padding-inline: var(--padding-body-desktop);
     padding-top: 120px;
     
     min-height: 80vh;
@@ -82,7 +82,8 @@
 .filter-results {
     margin-top: 120px;
     display: flex;
-    height: 500px;
+    gap: 25px;
+    height: 512px;
    
   
 }
@@ -97,6 +98,9 @@
    
         height: 100%;  /* ou qualquer altura visível */
         width: 100%;
+
+border-radius: 8px;
+
       
 }
 
@@ -189,7 +193,7 @@
   }
 
   .title-mp {
-    font-size: 32px;
+    font-size: 40px;
       color: #4B57A3;
       text-align: left;
  

@@ -12,26 +12,43 @@
     
 
 
-    <header>
-        <nav >
+    <div class="header">
+        <nav>
             <div class="logo">
                 <a href="./index.html">
-                    <img src="./imgs/logo.png" alt="">
+                    <img src="./imgs/logos/Logo.svg" alt="">
                 </a>
             </div>
+
+             <div class="main-menus">
+
+           
             <ul>
                
                 <li><a href="./sobrenos.html">Sobre o Clube</a></li>
-                <li><a href="#mp">Faça parte do Clube</a></li>
+                <li><a href="#mp">Categorias</a></li>
               
             </ul>
 
             <button class="btn-header">
-                <a href="./cadastro-com.html">Login</a>
+                <a href="./cadastro-com.html">Faça Parte do Clube</a>
             
             </button>
+              </div>
+
+            
+
+             <div class="menu-hamb">
+            <img src="./imgs/icons/menu.svg" alt="">
+        </div>
+
+        <div class="close-menu">
+            <img src="./imgs/icons/close.svg" alt="">
+        </div>
         </nav>
-    </header>
+
+       
+    </div>
  <section class="hero-header">
     <section class="banner-hero">
         <input type="radio" name="slide" id="slide1" checked>
@@ -50,12 +67,22 @@
             <label class="bar bullet" for="slide2"></label>
             <label class="bar bullet" for="slide3"></label>
         </div>
+
+        <div class="arrows">
+            <div class="btn-left">
+  <img src="./imgs/icons/iconbtn.svg" alt="">
+            </div>
+          <div class="btn-right">
+            <img src="./imgs/icons/iconbtn.svg" alt="" class="right">
+
+          </div>
+        </div>
     </section>
     </section>
     
 
      </section>
-<h1 class="title-mp" style="padding-left: 120px;">Parceiros Clube Vegas</h1>
+<h1 class="main-title" >Parceiros Clube Vegas</h1>
       <section class="carrossel" id="carrossel">
         
     <div class="carrossel-track" id="track">
@@ -415,16 +442,20 @@
          
             <h2 class="subtitle-nov">Veja como é rápido começar a usar seus descontos:</h2>
             <div class="list-nov">
+                <div class="tag-nov">1º</div>
                 <h2>Seja Cliente Vegas</h2>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam deleniti voluptates voluptatum, optio autem nostrum.</p>
+                <p>Ao utilizar os serviços da Vegas, você passa a ter acesso a benefícios exclusivos em centenas de comércios parceiros.</p>
             </div>
             <div class="list-nov">
+                 <div class="tag-nov">2º</div>
     <h2>Encontre o desconto ideal</h2>
-    <p>Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Encontre aquele que oferece o desconto ou vantagem que mais combina com você.</p>
+    <p>
+Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Encontre aquele que oferece o desconto ou vantagem que mais combina com você.</p>
             </div>
             <div class="list-nov">
+                 <div class="tag-nov">3º</div>
     <h2>Seja Cliente Vegas</h2>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam deleniti voluptates voluptatum, optio autem nostrum.</p>
+    <p>Para garantir o desconto, é obrigatório pagar utilizando seu Cartão Vegas Card, informe que é cliente Vegas antes de passar no caixa e finalize a compra com o cartão.</p>
             </div>
                
                
@@ -567,9 +598,11 @@
 
  
      
-    <script src="./scripts/script.js"></script>
-    <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzKJEV_2uVpJCajZAofAb5l6Gzhu9mNgw&callback=initMap">
+    <script src="./scripts/script.js" defer></script>
+    <script defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzKJEV_2uVpJCajZAofAb5l6Gzhu9mNgw"
+     onload="window.initMap()"
+    >
   </script>
 </body>
 </html>

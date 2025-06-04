@@ -52,9 +52,13 @@
 }
 
 .subtitle-nov {
-    color: #4B57A3;
-    font-weight: bold;
-    font-size: 35px;
+   color: #4B57A3;
+
+font-family: Rubik;
+font-size: 48px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
 }
 
 .content-nov ul li {
@@ -68,6 +72,13 @@
 .content-nov ul li img {
     width: 32px;
     height: 32px;
+}
+
+.list-nov h2 {
+  color: #4B57A3;
+
+font-family: Rubik;
+font-size: 32px;
 }
 
 .nov-call {
@@ -90,6 +101,31 @@ border-radius: 12px;
 border: 2px solid #828EC5;
 
 background: #FFF;
+position: relative;
+}
+
+
+.tag-nov {
+  position: absolute;
+  width: 81.882px;
+height: 80px;
+flex-shrink: 0;
+border-radius: 8px;
+border: 1px solid #828EC5;
+
+background: #4B57A3;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 40px;
+color: #fff;
+left: -41px;
+}
+.list-nov p {
+  color: #7E7E7E;
+
+font-family: Rubik;
+font-size: 20px;
 }
 
 .carrossel-nov {
