@@ -23,6 +23,7 @@
 
 .filter-btns {
     display: flex;
+    
     flex-wrap: wrap;
    
     height: 50px;
@@ -67,7 +68,7 @@
     outline: none;
     border-radius: 8px 0 0 8px;
     border: 1px solid gray;
-    width: 30%;
+    width: 31%;
     display: flex;
     align-items: center;
     padding-left: 20px;
@@ -214,3 +215,118 @@ cursor: pointer;
 margin-top: 10px;
 
   }
+.mobile-btns {
+  display: none;
+}
+
+.mobile-filters {
+  display: none;
+}
+
+  @media (max-width: 480px) {
+   
+.place-card {
+  position: relative;
+}
+    .mobile-filters {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+  
+    }
+
+    .mobile-filters button {
+      width: 100%;
+      height: 42px;
+    border-radius: 4px 0px 0px 4px;
+border: 2px solid #828EC5;
+
+background: #FFF;
+color: #4B57A3;
+
+font-family: Rubik;
+font-size: 13px;
+    }
+
+    .select-desktop {
+      display: none;
+    }
+
+    .melhor-oferta {
+      padding-inline: 50px;
+    }
+
+    .title-mp {
+      color: #4B57A3;
+
+font-family: Rubik;
+font-size: 24px;
+    }
+
+    
+     .place-card {
+      margin-bottom: 30px;
+     }
+    .search-text {
+      width: 100%;
+    }
+
+    .filter-results {
+      flex-direction: column;
+      height: 700px;
+    }
+
+    .map-container {
+      order: 1;
+      flex: 0.8;
+    }
+
+    .lojas {
+      order: 2;
+      height: 700px;
+    }
+
+    .place-image {
+      width: 82.594px;
+      height: 70px;
+
+    }
+
+    .place-details h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .place-details .address {
+    margin: 5px 0;
+    font-size: 10px;
+    color: #666;
+  }
+  
+  .place-details .distance {
+    margin: 0;
+    font-size: 8px;
+    color: #888;
+  }
+
+    .btn-card-map {
+    border-radius: 0 0 8px 8px;
+background: #4B57A3;
+display: flex;
+width: 100%;
+height: 12px;
+padding: 14px 12px;
+justify-content: center;
+align-items: center;
+border: none;
+color: #fff;
+cursor: pointer;
+margin-top: 10px;
+position: absolute;
+bottom: -10px;
+left: 0;
+
+  }
+
+}

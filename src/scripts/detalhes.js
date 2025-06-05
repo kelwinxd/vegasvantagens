@@ -192,3 +192,124 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+
+const modalInfo = {
+  "mercadao-dos-oculos": {
+    logo: "./imgs/logos/oculosmercadao.png",
+    titulo: "20% de desconto no Mercadão dos Óculos!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem 20% de desconto em armações selecionadas + exame de vista gratuito.`,
+  },
+  "intensos-barbearia": {
+    logo: "./imgs/logos/intensos-barbearia.png",
+    titulo: "Benefício na Intensos Barbearia!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem 1 hidratação de cabelo no 1º corte + se fechar clube: corte gratuito.`,
+  },
+  "zanini": {
+    logo: "./imgs/logos/zanini-logo.png",
+    titulo: "10% de desconto na Zanini!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem 10% de desconto em qualquer produto da loja.`,
+  },
+  "caochorro-petshop": {
+    logo: "./imgs/logos/caochorro-logo.png",
+    titulo: "10% de desconto no Cãochorro Petshop!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem 10% de desconto em qualquer produto da loja.`,
+  },
+  "betta-suplementos": {
+    logo: "./imgs/logos/beta-logo.png",
+    titulo: "R$50 de cashback na Betta Suplementos!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem R$50 de cashback para clientes cadastrados na landing page exclusiva.`,
+  },
+  "boi-que-mia": {
+    logo: "./imgs/logos/boi-logo.png",
+    titulo: "Brinde no Boi Que Mia - Grill Bar!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas ganha 1 pão de alho ou queijo coalho por conta da casa.`,
+  },
+  "casa-florindo": {
+    logo: "./imgs/logos/florindo-logo.png",
+    titulo: "Desconto especial na Casa Florindo!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem desconto especial.`,
+  },
+  "danny-cosmeticos": {
+    logo: "./imgs/logos/danny-logo.png",
+    titulo: "Desconto especial na Danny Cosméticos!",
+    validade: "Válido até 31/12/2025.",
+    descricao: `Cliente Vegas tem desconto especial.`,
+  }
+};
+
+
+function formatarSlug(str) {
+  return str
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+}
+
+function openModalByName(nome) {
+  const nomeSlug = formatarSlug(nome);
+  const info = modalInfo[nomeSlug];
+  console.log('clicou')
+
+  if (!info) {
+    console.warn("Informação não encontrada para:", nome);
+    return;
+  }
+
+  document.querySelector(".modal-logo").src = info.logo;
+  document.querySelector(".modal-logo").alt = nome;
+  document.querySelector(".modal-title").textContent = info.titulo;
+  document.querySelector(".modal-validade").innerHTML = info.validade;
+  document.querySelector(".modal-descricao").innerHTML = info.descricao;
+
+  document.querySelector(".modal-overlay").style.display = "flex";
+}
+
+document.querySelector(".close-btn").addEventListener("click", () => {
+  document.querySelector(".modal-overlay").style.display = "none";
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
+  const partes = hash.split("-");
+  const nomeEmpresa = partes.slice(2).join("-").toLowerCase(); // pega o nome após cidade-estado
+   console.log(nomeEmpresa)
+  const cards = document.querySelectorAll(".card-desconto");
+
+  if (nomeEmpresa) {
+    let encontrou = false;
+    cards.forEach(card => {
+      const verMais = card.querySelector("button")
+      const titulo = card.querySelector("h2").textContent.trim().toLowerCase();
+      card.style.height = 'auto'
+
+      verMais.addEventListener("click", () => openModalByName(nomeEmpresa))
+
+
+
+      console.log(titulo)
+      if (titulo.includes(nomeEmpresa) || titulo == nomeEmpresa) {
+        card.style.display = "block";
+        encontrou = true;
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    if (!encontrou) {
+      console.warn("Nenhum card correspondente foi encontrado para:", nomeEmpresa);
+    }
+  }
+});
+
+
+

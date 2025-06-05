@@ -26,7 +26,7 @@
             <ul>
                
                 <li><a href="./sobrenos.html">Sobre o Clube</a></li>
-                <li><a href="#mp">Categorias</a></li>
+                <li><a href="./categorias.html">Categorias</a></li>
               
             </ul>
 
@@ -85,27 +85,28 @@
 <h1 class="main-title" >Parceiros Clube Vegas</h1>
       <section class="carrossel" id="carrossel">
         
-    <div class="carrossel-track" id="track">
-      <!-- 6 logos -->
-      <a href="#"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
-    <a href="#"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
-    <a href="#"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
-    <a href="#"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
-    <a href="#"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
-    <a href="#"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
-    <a href="#"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
-    <a href="#"><img src="./imgs/logos/oculosmercadao.png" alt="Logo Mercadão"></a>
+ <div class="carrossel-track" id="track">
+  <a href="detalhes.html#americana-sp-Betta%20Suplementos"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
+  <a href="detalhes.html#americana-sp-Boi%20que%20Mia"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
+  <a href="detalhes.html#americana-sp-Cãochorro%20Petshop"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
+  <a href="detalhes.html#americana-sp-Danny%20Cosméticos"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
+  <a href="detalhes.html#americana-sp-Casa%20Florindo"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
+  <a href="detalhes.html#americana-sp-Intensos%20Barbearia"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
+  <a href="detalhes.html#americana-sp-Zanini"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
+  <a href="detalhes.html#americana-sp-Mercadão%20dos%20Óculos"><img src="./imgs/logos/oculosmercadao.png" alt="Logo Mercadão"></a>
 
-    <!-- Duplicadas para efeito infinito -->
-    <a href="#"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
-    <a href="#"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
-    <a href="#"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
-    <a href="#"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
-    <a href="#"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
-    <a href="#"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
-    <a href="#"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
-    <a href="#"><img src="./imgs/logos/oculosmercadao.png" alt="Logo Mercadão"></a>
-    </div>
+  <!-- Duplicadas para efeito infinito -->
+   <a href="detalhes.html#americana-sp-Betta%20Suplementos"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
+  <a href="detalhes.html#americana-sp-Boi%20que%20Mia"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
+  <a href="detalhes.html#americana-sp-Cãochorro%20Petshop"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
+  <a href="detalhes.html#americana-sp-Danny%20Cosméticos"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
+  <a href="detalhes.html#americana-sp-Casa%20Florindo"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
+  <a href="detalhes.html#americana-sp-Intensos%20Barbearia"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
+  <a href="detalhes.html#americana-sp-Zanini"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
+  <a href="detalhes.html#americana-sp-Mercadão%20dos%20Óculos"><img src="./imgs/logos/oculosmercadao.png" alt="Logo Mercadão"></a>
+
+</div>
+
   </section>
 
 
@@ -299,9 +300,12 @@
 
                     <input type="text" class="textinput" id="searchInput" placeholder="Buscar por nome ou palavra-chave..." />
                 </div>
-              
-
-                <select id="filterState">
+                <div class="mobile-filters">
+                    <button>Filtrar</button>
+                    <button>Ver lista</button>
+                </div>
+                <div class="mobile-btns">
+                     <select id="filterState">
                   <option value="">Todos os Estados</option>
                   <option value="sp">São Paulo</option>
                   <option value="rj">Rio de Janeiro</option>
@@ -332,6 +336,45 @@
                 </select>
               
                 <select id="filterCard">
+                    <option value="">Todos os Cartões</option>
+                    <option value="vegas day">Vegas Day</option>
+                    <option value="vegas plus">Vegas Plus</option>
+                    <option value="vegas alimentação">Vegas Alimentação</option>
+                    <option value="vegas refeição">Vegas Refeição</option>
+                    <option value="vegas combustível">Vegas Combustível</option>
+                </select>
+                </div>
+                <select id="filterState" class="select-desktop">
+                  <option value="">Todos os Estados</option>
+                  <option value="sp">São Paulo</option>
+                  <option value="rj">Rio de Janeiro</option>
+                  <!-- Adicione mais estados -->
+                </select>
+              
+                <select id="filterCity" class="select-desktop">
+                  <option value="">Todas as Cidades</option>
+      
+                  <!-- Preenchido dinamicamente com base no estado -->
+                </select>
+              
+                <select id="filterSegment" class="select-desktop">
+                    <option value="">Todos os Segmentos</option>
+    <option value="presentes">Presentes</option>
+    <option value="utensílios domésticos">Utensílios Domésticos</option>
+    <option value="variedades">Variedades</option>
+    <option value="brinquedos">Brinquedos</option>
+    <option value="ótica">Ótica</option>
+    <option value="barbearia">Barbearia</option>
+    <option value="petshop">Petshop</option>
+    <option value="alimentação">Alimentação</option>
+    <option value="restaurante">Restaurante</option>
+    <option value="cosméticos">Cosméticos</option>
+    <option value="veículos">Veículos</option>
+    <option value="posto de combustível">Posto de Combustível</option>
+    <option value="açougue">Açougue</option>
+                </select>
+              
+                <select id="filterCard" class="select-desktop">
                     <option value="">Todos os Cartões</option>
                     <option value="vegas day">Vegas Day</option>
                     <option value="vegas plus">Vegas Plus</option>

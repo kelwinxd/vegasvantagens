@@ -48,85 +48,145 @@
     </div>
 
 
-<section class="comercio">
-    <h1 class="tag-comercio">Bares e Restaurantes</h1>
-    <div class="comercio-container">
-        <div class="main-img">
-            <img src="./imgs/default-image.png" class="img-comercio" alt="">
-        </div>
-        <div class="main-info">
-            <div class="header-info">
-                <div class="img-logo">
-                   <img src="./imgs/default-image.png" class="logo" alt="">
-                </div>
-                <div class="inner-info">
-                    <div>
-                        <h2 class="title-comercio"></h2>
-                        <div class="avaliacao"><span>4.5</span><div class="stars"></div></div>
-                    </div>
-                  
-                    <div class="btn-info">
-                        <button class="visite">Visitar o Site</button>
-                        <button class="mapa">Ver Mapa</button>
-        
-                    </div>
+<section class="search">
+              <div class="search-container">
+                <i class="fas fa-search icon-search"></i>
+                <input type="text" name="desc-input" id="desc-input">
+
+                  <button class="btn-buscar">Buscar</button>
+              </div>
+    </section>
+
+    <section class="categorias">
+        <h1 class="title-categoria">Categorias</h1>
+        <div class="cards-categorias">
+            <div class="card-categoria" data-cat="alimentacao">
+                <i class="fas fa-shopping-cart"></i>
+
+                <h2>Alimentação</h2>
+            </div>
+            <div class="card-categoria" data-cat="presentes">
+                <i class="fas fa-gift"></i>
+
+                <h2>Presentes</h2>
+            </div>
+            <div class="card-categoria" data-cat="oticas">
+               <i class="fas fa-glasses"></i>
+
+                <h2>Óticas</h2>
+            </div>
+            <div class="card-categoria" data-cat="barbearia">
+           <i class="fas fa-cut"></i>
+
+                <h2>Barbearias</h2>
+            </div>
+            <div class="card-categoria" data-cat="petshop">
+       <i class="fas fa-dog"></i>
+                <h2>Petshop</h2>
+            </div>
+            <div class="card-categoria" data-cat="bareserestaurantes">
+                <i class="fas fa-utensils"></i>
+                <h2>Bares / Restaurantes</h2>
+            </div>
+
+            <div class="card-categoria" data-cat="cosmeticos">
+          <i class="fas fa-magic"></i> 
+
+
+                <h2>Cosméticos</h2>
+            </div>
+
+            <div class="card-categoria">
                 
-              
-                </div>
-               
-            
+               <i class="fas fa-car"></i>
+
+                <h2>Veículos</h2>
+            </div>
+
+                 <div class="card-categoria">
+                
            
+                <h2>Mais</h2>
             </div>
-              <hr style="margin-bottom: 20px;">
-               
-            <div class="info-cards">
-                <div class="info-card">
-                    <h3>Endereço:</h3>
-                    <p class="adress"></p>
-                </div>
-                <div class="info-card">
-                    <h3>Telefone:</h3>
-                    <p class="phone"></p>
-                </div>
-                <hr>
-                <div class="info-card">
-                    <h3>Cartões:</h3>
-                    <p class="cards"></p>
-                </div>
-            </div>
-          
+
             
-          
         </div>
-    </div>
-  
-  
-</section>
-<div class="modal-overlay">
-  <div class="modal">
-    <button class="close-btn">&times;</button>
-    <img class="modal-logo" src="" alt="" />
-    <h2 class="modal-title"></h2>
-    <p class="modal-validade"></p>
-    <p class="modal-descricao"></p>
-  </div>
-</div>
-<section class="desc-ofertas">
+    </section>
+
+    <section class="search-section">
+ <div class="filter-btns categ">
+                <div class="search-text">
+                    <i class="fa fa-search"></i>
+
+                    <input type="text" class="textinput" id="searchInput" placeholder="Buscar por nome ou palavra-chave..." />
+                </div>
+              
+
+                <select id="filterState">
+                  <option value="">Todos os Estados</option>
+                  <option value="sp">São Paulo</option>
+                  <option value="rj">Rio de Janeiro</option>
+                  <!-- Adicione mais estados -->
+                </select>
+              
+                <select id="filterCity">
+                  <option value="">Todas as Cidades</option>
+      
+                  <!-- Preenchido dinamicamente com base no estado -->
+                </select>
+              
+                <select id="filterSegment">
+                    <option value="">Todos os Segmentos</option>
+    <option value="presentes">Presentes</option>
+    <option value="utensílios domésticos">Utensílios Domésticos</option>
+    <option value="variedades">Variedades</option>
+    <option value="brinquedos">Brinquedos</option>
+    <option value="ótica">Ótica</option>
+    <option value="barbearia">Barbearia</option>
+    <option value="petshop">Petshop</option>
+    <option value="alimentação">Alimentação</option>
+    <option value="restaurante">Restaurante</option>
+    <option value="cosméticos">Cosméticos</option>
+    <option value="veículos">Veículos</option>
+    <option value="posto de combustível">Posto de Combustível</option>
+    <option value="açougue">Açougue</option>
+                </select>
+              
+                <select id="filterCard">
+                    <option value="">Todos os Cartões</option>
+                    <option value="vegas day">Vegas Day</option>
+                    <option value="vegas plus">Vegas Plus</option>
+                    <option value="vegas alimentação">Vegas Alimentação</option>
+                    <option value="vegas refeição">Vegas Refeição</option>
+                    <option value="vegas combustível">Vegas Combustível</option>
+                </select>
+              
+              
+              </div>
+    </section>
+
+        
+
+     <section class="desc-ofertas">
         <h1 class="title-desc">Descontos e Ofertas</h1>
         <div class="cards-descontos">
      
             <div class="card-desconto" data-tag="oticas">
-           
+                <div class="header-img">
+                    <img src="./imgs/logos/oculosmercadao.png" alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Óculos</div>
-                    <h2>Mercadão dos Óculos</h2>
+                    <h2>Mercadao de Oculos</h2>
                     <p>Cliente Vegas tem 20% de desconto em armações selecionadas + exame de vista gratuito</p>
                 </div>
                 <button>Ver Mais</button>
             </div>
             
             <div class="card-desconto" data-tag="barbearia">
-            
+                <div class="header-img">
+                    <img src="./imgs/logos/intensos-barbearia.png" alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Barbearias</div>
                     <h2>Intensos Barbearia</h2>
@@ -136,7 +196,9 @@
             </div>
 
                   <div class="card-desconto" data-tag="presentes">
-           
+                <div class="header-img">
+                    <img src="./imgs/logos/logo-zanini.png" style="width: 80%;"  alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Brinquedos</div>
                     <h2>Zanini</h2>
@@ -146,7 +208,9 @@
             </div>
 
             <div class="card-desconto" data-tag="petshop">
-               
+                <div class="header-img">
+                    <img src="./imgs/logos/caochorro-logo.png" alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Petshop</div>
                     <h2>Cãochorro Petshop</h2>
@@ -156,7 +220,9 @@
             </div>
 
                   <div class="card-desconto" data-tag="alimentacao">
-               
+                <div class="header-img">
+                    <img src="./imgs/logos/beta-logo.png" alt="">
+                </div>
                 <div class="content">
                     <div class="tag" >Alimentação</div>
                     <h2>Betta Suplementos</h2>
@@ -167,7 +233,9 @@
 
 
             <div class="card-desconto" data-tag="bareserestaurantes">
-           
+                <div class="header-img">
+                    <img src="./imgs/logos/boi-logo.png"  alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Bares / Restaurante</div>
                     <h2>Boi Que Mia - Grill Bar</h2>
@@ -177,7 +245,9 @@
             </div>
 
                   <div class="card-desconto" data-tag="bareserestaurantes">
-          
+                <div class="header-img">
+                    <img src="./imgs/logos/florindo-logo.png" alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Bares / Restaurantes</div>
                     <h2>Casa Florindo Bar e Restaurante</h2>
@@ -187,7 +257,9 @@
             </div>
 
                   <div class="card-desconto" data-tag="cosmeticos">
-       
+                <div class="header-img">
+                    <img src="./imgs/logos/danny-logo.png" alt="">
+                </div>
                 <div class="content">
                     <div class="tag">Cosméticos</div>
                     <h2>Danny Cosméticos</h2>
@@ -197,8 +269,6 @@
             </div>
         </div>
     </section>
-
-
 
 
    
@@ -324,6 +394,7 @@
 
        
     </footer>
+
     <div class="down-footer">
         <p>Acesse nossa Política de Privacidade.</p>
         <p>Copyright ©2025 Vegas Card do Brasil. Todos os direitos reservados. Desenvolvido por RedHot Comunicação.</p>
@@ -331,8 +402,7 @@
 
  
      
-    <script src="./scripts/detalhes.js"></script>
-   
-   
+
+   <script src="./scripts/categorias.js"></script>
 </body>
 </html>

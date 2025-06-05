@@ -2,7 +2,7 @@
     
     height: 100%;
     width: 100%;
-    padding-inline: 120px;
+    padding-inline: 104px;
     
     margin: 0 auto;
   
@@ -22,8 +22,8 @@
 }
 
 .main-img {
-    flex: 1;
-    height: 406px;
+    flex: 1.2;
+    height: 506px;
     
 }
 
@@ -60,6 +60,24 @@
    
 }
 
+.info-card h3 {
+    color: #4B57A3;
+font-family: Rubik;
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
+.info-card p {
+    color: #7E7E7E;
+font-family: Rubik;
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
 .btn-info button {
 border-radius: 8px;
 background-color: #4B57A3;
@@ -67,6 +85,16 @@ border: none;
 padding: 10px 30px;
 color: #fff;
 cursor: pointer;
+display: flex;
+height: 48px;
+padding: 26px 35px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+
+
+font-family: Rubik;
+font-size: 20px;
 
 
 }
@@ -80,8 +108,10 @@ cursor: pointer;
 
 
 .img-logo img {
-    width:100px;
-    height: 100px;
+   width: 130px;
+height: 130px;
+flex-shrink: 0;
+aspect-ratio: 1/1;
     margin-left: -20px;
     border: 0.5px solid gray;
     border-radius: 50%;
@@ -123,7 +153,7 @@ cursor: pointer;
     
     width: 100%;
 }
-.card-desconto {
+.card-desconto-comercio {
     flex: 1 1 calc(25% - 14px);
     min-width: 250px;
     height: 350px;
@@ -140,6 +170,21 @@ cursor: pointer;
 
 }
 
+.card-desconto-comercio {
+       flex: 1 1 calc(25% - 14px);
+    min-width: 250px;
+    
+    background: #fff;
+    text-align: center;
+    max-width: 200px;
+    border: 2.056px solid #CDCDCD;
+    border-radius: 8px;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+}
+
 .header-img {
     width: 100%;
     height: 45%;
@@ -148,7 +193,7 @@ cursor: pointer;
     
 }
 
-.card-desconto img {
+.card-desconto-comercio img {
     width: 100%;
     height: 100%;
     object-fit: contain; 
@@ -170,7 +215,7 @@ cursor: pointer;
 
 
 
-.card-desconto button {
+.card-desconto-comercio button {
     background-color: #4B57A3;
     color: white;
     border: none;
@@ -179,9 +224,10 @@ cursor: pointer;
     border-radius: 0 0 8px 8px;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    width: 100%;
 }
 
-.card-desconto button:hover {
+.card-desconto-comercio button:hover {
     background-color: #727cbd;
 }
 
@@ -213,10 +259,82 @@ margin-bottom: 15px;
 color: #fff;
 }
 
+.avaliacao span {
+    color: #7E7E7E;
+font-family: Rubik;
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
+.title-comercio {
+    color: #4B57A3;
+
+font-family: Rubik;
+font-size: 32px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+}
+
 .title-desc {
     font-size: 32px;
     color: #4B57A3;
     text-align: left;
 }
 
-.card-desconto.hidden { display: none; transform: scale(.95); pointer-events:none; }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 20px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  font-family: sans-serif;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-logo {
+  max-width: 120px;
+  margin-bottom: 20px;
+}
+
+.modal h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.modal .validade {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+
+.card-desconto-comercio.hidden { display: none; transform: scale(.95); pointer-events:none; }

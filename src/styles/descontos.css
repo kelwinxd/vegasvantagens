@@ -1,16 +1,19 @@
 .desc-ofertas {
     width: 100%;
-    padding-inline: 120px;
-    padding-top: 80px;
+    
+    padding-top: 40px;
 }
 
+.title-desc {
+    text-align: left;
+}
 .cards-descontos {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     justify-content: space-between;
     align-items: stretch; 
-    padding-top: 44px;
+    
     width: 100%;
 }
 .card-desconto {
@@ -60,6 +63,8 @@
 
 
 
+
+
 .card-desconto button {
     background-color: #4B57A3;
     color: white;
@@ -69,6 +74,7 @@
     border-radius: 0 0 8px 8px;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    width: 100%;
 }
 
 .card-desconto button:hover {
