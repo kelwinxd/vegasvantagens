@@ -5,3 +5,31 @@
     margin-top: 100px;
     margin-bottom: 50px;
 }
+
+
+@media screen and (max-width:480px) {
+
+    .voce-sabia {
+        height: 70vh;
+        padding-top: 0;
+        margin-top: 0;
+        margin-bottom: 600px;
+    }
+
+    .voce-sabia .flex-content {
+        flex-direction: column;
+        height: 600px;
+        display: block;
+    }
+    .voce-sabia {
+        padding-inline: 24px;
+    }
+
+    .voce-sabia h2 {
+        font-size: 24px;
+    }
+
+    .list-nov p {
+        font-size: 14px;
+    }
+}

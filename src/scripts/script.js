@@ -241,7 +241,7 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
             <div class="place-details">
               <h3>${ponto.name}</h3>
               <p class="address">${ponto.address}</p>
-              <p class="distance">Distância: 5.0 km</p>
+              <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
               <button class ="btn-card-map"> Saiba Mais </button>
             </div>
        

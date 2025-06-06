@@ -89,9 +89,9 @@ font-size: 32px;
 
 .list-nov {
 
-height: 160px;
-padding: 48px 64px;
-width: 100%;
+height: 250px;
+padding: 70px 64px;
+width: 90%;
 display: flex;
 flex-direction: column;
 align-items: start;
@@ -126,6 +126,10 @@ left: -41px;
 
 font-family: Rubik;
 font-size: 20px;
+}
+
+.voce-sabia .flex-content {
+  margin-bottom: 200px;
 }
 
 .carrossel-nov {
@@ -167,5 +171,51 @@ font-size: 20px;
 
 .carrossel-bullets .bullet.active {
   background-color: #333;
+}
+
+
+
+
+
+@media screen and (max-width:480px) {
+  .novidades {
+    padding-inline: 24px;
+  }
+
+  .flex-content {
+    gap: 50px;
+    height: 400px;
+  }
+
+  .subtitle-nov {
+  font-size: 30px;
+}
+
+.content-nov ul li {
+  font-size: 12px;
+}
+
+.nov-call {
+  font-size: 14px;
+}
+
+.tag-nov {
+  width:70px ;
+  height: 70px;
+}
+
+.final-nov {
+  display: flex;
+  justify-content: end;
+}
+
+.list-nov {
+  height: 180px;
+padding: 50px 64px;
+width: 90%;
+display: flex;
+align-self: end;
+}
+
 }
 

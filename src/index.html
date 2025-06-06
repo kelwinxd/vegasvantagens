@@ -299,51 +299,62 @@
                     <i class="fa fa-search"></i>
 
                     <input type="text" class="textinput" id="searchInput" placeholder="Buscar por nome ou palavra-chave..." />
+                    <button class="mobile-filter"><img src="./imgs/icons/filtericon.svg" alt=""></button>
                 </div>
-                <div class="mobile-filters">
+                <!---
+                  <div class="mobile-filters">
                     <button>Filtrar</button>
                     <button>Ver lista</button>
                 </div>
-                <div class="mobile-btns">
-                     <select id="filterState">
-                  <option value="">Todos os Estados</option>
-                  <option value="sp">São Paulo</option>
-                  <option value="rj">Rio de Janeiro</option>
-                  <!-- Adicione mais estados -->
-                </select>
+
+            
+<fieldset id="filterState">
+  <legend>Estados</legend>
+  <label><input type="radio" name="state" value="" checked> Todos os Estados</label><br>
+  <label><input type="radio" name="state" value="sp"> São Paulo</label><br>
+  <label><input type="radio" name="state" value="rj"> Rio de Janeiro</label>
+</fieldset>
+
+
+<fieldset id="filterCity">
+  <legend>Cidades</legend>
+  <label><input type="radio" name="city" value="" checked> Todas as Cidades</label>
+
+</fieldset>
+
+
+<fieldset id="filterSegment">
+  <legend>Segmentos</legend>
+  <label><input type="radio" name="segment" value="" checked> Todos os Segmentos</label><br>
+  <label><input type="radio" name="segment" value="presentes"> Presentes</label><br>
+  <label><input type="radio" name="segment" value="utensílios domésticos"> Utensílios Domésticos</label><br>
+  <label><input type="radio" name="segment" value="variedades"> Variedades</label><br>
+  <label><input type="radio" name="segment" value="brinquedos"> Brinquedos</label><br>
+  <label><input type="radio" name="segment" value="ótica"> Ótica</label><br>
+  <label><input type="radio" name="segment" value="barbearia"> Barbearia</label><br>
+  <label><input type="radio" name="segment" value="petshop"> Petshop</label><br>
+  <label><input type="radio" name="segment" value="alimentação"> Alimentação</label><br>
+  <label><input type="radio" name="segment" value="restaurante"> Restaurante</label><br>
+  <label><input type="radio" name="segment" value="cosméticos"> Cosméticos</label><br>
+  <label><input type="radio" name="segment" value="veículos"> Veículos</label><br>
+  <label><input type="radio" name="segment" value="posto de combustível"> Posto de Combustível</label><br>
+  <label><input type="radio" name="segment" value="açougue"> Açougue</label>
+</fieldset>
+
+
+<fieldset id="filterCard">
+  <legend>Cartões</legend>
+  <label><input type="radio" name="card" value="" checked> Todos os Cartões</label><br>
+  <label><input type="radio" name="card" value="vegas day"> Vegas Day</label><br>
+  <label><input type="radio" name="card" value="vegas plus"> Vegas Plus</label><br>
+  <label><input type="radio" name="card" value="vegas alimentação"> Vegas Alimentação</label><br>
+  <label><input type="radio" name="card" value="vegas refeição"> Vegas Refeição</label><br>
+  <label><input type="radio" name="card" value="vegas combustível"> Vegas Combustível</label>
+</fieldset>
+
+                -->
               
-                <select id="filterCity">
-                  <option value="">Todas as Cidades</option>
-      
-                  <!-- Preenchido dinamicamente com base no estado -->
-                </select>
               
-                <select id="filterSegment">
-                    <option value="">Todos os Segmentos</option>
-    <option value="presentes">Presentes</option>
-    <option value="utensílios domésticos">Utensílios Domésticos</option>
-    <option value="variedades">Variedades</option>
-    <option value="brinquedos">Brinquedos</option>
-    <option value="ótica">Ótica</option>
-    <option value="barbearia">Barbearia</option>
-    <option value="petshop">Petshop</option>
-    <option value="alimentação">Alimentação</option>
-    <option value="restaurante">Restaurante</option>
-    <option value="cosméticos">Cosméticos</option>
-    <option value="veículos">Veículos</option>
-    <option value="posto de combustível">Posto de Combustível</option>
-    <option value="açougue">Açougue</option>
-                </select>
-              
-                <select id="filterCard">
-                    <option value="">Todos os Cartões</option>
-                    <option value="vegas day">Vegas Day</option>
-                    <option value="vegas plus">Vegas Plus</option>
-                    <option value="vegas alimentação">Vegas Alimentação</option>
-                    <option value="vegas refeição">Vegas Refeição</option>
-                    <option value="vegas combustível">Vegas Combustível</option>
-                </select>
-                </div>
                 <select id="filterState" class="select-desktop">
                   <option value="">Todos os Estados</option>
                   <option value="sp">São Paulo</option>
@@ -426,7 +437,7 @@
             </div>
          
             <h2 class="title-nov">Descontos exclusivos para clientes Vegas</h2>
-            <p class="subtitle-nov">Voce sabia:</p>
+            <h3 class="subtitle-nov">Você sabia:</h3>
             <ul>
                 <li> <img src="./imgs/check.png" alt="">+28.000 academias e estúdios em todo o Brasil</li>
                 <li> <img src="./imgs/check.png" alt="">+28.000 academias e estúdios em todo o Brasil</li>
@@ -450,7 +461,7 @@
             </div>
          
             <h2 class="title-nov">Descontos exclusivos para clientes Vegas</h2>
-            <p class="subtitle-nov">Voce sabia:</p>
+            <h3 class="subtitle-nov">Você sabia:</h3>
             <ul>
                 <li> <img src="./imgs/check.png" alt="">+28.000 academias e estúdios em todo o Brasil</li>
                 <li> <img src="./imgs/check.png" alt="">+28.000 academias e estúdios em todo o Brasil</li>
@@ -555,14 +566,20 @@ Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Enco
                
 
             </div>
-
+ 
             <div class="card-footer">
-                <h2>@</h2>
-                <p>atendimento@vegascard.com.br</p>
+            <i class="fas fa-envelope"></i>
+
+
+                <div>
+                   <h2>Contate a Vegas Card</h2>
+                    <p>Email para contato: atendimento@vegascard.com.br</p>
+                </div>
+               
             </div>
         </div>
-
-        <div class="links-rapidos m-f menus">
+          
+        <div class="links-rapidos m-f menus ">
             <div class="link-div">
                 <h2>Sobre Nós</h2>
                 <ul>
@@ -588,7 +605,7 @@ Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Enco
          
         </div>
 
-        <div class="links-rapidos menus m-f">
+        <div class="links-rapidos menus m-f footer-menus">
             <div class="link-div">
                 <h2>Área do cliente</h2>
                 <ul>
@@ -615,7 +632,7 @@ Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Enco
          
         </div>
 
-        <div class="app menus m-f" style="padding-left: 50px;">
+        <div class="app menus m-f" >
             <h2>Baixe o App</h2>
             <ul>
                <a href=""><li>IOS</li></a>

@@ -21,6 +21,7 @@
 
 
 
+
 .filter-btns {
     display: flex;
     
@@ -223,7 +224,51 @@ margin-top: 10px;
   display: none;
 }
 
+.distance {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-filter {
+  border-radius: 0 8px 8px 0;
+  border: none;
+  background-color: #434D9C;
+  height: 100%;
+  display: flex;
+padding: 6px 6.5px 6px 5.5px;
+justify-content: center;
+align-items: center;
+}
+
+.mobile-filter img {
+  padding: 4px;
+}
+
+.search-text i {
+  color: #434D9C;
+}
+
+.mobile-filter {
+  display: none;
+}
+
   @media (max-width: 480px) {
+
+    .mobile-filter {
+      display: flex;
+    }
+
+    .mobile-btns {
+      display: flex;
+      z-index: 7000000;
+      flex-direction: column;
+      background-color: #fff;
+      height: 100vh;
+      width: 50vw;
+      position: fixed;
+      top: 0;
+    right: 0;
+    }
    
 .place-card {
   position: relative;
@@ -258,6 +303,7 @@ font-size: 13px;
 
     .title-mp {
       color: #4B57A3;
+      padding-inline: 24px;
 
 font-family: Rubik;
 font-size: 24px;
@@ -266,6 +312,8 @@ font-size: 24px;
     
      .place-card {
       margin-bottom: 30px;
+      padding: 16px;
+      height: 140px;
      }
     .search-text {
       width: 100%;
@@ -274,16 +322,19 @@ font-size: 24px;
     .filter-results {
       flex-direction: column;
       height: 700px;
+      margin-top: 0;
     }
 
     .map-container {
       order: 1;
       flex: 0.8;
+      width: 100%;
     }
 
     .lojas {
       order: 2;
       height: 700px;
+      padding-inline: 24px;
     }
 
     .place-image {
@@ -311,10 +362,10 @@ font-size: 24px;
   }
 
     .btn-card-map {
-    border-radius: 0 0 8px 8px;
+    border-radius: 8px;
 background: #4B57A3;
 display: flex;
-width: 100%;
+width: 330px;
 height: 12px;
 padding: 14px 12px;
 justify-content: center;
@@ -324,9 +375,26 @@ color: #fff;
 cursor: pointer;
 margin-top: 10px;
 position: absolute;
-bottom: -10px;
-left: 0;
+bottom: 10px;
+left: 50%;
+transform: translateX(-50%);
 
+  }
+
+  .melhor-oferta {
+    padding-inline: 0;
+  }
+
+  .container-limpar {
+    padding-right: 24px;
+  }
+
+  .filter-btns {
+    padding-inline: 24px;
+  }
+
+  .search-text {
+    border-radius: 8px;
   }
 
 }

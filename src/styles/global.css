@@ -219,9 +219,102 @@ padding-left: var(--padding-body-desktop);
       
       }
 
+      .app {
+        padding-left: 50px;
+      }
+
       @media (max-width: 480px){
 
         body, html {
                 overflow-x: hidden;
         }
+
+        footer {
+          padding-inline: 24px;
+        }
+
+        .menu-footer {
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        
+
+          .content-brand {
+        padding-top: 30px;
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        padding-inline: 24px;
+        border-bottom: solid 1px #fff;
+        align-items: center;
+        padding-bottom: 30px;
+        gap: 30px;
+
+      }
+
+      .content-brand img {
+        width: 140px;
+      }
+
+        .main-title {
+          font-size: 24px;
+          text-align: left;
+          padding-inline: 24px;
+        }
+
+         .m-f {
+        width: 90%;
+        justify-self: center;
+        align-self: center;
+     
+      }
+
+         .card-footer {
+        color: #fff;
+        display: flex;
+        justify-self: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        align-items: center;
+      }
+
+      .menus {
+      flex-direction: row;
+      padding-inline: 24px;
+      }
+
+      .footer-menus {
+        flex-wrap: wrap;
+      }
+
+      .app {
+        flex-direction: column;
+        align-items: start;
+        padding-left: 0;
+        border-top: 1px solid gray;
+        padding-top: 24px;
+        padding-bottom: 24px;
+        
+      }
+
+            .down-footer {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        padding-inline: 24px;
+        font-size: 13px;
+        color: #fff;
+        gap: 40px;
+        background-color: #3d3d3d;
+        width: 100%;
+        text-align: center;
+        
+      
+      }
+
+      .locals {
+        border-bottom: 1px solid gray;
+      }
       }
