@@ -97,6 +97,8 @@ nav .btn-header {
     
 }
 
+
+
 .slide {
     width: calc(100% / 3); /* cada slide ocupa 1/3 do container de 300% */
     flex-shrink: 1;

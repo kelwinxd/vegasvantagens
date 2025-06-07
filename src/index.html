@@ -89,7 +89,7 @@
   <a href="detalhes.html#americana-sp-Betta%20Suplementos"><img src="./imgs/logos/beta-logo.png" alt="Logo Beta"></a>
   <a href="detalhes.html#americana-sp-Boi%20que%20Mia"><img src="./imgs/logos/boi-logo.png" alt="Logo Boi"></a>
   <a href="detalhes.html#americana-sp-Cãochorro%20Petshop"><img src="./imgs/logos/caochorro-logo.png" alt="Logo Cachorro"></a>
-  <a href="detalhes.html#americana-sp-Danny%20Cosméticos"><img src="./imgs/logos/danny-logo.png" alt="Logo Danny"></a>
+  <a href="detalhes.html#americana-sp-Danny%20Cosméticos"><img src="./imgs/logos/danny-logo.png" style="aspect-ratio: 49/20; width:120px;" alt="Logo Danny"></a>
   <a href="detalhes.html#americana-sp-Casa%20Florindo"><img src="./imgs/logos/florindo-logo.png" alt="Logo Florindo"></a>
   <a href="detalhes.html#americana-sp-Intensos%20Barbearia"><img src="./imgs/logos/intensos-barbearia.png" alt="Logo Intensos"></a>
   <a href="detalhes.html#americana-sp-Zanini"><img src="./imgs/logos/logo-zanini.png" alt="Logo Zanini"></a>
@@ -353,7 +353,78 @@
 </fieldset>
 
                 -->
-              
+
+                  <div class="mobile-btns">
+                    <div class="header-mobile-btn">
+                        <span class="close-filter">X</span>
+                        <h2>Filtros</h2>
+                    </div>
+
+                    <div class="custom-select-group">
+  <div class="custom-select">
+    <div class="custom-select-title">Estado</div>
+    <ul class="custom-options" data-input-id="filterState2">
+      <li data-value="">Todos os Estados</li>
+      <li data-value="sp">São Paulo</li>
+      <li data-value="rj">Rio de Janeiro</li>
+      <li data-value="mg">Minas Gerais</li>
+      <li data-value="es">Espírito Santo</li>
+    </ul>
+    <input type="hidden" name="estado" id="filterState2">
+  </div>
+</div>
+
+<!-- Cidades -->
+<div class="custom-select-group">
+  <div class="custom-select">
+    <div class="custom-select-title">Cidade</div>
+    <ul class="custom-options" data-input-id="filterCity2">
+      <li data-value="">Todas as Cidades</li>
+      <!-- As cidades serão preenchidas automaticamente via JS -->
+    </ul>
+    <input type="hidden" name="cidade" id="filterCity2">
+  </div>
+</div>
+                <div class="custom-select-group">
+    <div class="custom-select">
+      <div class="custom-select-title">Segmento</div>
+      <ul class="custom-options" data-input-id="filterSegment2">
+        <li data-value="">Todos os Segmentos</li>
+        <li data-value="presentes">Presentes</li>
+        <li data-value="utensílios domésticos">Utensílios Domésticos</li>
+        <li data-value="variedades">Variedades</li>
+        <li data-value="brinquedos">Brinquedos</li>
+        <li data-value="ótica">Ótica</li>
+        <li data-value="barbearia">Barbearia</li>
+        <li data-value="petshop">Petshop</li>
+        <li data-value="alimentação">Alimentação</li>
+        <li data-value="restaurante">Restaurante</li>
+        <li data-value="cosméticos">Cosméticos</li>
+        <li data-value="veículos">Veículos</li>
+        <li data-value="posto de combustível">Posto de Combustível</li>
+        <li data-value="açougue">Açougue</li>
+      </ul>
+      <input type="hidden" name="segmento" id="filterSegment2">
+    </div>
+  </div>
+
+  <!-- Cartões -->
+  <div class="custom-select-group">
+    <div class="custom-select">
+      <div class="custom-select-title">Cartão</div>
+      <ul class="custom-options" data-input-id="filterCard2">
+        <li data-value="">Todos os Cartões</li>
+        <li data-value="vegas day">Vegas Day</li>
+        <li data-value="vegas plus">Vegas Plus</li>
+        <li data-value="vegas alimentação">Vegas Alimentação</li>
+        <li data-value="vegas refeição">Vegas Refeição</li>
+        <li data-value="vegas combustível">Vegas Combustível</li>
+      </ul>
+      <input type="hidden" name="cartao" id="filterCard2">
+    </div>
+  </div>
+            </div>
+          
               
                 <select id="filterState" class="select-desktop">
                   <option value="">Todos os Estados</option>
@@ -395,6 +466,9 @@
                 </select>
               
               
+
+                
+              
               </div>
               
               <div class="filter-results">
@@ -421,10 +495,42 @@
 
    <section class="novidades">
 
+     <section class="banner-hero">
+        <input type="radio" name="slide" id="slide11" checked>
+        <input type="radio" name="slide" id="slide22">
+        <input type="radio" name="slide" id="slide33">
+    
+        <div class="slides1">
+            
+            <img src="./imgs/banner.png" class="slide slide11" alt="">
+            <img src="./imgs/banner.png" class="slide slide22" alt="">
+            <img src="./imgs/banner.png" class="slide slide33" alt="">
+        </div>
+    
+        <div class="navigation-slides">
+            <label class="bar bullet1" for="slide11"></label>
+            <label class="bar bullet1" for="slide22"></label>
+            <label class="bar bullet1" for="slide33"></label>
+        </div>
+
+        <div class="arrows">
+            <div class="btn-left1">
+  <img src="./imgs/icons/iconbtn.svg" alt="">
+            </div>
+          <div class="btn-right1">
+            <img src="./imgs/icons/iconbtn.svg" alt="" class="right">
+
+          </div>
+        </div>
+    </section>
+    
+<!---
     <div class="carrossel-nov">
         <div class="carrossel-wrapper">
 
-       
+     
+     
+   
 <div class="flex-content">
         <div class="img-nov">
             <img src="./imgs/raia-people.png" alt="" >
@@ -481,8 +587,11 @@
      <div class="carrossel-bullets">
         
      </div>
+
+     
     </div>
  </div>
+    --> 
    </section>
 
    <section class="voce-sabia">

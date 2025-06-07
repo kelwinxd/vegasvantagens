@@ -20,6 +20,14 @@
 }
 
 
+.header-mobile-btn {
+  display: flex;
+    padding: 10px;
+  padding-inline: 20px;
+
+  justify-content: start;
+  gap: 20px;
+}
 
 
 .filter-btns {
@@ -267,7 +275,19 @@ align-items: center;
       width: 50vw;
       position: fixed;
       top: 0;
-    right: 0;
+      right: 0;
+       transform: translateX(200%);
+    overflow-y: scroll;
+    transition: all .3s ease;
+ 
+    }
+
+    .mobile-btns.active {
+      transform: translateX(0);
+    }
+
+    .mobile-btns select {
+          width: 100px;
     }
    
 .place-card {
@@ -396,5 +416,50 @@ transform: translateX(-50%);
   .search-text {
     border-radius: 8px;
   }
+
+
+    .custom-select-group {
+    margin-bottom: 20px;
+  }
+
+  .custom-select {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+    max-width: 300px;
+  }
+
+  .custom-select-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .custom-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .custom-options li {
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #f2f2f2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .custom-options li:hover {
+    background-color:#4B57A3;
+  }
+
+  .custom-options li.selected {
+    background-color:#434D9C;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  
 
 }

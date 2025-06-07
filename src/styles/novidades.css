@@ -1,10 +1,17 @@
 .novidades {
-    padding-inline: 120px;
+    padding-inline: 104px;
     padding-top: 50px;
-    min-height: 80vh;
+    width: 100%;
     margin-top: 100px;
     margin-bottom: 50px;
     
+}
+
+.slides1 {
+      display: flex;
+    width: 300%; /* 3 slides */
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
 }
 
 .flex-content {
@@ -55,7 +62,7 @@
    color: #4B57A3;
 
 font-family: Rubik;
-font-size: 48px;
+font-size: 32px;
 font-style: normal;
 font-weight: 600;
 line-height: normal;
@@ -78,7 +85,11 @@ line-height: normal;
   color: #4B57A3;
 
 font-family: Rubik;
-font-size: 32px;
+font-size: 24px;
+}
+
+.list-nov p {
+  font-size: 16px;
 }
 
 .nov-call {
@@ -89,7 +100,7 @@ font-size: 32px;
 
 .list-nov {
 
-height: 250px;
+height: 200px;
 padding: 70px 64px;
 width: 90%;
 display: flex;
@@ -103,6 +114,8 @@ border: 2px solid #828EC5;
 background: #FFF;
 position: relative;
 }
+
+
 
 
 .tag-nov {
@@ -130,6 +143,7 @@ font-size: 20px;
 
 .voce-sabia .flex-content {
   margin-bottom: 200px;
+  
 }
 
 .carrossel-nov {
@@ -173,6 +187,10 @@ font-size: 20px;
   background-color: #333;
 }
 
+.final-nov {
+  gap: 10px;
+}
+
 
 
 
@@ -188,7 +206,7 @@ font-size: 20px;
   }
 
   .subtitle-nov {
-  font-size: 30px;
+  font-size: 28px;
 }
 
 .content-nov ul li {
@@ -204,14 +222,17 @@ font-size: 20px;
   height: 70px;
 }
 
-.final-nov {
-  display: flex;
-  justify-content: end;
+.list-nov h2 {
+  font-size: 16px;
+}
+
+.list-nov p {
+  font-size: 16px;
 }
 
 .list-nov {
-  height: 180px;
-padding: 50px 64px;
+  height: 200px;
+padding: 70px 64px;
 width: 90%;
 display: flex;
 align-self: end;

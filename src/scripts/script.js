@@ -131,8 +131,18 @@ const filterState = document.getElementById("filterState");
 const filterCity = document.getElementById("filterCity");
 const filterSegment = document.getElementById("filterSegment");
 const filterCard = document.getElementById("filterCard");
+
+const filterState2 = document.getElementById("filterState2")
+const filterCity2 = document.getElementById("filterCity2");
+const filterSegment2 = document.getElementById("filterSegment2");
+const filterCard2 = document.getElementById("filterCard2");
+
+
+
+
+
 const lojasList = document.querySelector(".produtoLista");
-const mapContainer = document.getElementById("map"); // Certifique-se que esse ID existe
+const mapContainer = document.getElementById("map"); 
 
 // Inicializa o mapa
 
@@ -197,6 +207,38 @@ filterState.addEventListener("change", () => {
 
   filtrar();
 });
+
+filterState2.addEventListener("change", () => {
+  const estado2 = filterState2.value;
+  filterCity2.innerHTML = "";
+
+  if (cityData[estado2]) {
+    Object.keys(cityData[estado2]).forEach(cidade => {
+      const opt2 = document.createElement("li");
+      opt2.setAttribute("data-value", cidade);
+      opt2.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+      filterCity2.appendChild(opt2);
+
+      // Evento para selecionar a cidade clicada
+      opt2.addEventListener("click", () => {
+        // Remove seleção anterior
+        filterCity2.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
+
+        // Marca a selecionada
+        opt2.classList.add("selected");
+
+        // Salva em uma variável global (exemplo)
+        cidadeSelecionada2 = cidade;
+
+        filtrar();
+      });
+    });
+  } else {
+    cidadeSelecionada2 = null;
+  }
+});
+
+
 
 function updateMapByCity(cidade, segmento, busca, cartao) {
   markers.forEach(m => m.setMap(null));
@@ -362,6 +404,65 @@ searchInput.addEventListener("input", filtrar);
 btnLimpar.addEventListener("click", limparDados);
 
 
+//Selects mobile do mapa
+// Ativa o dropdown personalizado ao clicar no título
+document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
+  const title = selectWrapper.querySelector(".custom-select-title");
+  const optionsList = selectWrapper.querySelector(".custom-options");
+  const hiddenInput = document.getElementById(optionsList.dataset.inputId);
+
+  if (!title || !optionsList || !hiddenInput) return;
+
+  // Abre ou fecha o menu ao clicar no título
+  title.addEventListener("click", () => {
+    optionsList.classList.toggle("show-options");
+  });
+
+  // Seleciona a opção ao clicar
+optionsList.querySelectorAll("li").forEach((option) => {
+  option.addEventListener("click", () => {
+    const value = option.getAttribute("data-value");
+
+    // Remove "selected" de todos os <li> DENTRO dessa optionsList
+    optionsList.querySelectorAll("li").forEach((li) => {
+      li.classList.remove("selected");
+    });
+
+    // Adiciona "selected" no clicado
+    option.classList.add("selected");
+
+    // Atualiza o input oculto e o título
+    hiddenInput.value = value;
+    title.textContent = option.textContent;
+
+    // Fecha a lista de opções
+    optionsList.classList.remove("show-options");
+
+    // Dispara evento de mudança (se necessário)
+    hiddenInput.dispatchEvent(new Event("change"));
+  });
+});
+
+
+  // Fecha o menu se clicar fora
+  document.addEventListener("click", (e) => {
+    if (!selectWrapper.contains(e.target)) {
+      optionsList.classList.remove("show-options");
+    }
+  });
+});
+
+const btnCloseFilter = document.querySelector(".close-filter")
+const mobileFilter = document.querySelector(".mobile-btns")
+const btnFilter = document.querySelector(".mobile-filter")
+
+btnCloseFilter.addEventListener("click", () => {
+    mobileFilter.classList.remove("active")
+})
+
+btnFilter.addEventListener('click', () => {
+  mobileFilter.classList.add("active")
+})
 
 
 
@@ -557,6 +658,7 @@ startAutoplay();
 
 
   // Carrossel Novidades
+  /*
  const slides = document.querySelectorAll('.novidades .flex-content');
 let currentIndex = 0;
 const bulletsContainer = document.querySelector(".carrossel-bullets");
@@ -603,7 +705,7 @@ function startCarousel() {
 
 document.addEventListener("DOMContentLoaded", startCarousel);
 
-
+*/
 
 //Menu-mobile 
 const menuMobile = document.querySelector(".menu-hamb")
@@ -623,4 +725,93 @@ menuMobile.addEventListener("click", () => {
    closeMenu.style.display = 'block'
 })
 
+
+
+
+const slide11 = document.getElementById('slide11');
+const slide22 = document.getElementById('slide22');
+const slide33 = document.getElementById('slide33');
+const slidesContainer1 = document.querySelector('.slides1');
+const bullets1 = document.querySelectorAll('.bullet1');
+
+let currentSlide1 = 1;
+let autoPlayInterval1;
+
+// Atualiza a posição do slide com base no slide ativo
+function updateSlidePosition1() {
+    if (slide11.checked) {
+        slidesContainer1.style.transform = 'translateX(0%)';
+    } else if (slide22.checked) {
+        slidesContainer1.style.transform = 'translateX(-33.6%)';
+    } else if (slide33.checked) {
+        slidesContainer1.style.transform = 'translateX(-66.7%)';
+    }
+}
+
+// Atualiza os bullets, colocando a cor branca no ativo
+function updateBulletClasses1() {
+    bullets1.forEach((bullet, index) => {
+        if (index + 1 === currentSlide1) {
+            bullet.classList.add('bullet-ativo');
+        } else {
+            bullet.classList.remove('bullet-ativo');
+        }
+    });
+}
+
+// Função de autoplay
+function startAutoplay1() {
+    autoPlayInterval1 = setInterval(() => {
+        currentSlide1 = currentSlide1 % 3 + 1;
+        document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
+        updateSlidePosition1();
+        updateBulletClasses1();
+    }, 4000);
+}
+
+// Para o autoplay
+function stopAutoplay1() {
+    clearInterval(autoPlayInterval1);
+}
+
+// Eventos de mudança de slide manual
+slide11.addEventListener('change', () => {
+    currentSlide1 = 1;
+    updateSlidePosition1();
+    updateBulletClasses1();
+});
+
+slide22.addEventListener('change', () => {
+    currentSlide1 = 2;
+    updateSlidePosition1();
+    updateBulletClasses1();
+});
+
+slide33.addEventListener('change', () => {
+    currentSlide1 = 3;
+    updateSlidePosition1();
+    updateBulletClasses1();
+});
+
+const btnLeft1 = document.querySelector('.btn-left1');
+const btnRight1 = document.querySelector('.btn-right1');
+
+btnLeft1.addEventListener('click', () => {
+    currentSlide1 = currentSlide1 === 1 ? 3 : currentSlide1 - 1;
+    document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
+    updateSlidePosition1();
+    updateBulletClasses1();
+});
+
+btnRight1.addEventListener('click', () => {
+    currentSlide1 = currentSlide1 === 3 ? 1 : currentSlide1 + 1;
+    document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
+    updateSlidePosition1();
+    updateBulletClasses1();
+});
+
+// Inicializa
+updateSlidePosition1();
+updateBulletClasses1();
+startAutoplay1();
 

@@ -13,19 +13,25 @@
       display: flex;
       width: calc(200px * 16); /* 6 imagens duplicadas = 12 */
       animation: scroll 20s linear infinite;
+      gap: 16px;
      
       
      
     }
      
     .carrossel-track img {
-      width: 150px;
+      width: 60px;
+
       
-      padding: 0 20px;
+      
       
       transition: filter 0.3s;
       cursor: pointer;
-      object-fit: contain;
+      flex-shrink: 0;
+aspect-ratio: 1/1;
+object-fit:cover;
+z-index: 500;
+
     }
 
      .carrossel-track img:hover {
@@ -38,7 +44,20 @@
 
     .carrossel a {
       display: flex;
-      align-items: center;
+width: 169px;
+height: 150px;
+min-width: 169px;
+max-width: 169px;
+min-height: 90px;
+max-height: 90px;
+padding: 16px;
+justify-content: center;
+align-items: center;
+gap: 16px;
+border-radius: 8px;
+border: 1px solid #EDEDED;
+background-color: #fff;
+box-shadow: 2px 2px 16px 0px rgba(0, 0, 0, 0.08);
     }
 
     
