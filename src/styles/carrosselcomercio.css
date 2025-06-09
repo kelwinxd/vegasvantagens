@@ -34,6 +34,7 @@ z-index: 500;
 
     }
 
+  
      .carrossel-track img:hover {
       filter: brightness(1.5);
      }

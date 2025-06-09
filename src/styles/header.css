@@ -15,6 +15,11 @@ height: 67.937px;
 flex-shrink: 0;  
 }
 
+.logo img:hover {
+    
+    filter: brightness(0.2);
+}
+
 .header {
     width: 100%;
     margin: 0 auto;
@@ -72,6 +77,10 @@ nav .btn-header {
 
    
 
+}
+
+nav .btn-header:hover {
+    background: #434D9C;
 }
 
 

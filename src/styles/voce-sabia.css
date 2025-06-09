@@ -29,6 +29,14 @@
         font-size: 24px;
     }
 
+    .content-nov {
+        order: 1;
+    }
+
+    .img-nov {
+        order: 2;
+    }
+
     .list-nov p {
         font-size: 14px;
     }

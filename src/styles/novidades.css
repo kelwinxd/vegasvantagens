@@ -7,6 +7,15 @@
     
 }
 
+.banner-promo {
+    padding-inline: 104px;
+    padding-top: 50px;
+    width: 100%;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    
+}
+
 .slides1 {
       display: flex;
     width: 300%; /* 3 slides */
@@ -43,7 +52,7 @@
     justify-content: center;
     align-items:flex-start;
     text-align: left;
-    gap: 28px;
+    gap: 32px;
 }
 
 .content-nov-header {
@@ -62,7 +71,7 @@
    color: #4B57A3;
 
 font-family: Rubik;
-font-size: 32px;
+font-size: 24px;
 font-style: normal;
 font-weight: 600;
 line-height: normal;
@@ -101,7 +110,7 @@ font-size: 24px;
 .list-nov {
 
 height: 200px;
-padding: 70px 64px;
+padding: 32px 56px;
 width: 90%;
 display: flex;
 flex-direction: column;
@@ -113,6 +122,10 @@ border: 2px solid #828EC5;
 
 background: #FFF;
 position: relative;
+border-radius: 8px;
+border: 1px solid #EDEDED;
+background: #FFF;
+box-shadow: 2px 2px 16px 0px rgba(0, 0, 0, 0.08);
 }
 
 
@@ -120,8 +133,9 @@ position: relative;
 
 .tag-nov {
   position: absolute;
-  width: 81.882px;
-height: 80px;
+  padding: 11px 16px;
+  width: 50.882px;
+height: 50px;
 flex-shrink: 0;
 border-radius: 8px;
 border: 1px solid #828EC5;
@@ -130,9 +144,10 @@ background: #4B57A3;
 display: flex;
 align-items: center;
 justify-content: center;
-font-size: 40px;
+font-size: 24px;
 color: #fff;
-left: -41px;
+top: -25px;
+left: -25px;
 }
 .list-nov p {
   color: #7E7E7E;
@@ -188,7 +203,7 @@ font-size: 20px;
 }
 
 .final-nov {
-  gap: 10px;
+  gap: 30px;
 }
 
 
@@ -206,7 +221,7 @@ font-size: 20px;
   }
 
   .subtitle-nov {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .content-nov ul li {
@@ -218,8 +233,9 @@ font-size: 20px;
 }
 
 .tag-nov {
-  width:70px ;
-  height: 70px;
+  width:40px ;
+  height: 40px;
+  padding: 4px 7.123px 4px 8px;
 }
 
 .list-nov h2 {
@@ -227,16 +243,55 @@ font-size: 20px;
 }
 
 .list-nov p {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .list-nov {
   height: 200px;
-padding: 70px 64px;
+padding: 16px 24px;
 width: 90%;
 display: flex;
 align-self: end;
+max-height: 170px;
+
 }
+.content-nov {
+  order: 1;
+}
+.img-nov {
+  order: 2;
+}
+
+
+
+
+  .banner-hero {
+    height: 502px;
+    border-radius: 0;
+    
+   }
+
+   .banner-promo {
+    padding-inline: 0;
+   }
+
+   .slides1 img {
+    object-fit: cover;
+    
+   }
+
+   .flex-content {
+    display:flex;
+    flex-direction: column;
+   }
+
+   .img-nov {
+    order: 2;
+   }
+
+   .content-nov {
+    order: 1;
+   }
 
 }
 
