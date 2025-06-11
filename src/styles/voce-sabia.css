@@ -1,8 +1,9 @@
 .voce-sabia {
-    padding-inline: 120px;
-    padding-top: 50px;
+    padding-inline: 104px;
+   
     min-height: 80vh;
-    margin-top: 100px;
+    display: flex;
+    justify-content: center;
     margin-bottom: 50px;
 }
 

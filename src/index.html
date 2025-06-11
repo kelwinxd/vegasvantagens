@@ -20,13 +20,28 @@
                 </a>
             </div>
 
-             <div class="main-menus">
+          
 
            
-            <ul>
+            <ul class="menu-desktop">
                
                 <li><a href="./sobrenos.html">Sobre o Clube</a></li>
-                <li><a href="./categorias.html">Categorias</a></li>
+     
+              
+            </ul>
+
+            <button class="btn-header menu-desktop">
+                <a href="./cadastro-com.html">Faça Parte do Clube</a>
+            
+            </button>
+              
+
+            
+              <div class="main-menus">
+                     <ul >
+               
+                <li><a href="./sobrenos.html">Sobre o Clube</a></li>
+     
               
             </ul>
 
@@ -35,9 +50,6 @@
             
             </button>
               </div>
-
-            
-
              <div class="menu-hamb">
             <img src="./imgs/icons/menu.svg" alt="">
         </div>
@@ -372,72 +384,67 @@ aspect-ratio: 49/30;" alt="Logo Mercadão"></a>
                         <span class="close-filter">X</span>
                         <h2>Filtros</h2>
                     </div>
-
-                    <div class="custom-select-group">
+<div class="custom-select-group">
   <div class="custom-select">
     <div class="custom-select-title">Estado</div>
-    <ul class="custom-options" data-input-id="filterState2">
+    <ul class="custom-options" data-input-id="filterState">
       <li data-value="">Todos os Estados</li>
       <li data-value="sp">São Paulo</li>
       <li data-value="rj">Rio de Janeiro</li>
       <li data-value="mg">Minas Gerais</li>
       <li data-value="es">Espírito Santo</li>
     </ul>
-    <input type="hidden" name="estado" id="filterState2">
   </div>
 </div>
-
 <!-- Cidades -->
 <div class="custom-select-group">
   <div class="custom-select">
     <div class="custom-select-title">Cidade</div>
-    <ul class="custom-options" data-input-id="filterCity2">
+    <ul class="custom-options list-ul" id="list-ul" data-input-id="filterCity">
       <li data-value="">Todas as Cidades</li>
-      <!-- As cidades serão preenchidas automaticamente via JS -->
+   
+      <!-- Cidades dinâmicas via JS -->
     </ul>
-    <input type="hidden" name="cidade" id="filterCity2">
   </div>
 </div>
-                <div class="custom-select-group">
-    <div class="custom-select">
-      <div class="custom-select-title">Segmento</div>
-      <ul class="custom-options" data-input-id="filterSegment2">
-        <li data-value="">Todos os Segmentos</li>
-        <li data-value="presentes">Presentes</li>
-        <li data-value="utensílios domésticos">Utensílios Domésticos</li>
-        <li data-value="variedades">Variedades</li>
-        <li data-value="brinquedos">Brinquedos</li>
-        <li data-value="ótica">Ótica</li>
-        <li data-value="barbearia">Barbearia</li>
-        <li data-value="petshop">Petshop</li>
-        <li data-value="alimentação">Alimentação</li>
-        <li data-value="restaurante">Restaurante</li>
-        <li data-value="cosméticos">Cosméticos</li>
-        <li data-value="veículos">Veículos</li>
-        <li data-value="posto de combustível">Posto de Combustível</li>
-        <li data-value="açougue">Açougue</li>
-      </ul>
-      <input type="hidden" name="segmento" id="filterSegment2">
-    </div>
+
+             <div class="custom-select-group">
+  <div class="custom-select">
+    <div class="custom-select-title">Segmento</div>
+    <ul class="custom-options" data-input-id="filterSegment">
+      <li data-value="">Todos os Segmentos</li>
+      <li data-value="presentes">Presentes</li>
+      <li data-value="utensílios domésticos">Utensílios Domésticos</li>
+      <li data-value="variedades">Variedades</li>
+      <li data-value="brinquedos">Brinquedos</li>
+      <li data-value="ótica">Ótica</li>
+      <li data-value="barbearia">Barbearia</li>
+      <li data-value="petshop">Petshop</li>
+      <li data-value="alimentação">Alimentação</li>
+      <li data-value="restaurante">Restaurante</li>
+      <li data-value="cosméticos">Cosméticos</li>
+      <li data-value="veículos">Veículos</li>
+      <li data-value="posto de combustível">Posto de Combustível</li>
+      <li data-value="açougue">Açougue</li>
+    </ul>
   </div>
+</div>
 
   <!-- Cartões -->
-  <div class="custom-select-group">
-    <div class="custom-select">
-      <div class="custom-select-title">Cartão</div>
-      <ul class="custom-options" data-input-id="filterCard2">
-        <li data-value="">Todos os Cartões</li>
-        <li data-value="vegas day">Vegas Day</li>
-        <li data-value="vegas plus">Vegas Plus</li>
-        <li data-value="vegas alimentação">Vegas Alimentação</li>
-        <li data-value="vegas refeição">Vegas Refeição</li>
-        <li data-value="vegas combustível">Vegas Combustível</li>
-      </ul>
-      <input type="hidden" name="cartao" id="filterCard2">
-    </div>
+ <div class="custom-select-group">
+  <div class="custom-select">
+    <div class="custom-select-title">Cartão</div>
+    <ul class="custom-options" data-input-id="filterCard">
+      <li data-value="">Todos os Cartões</li>
+      <li data-value="vegas day">Vegas Day</li>
+      <li data-value="vegas plus">Vegas Plus</li>
+      <li data-value="vegas alimentação">Vegas Alimentação</li>
+      <li data-value="vegas refeição">Vegas Refeição</li>
+      <li data-value="vegas combustível">Vegas Combustível</li>
+    </ul>
   </div>
-            </div>
-          
+</div>
+</div>
               
                 <select id="filterState" class="select-desktop">
                   <option value="">Todos os Estados</option>
@@ -478,7 +485,7 @@ aspect-ratio: 49/30;" alt="Logo Mercadão"></a>
                     <option value="vegas combustível">Vegas Combustível</option>
                 </select>
               
-              
+              </div>
 
                 
               

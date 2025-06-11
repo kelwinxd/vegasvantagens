@@ -1,8 +1,9 @@
 .melhor-oferta {
-    padding-inline: var(--padding-body-desktop);
+    padding-inline: 104px;
     padding-top: 120px;
     
     min-height: 80vh;
+    margin-bottom: 200px;
     
     
     
@@ -18,7 +19,9 @@
     margin-top: 44px;
     display: block;
 }
-
+.select-desktop {
+  opacity: 1;
+}
 
 .header-mobile-btn {
   display: flex;
@@ -40,20 +43,21 @@
     margin-bottom: 20px;
     width: 100%;
 
-    justify-content: center;
+    
 
   }
   
   .filter-btns select {
     padding: 10px 14px;
     
-    
+    flex-grow: 1;
     background-color: #f9f9f9;
     font-size: 16px;
     color: #333;
     outline: none;
     transition: all 0.3s ease;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    
   }
   
   .filter-btns select:hover {
@@ -82,6 +86,7 @@
     align-items: center;
     padding-left: 20px;
     gap: 16px;
+    padding-right: 13px;
   }
 
   #filterCard {
@@ -203,7 +208,7 @@ border-radius: 8px;
   }
 
   .title-mp {
-    font-size: 40px;
+    font-size: 32px;
       color: #4B57A3;
       text-align: left;
  
@@ -264,6 +269,7 @@ align-items: center;
 
     .mobile-filter {
       display: flex;
+   
     }
 
     .mobile-btns {
@@ -314,13 +320,10 @@ font-size: 13px;
     }
 
     .select-desktop {
-      display: none;
+      opacity: 0;
     }
 
-    .melhor-oferta {
-      padding-inline: 50px;
-    }
-
+  
     .title-mp {
       color: #4B57A3;
       padding-inline: 24px;
@@ -337,6 +340,14 @@ font-size: 24px;
      }
     .search-text {
       width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .search-text i {
+      padding-left: 16px;
     }
 
     .filter-results {
@@ -349,6 +360,7 @@ font-size: 24px;
       order: 1;
       flex: 0.8;
       width: 100%;
+     
     }
 
     .lojas {

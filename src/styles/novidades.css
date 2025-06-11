@@ -1,6 +1,6 @@
 .novidades {
     padding-inline: 104px;
-    padding-top: 50px;
+    
     width: 100%;
     margin-top: 100px;
     margin-bottom: 50px;
@@ -9,9 +9,9 @@
 
 .banner-promo {
     padding-inline: 104px;
-    padding-top: 50px;
+    
     width: 100%;
-    margin-top: 100px;
+    margin-top: 86px;
     margin-bottom: 50px;
     
 }
@@ -25,13 +25,17 @@
 
 .flex-content {
     display: flex;
-    gap: 100px;
+    gap: 64px;
     margin-bottom: 100px;
-    height: 720px;
+    height: 796px;
+    justify-content: center;
+    align-items: center;
 }
 
 .img-nov {
-    flex: 1.5;
+    
+    height: 100%;
+    width:496px;
     
     
     

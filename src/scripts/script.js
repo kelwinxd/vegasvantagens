@@ -132,10 +132,7 @@ const filterCity = document.getElementById("filterCity");
 const filterSegment = document.getElementById("filterSegment");
 const filterCard = document.getElementById("filterCard");
 
-const filterState2 = document.getElementById("filterState2")
-const filterCity2 = document.getElementById("filterCity2");
-const filterSegment2 = document.getElementById("filterSegment2");
-const filterCard2 = document.getElementById("filterCard2");
+
 
 
 
@@ -194,49 +191,42 @@ if (navigator.geolocation) {
 // Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", () => {
   const estado = filterState.value;
+  const listaUl = document.getElementById("list-ul");
+  
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
 
   if (cityData[estado]) {
+
+    listaUl.innerHTML = ""; 
     Object.keys(cityData[estado]).forEach(cidade => {
       const opt = document.createElement("option");
+
       opt.value = cidade;
       opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
       filterCity.appendChild(opt);
+
+  // LI (para a UI customizada)
+    const li = document.createElement("li");
+    li.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    li.dataset.value = cidade;
+
+    // Evento de clique para atualizar o filtro
+    li.addEventListener("click", () => {
+      filterCity.value = cidade; // atualiza o select
+      filterCity.dispatchEvent(new Event("change")); // dispara o evento de filtro
     });
+
+    listaUl.appendChild(li);
+    });
+
+
+
+
   }
 
   filtrar();
 });
 
-filterState2.addEventListener("change", () => {
-  const estado2 = filterState2.value;
-  filterCity2.innerHTML = "";
-
-  if (cityData[estado2]) {
-    Object.keys(cityData[estado2]).forEach(cidade => {
-      const opt2 = document.createElement("li");
-      opt2.setAttribute("data-value", cidade);
-      opt2.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-      filterCity2.appendChild(opt2);
-
-      // Evento para selecionar a cidade clicada
-      opt2.addEventListener("click", () => {
-        // Remove seleção anterior
-        filterCity2.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
-
-        // Marca a selecionada
-        opt2.classList.add("selected");
-
-        // Salva em uma variável global (exemplo)
-        cidadeSelecionada2 = cidade;
-
-        filtrar();
-      });
-    });
-  } else {
-    cidadeSelecionada2 = null;
-  }
-});
 
 
 
@@ -379,19 +369,59 @@ document.addEventListener("DOMContentLoaded", () => {
   // Define estado
   filterState.value = estadoPadrao;
 
-  // Popular cidades com base no estado
+  // Limpa selects e lista
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  const listaUl = document.getElementById("list-ul");
+  listaUl.innerHTML = "";
+
+  // Cria li "Todas as Cidades"
+  const liDefault = document.createElement("li");
+  liDefault.textContent = "Todas as Cidades";
+  liDefault.dataset.value = "";
+  listaUl.appendChild(liDefault);
+
+  // Popular cidades e <li>s com base no estado
   Object.keys(cityData[estadoPadrao]).forEach(cidade => {
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+
+    // Adiciona ao <select>
     const opt = document.createElement("option");
     opt.value = cidade;
-    opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
+
+    // Adiciona ao <ul>
+    const li = document.createElement("li");
+    li.textContent = nomeFormatado;
+    li.dataset.value = cidade;
+
+    // Evento: atualizar <select> e aplicar classe 'active'
+    li.addEventListener("click", () => {
+      filterCity.value = cidade;
+      filterCity.dispatchEvent(new Event("change"));
+
+      // Remove 'active' de todos e adiciona no selecionado
+      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+      li.classList.add("active");
+    });
+
+    listaUl.appendChild(li);
   });
 
-  // Define cidade
+  // Define cidade no <select>
   filterCity.value = cidadePadrao;
 
-  // Aplica o filtro para mostrar resultados e atualizar o mapa
+  // Aplica 'active' ao li correspondente
+  listaUl.querySelectorAll("li").forEach(li => {
+    li.classList.remove("active");
+    if (li.dataset.value === cidadePadrao) {
+      li.classList.add("active");
+    }
+  });
+
+  
+
+  // Aplica o filtro
   filtrar();
 });
 
@@ -463,6 +493,27 @@ btnCloseFilter.addEventListener("click", () => {
 btnFilter.addEventListener('click', () => {
   mobileFilter.classList.add("active")
 })
+
+ document.querySelectorAll('.custom-options').forEach(optionList => {
+    const selectId = optionList.dataset.inputId;
+    const select = document.getElementById(selectId);
+
+    optionList.querySelectorAll('li').forEach(li => {
+      li.addEventListener('click', () => {
+        const value = li.dataset.value;
+
+        // Atualiza o select escondido
+        select.value = value;
+
+        // Marca a opção selecionada visualmente
+        optionList.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
+        li.classList.add('selected');
+
+        // Dispara evento de mudança, caso haja lógica atrelada
+        select.dispatchEvent(new Event('change'));
+      });
+    });
+  });
 
 
 
