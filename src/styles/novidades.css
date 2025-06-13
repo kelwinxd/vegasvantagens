@@ -1,17 +1,10 @@
-.novidades {
-    padding-inline: 104px;
-    
-    width: 100%;
-    margin-top: 100px;
-    margin-bottom: 50px;
-    
-}
+
 
 .banner-promo {
     padding-inline: 104px;
     
     width: 100%;
-    margin-top: 86px;
+   
     margin-bottom: 50px;
     
 }
@@ -170,21 +163,8 @@ font-size: 20px;
   overflow: hidden;
 }
 
-.novidades .flex-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  pointer-events: none;
-}
 
-.novidades .flex-content.showing {
-  opacity: 1;
-  pointer-events: auto;
-  position: relative;
-}
+
 
 .carrossel-bullets {
   text-align: center;
@@ -210,19 +190,70 @@ font-size: 20px;
   gap: 30px;
 }
 
+@media screen and (max-width:1440px) {
 
+  .voce-sabia {
+    display: flex;
+    justify-content: center;
+    margin-top: 90px;
+  
+  }
+  .flex-content{
+    height: 598px;
+    gap: 77px;
+    justify-content: center;
+  
+  }
+
+  .content-nov {
+    flex: 1.2;
+    width: 547px;
+    
+  
+  }
+
+  
+
+  .img-nov {
+    width: 400px;
+    height: 598px;
+  }
+   
+  .img-nov img {
+    width: 400px;
+    height: 100%;
+  }
+  .list-nov {
+    padding: 16px 40px;
+    height: auto;
+  }
+
+  .list-nov h2 {
+    font-size: 20px;
+  }
+
+  .list-nov {
+    font-size: 14px;
+  }
+
+  .subtitle-nov {
+    font-size: 32px;
+  }
+
+
+}
 
 
 
 @media screen and (max-width:480px) {
-  .novidades {
+
+
+  .voce-sabia {
     padding-inline: 24px;
+    width: 100%;
+
   }
 
-  .flex-content {
-    gap: 50px;
-    height: 400px;
-  }
 
   .subtitle-nov {
   font-size: 24px;
@@ -259,15 +290,6 @@ align-self: end;
 max-height: 170px;
 
 }
-.content-nov {
-  order: 1;
-}
-.img-nov {
-  order: 2;
-}
-
-
-
 
   .banner-hero {
     height: 502px;
@@ -284,18 +306,58 @@ max-height: 170px;
     
    }
 
-   .flex-content {
-    display:flex;
-    flex-direction: column;
+   .img-nov {
+    justify-self: center;
    }
 
-   .img-nov {
-    order: 2;
+
+
+   .list-nov { 
+    justify-self: center;
    }
 
    .content-nov {
-    order: 1;
+    width:100%;
+    justify-self: center;
+    justify-content: center;
+    margin-top: 50px;
    }
 
+
+
+
+  .img-nov,
+  .content-nov {
+    width: 100%;
+  }
+
+  .content-nov, .img-nov {
+    order:unset;
+  }
+
+  .img-nov img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+.flex-content {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 32px;
+  min-height: 100%;
+ 
+
+}
+
+
+  .img-nov,
+.content-nov {
+  width: 100%;
+  height: auto;
+  flex-shrink: 0;
+}
+
+  
 }
 

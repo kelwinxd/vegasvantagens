@@ -94,6 +94,7 @@ padding-left: var(--padding-body-desktop);
         
         border-bottom: #fff 1px solid;
         text-decoration: none;
+        padding-bottom: 50px;
       }
 
       .m-f {
