@@ -235,6 +235,8 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
   markers = [];
   lojasList.innerHTML = "";
 
+   let count = 0;
+
   for (const estado in cityData) {
     if (cityData[estado][cidade]) {
       const cidadeData = cityData[estado][cidade];
@@ -278,14 +280,28 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
             </div>
        
           `;
-
+           
           lojasList.appendChild(li);
+          count++
+
+          const resultsCount = document.querySelector(".resultscount span")
+          
+          resultsCount.textContent = `${count}`
           if(li){
             li.addEventListener("click", () => {
               // Formata a hash com base no nome, cidade e estado
               const hash = encodeURIComponent(`${cidade}-${estado}-${ponto.name}`);
               window.location.href = `detalhes.html#${hash}`;
+
+            
+
+
             });
+          }
+
+              if (count >= 4) {
+            li.classList.add('hidden');
+            console.log("escondido")
           }
 
           
@@ -294,8 +310,45 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
       });
     }
   }
+
+const totalItems = lojasList.querySelectorAll("li").length;
+if (window.innerWidth <= 768) { // ✅ Só executa em telas menores ou iguais a 768px
+  if (totalItems > 3) {
+    buttonVerMais.style.display = "block";
+    buttonVerMais.textContent = "Ver Mais";
+    buttonVerMais.classList.remove("expanded");
+  } else {
+    buttonVerMais.style.display = "none";
+  }
+} else {
+  // 👉 Se for maior que 768, esconde sempre
+  buttonVerMais.style.display = "none";
+}
 }
 
+const buttonVerMais = document.querySelector(".vermais");
+
+buttonVerMais.addEventListener("click", () => {
+  const allItems = document.querySelectorAll(".place-card");
+
+  const isExpanded = buttonVerMais.classList.contains("expanded");
+
+  if (isExpanded) {
+  
+    allItems.forEach((item, index) => {
+      if (index >= 3) {
+        item.classList.add("hidden");
+      }
+    });
+    buttonVerMais.textContent = "Ver Mais";
+    buttonVerMais.classList.remove("expanded");
+  } else {
+ 
+    allItems.forEach(item => item.classList.remove("hidden"));
+    buttonVerMais.textContent = "Ver Menos";
+    buttonVerMais.classList.add("expanded");
+  }
+});
 // Filtro principal
 function filtrar() {
   const search = searchInput.value.toLowerCase();
@@ -485,13 +538,19 @@ optionsList.querySelectorAll("li").forEach((option) => {
 const btnCloseFilter = document.querySelector(".close-filter")
 const mobileFilter = document.querySelector(".mobile-btns")
 const btnFilter = document.querySelector(".mobile-filter")
+const overlay = document.querySelector(".overlay")
 
 btnCloseFilter.addEventListener("click", () => {
     mobileFilter.classList.remove("active")
+      overlay.classList.remove("active")
+        document.body.classList.remove("no-scroll")
 })
 
 btnFilter.addEventListener('click', () => {
   mobileFilter.classList.add("active")
+  overlay.classList.add("active")
+ document.body.classList.add('no-scroll');
+  
 })
 
  document.querySelectorAll('.custom-options').forEach(optionList => {

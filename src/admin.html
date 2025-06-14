@@ -51,10 +51,29 @@ os nossos clientes!</p>
 <section class="telas">
     <div class="novocom-info" data-tag="novocom">
       <p>novo comercio info</p>
+       <div id="cadastroEstabelecimento">
+    <h2>Cadastrar Estabelecimento</h2>
+    <form id="formCadastro" onsubmit="event.preventDefault(); cadastrarEstabelecimento();">
+      <label for="nomeEstab">Nome:</label>
+      <input type="text" id="nomeEstab" required />
+
+      <label>
+        <input type="checkbox" id="ativoEstab" checked />
+        Ativo
+      </label>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
     </div>
 
     <div class="comercio-existentes" data-tag="comercio-ex">
    <p>comercios existentes</p>
+     <div id="listaEstabelecimentos" style="display:none;">
+    <h2>Lista de Estabelecimentos</h2>
+    <button onclick="buscarEstabelecimentos()">Atualizar Lista</button>
+    <ul id="lista"></ul>
+  </div>
     </div>
 
     <div class="promocoes" data-tag="promocoes">
@@ -68,5 +87,106 @@ os nossos clientes!</p>
 
 
 <script src="./scripts/admin.js"></script>
+ <script>
+    function fazerLogin() {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          alert("Login feito com sucesso!");
+
+          // Mostra o formulário de cadastro e esconde o login
+          document.getElementById("formLogin").style.display = "none";
+          document.getElementById("cadastroEstabelecimento").style.display = "block";
+        } else {
+          alert("Falha no login. Verifique os dados.");
+          console.error(data);
+        }
+      })
+      .catch(err => {
+        alert("Erro ao fazer login.");
+        console.error(err);
+      });
+    }
+
+    function cadastrarEstabelecimento() {
+      const nome = document.getElementById("nomeEstab").value;
+      const ativo = document.getElementById("ativoEstab").checked;
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Você precisa estar logado para cadastrar.");
+        return;
+      }
+
+      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimento", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ nome, ativo })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        alert("Estabelecimento cadastrado com sucesso!");
+        // Limpa o formulário
+        document.getElementById("nomeEstab").value = "";
+        document.getElementById("ativoEstab").checked = true;
+      })
+      .catch(err => {
+        alert("Erro: " + err.message);
+        console.error(err);
+      });
+    }
+
+
+    function buscarEstabelecimentos() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Você precisa estar logado para ver a lista.");
+        return;
+      }
+
+      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimento", {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao buscar estabelecimentos: " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        const lista = document.getElementById("lista");
+        lista.innerHTML = "";
+        if (data.length === 0) {
+          lista.innerHTML = "<li>Nenhum estabelecimento cadastrado.</li>";
+          return;
+        }
+
+        data.forEach(estab => {
+          const li = document.createElement("li");
+          li.textContent = `${estab.nome} - ${estab.ativo ? "Ativo" : "Inativo"}`;
+          lista.appendChild(li);
+        });
+      })
+      .catch(err => {
+        alert("Erro: " + err.message);
+        console.error(err);
+      });
+    }
+  </script>
 </body>
 </html>

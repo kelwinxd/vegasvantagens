@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Login</h2>
+  <form id="formLogin" onsubmit="event.preventDefault(); fazerLogin();">
+    <label for="email">Email:</label>
+    <input type="email" id="email" required value="admin@admin.com" />
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" required value=".Vg2025@" />
+
+    <button type="submit">Entrar</button>
+  </form>
+
+   <script>
+    function fazerLogin() {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          alert("Login feito com sucesso!");
+
+          // Mostra o formulário de cadastro e esconde o login
+          document.getElementById("formLogin").style.display = "none";
+          document.getElementById("cadastroEstabelecimento").style.display = "block";
+        } else {
+          alert("Falha no login. Verifique os dados.");
+          console.error(data);
+        }
+      })
+      .catch(err => {
+        alert("Erro ao fazer login.");
+        console.error(err);
+      });
+    }
+
+    function cadastrarEstabelecimento() {
+      const nome = document.getElementById("nomeEstab").value;
+      const ativo = document.getElementById("ativoEstab").checked;
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Você precisa estar logado para cadastrar.");
+        return;
+      }
+
+      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimento", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ nome, ativo })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        alert("Estabelecimento cadastrado com sucesso!");
+        // Limpa o formulário
+        document.getElementById("nomeEstab").value = "";
+        document.getElementById("ativoEstab").checked = true;
+      })
+      .catch(err => {
+        alert("Erro: " + err.message);
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>

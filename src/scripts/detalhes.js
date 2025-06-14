@@ -1,4 +1,4 @@
-const titleComercio = document.querySelector('.title-comercio')
+const titleComercio = document.querySelectorAll('.title-comercio')
 const adress = document.querySelector(".adress")
 
 const cityData = {
@@ -144,7 +144,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const [cidade, estado, ...nomePartes] = hash.split("-");
   const nomeDoPonto = nomePartes.join(" ");
 
-  titleComercio.textContent = `${nomeDoPonto}`;
+  titleComercio.forEach((i) => {
+    i.textContent =  `${nomeDoPonto}`;
+  })
+
   adress.textContent = `${cidade} | ${estado}`;
 
   const cidadeData = cityData[estado]?.[cidade];
@@ -171,14 +174,20 @@ window.addEventListener("DOMContentLoaded", () => {
       const cardsElement = document.querySelector(".cards");
       if (cardsElement) cardsElement.textContent = comercioInfo.cards.join(", ");
 
-      const imageElement = document.querySelector(".img-comercio");
+      const imageElement = document.querySelectorAll(".img-comercio");
+    
       if (imageElement && comercioInfo.img) {
-        imageElement.src = comercioInfo.img;
+        imageElement.forEach((i) => {
+          i.src = comercioInfo.img
+        })
       }
 
-      const logoElement = document.querySelector(".img-logo img");
+      const logoElement = document.querySelectorAll(".img-logo img");
       if (logoElement && comercioInfo.logo) {
-        logoElement.src = comercioInfo.logo;
+        logoElement.forEach((i) => {
+          i.src = comercioInfo.logo
+        })
+        
         console.log("achei o logo")
       } else {
         console.log("nao exite logo")
@@ -310,6 +319,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+
+const menuMobile = document.querySelector(".menu-hamb")
+const mainMenus = document.querySelector(".main-menus")
+const closeMenu = document.querySelector(".close-menu")
+
+closeMenu.addEventListener('click', () => {
+   mainMenus.classList.remove("active")
+   menuMobile.style.display = 'block'
+   closeMenu.style.display = 'none'
+
+})
+
+menuMobile.addEventListener("click", () => {
+   mainMenus.classList.add("active")
+   menuMobile.style.display = 'none'
+   closeMenu.style.display = 'block'
+})
+
+
+document.querySelectorAll('.avaliacao').forEach(avaliacaoDiv => {
+  const countSpan = avaliacaoDiv.querySelector('.count-avaliacao');
+  const starsDiv = avaliacaoDiv.querySelector('.stars');
+  
+  const rating = Math.floor(parseFloat(countSpan.textContent)); // só a parte inteira
+  const maxStars = 5;
+  
+  starsDiv.innerHTML = ''; // limpa
+  
+  for (let i = 1; i <= rating; i++) {
+    const img = document.createElement('img');
+    img.src = './imgs/icons/star.svg'; // estrela cheia
+    img.classList.add('star');
+    img.alt = `Star ${i}`;
+    starsDiv.appendChild(img);
+  }
+});
+
 
 
 
