@@ -114,7 +114,7 @@ padding-left: var(--padding-body-desktop);
       }
 
       .content-brand img {
-        
+        width: 300px;
       object-fit: contain;
         
 
@@ -135,7 +135,7 @@ padding-left: var(--padding-body-desktop);
       }
 
       .logo-footer {
-        width: 200px;
+        width: 30%;
         margin-bottom: 24px;
         
       }
@@ -217,6 +217,7 @@ padding-left: var(--padding-body-desktop);
         gap: 40px;
         background-color: #3d3d3d;
         width: 100%;
+        justify-content: center;
         
       
       }
@@ -249,6 +250,10 @@ padding-left: var(--padding-body-desktop);
        .content-brand {
         padding-inline: 32px;
         justify-content: space-between;
+       }
+
+       .content-brand img {
+        width: 200px;
        }
 
        .m-f {
@@ -308,7 +313,7 @@ padding-left: var(--padding-body-desktop);
         padding-top: 30px;
         display: flex;
         width: 100%;
-        justify-content: space-around;
+        justify-content: center;
         padding-inline: 24px;
         border-bottom: solid 1px #fff;
         align-items: center;

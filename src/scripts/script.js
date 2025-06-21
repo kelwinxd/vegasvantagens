@@ -327,6 +327,8 @@ if (window.innerWidth <= 768) { // ✅ Só executa em telas menores ou iguais a 
 }
 
 const buttonVerMais = document.querySelector(".vermais");
+const lojasContainer = document.querySelector(".lojas");
+const resultsFilter = document.querySelector('.filter-results')
 
 buttonVerMais.addEventListener("click", () => {
   const allItems = document.querySelectorAll(".place-card");
@@ -343,7 +345,10 @@ buttonVerMais.addEventListener("click", () => {
     buttonVerMais.textContent = "Ver Mais";
     buttonVerMais.classList.remove("expanded");
   } else {
- 
+     const totalHeight = Array.from(allItems)
+      .reduce((acc, item) => acc + item.offsetHeight + parseFloat(getComputedStyle(item).marginBottom), 0);
+    resultsFilter.style.height = totalHeight + "px";
+    lojasContainer.style.height = totalHeight + "px";
     allItems.forEach(item => item.classList.remove("hidden"));
     buttonVerMais.textContent = "Ver Menos";
     buttonVerMais.classList.add("expanded");
