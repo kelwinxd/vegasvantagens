@@ -34,8 +34,7 @@
           alert("Login feito com sucesso!");
 
           // Mostra o formulário de cadastro e esconde o login
-          document.getElementById("formLogin").style.display = "none";
-          document.getElementById("cadastroEstabelecimento").style.display = "block";
+        window.location.href = "admin.html";
         } else {
           alert("Falha no login. Verifique os dados.");
           console.error(data);
