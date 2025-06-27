@@ -164,7 +164,7 @@ os nossos clientes!</p>
         longitude: parseFloat(document.getElementById("longitude").value) || 0
       };
 
-      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimento/Criar", {
+      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/Criar", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -184,6 +184,8 @@ os nossos clientes!</p>
         alert("Erro: " + err.message);
         console.error(err);
       });
+
+      console.log(token)
     }
 
 
