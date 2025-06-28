@@ -90,10 +90,11 @@ margin-top: 20px;
 
 .cadastrar {
     display: block;
-    padding: 5px 7px;
+    padding: 15px 10px;
     background-color: #4B57A3;
     border: none;
     border-radius: 8px;
     margin-top: 20px;
     cursor: pointer;
+    color: #fff;
 }
