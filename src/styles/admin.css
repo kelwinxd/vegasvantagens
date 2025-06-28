@@ -79,3 +79,18 @@ button.active {
     
     
 }
+
+#formCadastro {
+    width: 80%;
+}
+
+#formCadastro label {
+margin-top: 20px;
+}
+
+.cadastrar {
+    display: block;
+    padding: 5px 7px;
+    background-color: #4B57A3;
+    cursor: pointer;
+}
