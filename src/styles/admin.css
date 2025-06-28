@@ -65,7 +65,7 @@ button.active {
 }
 
 .telas {
-    padding-inline: 120px;
+    padding-inline: 50px;
     margin-top: 30px;
     
 }
@@ -81,7 +81,7 @@ button.active {
 }
 
 #formCadastro {
-    width: 80%;
+    width: 100%;
 }
 
 #formCadastro label {
@@ -92,5 +92,8 @@ margin-top: 20px;
     display: block;
     padding: 5px 7px;
     background-color: #4B57A3;
+    border: none;
+    border-radius: 8px;
+    margin-top: 20px;
     cursor: pointer;
 }
