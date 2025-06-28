@@ -82,8 +82,7 @@ os nossos clientes!</p>
   <option value="">Carregando categorias...</option>
 </select>
 
-    <label>Cidade ID</label>
-<input type="number" id="cidadeId">
+
 
 <!-- Depois: -->
 <label>Estado</label>
@@ -164,7 +163,11 @@ function carregarEstados() {
     option.textContent = estado.nome;
     selectEstado.appendChild(option);
   });
+
+ 
 }
+
+
 
 function carregarCidades() {
   const estadoId = document.getElementById("estadoId").value;
