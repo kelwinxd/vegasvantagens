@@ -77,11 +77,24 @@ os nossos clientes!</p>
     <label>Ativo</label>
     <input type="checkbox" id="ativoEstab">
 
-    <label>Categoria ID</label>
-    <input type="number" id="categoriaId">
+  <label>Categoria</label>
+<select id="categoriaId" required>
+  <option value="">Carregando categorias...</option>
+</select>
 
     <label>Cidade ID</label>
-    <input type="number" id="cidadeId">
+<input type="number" id="cidadeId">
+
+<!-- Depois: -->
+<label>Estado</label>
+<select id="estadoId" onchange="carregarCidades()" required>
+  <option value="">Selecione um estado</option>
+</select>
+
+<label>Cidade</label>
+<select id="cidadeId" required>
+  <option value="">Selecione uma cidade</option>
+</select>
 
     <label>Rua</label>
     <input type="text" id="rua">
@@ -133,7 +146,89 @@ os nossos clientes!</p>
  <script>
   window.onload = () => {
   buscarEstabelecimentos();
+  carregarCategorias();
+  carregarEstados();
 };
+
+function carregarEstados() {
+  const estados = [
+    { id: 1, nome: "São Paulo" },
+    { id: 2, nome: "Rio de Janeiro" },
+    { id: 3, nome: "Minas Gerais" }
+  ];
+
+  const selectEstado = document.getElementById("estadoId");
+  estados.forEach(estado => {
+    const option = document.createElement("option");
+    option.value = estado.id;
+    option.textContent = estado.nome;
+    selectEstado.appendChild(option);
+  });
+}
+
+function carregarCidades() {
+  const estadoId = document.getElementById("estadoId").value;
+  const token = localStorage.getItem("token");
+
+  if (!estadoId || !token) return;
+
+  fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar cidades.");
+    return res.json();
+  })
+  .then(cidades => {
+    const selectCidade = document.getElementById("cidadeId");
+    selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+    cidades.forEach(cidade => {
+      const option = document.createElement("option");
+      option.value = cidade.id;
+      option.textContent = cidade.nome;
+      selectCidade.appendChild(option);
+    });
+  })
+  .catch(err => {
+    alert("Erro ao carregar cidades: " + err.message);
+    console.error(err);
+  });
+}
+
+function carregarCategorias() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado para carregar as categorias.");
+    return;
+  }
+
+  fetch("https://apivegasvantagens-production.up.railway.app/api/Categorias", {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar categorias: " + res.status);
+    return res.json();
+  })
+  .then(data => {
+    const select = document.getElementById("categoriaId");
+    select.innerHTML = ""; // Limpa os options
+
+    data.forEach(categoria => {
+      const option = document.createElement("option");
+      option.value = categoria.id;
+      option.textContent = categoria.nome;
+      select.appendChild(option);
+    });
+  })
+  .catch(err => {
+    alert("Erro ao carregar categorias: " + err.message);
+    console.error(err);
+  });
+}
 
    function cadastrarEstabelecimento() {
       const token = localStorage.getItem("token");
