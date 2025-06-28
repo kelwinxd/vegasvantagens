@@ -164,12 +164,16 @@ function carregarEstados() {
     selectEstado.appendChild(option);
   });
 
+   console.log("Estados carregados:", Array.from(selectEstado.options).map(o => o.textContent));
+
  
 }
 
 
 
 function carregarCidades() {
+ 
+
   const estadoId = document.getElementById("estadoId").value;
   const token = localStorage.getItem("token");
 
@@ -198,6 +202,9 @@ function carregarCidades() {
     alert("Erro ao carregar cidades: " + err.message);
     console.error(err);
   });
+
+  console.log("carregarCidades() chamado com estadoId =", estadoId);
+
 }
 
 function carregarCategorias() {
