@@ -116,11 +116,8 @@ os nossos clientes!</p>
     <label>Longitude</label>
     <input type="number" id="longitude" step="any">
 
-    <label>Logo (principal)</label>
-    <input type="file" id="imagemLogo" accept="image/*">
-
-    <label>Imagem do Estabelecimento</label>
-    <input type="file" id="imagemEstab" accept="image/*">
+   <label>Imagem</label>
+<input type="file" id="imagemEstab">
 
     <button type="button" onclick="cadastrarEstabelecimento()" class="cadastrar">Cadastrar Estabelecimento</button>
 
@@ -175,14 +172,18 @@ function carregarEstados() {
  
 }
 
-function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, principal = true) {
+function enviarImagemEstabelecimento(estabelecimentoId, imagemFile) {
   const token = localStorage.getItem("token");
-  if (!token || !imagemFile) return;
+  if (!token) {
+    alert("Você precisa estar logado para enviar imagens.");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("imagem", imagemFile);
+  formData.append("principal", "true"); // ou "false" se não for a principal
 
-  fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens?principal=${principal}`, {
+  fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
     method: "POST",
     headers: {
       "Authorization": "Bearer " + token
@@ -193,16 +194,15 @@ function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, principal = 
     if (!res.ok) throw new Error("Erro ao enviar imagem.");
     return res.json();
   })
-  .then(() => {
-    console.log(`Imagem ${principal ? "principal" : "secundária"} enviada com sucesso!`);
+  .then(data => {
+    alert("Imagem enviada com sucesso!");
+    console.log("Imagem cadastrada:", data);
   })
   .catch(err => {
     alert("Erro ao enviar imagem: " + err.message);
     console.error(err);
   });
 }
-
-
 
 
 function carregarCidades() {
@@ -292,7 +292,7 @@ function carregarCategorias() {
         telefone: document.getElementById("telefone").value,
         emailContato: document.getElementById("emailContato").value,
         ativo,
-        categoriaId: parseInt(document.getElementById("categoriaId").value) || 0,
+        categorias: [parseInt(document.getElementById("categoriaId").value)],
         cidadeId: parseInt(document.getElementById("cidadeId").value) || 0,
         rua: document.getElementById("rua").value,
         numero: document.getElementById("numero").value,
@@ -319,14 +319,10 @@ function carregarCategorias() {
   alert("Estabelecimento cadastrado com sucesso!");
   document.getElementById("formCadastro").reset();
 
-  const fileLogo = document.getElementById("imagemLogo").files[0];
-  const fileEstab = document.getElementById("imagemEstab").files[0];
-
-  if (fileLogo) {
-    enviarImagemEstabelecimento(data.id, fileLogo, true); // principal = logo
-  }
-  if (fileEstab) {
-    enviarImagemEstabelecimento(data.id, fileEstab, false); // secundária = fachada
+  // Se tiver imagem, envia ela agora
+  const imagemInput = document.getElementById("imagemEstab");
+  if (imagemInput.files.length > 0) {
+    enviarImagemEstabelecimento(data.id, imagemInput.files[0]);
   }
 })
 
