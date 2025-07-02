@@ -1,5 +1,8 @@
 let map, markers = [];
 
+function isValidCoordinate(coord) {
+  return typeof coord === 'number' && isFinite(coord) && Math.abs(coord) <= 90;
+}
 async function initMap() {
   const token = await getClientToken();
   const lojas = await fetchAllStores(token);
@@ -15,14 +18,18 @@ const first = lojas[0];
   });
 
   lojas.forEach(loja => {
-    const marker = new google.maps.Marker({
-      position: { lat: loja.latitude, lng: loja.longitude },
-      map, title: loja.nome
-    });
-    marker.addListener('click', () => {
-      window.location.href = `detalhes.html#store-${loja.id}`;
-    });
-    markers.push(marker);
+  if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
+  const marker = new google.maps.Marker({
+    position: { lat: parseFloat(loja.latitude),
+lng: parseFloat(loja.longitude), },
+    map,
+    title: loja.nome
+  });
+  marker.addListener('click', () => {
+    window.location.href = `detalhes.html#store-${loja.id}`;
+  });
+  markers.push(marker);
+}
   });
 }
 
@@ -377,45 +384,47 @@ function limparDados() {
   map.setZoom(10);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const estadoPadrao = "sp";
   const cidadePadrao = "americana";
 
-  // Define estado
-  filterState.value = estadoPadrao;
+  // Obtém token e lojas da API
+  const clientToken = await getClientToken();
+  const lojas = await fetchAllStores(clientToken);
 
-  // Limpa selects e lista
-  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  // Agrupa cidades únicas por estado
+  const cidadesDoEstado = lojas
+    .filter(l => l.cidade?.toLowerCase().includes(cidadePadrao)) // pode ajustar
+    .map(l => l.cidade.toLowerCase());
+
   const listaUl = document.getElementById("list-ul");
+  filterState.value = estadoPadrao;
+  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
   listaUl.innerHTML = "";
 
-  // Cria li "Todas as Cidades"
+  // "Todas as cidades"
   const liDefault = document.createElement("li");
   liDefault.textContent = "Todas as Cidades";
   liDefault.dataset.value = "";
   listaUl.appendChild(liDefault);
 
-  // Popular cidades e <li>s com base no estado
-  Object.keys(cityData[estadoPadrao]).forEach(cidade => {
+  // Cidades únicas
+  const cidadesUnicas = [...new Set(cidadesDoEstado)];
+  cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
-    // Adiciona ao <select>
     const opt = document.createElement("option");
     opt.value = cidade;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
-    // Adiciona ao <ul>
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
     li.dataset.value = cidade;
 
-    // Evento: atualizar <select> e aplicar classe 'active'
     li.addEventListener("click", () => {
       filterCity.value = cidade;
       filterCity.dispatchEvent(new Event("change"));
-
-      // Remove 'active' de todos e adiciona no selecionado
       listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
       li.classList.add("active");
     });
@@ -423,10 +432,9 @@ document.addEventListener("DOMContentLoaded", () => {
     listaUl.appendChild(li);
   });
 
-  // Define cidade no <select>
+  // Define cidade padrão
   filterCity.value = cidadePadrao;
 
-  // Aplica 'active' ao li correspondente
   listaUl.querySelectorAll("li").forEach(li => {
     li.classList.remove("active");
     if (li.dataset.value === cidadePadrao) {
@@ -434,9 +442,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  
-
-  // Aplica o filtro
   filtrar();
 });
 
