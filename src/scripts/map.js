@@ -1,36 +1,52 @@
 let map, markers = [];
 
 function isValidCoordinate(coord) {
-  return typeof coord === 'number' && isFinite(coord) && Math.abs(coord) <= 90;
+  return typeof coord === 'number' && isFinite(coord);
 }
+
 async function initMap() {
-  const token = await getClientToken();
-  const lojas = await fetchAllStores(token);
+  try {
+    const accessToken = await getClientToken();
+    const lojas = await fetchAllStores(accessToken);
 
-  if (!lojas || lojas.length === 0) {
-  console.warn("Nenhuma loja encontrada.");
-  return;
-}
-const first = lojas[0];
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: first.latitude, lng: first.longitude },
-    zoom: 13
-  });
+    if (!lojas || lojas.length === 0) {
+      console.warn("Nenhuma loja encontrada.");
+      return;
+    }
 
-  lojas.forEach(loja => {
-  if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
-  const marker = new google.maps.Marker({
-    position: { lat: parseFloat(loja.latitude),
-lng: parseFloat(loja.longitude), },
-    map,
-    title: loja.nome
-  });
-  marker.addListener('click', () => {
-    window.location.href = `detalhes.html#store-${loja.id}`;
-  });
-  markers.push(marker);
-}
-  });
+    const first = lojas.find(l => isValidCoordinate(l.latitude) && isValidCoordinate(l.longitude));
+    if (!first) {
+      console.warn("Nenhuma coordenada válida encontrada.");
+      return;
+    }
+
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: parseFloat(first.latitude), lng: parseFloat(first.longitude) },
+      zoom: 13
+    });
+
+    lojas.forEach(loja => {
+      if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
+        const marker = new google.maps.Marker({
+          position: {
+            lat: parseFloat(loja.latitude),
+            lng: parseFloat(loja.longitude)
+          },
+          map,
+          title: loja.nome
+        });
+
+        marker.addListener('click', () => {
+          window.location.href = `detalhes.html#store-${loja.id}`;
+        });
+
+        markers.push(marker);
+      }
+    });
+
+  } catch (error) {
+    console.error("Erro ao inicializar o mapa:", error.message);
+  }
 }
 
 
@@ -105,53 +121,7 @@ const filterCard = document.getElementById("filterCard");
 const lojasList = document.querySelector(".produtoLista");
 const mapContainer = document.getElementById("map"); 
 
-// Inicializa o mapa
 
-/*
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-
-    // Usa a API de geocodificação reversa do Google para obter cidade/estado
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        let cidadeDetectada = "";
-        let estadoDetectado = "";
-
-        for (const comp of results[0].address_components) {
-          if (comp.types.includes("administrative_area_level_2")) {
-            cidadeDetectada = comp.long_name.toLowerCase();
-          }
-          if (comp.types.includes("administrative_area_level_1")) {
-            estadoDetectado = comp.short_name.toLowerCase(); // 'SP', 'RJ'...
-          }
-        }
-
-        // Se a cidade/estado detectados existirem no seu cityData, selecione
-        if (cityData[estadoDetectado] && cityData[estadoDetectado][cidadeDetectada]) {
-          filterState.value = estadoDetectado;
-
-          // Atualiza as opções de cidade
-          filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-          Object.keys(cityData[estadoDetectado]).forEach(cidade => {
-            const opt = document.createElement("option");
-            opt.value = cidade;
-            opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-            filterCity.appendChild(opt);
-          });
-
-          filterCity.value = cidadeDetectada;
-          filtrar(); // Aplica o filtro
-        }
-      }
-    });
-  });
-}
-*/
 // Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", () => {
   const estado = filterState.value;
@@ -194,85 +164,87 @@ filterState.addEventListener("change", () => {
 
 
 
-function updateMapByCity(cidade, segmento, busca, cartao) {
-  markers.forEach(m => m.setMap(null));
-  markers = [];
-  lojasList.innerHTML = "";
+async function updateMapByCity(cidade, segmento, busca, cartao) {
+  try {
+    const accessToken = await getClientToken();
+    const lojas = await fetchAllStores(accessToken);
 
-   let count = 0;
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+    lojasList.innerHTML = "";
 
-  for (const estado in cityData) {
-    if (cityData[estado][cidade]) {
-      const cidadeData = cityData[estado][cidade];
-      if (cidadeData.center && cidadeData.points.length > 0) {
-  map.setCenter(cidadeData.center);
-  map.setZoom(13);
-}
-      
+    let count = 0;
 
-      cidadeData.points.forEach(ponto => {
-        const nomeMatch = !busca || ponto.name.toLowerCase().includes(busca.toLowerCase());
-        const segMatch = !segmento || ponto.type.includes(segmento);
-        const cardMatch = !cartao || ponto.card.includes(cartao);
+    const lojasFiltradas = lojas.filter(loja => {
+      const nomeMatch = !busca || loja.nome.toLowerCase().includes(busca.toLowerCase());
+      const cidadeMatch = !cidade || loja.cidade.toLowerCase() === cidade.toLowerCase();
+      const segMatch = !segmento || loja.categorias?.some(cat => cat.toLowerCase().includes(segmento.toLowerCase()));
+      const cardMatch = !cartao || loja.cartoes?.includes(cartao); // ajuste se necessário
 
-        if (nomeMatch && segMatch && cardMatch) {
-          const marker = new google.maps.Marker({
-            position: ponto.position,
-            map: map,
-            title: ponto.name
-          });
-          markers.push(marker);
+      return nomeMatch && cidadeMatch && segMatch && cardMatch;
+    });
 
-          const li = document.createElement("li");
-          li.classList.add("place-card");
-          li.dataset.city = cidade;
-          li.dataset.state = estado;
-          li.dataset.seg = ponto.type.join(",");
-          li.dataset.card = ponto.card.join(",");
-          li.dataset.tags = `${ponto.name.toLowerCase()} ${ponto.address.toLowerCase()}`;
+    if (lojasFiltradas.length === 0) return;
 
-          li.innerHTML = `
-         
-            <div class="place-image">
-              <img src="${ponto.image}" alt="${ponto.name}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
-            </div>
-            <div class="place-details">
-              <h3>${ponto.name}</h3>
-              <p class="address">${ponto.address}</p>
-              <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
-              <button class ="btn-card-map"> Saiba Mais </button>
-            </div>
-       
-          `;
-           
-          lojasList.appendChild(li);
-          count++
-
-          const resultsCount = document.querySelector(".resultscount span")
-          
-          resultsCount.textContent = `${count}`
-          if(li){
-            li.addEventListener("click", () => {
-              // Formata a hash com base no nome, cidade e estado
-              const hash = encodeURIComponent(`${cidade}-${estado}-${ponto.name}`);
-              window.location.href = `detalhes.html#${hash}`;
-
-            
-
-
-            });
-          }
-
-              if (count >= 4) {
-            li.classList.add('hidden');
-            console.log("escondido")
-          }
-
-          
-          
-        }
-      });
+    const cidadeCentro = lojasFiltradas[0];
+    if (isValidCoordinate(cidadeCentro.latitude) && isValidCoordinate(cidadeCentro.longitude)) {
+      map.setCenter({ lat: parseFloat(cidadeCentro.latitude), lng: parseFloat(cidadeCentro.longitude) });
+      map.setZoom(13);
     }
+
+    lojasFiltradas.forEach(loja => {
+      if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
+        const marker = new google.maps.Marker({
+          position: { lat: parseFloat(loja.latitude), lng: parseFloat(loja.longitude) },
+          map,
+          title: loja.nome
+        });
+
+        marker.addListener("click", () => {
+          window.location.href = `detalhes.html#store-${loja.id}`;
+        });
+
+        markers.push(marker);
+
+        const li = document.createElement("li");
+        li.classList.add("place-card");
+        li.dataset.city = loja.cidade;
+        li.dataset.state = ""; // pode incluir se for necessário depois
+        li.dataset.seg = loja.categorias?.join(",") || "";
+        li.dataset.card = loja.cartoes?.join(",") || "";
+        li.dataset.tags = `${loja.nome.toLowerCase()} ${loja.rua?.toLowerCase() || ""}`;
+
+        li.innerHTML = `
+          <div class="place-image">
+            <img src="${loja.imagemPrincipal || './imgs/default-image.png'}" alt="${loja.nome}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
+          </div>
+          <div class="place-details">
+            <h3>${loja.nome}</h3>
+            <p class="address">${loja.rua}, ${loja.numero}, ${loja.bairro}</p>
+            <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
+            <button class="btn-card-map">Saiba Mais</button>
+          </div>
+        `;
+
+        lojasList.appendChild(li);
+        count++;
+
+        const resultsCount = document.querySelector(".resultscount span");
+        resultsCount.textContent = `${count}`;
+
+        li.addEventListener("click", () => {
+          const hash = encodeURIComponent(`store-${loja.id}`);
+          window.location.href = `detalhes.html#${hash}`;
+        });
+
+        if (count >= 4) {
+          li.classList.add("hidden");
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error("Erro ao atualizar mapa:", err.message);
   }
 
 const totalItems = lojasList.querySelectorAll("li").length;
