@@ -49,7 +49,7 @@ async function getClientToken() {
     })
   });
   const data = await resp.json();
-  return data.token; // adapte conforme resposta real
+  return data.accessToken; // adapte conforme resposta real
 }
 
 async function loginToken(email, senha) {
@@ -59,7 +59,7 @@ async function loginToken(email, senha) {
     body: JSON.stringify({ email, senha })
   });
   const data = await resp.json();
-  return data.token;
+  return data.accessToken;
 }
 
 async function fetchAllStores(clientToken) {
