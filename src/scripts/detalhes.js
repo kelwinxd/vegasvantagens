@@ -140,6 +140,37 @@ const cityData = {
 
 
 window.addEventListener("DOMContentLoaded", () => {
+const menuMobile = document.querySelector(".menu-hamb")
+const mainMenus = document.querySelector(".main-menus")
+const closeMenu = document.querySelector(".close-menu")
+  const menuOverlay = document.querySelector(".menu-overlay");
+
+closeMenu.addEventListener('click', () => {
+   mainMenus.classList.remove("active")
+   menuMobile.style.display = 'block'
+   closeMenu.style.display = 'none'
+     menuOverlay.classList.remove("active");
+
+})
+
+menuMobile.addEventListener("click", () => {
+   mainMenus.classList.add("active")
+   menuOverlay.classList.add("active");
+   menuMobile.style.display = 'none'
+   closeMenu.style.display = 'block'
+})
+
+  menuOverlay.addEventListener("click", () => {
+   mainMenus.classList.remove("active")
+   menuMobile.style.display = 'block'
+   closeMenu.style.display = 'none'
+   menuOverlay.classList.remove("active");
+
+})
+
+
+
+
   const hash = decodeURIComponent(window.location.hash.substring(1));
   const [cidade, estado, ...nomePartes] = hash.split("-");
   const nomeDoPonto = nomePartes.join(" ");
@@ -281,9 +312,6 @@ function openModalByName(nome) {
   document.querySelector(".modal-overlay").style.display = "flex";
 }
 
-document.querySelector(".close-btn").addEventListener("click", () => {
-  document.querySelector(".modal-overlay").style.display = "none";
-});
 
 
 
@@ -318,6 +346,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("Nenhum card correspondente foi encontrado para:", nomeEmpresa);
     }
   }
+
+
+  
 });
 
 
