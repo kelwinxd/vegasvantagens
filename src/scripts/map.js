@@ -1,9 +1,9 @@
 let map, markers = [];
 
 function isValidCoordinate(coord) {
-  return typeof coord === 'number' && isFinite(coord);
+  const num = parseFloat(coord);
+  return !isNaN(num) && isFinite(num) && Math.abs(num) <= 90;
 }
-
 async function initMap() {
   try {
     const accessToken = await getClientToken();
@@ -25,7 +25,11 @@ async function initMap() {
       zoom: 13
     });
 
+
+
+
     lojas.forEach(loja => {
+            console.log("Coordenada da loja:", loja.latitude, loja.longitude);
       if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
         const marker = new google.maps.Marker({
           position: {
@@ -183,6 +187,10 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
 
       return nomeMatch && cidadeMatch && segMatch && cardMatch;
     });
+
+    console.log("Lojas filtradas:", lojasFiltradas);
+
+
 
     if (lojasFiltradas.length === 0) return;
 
