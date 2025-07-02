@@ -4,7 +4,11 @@ async function initMap() {
   const token = await getClientToken();
   const lojas = await fetchAllStores(token);
 
-  const first = lojas[0];
+  if (!lojas || lojas.length === 0) {
+  console.warn("Nenhuma loja encontrada.");
+  return;
+}
+const first = lojas[0];
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: first.latitude, lng: first.longitude },
     zoom: 13
@@ -52,12 +56,18 @@ async function loginToken(email, senha) {
 }
 
 async function fetchAllStores(clientToken) {
-  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Store', {
-    headers: {
-      'Authorization': `Bearer ${clientToken}`
-    }
-  });
-  return resp.json(); // deverá retornar lista com id, nome, cidade...
+  try {
+    const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Store', {
+      headers: {
+        'Authorization': `Bearer ${clientToken}`
+      }
+    });
+    if (!resp.ok) throw new Error('Erro ao buscar lojas');
+    return await resp.json();
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 }
 
 async function fetchStoreDetails(loginToken, storeId) {
