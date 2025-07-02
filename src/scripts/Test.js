@@ -18,7 +18,7 @@
       // Buscar estabelecimentos
       const respEstab = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${accessToken}`
         }
       });
 
