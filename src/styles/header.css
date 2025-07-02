@@ -433,6 +433,7 @@ height: 40.84px;
   z-index: 5000;
   background-color: #fff;
   padding: 50px 24px 70px 24px;
+  padding-top: 90px;
   transition: all .4s ease;
   transform: translate(-50%, -200%);
 }
