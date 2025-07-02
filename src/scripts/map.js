@@ -64,7 +64,7 @@ async function loginToken(email, senha) {
 
 async function fetchAllStores(clientToken) {
   try {
-    const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Store', {
+    const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
       headers: {
         'Authorization': `Bearer ${clientToken}`
       }
@@ -78,7 +78,7 @@ async function fetchAllStores(clientToken) {
 }
 
 async function fetchStoreDetails(loginToken, storeId) {
-  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Store/${storeId}`, {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${storeId}`, {
     headers: {
       'Authorization': `Bearer ${loginToken}`
     }
