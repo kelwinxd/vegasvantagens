@@ -8,8 +8,8 @@ async function getClientToken() {
     })
   });
   const data = await resp.json();
-  console.log('Token:', data.token);
-  return data.token;
+  console.log('Token:', data.accessToken);
+  return data.accessToken;
 }
 
 getClientToken();
