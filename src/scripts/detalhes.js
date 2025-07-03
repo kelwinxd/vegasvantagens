@@ -169,6 +169,12 @@ menuMobile.addEventListener("click", () => {
 })
 
 
+const modalOverlay = document.querySelector(".modal-overlay");
+  const closeBtn = document.querySelector(".close-btn");
+
+closeBtn.addEventListener("click", () => {
+    modalOverlay.style.display = "none";
+  });
 
 
   const hash = decodeURIComponent(window.location.hash.substring(1));
