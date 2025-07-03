@@ -226,18 +226,25 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
     if (lojasFiltradas.length === 0) return;
 
     const cidadeCentro = lojasFiltradas[0];
-    if (isValidCoordinate(cidadeCentro.latitude) && isValidCoordinate(cidadeCentro.longitude)) {
-      map.setCenter({ lat: parseFloat(cidadeCentro.latitude), lng: parseFloat(cidadeCentro.longitude) });
-      map.setZoom(13);
-    }
+  const centroLat = corrigirCoordenada(cidadeCentro.latitude, "latitude");
+const centroLng = corrigirCoordenada(cidadeCentro.longitude, "longitude");
 
-    lojasFiltradas.forEach(loja => {
-      if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
-        const marker = new google.maps.Marker({
-          position: { lat: parseFloat(loja.latitude), lng: parseFloat(loja.longitude) },
-          map,
-          title: loja.nome
-        });
+if (!isNaN(centroLat) && !isNaN(centroLng)) {
+  map.setCenter({ lat: centroLat, lng: centroLng });
+  map.setZoom(13);
+}
+
+lojasFiltradas.forEach(loja => {
+  const lat = corrigirCoordenada(loja.latitude, "latitude");
+  const lng = corrigirCoordenada(loja.longitude, "longitude");
+
+  if (!isNaN(lat) && !isNaN(lng)) {
+    const marker = new google.maps.Marker({
+      position: { lat, lng },
+      map,
+      title: loja.nome
+    });
+
 
         marker.addListener("click", () => {
           window.location.href = `detalhes.html#store-${loja.id}`;
