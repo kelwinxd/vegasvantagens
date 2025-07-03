@@ -1,14 +1,20 @@
 let map, markers = [];
 
-function isValidCoordinate(lat, lng) {
-  const latNum = parseFloat(lat);
-  const lngNum = parseFloat(lng);
+function corrigirCoordenada(valor, tipo) {
+  const num = parseFloat(valor);
+  if (isNaN(num)) return null;
 
-  return (
-    !isNaN(latNum) && isFinite(latNum) && latNum >= -90 && latNum <= 90 &&
-    !isNaN(lngNum) && isFinite(lngNum) && lngNum >= -180 && lngNum <= 180
-  );
+  // Corrige se estiver fora dos limites reais de coordenadas
+  if (tipo === "longitude" && (num > 180 || num < -180)) {
+    return num / 1e15;
+  }
+  if (tipo === "latitude" && (num > 90 || num < -90)) {
+    return num / 1e15;
+  }
+
+  return num;
 }
+
 async function initMap() {
   try {
     const accessToken = await getClientToken();
@@ -19,28 +25,35 @@ async function initMap() {
       return;
     }
 
-    const first = lojas.find(l => isValidCoordinate(l.latitude) && isValidCoordinate(l.longitude));
-    if (!first) {
+    // Pega a primeira loja com coordenadas válidas (corrigidas)
+    const primeiraComCoordValida = lojas.find(loja => {
+      const lat = corrigirCoordenada(loja.latitude, "latitude");
+      const lng = corrigirCoordenada(loja.longitude, "longitude");
+      return !isNaN(lat) && !isNaN(lng);
+    });
+
+    if (!primeiraComCoordValida) {
       console.warn("Nenhuma coordenada válida encontrada.");
       return;
     }
 
+    const latInicial = corrigirCoordenada(primeiraComCoordValida.latitude, "latitude");
+    const lngInicial = corrigirCoordenada(primeiraComCoordValida.longitude, "longitude");
+
     map = new google.maps.Map(document.getElementById('map'), {
-      center: { lat: parseFloat(first.latitude), lng: parseFloat(first.longitude) },
+      center: { lat: latInicial, lng: lngInicial },
       zoom: 13
     });
 
-
-
-
     lojas.forEach(loja => {
-            console.log("Coordenada da loja:", loja.latitude, loja.longitude);
-     if (isValidCoordinate(loja.latitude, loja.longitude)) {
+      const lat = corrigirCoordenada(loja.latitude, "latitude");
+      const lng = corrigirCoordenada(loja.longitude, "longitude");
+
+      console.log(`Loja: ${loja.nome}, Latitude corrigida: ${lat}, Longitude corrigida: ${lng}`);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
         const marker = new google.maps.Marker({
-          position: {
-            lat: parseFloat(loja.latitude),
-            lng: parseFloat(loja.longitude)
-          },
+          position: { lat, lng },
           map,
           title: loja.nome
         });
