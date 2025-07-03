@@ -1,8 +1,13 @@
 let map, markers = [];
 
-function isValidCoordinate(coord) {
-  const num = parseFloat(coord);
-  return !isNaN(num) && isFinite(num) && Math.abs(num) <= 90;
+function isValidCoordinate(lat, lng) {
+  const latNum = parseFloat(lat);
+  const lngNum = parseFloat(lng);
+
+  return (
+    !isNaN(latNum) && isFinite(latNum) && latNum >= -90 && latNum <= 90 &&
+    !isNaN(lngNum) && isFinite(lngNum) && lngNum >= -180 && lngNum <= 180
+  );
 }
 async function initMap() {
   try {
@@ -30,7 +35,7 @@ async function initMap() {
 
     lojas.forEach(loja => {
             console.log("Coordenada da loja:", loja.latitude, loja.longitude);
-      if (isValidCoordinate(loja.latitude) && isValidCoordinate(loja.longitude)) {
+     if (isValidCoordinate(loja.latitude, loja.longitude)) {
         const marker = new google.maps.Marker({
           position: {
             lat: parseFloat(loja.latitude),
@@ -258,9 +263,9 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
           window.location.href = `detalhes.html#${hash}`;
         });
 
-        if (count >= 4) {
+      /*  if (count >= 4) {
           li.classList.add("hidden");
-        }
+        }*/
       }
     });
 
@@ -311,6 +316,8 @@ buttonVerMais.addEventListener("click", () => {
     buttonVerMais.classList.add("expanded");
   }
 });
+
+
 // Filtro principal
 function filtrar() {
   const search = searchInput.value.toLowerCase();
