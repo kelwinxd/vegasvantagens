@@ -82,17 +82,30 @@ async function loginToken(email, senha) {
   return data.accessToken;
 }
 
-async function fetchAllStores(clientToken) {
+async function fetchAllStores(accessToken) {
   try {
-    const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
-      headers: {
-        'Authorization': `Bearer ${clientToken}`
-      }
+    // Buscar lista resumida
+    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
     });
-    if (!resp.ok) throw new Error('Erro ao buscar lojas');
-    return await resp.json();
-  } catch (e) {
-    console.error(e);
+    if (!respLista.ok) throw new Error("Erro ao buscar lista geral");
+    const lista = await respLista.json();
+
+    // Buscar detalhes um a um
+    const detalhes = await Promise.all(
+      lista.map(async loja => {
+        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${loja.id}`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!detalheResp.ok) return null;
+        return await detalheResp.json();
+      })
+    );
+
+    return detalhes.filter(e => e && e.latitude && e.longitude);
+
+  } catch (err) {
+    console.error("Erro ao buscar estabelecimentos completos:", err.message);
     return [];
   }
 }
