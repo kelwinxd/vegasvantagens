@@ -6,70 +6,72 @@
     <title>Document</title>
 </head>
 <body>
-  <h2>Upload de Imagem para Estabelecimento</h2>
+   <h2>Upload de Imagem para Estabelecimento</h2>
 
   <label for="estabId">ID do Estabelecimento:</label>
-  <input type="number" id="estabId" value="11"><br><br>
+  <input type="text" id="estabId" placeholder="Ex: 11">
+  <br><br>
 
-  <label for="imagemInput">Selecione a imagem:</label>
-  <input type="file" id="imagemInput"><br><br>
+  <label for="imagemInput">Escolha uma imagem:</label>
+  <input type="file" id="imagemInput" accept="image/*">
+  <br><br>
 
-  <button onclick="obterTokenEEnviar()">Enviar Imagem</button>
+  <button onclick="enviarImagemComLogin()">Enviar Imagem</button>
 
   <script>
-    const clientId = "site_vegas_vantagens";
-    const clientSecret = "8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0=";
-
-    async function obterToken() {
-      const resposta = await fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/client-token", {
+    async function obterTokenAdmin() {
+      const resposta = await fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clientId, clientSecret })
+        body: JSON.stringify({
+          email: "admin@admin.com",
+          senha: ".Vg2025@"
+        })
       });
 
       if (!resposta.ok) {
-        throw new Error("Erro ao obter token");
+        const erro = await resposta.text();
+        throw new Error("Erro no login de admin: " + erro);
       }
 
       const dados = await resposta.json();
-      return dados.accessToken;
+      return dados.token;
     }
 
-    async function enviarImagem(estabId, imagemFile, token) {
+    async function enviarImagem(estabelecimentoId, imagemFile, token) {
       const formData = new FormData();
       formData.append("imagem", imagemFile);
       formData.append("principal", "true");
 
-      const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabId}/imagens`, {
+      const resposta = await fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`
-          // NÃO adicione Content-Type! O browser cuida disso com FormData.
+          "Authorization": "Bearer " + token
         },
         body: formData
       });
 
-      if (!resp.ok) {
-        const erro = await resp.text();
+      if (!resposta.ok) {
+        const erro = await resposta.text();
         throw new Error("Erro ao enviar imagem: " + erro);
       }
 
-      const resultado = await resp.json();
+      const dados = await resposta.json();
       alert("Imagem enviada com sucesso!");
-      console.log("Resposta:", resultado);
+      console.log("Imagem cadastrada:", dados);
     }
 
-    async function obterTokenEEnviar() {
+    async function enviarImagemComLogin() {
       const estabId = document.getElementById("estabId").value;
       const imagemFile = document.getElementById("imagemInput").files[0];
 
-      if (!imagemFile || !estabId) {
-        alert("Preencha todos os campos.");
+      if (!estabId || !imagemFile) {
+        alert("Preencha o ID e selecione uma imagem.");
         return;
       }
 
       try {
-        const token = await obterToken();
+        const token = await obterTokenAdmin();
         await enviarImagem(estabId, imagemFile, token);
       } catch (erro) {
         alert(erro.message);
