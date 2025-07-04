@@ -262,7 +262,7 @@ lojasFiltradas.forEach(loja => {
 
         li.innerHTML = `
           <div class="place-image">
-            <img src="${loja.imagemPrincipal || './imgs/default-image.png'}" alt="${loja.nome}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
+            <img src="${loja.imagens[0] || './imgs/default-image.png'}" alt="${loja.nome}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
           </div>
           <div class="place-details">
             <h3>${loja.nome}</h3>
