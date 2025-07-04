@@ -181,7 +181,7 @@ function enviarImagemEstabelecimento(estabelecimentoId, imagemFile) {
 
   const formData = new FormData();
   formData.append("imagem", imagemFile);
-  formData.append("principal", true); // ou "false" se não for a principal
+  formData.append("principal", false); // ou "false" se não for a principal
 
   fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
     method: "POST",

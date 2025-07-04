@@ -6,12 +6,67 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="resultado">
-      
-    </div>
+  <h2>Upload de Imagem</h2>
 
+  <label for="imagemInput">Selecione a imagem:</label>
+  <input type="file" id="imagemInput"><br><br>
 
+  <label for="estabId">ID do Estabelecimento:</label>
+  <input type="number" id="estabId" value="11"><br><br>
 
-    <script src="./scripts/Test.js"></script>
+  <button onclick="upload()">Enviar Imagem</button>
+
+  <script>
+    // Simule um token (ou recupere do login/localStorage)
+    // ⚠️ Substitua este token por um válido da sua aplicação
+    localStorage.setItem("token", "SEU_TOKEN_AQUI");
+
+    function enviarImagemEstabelecimento(estabelecimentoId, imagemFile) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Você precisa estar logado para enviar imagens.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("imagem", imagemFile);
+      formData.append("principal", "true"); // obrigatório em string
+
+      fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token
+          // NÃO coloque Content-Type aqui
+        },
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) {
+          return res.text().then(textoErro => {
+            throw new Error("Erro da API: " + textoErro);
+          });
+        }
+        return res.json();
+      })
+      .then(data => {
+        alert("Imagem enviada com sucesso!");
+        console.log("Resposta da API:", data);
+      })
+      .catch(err => {
+        alert("Erro ao enviar imagem: " + err.message);
+        console.error(err);
+      });
+    }
+
+    function upload() {
+      const file = document.getElementById('imagemInput').files[0];
+      const estabId = document.getElementById('estabId').value;
+
+      if (!file) return alert("Selecione uma imagem.");
+      if (!estabId) return alert("Informe o ID do estabelecimento.");
+
+      enviarImagemEstabelecimento(estabId, file);
+    }
+  </script>
 </body>
 </html>
