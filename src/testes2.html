@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const token = await getClientToken();
-    const estabelecimentos = await getEstabelecimentos(token);
+    const estabelecimentos = await getEstabelecimentosDetalhados(token);
 
     // Adiciona até 8 primeiros estabelecimentos (pode mudar)
     const maxExibir = 8;
