@@ -3,81 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="./styles/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <title>Vegas Benefícios</title>
 </head>
 <body>
-   <h2>Upload de Imagem para Estabelecimento</h2>
+    <div class="header">
+        <nav>
+            <div class="logo">
+                <a href="./index.html">
+                    <img src="./imgs/logos/Logo.svg" alt="">
+                </a>
+            </div>
 
-  <label for="estabId">ID do Estabelecimento:</label>
-  <input type="text" id="estabId" placeholder="Ex: 11">
-  <br><br>
+          
 
-  <label for="imagemInput">Escolha uma imagem:</label>
-  <input type="file" id="imagemInput" accept="image/*">
-  <br><br>
+           
+            <ul class="menu-desktop">
+               
+                <li><a href="./sobrenos.html">Sobre o Clube</a></li>
+     
+              
+            </ul>
 
-  <button onclick="enviarImagemComLogin()">Enviar Imagem</button>
+            <button class="btn-header menu-desktop">
+                <a href="./cadastro-com.html">Faça Parte do Clube</a>
+            
+            </button>
+              
 
-  <script>
-    async function obterTokenAdmin() {
-      const resposta = await fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: "admin@admin.com",
-          senha: ".Vg2025@"
-        })
-      });
+            
+              <div class="main-menus">
+                     <ul >
+               
+                <li><a href="./sobrenos.html">Sobre o Clube</a></li>
+     
+              
+            </ul>
 
-      if (!resposta.ok) {
-        const erro = await resposta.text();
-        throw new Error("Erro no login de admin: " + erro);
-      }
+            <button class="btn-header">
+                <a href="./cadastro-com.html">Faça Parte do Clube</a>
+            
+            </button>
+              </div>
+             <div class="menu-hamb">
+            <img src="./imgs/icons/menu.svg" alt="">
+        </div>
 
-      const dados = await resposta.json();
-      return dados.token;
-    }
+        <div class="close-menu">
+            <img src="./imgs/icons/close.svg" alt="">
+        </div>
+        </nav>
 
-    async function enviarImagem(estabelecimentoId, imagemFile, token) {
-      const formData = new FormData();
-      formData.append("imagem", imagemFile);
-      formData.append("principal", "true");
+       
+    </div>
 
-      const resposta = await fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer " + token
-        },
-        body: formData
-      });
 
-      if (!resposta.ok) {
-        const erro = await resposta.text();
-        throw new Error("Erro ao enviar imagem: " + erro);
-      }
+<section class="comercio">
+    <h1 class="tag-comercio">Bares e Restaurantes</h1>
+    <div class="comercio-container">
+        <div class="main-img">
+            <img src="./imgs/default-image.png" class="img-comercio" alt="">
+        </div>
+        <div class="main-info">
+            <div class="header-info-mobile">
+                <div class="header-info-mobile-head">
+                <div class="img-logo">
+                   <img src="./imgs/default-image.png" class="logo" alt="">
+                </div>
+               
+                 <div class="names-ava">
+                        <h2 class="title-comercio"></h2>
+                        <div class="avaliacao"><span class="count-avaliacao">4.5</span>
+                            <div class="stars">
+                                <img src="./imgs/icons/star.svg" class="star" alt="">
+                        </div></div>
+                    </div>
+                </div>
+                <div class="inner-info">
+                 
+                  
+                    <div class="btn-info">
+                                          <button class="visite"><img src="./imgs/icons/System.png" alt=""> Visitar o Site</button>
+                        <button class="mapa"><img src="./imgs/icons/location_on.svg" alt="">Ver Mapa</button>
 
-      const dados = await resposta.json();
-      alert("Imagem enviada com sucesso!");
-      console.log("Imagem cadastrada:", dados);
-    }
+        
+                    </div>
+                
+              
+                </div>
+                  <div class="main-img">
+            <img src="./imgs/default-image.png" class="img-comercio" alt="">
+        </div>
+                
 
-    async function enviarImagemComLogin() {
-      const estabId = document.getElementById("estabId").value;
-      const imagemFile = document.getElementById("imagemInput").files[0];
+                           
+            </div>
+            <div class="header-info">
+                
+                <div class="img-logo">
+                   <img src="./imgs/default-image.png" class="logo" alt="">
+                </div>
+                <div class="inner-info">
+                    <div class="names-ava">
+                        <h2 class="title-comercio"></h2>
+                        <div class="avaliacao"><span class="count-avaliacao">4.5</span>
+                            <div class="stars">
+                                <img src="./imgs/icons/star.svg" class="star" alt="">
+                        </div></div>
+                    </div>
+                  
+                    <div class="btn-info">
+                        <button class="visite"><img src="./imgs/icons/System.png" alt=""> Visitar o Site</button>
+                        <button class="mapa"><img src="./imgs/icons/location_on.svg" alt="">Ver Mapa</button>
+        
+                    </div>
+                
+              
+                </div>
+               
+            
+           
+            </div>
 
-      if (!estabId || !imagemFile) {
-        alert("Preencha o ID e selecione uma imagem.");
-        return;
-      }
+            <div class="main-img-tablet">
+                <img src="./imgs/default-image.png"  class="img-comercio" alt="">
+            </div>
+          <div class="line line-1"></div>
+               
+            <div class="info-cards">
+                <div class="primary-infos">
+     <div class="info-card adress-card">
+                    <h3>Endereço:</h3>
+                    <p class="adress"></p>
+                </div>
+                <div class="info-card phone-card">
+                    <h3>Telefone:</h3>
+                    <p class="phone"></p>
+                </div>
+                </div>
+           
+                     <div class="line"></div>
+                <div class="info-card last">
+                    <h3>Cartões:</h3>
+                    <p class="cards"></p>
+                </div>
+            </div>
+                  <div class="line line-last"></div>
+          
+            
+          
+        </div>
+       <div class="menu-overlay"></div>
+    </div>
+  
 
-      try {
-        const token = await obterTokenAdmin();
-        await enviarImagem(estabId, imagemFile, token);
-      } catch (erro) {
-        alert(erro.message);
-        console.error(erro);
-      }
-    }
-  </script>
+</section>
+<div class="modal-overlay">
+  <div class="modal">
+    <button class="close-btn">&times;</button>
+    <img class="modal-logo" src="" alt="" />
+    <h2 class="modal-title"></h2>
+    <p class="modal-validade"></p>
+    <p class="modal-descricao"></p>
+  </div>
+</div>
+<section class="desc-ofertas">
+      <div class="line line-desc"></div>
+        <h1 class="title-desc">Ofertas</h1>
+        <div class="cards-descontos">
+     
+            <div class="card-desconto" data-tag="oticas">
+            <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+                <div class="content">
+                    <div class="tag">Óculos</div>
+                    <h2>Mercadão dos Óculos</h2>
+                    <p>Cliente Vegas tem 20% de desconto em armações selecionadas + exame de vista gratuito</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+            
+            <div class="card-desconto" data-tag="barbearia">
+             <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+                <div class="content">
+                    <div class="tag">Barbearias</div>
+                    <h2>Intensos Barbearia</h2>
+                    <p>Cliente Vegas tem 1 hidratação de cabelo no 1º corte + se fechar clube: corte gratuito</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+
+                  <div class="card-desconto" data-tag="presentes">
+            <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+                <div class="content">
+                    <div class="tag">Brinquedos</div>
+                    <h2>Zanini</h2>
+                    <p>Cliente Vegas tem 10% de desconto em qualquer produto da loja.</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+
+            <div class="card-desconto" data-tag="petshop">
+                <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+                <div class="content">
+                    <div class="tag">Petshop</div>
+                    <h2>Cãochorro Petshop</h2>
+                    <p>Cliente Vegas tem 10% de desconto em qualquer produto da loja</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+
+                  <div class="card-desconto" data-tag="alimentacao">
+                     <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+               
+                <div class="content">
+                    <div class="tag" >Alimentação</div>
+                    <h2>Betta Suplementos</h2>
+                    <p>Cliente Vegas tem R$50 de cashback para clientes cadastrados na landing Page exclusiva</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+
+
+            <div class="card-desconto" data-tag="bareserestaurantes">
+                <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+           
+                <div class="content">
+                    <div class="tag">Bares / Restaurante</div>
+                    <h2>Boi Que Mia - Grill Bar</h2>
+                    <p>Cliente Vegas tem ganha, (1 pão de alho ou queijo coalho) por conta da casa</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+
+                  <div class="card-desconto" data-tag="bareserestaurantes">
+          
+                <div class="content">
+                    <div class="tag">Bares / Restaurantes</div>
+                    <h2>Casa Florindo Bar e Restaurante</h2>
+                    <p>Cliente Vegas tem Desconto Especial</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+
+                  <div class="card-desconto" data-tag="cosmeticos">
+                      <div class="card-image">
+                    <img src="./imgs/img-desc.png" alt="">
+                </div>
+       
+                <div class="content">
+                    <div class="tag">Cosméticos</div>
+                    <h2>Danny Cosméticos</h2>
+                    <p>Cliente Vegas tem Desconto Especial</p>
+                </div>
+                <button>Ver Mais</button>
+            </div>
+        </div>
+    </section>
+
+
+
+
+   
+    
+
+ <footer>
+       <div class="content-brand">
+        <img src="./imgs/logo-white.png" class="logo-footer" style=" padding-top: 20px;" alt="" >
+        <img src="./imgs/logos/logo-abbt 1.svg" style="width: 10%;" alt="">
+        <img src="./imgs/logos/logo-empresa-brasileira.svg" alt="">
+       
+       </div>
+
+       <div class="menu-footer">
+        <div class="links-rapidos m-f locals">
+            <div class="card-footer">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <h2>Americana</h2>
+                    <p>R. Tamôio, 526 - Vila Santa Catarina | 13466-250 </p>
+                </div>
+         
+
+            </div>
+
+            <div class="card-footer">
+           <i class="fa-brands fa-whatsapp"></i>
+                <div>
+                    <h2>19 2108.2900</h2>
+                    <p>segunda a sexta 8h às 20h,
+                        aos sábados das 8h às 18h</p>
+                </div>
+         
+
+            </div>
+
+            <div class="card-footer">
+<i class="fa-solid fa-phone"></i>
+
+                <div>
+                    <h2>19 2108.2908</h2>
+                    <p>segunda a sexta 8h às 20h,
+                        aos sábados das 8h às 18h</p>
+                </div>
+               
+
+            </div>
+ 
+            <div class="card-footer">
+            <i class="fas fa-envelope"></i>
+
+
+                <div>
+               
+                    <p>atendimento@vegascard.com.br</p>
+                </div>
+               
+            </div>
+        </div>
+          
+        <div class="links-rapidos m-f menus ">
+            <div class="link-div">
+                <h2>Sobre Nós</h2>
+                <ul>
+                     <li><a href="">A Vegas</a></li>
+                     <li><a href="">Vegas Cultural</a></li>
+                     <li><a href="">Notícias</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="link-div">
+                <h2>Soluções</h2>
+                <ul>
+                     <li><a href="">PAT</a></li>
+                     <li><a href="">Convênios</a></li>
+                     <li><a href="">Bônus</a></li>
+                     <li><a href="">Mobilidade</a></li>
+                     <li><a href="">Bem-Estar e Saúde</a></li>
+                     <li><a href="">Entreterimento</a></li>
+                     <li><a href="">Gestão PME</a></li>
+                </ul>
+            </div>
+         
+        </div>
+
+        <div class="links-rapidos menus m-f footer-menus">
+            <div class="link-div">
+                <h2>Área do cliente</h2>
+                <ul>
+                     <li><a href="">Meu Cartão</a></li>
+                     <li><a href="">Portal RH</a></li>
+                     <li><a href="">Meu Estabelecimento</a></li>
+                     <li><a href="">Meu Rastreador</a></li>
+                </ul>
+            </div>
+
+            <div class="link-div">
+                <h2>Estabelecimento</h2>
+                <ul>
+                     <li><a href="">Quero ser Estabelecimento</a></li>
+                     <li><a href="">Rede Credenciada</a></li>
+                
+                </ul>
+            </div>
+
+            <div class="link-div">
+                <a href=""><h2>Trabalhe Conosco</h2></a>
+                <a href=""><h2>Tire Suas Dúvidas</h2></a>
+            </div>
+         
+        </div>
+
+        <div class="app menus m-f" >
+            <h2>Baixe o App</h2>
+            <ul>
+               <a href=""><li>IOS</li></a>
+               <a href=""><li>Android</li></a>
+            </ul>
+
+            <div class="midia-links">
+                <a href=""><i class="fab fa-instagram-square social-media"></i>  </a>
+                <a href=""><i class="fab fa-facebook-square social-media"></i> </a>
+                <a href=""><i class="fab fa-youtube-square social-media"></i>   </a>
+                <a href=""><i class="fab fa-linkedin social-media"></i>  </a>
+            </div>
+        </div>
+       </div>
+
+       
+    </footer>
+    <div class="down-footer">
+        <p>Acesse nossa Política de Privacidade.</p>
+        <p>Copyright ©2025 Vegas Card do Brasil. Todos os direitos reservados. Desenvolvido por RedHot Comunicação.</p>
+       </div>
+
+ 
+     
+    <script src="./scripts/detalhes.js"></script>
+   
+   
 </body>
 </html>

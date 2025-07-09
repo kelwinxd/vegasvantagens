@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <section class="carrossel" id="carrossel">
+        
+ <div class="carrossel-track" id="track">
+ 
+</div>
+
+  </section>
+
+  <script>
+    async function getClientToken() {
+  const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/client-token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      clientId: "site_vegas_vantagens",
+      clientSecret: "8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0="
+    })
+  });
+  const data = await res.json();
+  return data.token;
+}
+
+async function getEstabelecimentosDetalhados(token) {
+  const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos", {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+  
+  const estabelecimentos = await res.json();
+
+  // Pega os detalhes por ID
+  const detalhesPromises = estabelecimentos.map(async (est) => {
+    const resDetalhe = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${est.id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!resDetalhe.ok) {
+      console.warn(`Erro ao buscar detalhes do estabelecimento ${est.id}`);
+      return null;
+    }
+
+    const detalhes = await resDetalhe.json();
+
+    return {
+      id: est.id,
+      nome: detalhes.nome,
+      imagemLogo: detalhes.imagemPrincipal, // logo
+      imagemFachada: detalhes.imagens?.[1] || null // fachada
+    };
+  });
+
+  const estabelecimentosDetalhados = await Promise.all(detalhesPromises);
+
+  // Remove nulos (caso algum fetch falhe)
+  return estabelecimentosDetalhados.filter(e => e !== null);
+}
+
+
+function formatarSlug(str) {
+  return str
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/\s+/g, "-");
+}
+
+function criarItem(estabelecimento) {
+  const cidade = formatarSlug(estabelecimento.cidade.nome);
+  const estado = formatarSlug(estabelecimento.cidade.estado.sigla);
+  const id = estabelecimento.id;
+
+  const link = document.createElement("a");
+  link.href = `detalhes.html#${cidade}-${estado}-${id}`;
+
+  const img = document.createElement("img");
+  img.alt = `Logo ${estabelecimento.nome}`;
+  img.src = estabelecimento.imagens?.find(img => img.principal)?.caminho || "./imgs/default-image.png";
+
+  link.appendChild(img);
+  return link;
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const track = document.getElementById("track");
+
+  try {
+    const token = await getClientToken();
+    const estabelecimentos = await getEstabelecimentos(token);
+
+    // Adiciona até 8 primeiros estabelecimentos (pode mudar)
+    const maxExibir = 8;
+    const nodes = [];
+
+    for (let i = 0; i < Math.min(estabelecimentos.length, maxExibir); i++) {
+      const est = estabelecimentos[i];
+      const item = criarItem(est);
+      nodes.push(item);
+      track.appendChild(item.cloneNode(true)); // Primeira leva
+    }
+
+    // Duplica para efeito de carrossel infinito
+    nodes.forEach(n => track.appendChild(n.cloneNode(true)));
+
+    iniciarCarrossel();
+  } catch (err) {
+    console.error("Erro ao carregar carrossel:", err);
+  }
+});
+
+function iniciarCarrossel() {
+  const track = document.getElementById('track');
+  const carrossel = document.getElementById('carrossel');
+
+  let posX = 0;
+  let animationId;
+  const speed = 1;
+
+  function animate() {
+    posX -= speed;
+    if (Math.abs(posX) >= track.scrollWidth / 2) {
+      posX = 0;
+    }
+    track.style.transform = `translateX(${posX}px)`;
+    animationId = requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
+  carrossel.addEventListener('mouseleave', () => animate());
+}
+
+  </script>
+</body>
+</html>
