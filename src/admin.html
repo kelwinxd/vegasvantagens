@@ -116,8 +116,12 @@ os nossos clientes!</p>
     <label>Longitude</label>
     <input type="number" id="longitude" step="any">
 
-   <label>Imagem</label>
-<input type="file" id="imagemEstab">
+<label>Logo</label>
+<input type="file" id="imagemPrincipal">
+
+<label>Imagem Fachada </label>
+<input type="file" id="imagemAdicional">
+
 
     <button type="button" onclick="cadastrarEstabelecimento()" class="cadastrar">Cadastrar Estabelecimento</button>
 
@@ -172,7 +176,7 @@ function carregarEstados() {
  
 }
 
-function enviarImagemEstabelecimento(estabelecimentoId, imagemFile) {
+async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, principal = true) {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado para enviar imagens.");
@@ -181,28 +185,30 @@ function enviarImagemEstabelecimento(estabelecimentoId, imagemFile) {
 
   const formData = new FormData();
   formData.append("imagem", imagemFile);
-  formData.append("principal", false); // ou "false" se não for a principal
+  formData.append("principal", String(principal)); // true ou false como string
 
-  fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer " + token
-    },
-    body: formData
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Erro ao enviar imagem.");
-    return res.json();
-  })
-  .then(data => {
-    alert("Imagem enviada com sucesso!");
-    console.log("Imagem cadastrada:", data);
-  })
-  .catch(err => {
+  try {
+    const resposta = await fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token
+      },
+      body: formData
+    });
+
+    if (!resposta.ok) {
+      const erro = await resposta.text();
+      throw new Error("Erro ao enviar imagem: " + erro);
+    }
+
+    const dados = await resposta.json();
+    console.log("Imagem enviada:", dados);
+  } catch (err) {
     alert("Erro ao enviar imagem: " + err.message);
     console.error(err);
-  });
+  }
 }
+
 
 
 function carregarCidades() {
@@ -274,70 +280,84 @@ function carregarCategorias() {
   });
 }
 
-   function cadastrarEstabelecimento() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Você precisa estar logado para cadastrar.");
-        return;
-      }
-
-      const nome = document.getElementById("nomeEstab").value;
-      const ativo = document.getElementById("ativoEstab").checked;
-
-      const data = {
-        nome,
-        razaoSocial: document.getElementById("razaoSocial").value,
-        cnpj: document.getElementById("cnpj").value,
-        endereco: document.getElementById("endereco").value,
-        telefone: document.getElementById("telefone").value,
-        emailContato: document.getElementById("emailContato").value,
-        ativo,
-        categorias: [parseInt(document.getElementById("categoriaId").value)],
-        cidadeId: parseInt(document.getElementById("cidadeId").value) || 0,
-        rua: document.getElementById("rua").value,
-        numero: document.getElementById("numero").value,
-        bairro: document.getElementById("bairro").value,
-        complemento: document.getElementById("complemento").value,
-        cep: document.getElementById("cep").value,
-        latitude: parseFloat(document.getElementById("latitude").value) || 0,
-        longitude: parseFloat(document.getElementById("longitude").value) || 0
-      };
-
-      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/Criar", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify(data)
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
-        return res.json();
-      })
-      .then(data => {
-  alert("Estabelecimento cadastrado com sucesso!");
-
-
-  // Se tiver imagem, envia ela agora
-  const imagemInput = document.getElementById("imagemEstab");
-  if (imagemInput.files.length > 0) {
-    enviarImagemEstabelecimento(data.id, imagemInput.files[0]);
+  async function cadastrarEstabelecimento() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado para cadastrar.");
+    return;
   }
-})
 
-      .catch(err => {
-        alert("Erro: " + err.message);
-        console.error(err);
-      });
+  const nome = document.getElementById("nomeEstab").value;
+  const ativo = document.getElementById("ativoEstab").checked;
+  const categoriaId = parseInt(document.getElementById("categoriaId").value);
+  const imagemPrincipal = document.getElementById("imagemPrincipal");
+  const imagemAdicional = document.getElementById("imagemAdicional");
 
-        setTimeout(() => {
-      document.getElementById("formCadastro").reset();
-  }, 600)
+  const data = {
+    nome,
+    razaoSocial: document.getElementById("razaoSocial").value,
+    cnpj: document.getElementById("cnpj").value,
+    endereco: document.getElementById("endereco").value,
+    telefone: document.getElementById("telefone").value,
+    emailContato: document.getElementById("emailContato").value,
+    ativo,
+    categorias: [categoriaId],
+    cidadeId: parseInt(document.getElementById("cidadeId").value) || 0,
+    rua: document.getElementById("rua").value,
+    numero: document.getElementById("numero").value,
+    bairro: document.getElementById("bairro").value,
+    complemento: document.getElementById("complemento").value,
+    cep: document.getElementById("cep").value,
+    latitude: parseFloat(document.getElementById("latitude").value) || 0,
+    longitude: parseFloat(document.getElementById("longitude").value) || 0
+  };
 
+  try {
+    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/Criar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
 
-      console.log(token)
+    if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
+    const estab = await res.json();
+
+    alert("Estabelecimento cadastrado com sucesso!");
+
+    if (imagemPrincipal.files.length > 0) {
+      await enviarImagemEstabelecimento(estab.id, imagemPrincipal.files[0], true);
     }
+
+    if (imagemAdicional.files.length > 0) {
+      await enviarImagemEstabelecimento(estab.id, imagemAdicional.files[0], false);
+    }
+
+    if (categoriaId) {
+      await vincularCategoria(estab.id, categoriaId);
+    }
+
+    document.getElementById("formCadastro").reset();
+
+  } catch (err) {
+    alert("Erro: " + err.message);
+    console.error(err);
+  }
+}
+
+     async function vincularCategoria(estabelecimentoId, categoriaId) {
+    const token = localStorage.getItem("token");
+    await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabelecimentoId}/vincular-categorias`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify([categoriaId])
+    });
+  }
 
 
     function buscarEstabelecimentos() {
