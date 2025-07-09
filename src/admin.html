@@ -176,39 +176,27 @@ function carregarEstados() {
  
 }
 
-async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, principal = true) {
+async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, principal) {
   const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Você precisa estar logado para enviar imagens.");
-    return;
-  }
-
   const formData = new FormData();
   formData.append("imagem", imagemFile);
-  formData.append("principal", String(principal)); // true ou false como string
 
-  try {
-    const resposta = await fetch(`https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens`, {
+  const resposta = await fetch(
+    `https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens?principal=${principal}`,
+    {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + token
       },
       body: formData
-    });
-
-    if (!resposta.ok) {
-      const erro = await resposta.text();
-      throw new Error("Erro ao enviar imagem: " + erro);
     }
+  );
 
-    const dados = await resposta.json();
-    console.log("Imagem enviada:", dados);
-  } catch (err) {
-    alert("Erro ao enviar imagem: " + err.message);
-    console.error(err);
+  if (!resposta.ok) {
+    const erro = await resposta.text();
+    throw new Error("Erro ao enviar imagem: " + erro);
   }
 }
-
 
 
 function carregarCidades() {
@@ -301,7 +289,7 @@ function carregarCategorias() {
     telefone: document.getElementById("telefone").value,
     emailContato: document.getElementById("emailContato").value,
     ativo,
-    categorias: [categoriaId],
+   
     cidadeId: parseInt(document.getElementById("cidadeId").value) || 0,
     rua: document.getElementById("rua").value,
     numero: document.getElementById("numero").value,
@@ -347,17 +335,18 @@ function carregarCategorias() {
   }
 }
 
-     async function vincularCategoria(estabelecimentoId, categoriaId) {
-    const token = localStorage.getItem("token");
-    await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabelecimentoId}/vincular-categorias`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify([categoriaId])
-    });
-  }
+  async function vincularCategoria(estabelecimentoId, categoriaId) {
+  const token = localStorage.getItem("token");
+  await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabelecimentoId}/vincular-categorias`, {
+    method: "POST", // ← alterado de PUT para POST
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify([categoriaId]) // ← continua um array
+  });
+}
+
 
 
     function buscarEstabelecimentos() {
