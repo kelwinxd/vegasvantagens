@@ -119,6 +119,7 @@ margin-top: 20px;
 
 .card-info {
   flex: 1;
+  border: none;
 }
 
 .card-info h3 {
@@ -144,4 +145,8 @@ margin-top: 20px;
 }
 .card-actions i:hover {
   color: #c00;
+}
+
+#listaEstabelecimentos {
+    width: 100%;
 }
