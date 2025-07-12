@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <title>Admin Vegas Benefícios</title>
+    <script>
+  // Redireciona se não houver token
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "admin-login.html";
+  }
+</script>
 </head>
 <body>
     
@@ -134,7 +141,10 @@ os nossos clientes!</p>
      <div id="listaEstabelecimentos" style="display:none;">
     <h2>Lista de Estabelecimentos</h2>
     
-    <ul id="lista"></ul>
+ <input type="text" id="filtroEstab" placeholder="Buscar estabelecimento..." style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc;" />
+
+<div id="listaCards" class="lista-cards" style="display: flex; flex-direction: column; gap: 20px;"></div>
+
   </div>
     </div>
 
@@ -349,45 +359,114 @@ function carregarCategorias() {
 
 
 
-    function buscarEstabelecimentos() {
+   async function buscarEstabelecimentos() {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado para ver a lista.");
     return;
   }
 
-  fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos", {
-    headers: {
-      "Authorization": "Bearer " + token
-    }
-  })
-  .then(res => {
+  const listaDiv = document.getElementById("listaEstabelecimentos");
+  const listaCards = document.getElementById("listaCards");
+  listaCards.innerHTML = "";
+
+  try {
+    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
     if (!res.ok) throw new Error("Erro ao buscar estabelecimentos: " + res.status);
-    return res.json();
-  })
-  .then(data => {
-    const lista = document.getElementById("lista");
-    const listaDiv = document.getElementById("listaEstabelecimentos");
-    lista.innerHTML = "";
+    const data = await res.json();
 
     if (data.length === 0) {
-      lista.innerHTML = "<li>Nenhum estabelecimento cadastrado.</li>";
-    } else {
-      data.forEach(estab => {
-        const li = document.createElement("li");
-        li.textContent = `${estab.nome} - ${estab.ativo ? "Ativo" : "Inativo"}`;
-        lista.appendChild(li);
-      });
+      listaCards.innerHTML = "<p>Nenhum estabelecimento cadastrado.</p>";
+      return;
     }
 
-    // Mostra a div após preencher a lista
+    const detalhes = await Promise.all(
+      data.map(estab =>
+        fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estab.id}`, {
+          headers: { "Authorization": "Bearer " + token }
+        }).then(r => r.json())
+      )
+    );
+
+    detalhes.forEach(estab => {
+      const card = document.createElement("div");
+      card.className = "card-estab";
+      card.setAttribute("data-nome", estab.nome.toLowerCase());
+
+      const imagem = document.createElement("img");
+      imagem.src = estab.imagemPrincipal || "./imgs/sem-imagem.png";
+      imagem.alt = estab.nome;
+
+      const info = document.createElement("div");
+      info.className = "card-info";
+      info.innerHTML = `
+        <h3>${estab.nome}</h3>
+        <p>${estab.cidade}</p>
+      `;
+
+      const actions = document.createElement("div");
+      actions.className = "card-actions";
+
+      const btnEditar = document.createElement("i");
+      btnEditar.className = "fa-solid fa-pen-to-square";
+
+      const btnExcluir = document.createElement("i");
+      btnExcluir.className = "fa-solid fa-trash";
+
+      // Ação do botão excluir
+      btnExcluir.addEventListener("click", async () => {
+        if (confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) {
+          try {
+            const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estab.id}`, {
+              method: "DELETE",
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            });
+
+            if (!res.ok) throw new Error("Erro ao excluir");
+
+            alert("Estabelecimento excluído com sucesso!");
+            card.remove();
+          } catch (e) {
+            alert("Erro ao excluir: " + e.message);
+          }
+        }
+      });
+
+      actions.appendChild(btnEditar);
+      actions.appendChild(btnExcluir);
+
+      card.appendChild(imagem);
+      card.appendChild(info);
+      card.appendChild(actions);
+      listaCards.appendChild(card);
+    });
+
     listaDiv.style.display = "block";
-  })
-  .catch(err => {
+
+  } catch (err) {
     alert("Erro: " + err.message);
     console.error(err);
-  });
+  }
 }
+
+document.getElementById("filtroEstab").addEventListener("input", function () {
+  const termo = this.value.toLowerCase();
+  const cards = document.querySelectorAll(".card-estab");
+
+  cards.forEach(card => {
+    const nome = card.getAttribute("data-nome");
+    card.style.display = nome.includes(termo) ? "flex" : "none";
+  });
+});
+
+
   </script>
 </body>
 </html>
