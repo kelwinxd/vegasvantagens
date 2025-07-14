@@ -1,4 +1,28 @@
 let map, markers = [];
+let todasAsLojas = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const estadoPadrao = "sp";
+  const cidadePadrao = "americana";
+
+  const clientToken = await getClientToken();
+  todasAsLojas = await fetchAllStores(clientToken); // ✅ Armazena uma vez
+
+  filterState.value = estadoPadrao;
+
+  atualizarFiltroDeCidades(estadoPadrao); // ✅ monta select e ul
+
+  filterCity.value = cidadePadrao;
+  document.querySelectorAll("#list-ul li").forEach(li => {
+    li.classList.remove("active");
+    if (li.dataset.value === cidadePadrao) {
+      li.classList.add("active");
+    }
+  });
+
+  filtrar(); // já exibe os resultados
+});
+
 
 function corrigirCoordenada(valor, tipo) {
   const num = parseFloat(valor);
@@ -158,26 +182,23 @@ const mapContainer = document.getElementById("map");
 
 
 // Atualiza o select de cidades baseado no estado
-// Atualiza o select de cidades baseado no estado
-filterState.addEventListener("change", async () => {
-  const estado = filterState.value;
+filterState.addEventListener("change", () => {
+  const estadoSelecionado = filterState.value;
+  atualizarFiltroDeCidades(estadoSelecionado);
+  filtrar();
+});
+
+function atualizarFiltroDeCidades(estado) {
   const listaUl = document.getElementById("list-ul");
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
   listaUl.innerHTML = "";
 
-  const accessToken = await getClientToken();
-  const lojas = await fetchAllStores(accessToken);
-
-  // Filtra as lojas do estado selecionado
-  const lojasDoEstado = lojas.filter(loja =>
+  const lojasDoEstado = todasAsLojas.filter(loja =>
     loja.estado?.toLowerCase() === estado.toLowerCase()
   );
 
-  if (lojasDoEstado.length === 0) return;
-
   const cidadesUnicas = [...new Set(lojasDoEstado.map(loja => loja.cidade?.toLowerCase()).filter(Boolean))];
 
-  // "Todas as cidades" (opcional)
   const liDefault = document.createElement("li");
   liDefault.textContent = "Todas as Cidades";
   liDefault.dataset.value = "";
@@ -186,13 +207,11 @@ filterState.addEventListener("change", async () => {
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
-    // Add ao select
     const opt = document.createElement("option");
     opt.value = cidade;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
-    // Add à UI customizada (ul/li)
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
     li.dataset.value = cidade;
@@ -206,9 +225,8 @@ filterState.addEventListener("change", async () => {
 
     listaUl.appendChild(li);
   });
+}
 
-  filtrar();
-});
 
 
 
