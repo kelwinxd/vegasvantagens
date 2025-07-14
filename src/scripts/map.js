@@ -158,40 +158,54 @@ const mapContainer = document.getElementById("map");
 
 
 // Atualiza o select de cidades baseado no estado
-filterState.addEventListener("change", () => {
+// Atualiza o select de cidades baseado no estado
+filterState.addEventListener("change", async () => {
   const estado = filterState.value;
   const listaUl = document.getElementById("list-ul");
-  
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  listaUl.innerHTML = "";
 
-  if (cityData[estado]) {
+  const accessToken = await getClientToken();
+  const lojas = await fetchAllStores(accessToken);
 
-    listaUl.innerHTML = ""; 
-    Object.keys(cityData[estado]).forEach(cidade => {
-      const opt = document.createElement("option");
+  // Filtra as lojas do estado selecionado
+  const lojasDoEstado = lojas.filter(loja =>
+    loja.estado?.toLowerCase() === estado.toLowerCase()
+  );
 
-      opt.value = cidade;
-      opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-      filterCity.appendChild(opt);
+  if (lojasDoEstado.length === 0) return;
 
-  // LI (para a UI customizada)
+  const cidadesUnicas = [...new Set(lojasDoEstado.map(loja => loja.cidade?.toLowerCase()).filter(Boolean))];
+
+  // "Todas as cidades" (opcional)
+  const liDefault = document.createElement("li");
+  liDefault.textContent = "Todas as Cidades";
+  liDefault.dataset.value = "";
+  listaUl.appendChild(liDefault);
+
+  cidadesUnicas.forEach(cidade => {
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+
+    // Add ao select
+    const opt = document.createElement("option");
+    opt.value = cidade;
+    opt.textContent = nomeFormatado;
+    filterCity.appendChild(opt);
+
+    // Add à UI customizada (ul/li)
     const li = document.createElement("li");
-    li.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    li.textContent = nomeFormatado;
     li.dataset.value = cidade;
 
-    // Evento de clique para atualizar o filtro
     li.addEventListener("click", () => {
-      filterCity.value = cidade; // atualiza o select
-      filterCity.dispatchEvent(new Event("change")); // dispara o evento de filtro
+      filterCity.value = cidade;
+      filterCity.dispatchEvent(new Event("change"));
+      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+      li.classList.add("active");
     });
 
     listaUl.appendChild(li);
-    });
-
-
-
-
-  }
+  });
 
   filtrar();
 });
