@@ -188,13 +188,27 @@ filterState.addEventListener("change", () => {
   filtrar();
 });
 
+function normalizarEstado(estado) {
+  const mapa = {
+    "sp": "são paulo",
+    "rj": "rio de janeiro",
+    "mg": "minas gerais",
+    // adicione conforme necessário
+  };
+
+  const normalizado = estado.toLowerCase();
+  return mapa[normalizado] || normalizado;
+}
+
 function atualizarFiltroDeCidades(estado) {
   const listaUl = document.getElementById("list-ul");
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
   listaUl.innerHTML = "";
 
+  const estadoNormalizado = normalizarEstado(estado);
+
   const lojasDoEstado = todasAsLojas.filter(loja =>
-    loja.estado?.toLowerCase() === estado.toLowerCase()
+    loja.estado?.toLowerCase() === estadoNormalizado
   );
 
   const cidadesUnicas = [...new Set(lojasDoEstado.map(loja => loja.cidade?.toLowerCase()).filter(Boolean))];
@@ -226,7 +240,6 @@ function atualizarFiltroDeCidades(estado) {
     listaUl.appendChild(li);
   });
 }
-
 
 
 
@@ -436,66 +449,6 @@ function limparDados() {
   map.setZoom(10);
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const estadoPadrao = "sp";
-  const cidadePadrao = "americana";
-
-  // Obtém token e lojas da API
-  const clientToken = await getClientToken();
-  const lojas = await fetchAllStores(clientToken);
-
-  // Agrupa cidades únicas por estado
-  const cidadesDoEstado = lojas
-    .filter(l => l.cidade?.toLowerCase().includes(cidadePadrao)) // pode ajustar
-    .map(l => l.cidade.toLowerCase());
-
-  const listaUl = document.getElementById("list-ul");
-  filterState.value = estadoPadrao;
-  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-  listaUl.innerHTML = "";
-
-  // "Todas as cidades"
-  const liDefault = document.createElement("li");
-  liDefault.textContent = "Todas as Cidades";
-  liDefault.dataset.value = "";
-  listaUl.appendChild(liDefault);
-
-  // Cidades únicas
-  const cidadesUnicas = [...new Set(cidadesDoEstado)];
-  cidadesUnicas.forEach(cidade => {
-    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-
-    const opt = document.createElement("option");
-    opt.value = cidade;
-    opt.textContent = nomeFormatado;
-    filterCity.appendChild(opt);
-
-    const li = document.createElement("li");
-    li.textContent = nomeFormatado;
-    li.dataset.value = cidade;
-
-    li.addEventListener("click", () => {
-      filterCity.value = cidade;
-      filterCity.dispatchEvent(new Event("change"));
-      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-      li.classList.add("active");
-    });
-
-    listaUl.appendChild(li);
-  });
-
-  // Define cidade padrão
-  filterCity.value = cidadePadrao;
-
-  listaUl.querySelectorAll("li").forEach(li => {
-    li.classList.remove("active");
-    if (li.dataset.value === cidadePadrao) {
-      li.classList.add("active");
-    }
-  });
-
-  filtrar();
-});
 
 
 // Eventos
