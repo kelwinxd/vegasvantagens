@@ -163,6 +163,19 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
   });
 }
 
+async function initMap() {
+  try {
+    const accessToken = await getClientToken();
+    const lojas = await fetchAllStores(accessToken);
+    // resto do código...
+  } catch (error) {
+    console.error("Erro ao inicializar o mapa:", error.message);
+  }
+}
+
+window.initMap = initMap; // <- Torna acessível ao Google Maps API
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   await popularEstadosECidades();
   await initMap();
