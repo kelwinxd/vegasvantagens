@@ -9,6 +9,30 @@ const lojasList = document.querySelector(".produtoLista");
 const resultsCount = document.querySelector(".resultscount span");
 const listaUl = document.getElementById("list-ul");
 
+window.initMap = async function initMap() {
+  const token = await getClientToken();
+  todasAsLojas = await fetchAllStores(token);
+
+  if (!todasAsLojas.length) {
+    console.warn("Nenhuma loja com coordenadas encontradas.");
+    return;
+  }
+
+  const primeira = todasAsLojas.find(loja => loja.latitude && loja.longitude);
+  if (!primeira) return;
+
+  const lat = corrigirCoordenada(primeira.latitude, "latitude");
+  const lng = corrigirCoordenada(primeira.longitude, "longitude");
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat, lng },
+    zoom: 13,
+  });
+
+  filtrar(); // renderiza marcadores iniciais
+};
+
+
 // === UTILITÁRIOS ===
 function corrigirCoordenada(valor, tipo) {
   const num = parseFloat(valor);
