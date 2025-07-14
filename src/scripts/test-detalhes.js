@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const imageEls = document.querySelectorAll(".img-comercio");
     if (imageEls && loja.imagens?.length > 0) {
       imageEls.forEach(img => {
-        img.src = loja.imagens[0];
+        img.src = loja.imagens[1];
       });
     }
 
