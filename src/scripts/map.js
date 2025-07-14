@@ -175,11 +175,10 @@ async function initMap() {
 
 window.initMap = initMap; // <- Torna acessível ao Google Maps API
 
-
 document.addEventListener("DOMContentLoaded", async () => {
   await popularEstadosECidades();
-  await initMap();
-  filtrar();
+  await initMap(); // Garante que o mapa esteja pronto antes de chamar updateMap
+  filtrar(); // Só chama o filtro depois que o mapa existir
 });
 
 const searchInput = document.getElementById("searchInput");
