@@ -180,6 +180,12 @@ async function atualizarCidadesPorEstado(estado) {
 
   const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
 
+  if (cidadesUnicas.length === 0) {
+    filtrar();
+    return;
+  }
+
+  // Gerar opções
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
@@ -202,8 +208,19 @@ async function atualizarCidadesPorEstado(estado) {
     listaUl.appendChild(li);
   });
 
-  filtrar(); // Atualiza mapa e lista
+  // Se só houver uma cidade, já seleciona
+  if (cidadesUnicas.length === 1) {
+    const cidadeUnica = cidadesUnicas[0];
+    filterCity.value = cidadeUnica;
+    listaUl.querySelectorAll("li").forEach(el => {
+      el.classList.toggle("active", el.dataset.value === cidadeUnica);
+    });
+  }
+
+  // 🚨 Chamada manual ao filtro (essencial pro mobile funcionar)
+  filtrar();
 }
+
 
 
 
@@ -523,8 +540,7 @@ document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
     if (hiddenInput.id === "filterState") {
   await atualizarCidadesPorEstado(value.toLowerCase());
 
-  // Garante que o mapa filtre após carregar as cidades
-  filtrar();
+
 } else {
   // Para cidade, segmento, cartão...
   hiddenInput.dispatchEvent(new Event("change"));
