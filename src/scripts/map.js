@@ -170,7 +170,6 @@ filterState.addEventListener("change", async () => {
   const accessToken = await getClientToken();
   const lojas = await fetchAllStores(accessToken);
 
-  // Filtra cidades com base no estado selecionado
   const cidadesDoEstado = lojas
     .filter(loja => loja.uf?.toLowerCase() === estado)
     .map(loja => loja.cidade?.toLowerCase())
@@ -181,20 +180,18 @@ filterState.addEventListener("change", async () => {
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
-    // Select <option>
     const opt = document.createElement("option");
     opt.value = cidade;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
-    // Menu Mobile <li>
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
     li.dataset.value = cidade;
 
     li.addEventListener("click", () => {
       filterCity.value = cidade;
-      filterCity.dispatchEvent(new Event("change"));
+      filterCity.dispatchEvent(new Event("change")); // <– aqui sim aplica o filtro
       listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
       li.classList.add("active");
     });
@@ -202,9 +199,8 @@ filterState.addEventListener("change", async () => {
     listaUl.appendChild(li);
   });
 
-  filtrar(); // aplica os filtros após atualizar a lista de cidades
+  // ⚠️ NÃO CHAMA filtrar() aqui!
 });
-
 
 
 
