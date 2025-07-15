@@ -170,7 +170,6 @@ filterState.addEventListener("change", async () => {
   const accessToken = await getClientToken();
   const lojas = await fetchAllStores(accessToken);
 
-  // Filtra cidades com base no estado selecionado
   const cidadesDoEstado = lojas
     .filter(loja => loja.uf?.toLowerCase() === estado)
     .map(loja => loja.cidade?.toLowerCase())
@@ -181,13 +180,11 @@ filterState.addEventListener("change", async () => {
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
-    // Select <option>
     const opt = document.createElement("option");
     opt.value = cidade;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
-    // Menu Mobile <li>
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
     li.dataset.value = cidade;
@@ -202,7 +199,7 @@ filterState.addEventListener("change", async () => {
     listaUl.appendChild(li);
   });
 
-  filtrar(); // aplica os filtros após atualizar a lista de cidades
+  filtrar();
 });
 
 
@@ -418,28 +415,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const estadoPadrao = "sp";
   const cidadePadrao = "americana";
 
-  // Obtém token e lojas da API
-  const clientToken = await getClientToken();
-  const lojas = await fetchAllStores(clientToken);
-
-  // Agrupa cidades únicas por estado
-  const cidadesDoEstado = lojas
-    .filter(l => l.cidade?.toLowerCase().includes(cidadePadrao)) // pode ajustar
-    .map(l => l.cidade.toLowerCase());
+  const accessToken = await getClientToken();
+  const lojas = await fetchAllStores(accessToken);
 
   const listaUl = document.getElementById("list-ul");
-  filterState.value = estadoPadrao;
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  filterState.value = estadoPadrao;
   listaUl.innerHTML = "";
 
-  // "Todas as cidades"
-  const liDefault = document.createElement("li");
-  liDefault.textContent = "Todas as Cidades";
-  liDefault.dataset.value = "";
-  listaUl.appendChild(liDefault);
+  // Agrupa cidades por estado
+  const cidadesDoEstado = lojas
+    .filter(loja => loja.uf?.toLowerCase() === estadoPadrao)
+    .map(loja => loja.cidade?.toLowerCase())
+    .filter(Boolean);
 
-  // Cidades únicas
-  const cidadesUnicas = [...new Set(cidadesDoEstado)];
+  const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
+
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
@@ -462,9 +453,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     listaUl.appendChild(li);
   });
 
-  // Define cidade padrão
+  // Define cidade padrão no <select>
   filterCity.value = cidadePadrao;
 
+  // Marca cidade padrão no <li>
   listaUl.querySelectorAll("li").forEach(li => {
     li.classList.remove("active");
     if (li.dataset.value === cidadePadrao) {
