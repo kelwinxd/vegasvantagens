@@ -165,8 +165,9 @@ filterState.addEventListener("change", () => {
 
 async function atualizarCidadesPorEstado(estado) {
   const listaUl = document.getElementById("list-ul");
+  const filterCity = document.getElementById("filterCity");
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-  listaUl.innerHTML = "";
+  listaUl.innerHTML = "<li data-value=''>Todas as Cidades</li>";
 
   if (!estado) return;
 
@@ -183,11 +184,13 @@ async function atualizarCidadesPorEstado(estado) {
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
+    // Adiciona ao <select> padrão
     const opt = document.createElement("option");
     opt.value = cidade;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
+    // Adiciona à lista <ul> customizada do mobile
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
     li.dataset.value = cidade;
@@ -202,7 +205,8 @@ async function atualizarCidadesPorEstado(estado) {
     listaUl.appendChild(li);
   });
 
-  filtrar(); // Atualiza mapa e lista
+  // Exibe resultados de todas as cidades inicialmente
+  filtrar();
 }
 
 
@@ -416,6 +420,7 @@ function limparDados() {
 document.addEventListener("DOMContentLoaded", async () => {
   const estadoPadrao = "sp";
   const cidadePadrao = "americana";
+   await atualizarCidadesPorEstado("sp");
 
   // Obtém token e lojas da API
   const clientToken = await getClientToken();
