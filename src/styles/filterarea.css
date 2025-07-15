@@ -311,6 +311,10 @@ color: #7E7E7E;
    
     }
 
+     .filter-btns {
+    flex-wrap: wrap;
+     }
+
     .mobile-btns {
       display: flex;
       z-index: 7000000;
