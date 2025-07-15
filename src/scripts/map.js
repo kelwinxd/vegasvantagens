@@ -9,6 +9,27 @@ function corrigirCoordenada(valor, tipo) {
   return num;
 }
 
+window.initMap = async function () {
+  const accessToken = await getClientToken();
+  const lojas = await fetchAllStores(accessToken);
+
+  const primeira = lojas.find(loja => {
+    const lat = corrigirCoordenada(loja.latitude, "latitude");
+    const lng = corrigirCoordenada(loja.longitude, "longitude");
+    return !isNaN(lat) && !isNaN(lng);
+  });
+
+  if (!primeira) return;
+
+  const lat = corrigirCoordenada(primeira.latitude, "latitude");
+  const lng = corrigirCoordenada(primeira.longitude, "longitude");
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat, lng },
+    zoom: 13,
+  });
+};
+
 async function getClientToken() {
   const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
     method: 'POST',
