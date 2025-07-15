@@ -158,11 +158,52 @@ const mapContainer = document.getElementById("map");
 
 // menu mobile
 // Atualiza o select de cidades baseado no estado
-filterState.addEventListener("change", async () => {
-  const estado = filterState.value.toLowerCase();
-  await atualizarCidadesPorEstado(estado);
+filterState.addEventListener("change", () => {
+  atualizarCidadesPorEstado(filterState.value.toLowerCase());
 });
 
+
+async function atualizarCidadesPorEstado(estado) {
+  const listaUl = document.getElementById("list-ul");
+  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  listaUl.innerHTML = "";
+
+  if (!estado) return;
+
+  const accessToken = await getClientToken();
+  const lojas = await fetchAllStores(accessToken);
+
+  const cidadesDoEstado = lojas
+    .filter(loja => loja.uf?.toLowerCase() === estado)
+    .map(loja => loja.cidade?.toLowerCase())
+    .filter(Boolean);
+
+  const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
+
+  cidadesUnicas.forEach(cidade => {
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+
+    const opt = document.createElement("option");
+    opt.value = cidade;
+    opt.textContent = nomeFormatado;
+    filterCity.appendChild(opt);
+
+    const li = document.createElement("li");
+    li.textContent = nomeFormatado;
+    li.dataset.value = cidade;
+
+    li.addEventListener("click", () => {
+      filterCity.value = cidade;
+      filterCity.dispatchEvent(new Event("change"));
+      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+      li.classList.add("active");
+    });
+
+    listaUl.appendChild(li);
+  });
+
+  filtrar(); // Atualiza mapa e lista
+}
 
 
 
@@ -275,53 +316,6 @@ if (window.innerWidth <= 768) { // ✅ Só executa em telas menores ou iguais a 
   buttonVerMais.style.display = "none";
 }
 }
-
-async function atualizarCidadesPorEstado(estado) {
-  const listaUl = document.getElementById("list-ul");
-
-  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-  listaUl.innerHTML = "";
-
-  if (!estado) return;
-
-  const accessToken = await getClientToken();
-  const lojas = await fetchAllStores(accessToken);
-
-  const cidadesDoEstado = lojas
-    .filter(loja => loja.uf?.toLowerCase() === estado)
-    .map(loja => loja.cidade?.toLowerCase())
-    .filter(Boolean);
-
-  const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
-
-  cidadesUnicas.forEach(cidade => {
-    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-
-    // <select>
-    const opt = document.createElement("option");
-    opt.value = cidade;
-    opt.textContent = nomeFormatado;
-    filterCity.appendChild(opt);
-
-    // <ul> para mobile
-    const li = document.createElement("li");
-    li.textContent = nomeFormatado;
-    li.dataset.value = cidade;
-
-    li.addEventListener("click", () => {
-      filterCity.value = cidade;
-      filterCity.dispatchEvent(new Event("change"));
-      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-      li.classList.add("active");
-    });
-
-    listaUl.appendChild(li);
-  });
-
-  // Aplica filtro automaticamente
-  filtrar();
-}
-
 
 const buttonVerMais = document.querySelector(".vermais");
 const lojasContainer = document.querySelector(".lojas");
@@ -504,39 +498,34 @@ document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
   });
 
   // Seleciona a opção ao clicar
-optionsList.querySelectorAll("li").forEach((option) => {
-  option.addEventListener("click", () => {
-    const value = option.getAttribute("data-value");
+  optionsList.querySelectorAll("li").forEach((option) => {
+    option.addEventListener("click", async () => {
+      const value = option.getAttribute("data-value");
 
-    // Remove "selected" de todos os <li> DENTRO dessa optionsList
-    optionsList.querySelectorAll("li").forEach((li) => {
-      li.classList.remove("selected");
+      // Remove "selected" de todos os <li> DENTRO dessa optionsList
+      optionsList.querySelectorAll("li").forEach((li) => {
+        li.classList.remove("selected");
+      });
+
+      // Adiciona "selected" no clicado
+      option.classList.add("selected");
+
+      // Atualiza o input oculto e o título
+      hiddenInput.value = value;
+      title.textContent = option.textContent;
+
+      // Fecha a lista de opções
+      optionsList.classList.remove("show-options");
+
+      // Se for o input de estado, atualiza as cidades
+      if (hiddenInput.id === "filterState") {
+        await atualizarCidadesPorEstado(value.toLowerCase());
+      } else {
+        // Dispara evento de mudança normal
+        hiddenInput.dispatchEvent(new Event("change"));
+      }
     });
-
-    // Adiciona "selected" no clicado
-    option.classList.add("selected");
-
-    // Atualiza o input oculto e o título
-    hiddenInput.value = value;
-    title.textContent = option.textContent;
-    if (hiddenInput.id === "filterState") {
-  atualizarCidadesPorEstado(value.toLowerCase());
-}
-
-
-    // Fecha a lista de opções
-    optionsList.classList.remove("show-options");
-
-    // ⚠️ Dispara evento de mudança sempre
-    hiddenInput.dispatchEvent(new Event("change"));
-
-    // 🔁 Correção extra: se o campo alterado for o estado, atualize a lista de cidades do mobile também
-    if (hiddenInput.id === "filterState") {
-      filterState.dispatchEvent(new Event("change"));
-    }
   });
-});
-
 
   // Fecha o menu se clicar fora
   document.addEventListener("click", (e) => {
@@ -545,6 +534,7 @@ optionsList.querySelectorAll("li").forEach((option) => {
     }
   });
 });
+
 
 
 const btnCloseFilter = document.querySelector(".close-filter")
