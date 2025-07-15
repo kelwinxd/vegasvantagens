@@ -170,6 +170,7 @@ filterState.addEventListener("change", async () => {
   const accessToken = await getClientToken();
   const lojas = await fetchAllStores(accessToken);
 
+  // Filtra cidades com base no estado selecionado
   const cidadesDoEstado = lojas
     .filter(loja => loja.uf?.toLowerCase() === estado)
     .map(loja => loja.cidade?.toLowerCase())
@@ -180,18 +181,20 @@ filterState.addEventListener("change", async () => {
   cidadesUnicas.forEach(cidade => {
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
 
+    // Select <option>
     const opt = document.createElement("option");
     opt.value = cidade;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
+    // Menu Mobile <li>
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
     li.dataset.value = cidade;
 
     li.addEventListener("click", () => {
       filterCity.value = cidade;
-      filterCity.dispatchEvent(new Event("change")); // <– aqui sim aplica o filtro
+      filterCity.dispatchEvent(new Event("change"));
       listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
       li.classList.add("active");
     });
@@ -199,8 +202,9 @@ filterState.addEventListener("change", async () => {
     listaUl.appendChild(li);
   });
 
-  // ⚠️ NÃO CHAMA filtrar() aqui!
+  filtrar(); // aplica os filtros após atualizar a lista de cidades
 });
+
 
 
 
@@ -393,7 +397,7 @@ function filtrar() {
 
 function limparDados() {
   // Resetar os selects e o campo de busca
-  filterState.value = "";
+  filterState.value = "sp";
   filterCity.innerHTML = '<option value="">Todas as Cidades</option>';
   filterSegment.value = "";
   filterCard.value = "";
@@ -514,8 +518,13 @@ optionsList.querySelectorAll("li").forEach((option) => {
     // Fecha a lista de opções
     optionsList.classList.remove("show-options");
 
-    // Dispara evento de mudança (se necessário)
+    // ⚠️ Dispara evento de mudança sempre
     hiddenInput.dispatchEvent(new Event("change"));
+
+    // 🔁 Correção extra: se o campo alterado for o estado, atualize a lista de cidades do mobile também
+    if (hiddenInput.id === "filterState") {
+      filterState.dispatchEvent(new Event("change"));
+    }
   });
 });
 
