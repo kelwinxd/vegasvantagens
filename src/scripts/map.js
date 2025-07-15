@@ -160,49 +160,7 @@ const mapContainer = document.getElementById("map");
 // Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", async () => {
   const estado = filterState.value.toLowerCase();
-  const listaUl = document.getElementById("list-ul");
-
-  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-  listaUl.innerHTML = "";
-
-  if (!estado) return;
-
-  const accessToken = await getClientToken();
-  const lojas = await fetchAllStores(accessToken);
-
-  // Filtra cidades com base no estado selecionado
-  const cidadesDoEstado = lojas
-    .filter(loja => loja.uf?.toLowerCase() === estado)
-    .map(loja => loja.cidade?.toLowerCase())
-    .filter(Boolean);
-
-  const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
-
-  cidadesUnicas.forEach(cidade => {
-    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-
-    // Select <option>
-    const opt = document.createElement("option");
-    opt.value = cidade;
-    opt.textContent = nomeFormatado;
-    filterCity.appendChild(opt);
-
-    // Menu Mobile <li>
-    const li = document.createElement("li");
-    li.textContent = nomeFormatado;
-    li.dataset.value = cidade;
-
-    li.addEventListener("click", () => {
-      filterCity.value = cidade;
-      filterCity.dispatchEvent(new Event("change"));
-      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-      li.classList.add("active");
-    });
-
-    listaUl.appendChild(li);
-  });
-
-  filtrar(); // aplica os filtros após atualizar a lista de cidades
+  await atualizarCidadesPorEstado(estado);
 });
 
 
@@ -317,6 +275,53 @@ if (window.innerWidth <= 768) { // ✅ Só executa em telas menores ou iguais a 
   buttonVerMais.style.display = "none";
 }
 }
+
+async function atualizarCidadesPorEstado(estado) {
+  const listaUl = document.getElementById("list-ul");
+
+  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  listaUl.innerHTML = "";
+
+  if (!estado) return;
+
+  const accessToken = await getClientToken();
+  const lojas = await fetchAllStores(accessToken);
+
+  const cidadesDoEstado = lojas
+    .filter(loja => loja.uf?.toLowerCase() === estado)
+    .map(loja => loja.cidade?.toLowerCase())
+    .filter(Boolean);
+
+  const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
+
+  cidadesUnicas.forEach(cidade => {
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+
+    // <select>
+    const opt = document.createElement("option");
+    opt.value = cidade;
+    opt.textContent = nomeFormatado;
+    filterCity.appendChild(opt);
+
+    // <ul> para mobile
+    const li = document.createElement("li");
+    li.textContent = nomeFormatado;
+    li.dataset.value = cidade;
+
+    li.addEventListener("click", () => {
+      filterCity.value = cidade;
+      filterCity.dispatchEvent(new Event("change"));
+      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+      li.classList.add("active");
+    });
+
+    listaUl.appendChild(li);
+  });
+
+  // Aplica filtro automaticamente
+  filtrar();
+}
+
 
 const buttonVerMais = document.querySelector(".vermais");
 const lojasContainer = document.querySelector(".lojas");
@@ -514,6 +519,10 @@ optionsList.querySelectorAll("li").forEach((option) => {
     // Atualiza o input oculto e o título
     hiddenInput.value = value;
     title.textContent = option.textContent;
+    if (hiddenInput.id === "filterState") {
+  atualizarCidadesPorEstado(value.toLowerCase());
+}
+
 
     // Fecha a lista de opções
     optionsList.classList.remove("show-options");
