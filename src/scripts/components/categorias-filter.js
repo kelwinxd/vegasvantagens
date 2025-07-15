@@ -1,4 +1,4 @@
- const categoriaCards = document.querySelectorAll('.card-categoria');
+const categoriaCards = document.querySelectorAll('.card-categoria');
   const descontoCards   = document.querySelectorAll('.card-desconto');
 
   function resetFiltragem() {
@@ -50,4 +50,6 @@
     const cat = location.hash.replace('#','');
     if (cat) filtrarPorCategoria(cat);
   });
+
+
 

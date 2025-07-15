@@ -143,52 +143,6 @@ const mapContainer = document.getElementById("map");
 
 // Inicializa o mapa
 
-/*
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-
-    // Usa a API de geocodificação reversa do Google para obter cidade/estado
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        let cidadeDetectada = "";
-        let estadoDetectado = "";
-
-        for (const comp of results[0].address_components) {
-          if (comp.types.includes("administrative_area_level_2")) {
-            cidadeDetectada = comp.long_name.toLowerCase();
-          }
-          if (comp.types.includes("administrative_area_level_1")) {
-            estadoDetectado = comp.short_name.toLowerCase(); // 'SP', 'RJ'...
-          }
-        }
-
-        // Se a cidade/estado detectados existirem no seu cityData, selecione
-        if (cityData[estadoDetectado] && cityData[estadoDetectado][cidadeDetectada]) {
-          filterState.value = estadoDetectado;
-
-          // Atualiza as opções de cidade
-          filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-          Object.keys(cityData[estadoDetectado]).forEach(cidade => {
-            const opt = document.createElement("option");
-            opt.value = cidade;
-            opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-            filterCity.appendChild(opt);
-          });
-
-          filterCity.value = cidadeDetectada;
-          filtrar(); // Aplica o filtro
-        }
-      }
-    });
-  });
-}
-*/
-// Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", () => {
   const estado = filterState.value;
   const listaUl = document.getElementById("list-ul");
@@ -270,7 +224,7 @@ function updateMapByCity(cidade, segmento, busca, cartao) {
           li.innerHTML = `
          
             <div class="place-image">
-              <img src="${ponto.image}" alt="${ponto.name}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
+              <img src="${ponto.image ? ponto.image : './imgs/default-image.png' }" alt="${ponto.name}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
             </div>
             <div class="place-details">
               <h3>${ponto.name}</h3>
@@ -582,362 +536,50 @@ btnFilter.addEventListener('click', () => {
 
 
 
-
-/* slider */
-
-
-const slide1 = document.getElementById('slide1');
-const slide2 = document.getElementById('slide2');
-const slide3 = document.getElementById('slide3');
-const slidesContainer = document.querySelector('.slides');
-const bullets = document.querySelectorAll('.bullet'); // Supondo que os bullets tenham a classe '.bullet'
-
-let currentSlide = 1;
-let autoPlayInterval;
-
-// Atualiza a posição do slide com base no slide ativo
-function updateSlidePosition() {
-    if (slide1.checked) {
-        slidesContainer.style.transform = 'translateX(0%)';
-    } else if (slide2.checked) {
-        slidesContainer.style.transform = 'translateX(-33.6%)';
-    } else if (slide3.checked) {
-        slidesContainer.style.transform = 'translateX(-66.7%)';
-    }
-}
-
-// Atualiza os bullets, colocando a cor branca no ativo
-function updateBulletClasses() {
-    bullets.forEach((bullet, index) => {
-        if (index + 1 === currentSlide) {
-            bullet.classList.add('bullet-ativo');
-        } else {
-            bullet.classList.remove('bullet-ativo');
-        }
-    });
-}
-
-// Função de autoplay (muda o slide a cada 3 segundos)
-function startAutoplay() {
-    autoPlayInterval = setInterval(() => {
-        currentSlide = currentSlide % 3 + 1; // Vai de 1 a 3 e volta para 1
-        document.getElementById(`slide${currentSlide}`).checked = true;
-        updateSlidePosition();
-        updateBulletClasses();
-    }, 4000);
-}
-
-// Para o autoplay (caso queira parar em algum evento)
-function stopAutoplay() {
-    clearInterval(autoPlayInterval);
-}
-
-// Adiciona evento para os slides ao serem clicados
-slide1.addEventListener('change', () => {
-    currentSlide = 1;
-    updateSlidePosition();
-    updateBulletClasses();
-});
-
-slide2.addEventListener('change', () => {
-    currentSlide = 2;
-    updateSlidePosition();
-    updateBulletClasses();
-});
-
-slide3.addEventListener('change', () => {
-    currentSlide = 3;
-    updateSlidePosition();
-    updateBulletClasses();
-});
-
-const btnLeft = document.querySelector('.btn-left');
-const btnRight = document.querySelector('.btn-right');
-
-btnLeft.addEventListener('click', () => {
-    currentSlide = currentSlide === 1 ? 3 : currentSlide - 1;
-    document.getElementById(`slide${currentSlide}`).checked = true;
-    updateSlidePosition();
-    updateBulletClasses();
-    // Não parar autoplay!
-});
-
-btnRight.addEventListener('click', () => {
-    currentSlide = currentSlide === 3 ? 1 : currentSlide + 1;
-    document.getElementById(`slide${currentSlide}`).checked = true;
-    updateSlidePosition();
-    updateBulletClasses();
-    // Não parar autoplay!
-});
-
-
-
-// Inicializa a posição do slide
-updateSlidePosition();
-updateBulletClasses();
-
-// Inicia o autoplay
-startAutoplay();
-
-
-
-
-/* Filter Categorias */
-
- const categoriaCards = document.querySelectorAll('.card-categoria');
-  const descontoCards   = document.querySelectorAll('.card-desconto');
-
-  function resetFiltragem() {
-    categoriaCards.forEach(c => c.classList.remove('active'));
-    descontoCards.forEach(d => d.classList.remove('hidden'));
-  }
-
-  const cardsDesc = document.querySelector(".cards-descontos")
-
-  function filtrarPorCategoria(cat) {
-    resetFiltragem();
-    // destaca categoria
-    const clicked = document.querySelector(`.card-categoria[data-cat="${cat}"]`);
-    if (clicked) {
-      clicked.classList.add('active');
-      cardsDesc.classList.add('classify-cards')
-
-    } 
-
-    // filtra descontos
-    descontoCards.forEach(d => {
-      if (d.dataset.tag !== cat) d.classList.add('hidden');
-    });
-  }
-
-  // listener em cada categoria
- categoriaCards.forEach(catCard => {
-  catCard.addEventListener('click', (e) => {
-    e.preventDefault(); // caso algum clique em link
-    const cat = catCard.dataset.cat;
-    if (location.hash !== `#${cat}`) {
-      location.hash = cat; // Isso vai acionar o hashchange depois
-    } else {
-      // se o hash já for o mesmo, ainda assim forçamos o filtro
-      filtrarPorCategoria(cat);
-    }
-  });
-});
-
-  // reage a mudanças de hash (back/forward e direto na URL)
-  window.addEventListener('hashchange', () => {
-    const cat = location.hash.replace('#','');
-    if (cat) filtrarPorCategoria(cat);
-    else resetFiltragem();
-  });
-
-  // ao carregar a página, aplica filtro do hash (se houver)
-  window.addEventListener('DOMContentLoaded', () => {
-    const cat = location.hash.replace('#','');
-    if (cat) filtrarPorCategoria(cat);
-  });
-
-
-
-
   
-   const track = document.getElementById('track');
-  const carrossel = document.getElementById('carrossel');
+/*
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
 
-  // Duplica os itens para garantir continuidade
-  track.innerHTML += track.innerHTML;
+    // Usa a API de geocodificação reversa do Google para obter cidade/estado
+    const geocoder = new google.maps.Geocoder();
+    const latlng = { lat, lng };
 
-  let posX = 0;
-  let animationId;
-  const speed = 1; // pixels por frame
+    geocoder.geocode({ location: latlng }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        let cidadeDetectada = "";
+        let estadoDetectado = "";
 
-  function animate() {
-    posX -= speed;
-    if (Math.abs(posX) >= track.scrollWidth / 2) {
-      posX = 0;
-    }
-    track.style.transform = `translateX(${posX}px)`;
-    animationId = requestAnimationFrame(animate);
-  }
-
-  animate(); // inicia animação
-
-  // Pausar ao passar mouse
-  carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
-  carrossel.addEventListener('mouseleave', () => animate());
-
-
-
-
-
-
-
-  // Carrossel Novidades
-  /*
- const slides = document.querySelectorAll('.novidades .flex-content');
-let currentIndex = 0;
-const bulletsContainer = document.querySelector(".carrossel-bullets");
-const bullets2= []; // <- CRIA o array que será usado no updateBullets
-
-function updateBullets(index) {
-  bullets2.forEach((bullet, i) => {
-    bullet.classList.toggle("active", i === index);
-  });
-}
-
-function showSlide(index) {
-  slides.forEach((slide, i) => {
-    slide.classList.remove('showing');
-  });
-  slides[index].classList.add('showing');
-  updateBullets(index); // <- Atualiza os bullets sempre que muda o slide
-}
-
-function startCarousel() {
-  showSlide(currentIndex);
-
-  // Criar os bullets dinamicamente e guardar no array
-  slides.forEach((_, index) => {
-    const bullet = document.createElement("span");
-    bullet.classList.add("bullet");
-    if (index === 0) bullet.classList.add("active");
-
-    bullet.addEventListener("click", () => {
-      currentIndex = index;
-      showSlide(currentIndex); // <- Mostra o slide ao clicar no bullet
-    });
-
-    bulletsContainer.appendChild(bullet);
-    bullets2.push(bullet); // <- Armazena o bullet no array
-  });
-
-  // Muda os slides automaticamente
-  setInterval(() => {
-    currentIndex = (currentIndex + 1) % slides.length;
-    showSlide(currentIndex);
-  }, 3000);
-}
-
-document.addEventListener("DOMContentLoaded", startCarousel);
-
-*/
-
-//Menu-mobile 
-const menuMobile = document.querySelector(".menu-hamb")
-const mainMenus = document.querySelector(".main-menus")
-const closeMenu = document.querySelector(".close-menu")
-  const menuOverlay = document.querySelector(".menu-overlay");
-
-closeMenu.addEventListener('click', () => {
-   mainMenus.classList.remove("active")
-   menuMobile.style.display = 'block'
-   closeMenu.style.display = 'none'
-     menuOverlay.classList.remove("active");
-
-})
-
-menuMobile.addEventListener("click", () => {
-   mainMenus.classList.add("active")
-   menuOverlay.classList.add("active");
-   menuMobile.style.display = 'none'
-   closeMenu.style.display = 'block'
-})
-
-  menuOverlay.addEventListener("click", () => {
-   mainMenus.classList.remove("active")
-   menuMobile.style.display = 'block'
-   closeMenu.style.display = 'none'
-   menuOverlay.classList.remove("active");
-
-})
-
-
-
-
-const slide11 = document.getElementById('slide11');
-const slide22 = document.getElementById('slide22');
-const slide33 = document.getElementById('slide33');
-const slidesContainer1 = document.querySelector('.slides1');
-const bullets1 = document.querySelectorAll('.bullet1');
-
-let currentSlide1 = 1;
-let autoPlayInterval1;
-
-// Atualiza a posição do slide com base no slide ativo
-function updateSlidePosition1() {
-    if (slide11.checked) {
-        slidesContainer1.style.transform = 'translateX(0%)';
-    } else if (slide22.checked) {
-        slidesContainer1.style.transform = 'translateX(-33.6%)';
-    } else if (slide33.checked) {
-        slidesContainer1.style.transform = 'translateX(-66.7%)';
-    }
-}
-
-// Atualiza os bullets, colocando a cor branca no ativo
-function updateBulletClasses1() {
-    bullets1.forEach((bullet, index) => {
-        if (index + 1 === currentSlide1) {
-            bullet.classList.add('bullet-ativo');
-        } else {
-            bullet.classList.remove('bullet-ativo');
+        for (const comp of results[0].address_components) {
+          if (comp.types.includes("administrative_area_level_2")) {
+            cidadeDetectada = comp.long_name.toLowerCase();
+          }
+          if (comp.types.includes("administrative_area_level_1")) {
+            estadoDetectado = comp.short_name.toLowerCase(); // 'SP', 'RJ'...
+          }
         }
+
+        // Se a cidade/estado detectados existirem no seu cityData, selecione
+        if (cityData[estadoDetectado] && cityData[estadoDetectado][cidadeDetectada]) {
+          filterState.value = estadoDetectado;
+
+          // Atualiza as opções de cidade
+          filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+          Object.keys(cityData[estadoDetectado]).forEach(cidade => {
+            const opt = document.createElement("option");
+            opt.value = cidade;
+            opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+            filterCity.appendChild(opt);
+          });
+
+          filterCity.value = cidadeDetectada;
+          filtrar(); // Aplica o filtro
+        }
+      }
     });
+  });
 }
-
-// Função de autoplay
-function startAutoplay1() {
-    autoPlayInterval1 = setInterval(() => {
-        currentSlide1 = currentSlide1 % 3 + 1;
-        document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
-        updateSlidePosition1();
-        updateBulletClasses1();
-    }, 4000);
-}
-
-// Para o autoplay
-function stopAutoplay1() {
-    clearInterval(autoPlayInterval1);
-}
-
-// Eventos de mudança de slide manual
-slide11.addEventListener('change', () => {
-    currentSlide1 = 1;
-    updateSlidePosition1();
-    updateBulletClasses1();
-});
-
-slide22.addEventListener('change', () => {
-    currentSlide1 = 2;
-    updateSlidePosition1();
-    updateBulletClasses1();
-});
-
-slide33.addEventListener('change', () => {
-    currentSlide1 = 3;
-    updateSlidePosition1();
-    updateBulletClasses1();
-});
-
-const btnLeft1 = document.querySelector('.btn-left1');
-const btnRight1 = document.querySelector('.btn-right1');
-
-btnLeft1.addEventListener('click', () => {
-    currentSlide1 = currentSlide1 === 1 ? 3 : currentSlide1 - 1;
-    document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
-    updateSlidePosition1();
-    updateBulletClasses1();
-});
-
-btnRight1.addEventListener('click', () => {
-    currentSlide1 = currentSlide1 === 3 ? 1 : currentSlide1 + 1;
-    document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
-    updateSlidePosition1();
-    updateBulletClasses1();
-});
-
-// Inicializa
-updateSlidePosition1();
-updateBulletClasses1();
-startAutoplay1();
-
+*/
+// Atualiza o select de cidades baseado no estado
