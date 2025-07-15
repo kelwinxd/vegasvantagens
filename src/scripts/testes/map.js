@@ -163,43 +163,42 @@ filterState.addEventListener("change", () => {
 });
 
 
-async function atualizarCidadesPorEstado(estado) {
+async function fetchCidadesPorEstado(estadoId) {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`);
+  return await resp.json();
+}
+
+const estados = {
+  sp: 1,
+  rj: 2,
+  mg: 3,
+  es: 4
+};
+
+async function atualizarCidadesPorEstado(siglaEstado) {
+  const estadoId = estados[siglaEstado.toLowerCase()];
+  if (!estadoId) return;
+
+  const cidades = await fetchCidadesPorEstado(estadoId);
   const listaUl = document.getElementById("list-ul");
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
   listaUl.innerHTML = "";
 
-  if (!estado) return;
-
-  const accessToken = await getClientToken();
-  const lojas = await fetchAllStores(accessToken);
-
-  const cidadesDoEstado = lojas
-    .filter(loja => loja.uf?.toLowerCase() === estado)
-    .map(loja => loja.cidade?.toLowerCase())
-    .filter(Boolean);
-
-  const cidadesUnicas = [...new Set(cidadesDoEstado)].sort();
-
-  if (cidadesUnicas.length === 0) {
-    filtrar();
-    return;
-  }
-
-  // Gerar opções
-  cidadesUnicas.forEach(cidade => {
-    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+  cidades.forEach(cidade => {
+    const nome = cidade.nome;
+    const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1);
 
     const opt = document.createElement("option");
-    opt.value = cidade;
+    opt.value = nome;
     opt.textContent = nomeFormatado;
     filterCity.appendChild(opt);
 
     const li = document.createElement("li");
     li.textContent = nomeFormatado;
-    li.dataset.value = cidade;
+    li.dataset.value = nome;
 
     li.addEventListener("click", () => {
-      filterCity.value = cidade;
+      filterCity.value = nome;
       filterCity.dispatchEvent(new Event("change"));
       listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
       li.classList.add("active");
@@ -208,19 +207,8 @@ async function atualizarCidadesPorEstado(estado) {
     listaUl.appendChild(li);
   });
 
-  // Se só houver uma cidade, já seleciona
-  if (cidadesUnicas.length === 1) {
-    const cidadeUnica = cidadesUnicas[0];
-    filterCity.value = cidadeUnica;
-    listaUl.querySelectorAll("li").forEach(el => {
-      el.classList.toggle("active", el.dataset.value === cidadeUnica);
-    });
-  }
-
-  // 🚨 Chamada manual ao filtro (essencial pro mobile funcionar)
   filtrar();
 }
-
 
 
 
