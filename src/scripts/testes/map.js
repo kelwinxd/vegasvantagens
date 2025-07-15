@@ -138,7 +138,6 @@ async function atualizarCidadesPorEstado(estadoId) {
   filtrar();
 }
 
-// Evento para select real
 const filterState = document.getElementById("filterState");
 filterState.addEventListener("change", () => {
   atualizarCidadesPorEstado(filterState.value);
@@ -147,6 +146,9 @@ filterState.addEventListener("change", () => {
 async function initMap() {
   const accessToken = await getClientToken();
   const lojas = await fetchAllStores(accessToken);
+  const lojasList = document.querySelector(".produtoLista");
+  const resultsCount = document.querySelector(".resultscount span");
+  let count = 0;
 
   const primeira = lojas.find(loja => loja.latitude && loja.longitude);
   if (!primeira) return;
@@ -170,6 +172,40 @@ async function initMap() {
         title: loja.nome
       });
       markers.push(marker);
+
+      const li = document.createElement("li");
+      li.classList.add("place-card");
+      li.dataset.city = loja.cidade?.nome || "";
+      li.dataset.state = loja.unidadeFederativa?.sigla || "";
+      li.dataset.seg = loja.segmentoPrincipal || "";
+      li.dataset.card = loja.cartoesAceitos?.join(",") || "";
+      li.dataset.tags = `${loja.nome?.toLowerCase() || ""} ${loja.endereco?.toLowerCase() || ""}`;
+
+      li.innerHTML = `
+        <div class="place-image">
+          <img src="${loja.imagemUrl || './imgs/default-image.png'}" alt="${loja.nome}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
+        </div>
+        <div class="place-details">
+          <h3>${loja.nome}</h3>
+          <p class="address">${loja.endereco}</p>
+          <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
+          <button class="btn-card-map">Saiba Mais</button>
+        </div>
+      `;
+
+      lojasList.appendChild(li);
+      count++;
+
+      resultsCount.textContent = `${count}`;
+
+      li.addEventListener("click", () => {
+        const hash = encodeURIComponent(`${loja.cidade?.nome}-${loja.unidadeFederativa?.sigla}-${loja.nome}`);
+        window.location.href = `detalhes.html#${hash}`;
+      });
+
+      if (count >= 4) {
+        li.classList.add('hidden');
+      }
     }
   });
 }
