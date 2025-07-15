@@ -1,6 +1,3 @@
-// scripts/pages/home.js (como módulo)
-import { getClientToken, fetchAllStores } from "../api/lojas-api.js";
-
 let map;
 let markers = [];
 const lojasList = document.querySelector(".produtoLista");
@@ -14,7 +11,45 @@ function corrigirCoordenada(valor, tipo) {
   return num;
 }
 
-export async function initMap() {
+async function getClientToken() {
+  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientId: 'site_vegas_vantagens',
+      clientSecret: '8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0='
+    })
+  });
+  const data = await resp.json();
+  return data.accessToken;
+}
+
+async function fetchAllStores(accessToken) {
+  try {
+    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (!respLista.ok) throw new Error("Erro ao buscar lista geral");
+    const lista = await respLista.json();
+
+    const detalhes = await Promise.all(
+      lista.map(async loja => {
+        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${loja.id}`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!detalheResp.ok) return null;
+        return await detalheResp.json();
+      })
+    );
+
+    return detalhes.filter(e => e && e.latitude && e.longitude);
+  } catch (err) {
+    console.error("Erro ao buscar estabelecimentos completos:", err.message);
+    return [];
+  }
+}
+
+async function initMap() {
   try {
     const token = await getClientToken();
     const lojas = await fetchAllStores(token);
@@ -59,11 +94,11 @@ export async function initMap() {
 
         const li = document.createElement("li");
         li.classList.add("place-card");
-        li.dataset.city = loja.cidade.toLowerCase();
-        li.dataset.state = loja.estado.toLowerCase();
+        li.dataset.city = loja.cidade?.toLowerCase() || "";
+        li.dataset.state = loja.estado?.toLowerCase() || "";
         li.dataset.seg = loja.categorias?.join(",") || "";
         li.dataset.card = loja.cartoes?.join(",") || "";
-        li.dataset.tags = `${loja.nome.toLowerCase()} ${loja.endereco?.toLowerCase()}`;
+        li.dataset.tags = `${loja.nome?.toLowerCase() || ""} ${loja.endereco?.toLowerCase() || ""}`;
 
         li.innerHTML = `
           <div class="place-image">
@@ -89,3 +124,7 @@ export async function initMap() {
     console.error("Erro ao carregar mapa e lojas:", e);
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  initMap();
+});
