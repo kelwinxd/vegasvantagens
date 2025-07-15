@@ -144,6 +144,38 @@ filterState.addEventListener("change", () => {
   atualizarCidadesPorEstado(filterState.value);
 });
 
+async function initMap() {
+  const accessToken = await getClientToken();
+  const lojas = await fetchAllStores(accessToken);
+
+  const primeira = lojas.find(loja => loja.latitude && loja.longitude);
+  if (!primeira) return;
+
+  const latInicial = corrigirCoordenada(primeira.latitude, "latitude");
+  const lngInicial = corrigirCoordenada(primeira.longitude, "longitude");
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: latInicial, lng: lngInicial },
+    zoom: 13
+  });
+
+  lojas.forEach(loja => {
+    const lat = corrigirCoordenada(loja.latitude, "latitude");
+    const lng = corrigirCoordenada(loja.longitude, "longitude");
+
+    if (!isNaN(lat) && !isNaN(lng)) {
+      const marker = new google.maps.Marker({
+        position: { lat, lng },
+        map,
+        title: loja.nome
+      });
+      markers.push(marker);
+    }
+  });
+}
+
+window.initMap = initMap;
+
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarEstados();
   await initMap();
