@@ -158,6 +158,11 @@ async function atualizarCidadesPorEstado(estado) {
   filtrar();
 }
 
+function filtrar() {
+  // Reimplemente aqui sua lógica de filtragem se necessário
+  console.log("Filtro aplicado (placeholder).");
+}
+
 // Atualização para selects personalizados (mobile)
 document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
   const title = selectWrapper.querySelector(".custom-select-title");
