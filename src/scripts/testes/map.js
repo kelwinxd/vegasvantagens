@@ -235,7 +235,14 @@ async function atualizarCidadesPorEstado(estadoId) {
       }
     });
 
-    if (!resp.ok) throw new Error("Cidades não encontradas para este estado.");
+    if (!resp.ok) {
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+    lojasList.innerHTML = "";
+      throw new Error("Cidades não encontradas para este estado.");
+      
+
+    } 
 
     const cidades = await resp.json();
 
@@ -485,6 +492,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const spOption = [...filterState.options].find(opt => opt.textContent === "SP");
   if (spOption) {
     filterState.value = spOption.value;
+    spOption.classList.add("selected")
     await atualizarCidadesPorEstado(spOption.value);
 
     const cidadeOption = [...filterCity.options].find(opt => opt.textContent.toLowerCase() === "americana");
@@ -497,6 +505,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (cidadeLi) {
         listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
         cidadeLi.classList.add("active");
+        cidadeLi.classList.add('selected')
+        console.log(cidadeLi)
       }
     }
   }
