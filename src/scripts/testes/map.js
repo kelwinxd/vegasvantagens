@@ -1,5 +1,5 @@
 let map, markers = [];
-
+  window.initMap = initMap;
 function corrigirCoordenada(valor, tipo) {
   const num = parseFloat(valor);
   if (isNaN(num)) return null;
@@ -489,9 +489,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (spOption) {
     filterState.value = spOption.value;
     document.querySelector(".custom-options[data-input-id='filterState'] li[data-value='" + spOption.value + "']")?.classList.add("selected");
-    document.querySelector(".custom-select-title")?.textContent = "SP";
+    document.querySelector(".custom-select-title").textContent = "SP";
     await atualizarCidadesPorEstado(spOption.value);
   }
+
 
   await initMap();
 });
