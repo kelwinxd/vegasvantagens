@@ -255,6 +255,7 @@ async function atualizarCidadesPorEstado(estadoId) {
       li.addEventListener("click", () => {
         filterCity.value = nome;
         filterCity.dispatchEvent(new Event("change"));
+
         listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
         li.classList.add("active");
 
@@ -278,6 +279,7 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
     const accessToken = await getClientToken();
     const lojas = await fetchAllStores(accessToken);
 
+    // Remove todos os marcadores existentes
     markers.forEach(m => m.setMap(null));
     markers = [];
     lojasList.innerHTML = "";
@@ -288,37 +290,36 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
       const nomeMatch = !busca || loja.nome.toLowerCase().includes(busca.toLowerCase());
       const cidadeMatch = !cidade || loja.cidade.toLowerCase() === cidade.toLowerCase();
       const segMatch = !segmento || loja.categorias?.some(cat => cat.toLowerCase().includes(segmento.toLowerCase()));
-      const cardMatch = !cartao || loja.cartoes?.includes(cartao); // ajuste se necessário
-
+      const cardMatch = !cartao || loja.cartoes?.includes(cartao);
       return nomeMatch && cidadeMatch && segMatch && cardMatch;
     });
 
     console.log("Lojas filtradas:", lojasFiltradas);
 
-
-
-    if (lojasFiltradas.length === 0) return;
+    if (lojasFiltradas.length === 0) {
+      document.querySelector(".resultscount span").textContent = "0";
+      return;
+    }
 
     const cidadeCentro = lojasFiltradas[0];
-  const centroLat = corrigirCoordenada(cidadeCentro.latitude, "latitude");
-const centroLng = corrigirCoordenada(cidadeCentro.longitude, "longitude");
+    const centroLat = corrigirCoordenada(cidadeCentro.latitude, "latitude");
+    const centroLng = corrigirCoordenada(cidadeCentro.longitude, "longitude");
 
-if (!isNaN(centroLat) && !isNaN(centroLng)) {
-  map.setCenter({ lat: centroLat, lng: centroLng });
-  map.setZoom(13);
-}
+    if (!isNaN(centroLat) && !isNaN(centroLng)) {
+      map.setCenter({ lat: centroLat, lng: centroLng });
+      map.setZoom(13);
+    }
 
-lojasFiltradas.forEach(loja => {
-  const lat = corrigirCoordenada(loja.latitude, "latitude");
-  const lng = corrigirCoordenada(loja.longitude, "longitude");
+    lojasFiltradas.forEach(loja => {
+      const lat = corrigirCoordenada(loja.latitude, "latitude");
+      const lng = corrigirCoordenada(loja.longitude, "longitude");
 
-  if (!isNaN(lat) && !isNaN(lng)) {
-    const marker = new google.maps.Marker({
-      position: { lat, lng },
-      map,
-      title: loja.nome
-    });
-
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const marker = new google.maps.Marker({
+          position: { lat, lng },
+          map,
+          title: loja.nome
+        });
 
         marker.addListener("click", () => {
           window.location.href = `testes.html#store-${loja.id}`;
@@ -329,7 +330,7 @@ lojasFiltradas.forEach(loja => {
         const li = document.createElement("li");
         li.classList.add("place-card");
         li.dataset.city = loja.cidade;
-        li.dataset.state = ""; // pode incluir se for necessário depois
+        li.dataset.state = "";
         li.dataset.seg = loja.categorias?.join(",") || "";
         li.dataset.card = loja.cartoes?.join(",") || "";
         li.dataset.tags = `${loja.nome.toLowerCase()} ${loja.rua?.toLowerCase() || ""}`;
@@ -343,8 +344,7 @@ lojasFiltradas.forEach(loja => {
             <p class="address">${loja.rua}, ${loja.numero}, ${loja.bairro}</p>
             <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
             <button class="btn-card-map">Saiba Mais</button>
-          </div>
-        `;
+          </div>`;
 
         lojasList.appendChild(li);
         count++;
@@ -356,30 +356,20 @@ lojasFiltradas.forEach(loja => {
           const hash = encodeURIComponent(`store-${loja.id}`);
           window.location.href = `testes.html#${hash}`;
         });
-
-      /*  if (count >= 4) {
-          li.classList.add("hidden");
-        }*/
       }
     });
-
   } catch (err) {
     console.error("Erro ao atualizar mapa:", err.message);
   }
-
-const totalItems = lojasList.querySelectorAll("li").length;
-if (window.innerWidth <= 768) { // ✅ Só executa em telas menores ou iguais a 768px
-  if (totalItems > 3) {
-    buttonVerMais.style.display = "block";
-    buttonVerMais.textContent = "Ver Mais";
-    buttonVerMais.classList.remove("expanded");
-  } else {
-    buttonVerMais.style.display = "none";
-  }
-} else {
-  // 👉 Se for maior que 768, esconde sempre
-  buttonVerMais.style.display = "none";
 }
+
+function ativarCidadeMobile(nomeCidade) {
+  const listaUl = document.getElementById("list-ul");
+  const cidadeLi = [...listaUl.querySelectorAll("li")].find(li => li.dataset.value?.toLowerCase() === nomeCidade.toLowerCase());
+  if (cidadeLi) {
+    listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+    cidadeLi.classList.add("active");
+  }
 }
 
 const buttonVerMais = document.querySelector(".vermais");
@@ -481,7 +471,6 @@ function limparDados() {
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarEstados();
 
-  // Define SP e cidade Americana após carregar estados e cidades
   const spOption = [...filterState.options].find(opt => opt.textContent === "SP");
   if (spOption) {
     filterState.value = spOption.value;
@@ -491,19 +480,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (cidadeOption) {
       filterCity.value = cidadeOption.value;
       filterCity.dispatchEvent(new Event("change"));
-
-      const listaUl = document.getElementById("list-ul");
-      const cidadeLi = [...listaUl.querySelectorAll("li")].find(li => li.dataset.value?.toLowerCase() === "americana");
-      if (cidadeLi) {
-        listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-        cidadeLi.classList.add("active");
-      }
+      ativarCidadeMobile("Americana");
     }
   }
 
   await initMap();
 });
-
 
 
 
