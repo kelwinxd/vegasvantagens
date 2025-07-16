@@ -223,43 +223,50 @@ async function carregarEstados() {
 async function atualizarCidadesPorEstado(estadoId) {
   if (!estadoId) return;
 
-  const accessToken = await getClientToken();
-  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
-  });
-  const cidades = await resp.json();
-
   const listaUl = document.getElementById("list-ul");
   filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
   listaUl.innerHTML = `<li data-value="">Todas as Cidades</li>`;
 
-  cidades.forEach(cidade => {
-    const nome = cidade.nome;
-    const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1);
-
-    const opt = document.createElement("option");
-    opt.value = nome;
-    opt.textContent = nomeFormatado;
-    filterCity.appendChild(opt);
-
-    const li = document.createElement("li");
-    li.textContent = nomeFormatado;
-    li.dataset.value = nome;
-
-    li.addEventListener("click", () => {
-      filterCity.value = nome;
-      filterCity.dispatchEvent(new Event("change"));
-      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-      li.classList.add("active");
-
-      const title = listaUl.closest(".custom-select")?.querySelector(".custom-select-title");
-      if (title) title.textContent = nomeFormatado;
+  try {
+    const accessToken = await getClientToken();
+    const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
     });
 
-    listaUl.appendChild(li);
-  });
+    if (!resp.ok) throw new Error("Cidades não encontradas para este estado.");
+
+    const cidades = await resp.json();
+
+    cidades.forEach(cidade => {
+      const nome = cidade.nome;
+      const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1);
+
+      const opt = document.createElement("option");
+      opt.value = nome;
+      opt.textContent = nomeFormatado;
+      filterCity.appendChild(opt);
+
+      const li = document.createElement("li");
+      li.textContent = nomeFormatado;
+      li.dataset.value = nome;
+
+      li.addEventListener("click", () => {
+        filterCity.value = nome;
+        filterCity.dispatchEvent(new Event("change"));
+        listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+        li.classList.add("active");
+
+        const title = listaUl.closest(".custom-select")?.querySelector(".custom-select-title");
+        if (title) title.textContent = nomeFormatado;
+      });
+
+      listaUl.appendChild(li);
+    });
+  } catch (error) {
+    console.warn("Falha ao carregar cidades:", error.message);
+  }
 
   filtrar();
 }
@@ -473,6 +480,27 @@ function limparDados() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await carregarEstados();
+
+  // Define SP e cidade Americana após carregar estados e cidades
+  const spOption = [...filterState.options].find(opt => opt.textContent === "SP");
+  if (spOption) {
+    filterState.value = spOption.value;
+    await atualizarCidadesPorEstado(spOption.value);
+
+    const cidadeOption = [...filterCity.options].find(opt => opt.textContent.toLowerCase() === "americana");
+    if (cidadeOption) {
+      filterCity.value = cidadeOption.value;
+      filterCity.dispatchEvent(new Event("change"));
+
+      const listaUl = document.getElementById("list-ul");
+      const cidadeLi = [...listaUl.querySelectorAll("li")].find(li => li.dataset.value?.toLowerCase() === "americana");
+      if (cidadeLi) {
+        listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+        cidadeLi.classList.add("active");
+      }
+    }
+  }
+
   await initMap();
 });
 
