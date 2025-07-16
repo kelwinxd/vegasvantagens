@@ -270,11 +270,24 @@ async function atualizarCidadesPorEstado(estadoId) {
   }
 
   filtrar();
+
+  // Ativar cidade Americana se ela existir na lista
+const cidadeInicial = cidades.find(c => c.nome.toLowerCase() === "americana");
+if (cidadeInicial) {
+  filterCity.value = "Americana";
+  filterCity.dispatchEvent(new Event("change"));
+  ativarCidadeMobile("Americana");
+}
+
 }
 
 
 
 async function updateMapByCity(cidade, segmento, busca, cartao) {
+  // Remove todos os marcadores existentes
+markers.forEach(m => m.setMap(null));
+markers = [];
+
   try {
     const accessToken = await getClientToken();
     const lojas = await fetchAllStores(accessToken);
@@ -371,6 +384,7 @@ function ativarCidadeMobile(nomeCidade) {
     cidadeLi.classList.add("active");
   }
 }
+
 
 const buttonVerMais = document.querySelector(".vermais");
 const lojasContainer = document.querySelector(".lojas");
@@ -474,18 +488,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const spOption = [...filterState.options].find(opt => opt.textContent === "SP");
   if (spOption) {
     filterState.value = spOption.value;
+    document.querySelector(".custom-options[data-input-id='filterState'] li[data-value='" + spOption.value + "']")?.classList.add("selected");
+    document.querySelector(".custom-select-title")?.textContent = "SP";
     await atualizarCidadesPorEstado(spOption.value);
-
-    const cidadeOption = [...filterCity.options].find(opt => opt.textContent.toLowerCase() === "americana");
-    if (cidadeOption) {
-      filterCity.value = cidadeOption.value;
-      filterCity.dispatchEvent(new Event("change"));
-      ativarCidadeMobile("Americana");
-    }
   }
 
   await initMap();
 });
+
 
 
 
