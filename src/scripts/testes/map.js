@@ -506,6 +506,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
         cidadeLi.classList.add("active");
         cidadeLi.classList.add('selected')
+
         console.log(cidadeLi)
       }
     }
@@ -530,6 +531,7 @@ btnLimpar.addEventListener("click", limparDados);
 document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
   const title = selectWrapper.querySelector(".custom-select-title");
   const optionsList = selectWrapper.querySelector(".custom-options");
+  const listUl = document.querySelectorAll("#list-ul li")
   const hiddenInput = document.getElementById(optionsList.dataset.inputId);
 
   if (!title || !optionsList || !hiddenInput) return;
@@ -538,6 +540,16 @@ document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
   title.addEventListener("click", () => {
     optionsList.classList.toggle("show-options");
   });
+
+  listUl.forEach((l) => {
+    l.addEventListener('click', () => {
+      listUl.forEach((li) => {
+        li.classList.remove('selected')
+      })
+    })
+
+    l.classList.add('selected')
+  })
 
   // Seleciona a opção ao clicar
   optionsList.querySelectorAll("li").forEach((option) => {
@@ -616,6 +628,8 @@ btnFilter.addEventListener('click', () => {
         // Marca a opção selecionada visualmente
         optionList.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
         li.classList.add('selected');
+
+
 
         // Dispara evento de mudança, caso haja lógica atrelada
         select.dispatchEvent(new Event('change'));
