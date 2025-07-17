@@ -23,7 +23,7 @@
 .card-desconto {
     flex: 1 1 calc(25%);
     min-width: calc(33% - 14px);
-    height: 350px;
+    height: 450px;
     background: #fff;
     text-align: center;
     max-width: 200px;
