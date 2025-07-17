@@ -209,6 +209,7 @@ if (window.location.pathname.includes("testes.html")) {
 
           modal.style.display = "flex";
           modal.style.flexDirection = 'column'
+          modal.style.alignItems = 'center'
           overlay.style.display = "flex";
         });
 
