@@ -11,6 +11,19 @@ function hideGlobalLoader() {
   globalLoader.style.display = "none";
 }
 
+function createInlineLoader(targetEl) {
+  const loader = document.createElement("div");
+  loader.className = "loader loader-inline";
+  loader.style.position = "absolute";
+  loader.style.top = "50%";
+  loader.style.left = "50%";
+  loader.style.transform = "translate(-50%, -50%)";
+  loader.style.zIndex = "10";
+  targetEl.style.position = "relative";
+  targetEl.appendChild(loader);
+  return loader;
+}
+
 async function getClientToken() {
   const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
     method: 'POST',
@@ -46,6 +59,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const storeId = idMatch[1];
   showGlobalLoader();
+
+  const imgContainers = document.querySelectorAll(".img-comercio");
+  const logoContainers = document.querySelectorAll(".img-logo img");
+  const loadersImg = [];
+  const loadersLogo = [];
+
+  imgContainers.forEach(container => {
+    const loader = createInlineLoader(container);
+    loadersImg.push(loader);
+    container.querySelector("img").style.display = "none";
+  });
+
+  logoContainers.forEach(img => {
+    const loader = createInlineLoader(img.parentElement);
+    loadersLogo.push(loader);
+    img.style.display = "none";
+  });
 
   try {
     const token = await getClientToken();
