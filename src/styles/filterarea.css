@@ -220,8 +220,12 @@ border-radius: 8px;
   }
 
   #mensagem-vazia {
-    margin-left: 20px;
-  }
+  display: none;
+  text-align: center;
+  margin-top: 30px;
+  font-weight: 500;
+  color: #333;
+}
 
   .title-mp {
     font-size: 32px;

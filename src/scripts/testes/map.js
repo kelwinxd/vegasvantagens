@@ -20,8 +20,10 @@ async function initMap() {
     const accessToken = await getClientToken();
     const lojas = await fetchAllStores(accessToken);
 
+
     if (!lojas || lojas.length === 0) {
       console.warn("Nenhuma loja encontrada.");
+ 
       return;
     }
 
@@ -102,6 +104,7 @@ async function loginToken(email, senha) {
 
 async function fetchAllStores(accessToken) {
   try {
+    
     // Buscar lista resumida
     const respLista = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -123,6 +126,7 @@ async function fetchAllStores(accessToken) {
     return detalhes.filter(e => e && e.latitude && e.longitude);
 
   } catch (err) {
+
     console.error("Erro ao buscar estabelecimentos completos:", err.message);
     return [];
   }
@@ -292,12 +296,18 @@ loader.style.display = "none";
 lojasList.parentElement.insertBefore(loader, lojasList);
 
 function mostrarLoader() {
+  document.getElementById("mensagem-vazia").style.display = "none";
   loader.style.display = "block";
 }
 function esconderLoader() {
   loader.style.display = "none";
 }
-
+function mostrarMensagemVazia() {
+  document.getElementById("mensagem-vazia").style.display = "block";
+}
+function esconderMensagemVazia() {
+  document.getElementById("mensagem-vazia").style.display = "none";
+}
 
 async function updateMapByCity(cidade, segmento, busca, cartao) {
   try {
@@ -324,7 +334,10 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
 
 
 
-    if (lojasFiltradas.length === 0) return;
+    if (lojasFiltradas.length === 0) {
+      mostrarMensagemVazia();
+      return;
+    }
 
     const cidadeCentro = lojasFiltradas[0];
   const centroLat = corrigirCoordenada(cidadeCentro.latitude, "latitude");
@@ -392,6 +405,7 @@ lojasFiltradas.forEach(loja => {
 
   } catch (err) {
     console.error("Erro ao atualizar mapa:", err.message);
+     mostrarMensagemVazia();
   }finally {
     esconderLoader();
   }
