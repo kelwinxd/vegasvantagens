@@ -83,3 +83,72 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Erro ao buscar detalhes da loja:", err.message);
   }
 });
+
+// Função auxiliar para buscar cupons
+async function fetchCuponsPorEstabelecimento(token, estabelecimentoId) {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cupons/por-estabelecimento/${estabelecimentoId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!resp.ok) throw new Error("Falha ao buscar cupons");
+  return await resp.json();
+}
+
+// Atualização na DOMContentLoaded para página de testes.html
+if (window.location.pathname.includes("testes.html")) {
+  document.addEventListener("DOMContentLoaded", async () => {
+    const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
+    const idMatch = hash.match(/^store-(\d+)$/);
+
+    if (!idMatch) return;
+    const storeId = idMatch[1];
+
+    try {
+      const token = await getClientToken();
+      const cupons = await fetchCuponsPorEstabelecimento(token, storeId);
+
+      const container = document.querySelector(".cards-descontos");
+      if (!container) return;
+
+      container.innerHTML = "";
+      cupons.forEach(cupom => {
+        const card = document.createElement("div");
+        card.className = "card-desconto";
+        card.innerHTML = `
+          <div class="card-image">
+            <img src="${cupom.imagens?.[0] || './imgs/default-image.png'}" alt="Imagem do Cupom">
+          </div>
+          <div class="content">
+            <div class="tag">${cupom.titulo}</div>
+            <h2>${cupom.codigo}</h2>
+            <p>${cupom.descricao}</p>
+          </div>
+          <button>Ver Mais</button>
+        `;
+
+        card.querySelector("button").addEventListener("click", () => {
+          const modal = document.querySelector(".modal");
+          if (!modal) return;
+          modal.querySelector(".modal-title").textContent = cupom.codigo;
+          modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
+          modal.querySelector(".modal-descricao").textContent = cupom.descricao;
+          modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
+          modal.style.display = "flex";
+        });
+
+        container.appendChild(card);
+      });
+
+      const closeBtn = document.querySelector(".modal .close-btn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          document.querySelector(".modal").style.display = "none";
+        });
+      }
+
+    } catch (e) {
+      console.error("Erro ao carregar cupons:", e.message);
+    }
+  });
+}
