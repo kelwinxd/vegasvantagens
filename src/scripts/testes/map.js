@@ -285,10 +285,23 @@ async function atualizarCidadesPorEstado(estadoId) {
   filtrar();
 }
 
+// Criação do elemento loader no HTML (adicione dinamicamente)
+const loader = document.createElement("div");
+loader.className = "loader";
+loader.style.display = "none";
+lojasList.parentElement.insertBefore(loader, lojasList);
+
+function mostrarLoader() {
+  loader.style.display = "block";
+}
+function esconderLoader() {
+  loader.style.display = "none";
+}
 
 
 async function updateMapByCity(cidade, segmento, busca, cartao) {
   try {
+    mostrarLoader()
     const accessToken = await getClientToken();
     const lojas = await fetchAllStores(accessToken);
 
@@ -379,6 +392,8 @@ lojasFiltradas.forEach(loja => {
 
   } catch (err) {
     console.error("Erro ao atualizar mapa:", err.message);
+  }finally {
+    esconderLoader();
   }
 
 const totalItems = lojasList.querySelectorAll("li").length;
