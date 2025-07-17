@@ -350,6 +350,11 @@ line-height: normal;
   cursor: pointer;
 }
 
+.close-btn:hover {
+    background-color: red;
+    border-radius: 50%;
+}
+
 .modal-logo {
   max-width: 320px;
   height: 180px;
