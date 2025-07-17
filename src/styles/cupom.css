@@ -1,23 +1,32 @@
 /* Container */
 .coupon-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 17px;
-  justify-content: space-between;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(368px, 1fr));
+  gap: 24px;
+  padding: 32px 0;
+  justify-content: center;
 }
 
 /* Card */
 .coupon-card {
+ .coupon-card {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%; /* controle do tamanho será pelo grid */
+  max-width: 368px;
+  padding: 24px;
   background: #fff;
   border: 1px solid #EDEDED;
   border-radius: 8px;
-  box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.03);
-  padding: 24px;
-  width: calc(25% - 17px); /* 4 por linha */
-  box-sizing: border-box;
+  box-shadow: 2px 2px 16px 0px rgba(0, 0, 0, 0.05);
+  gap: 16px;
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+
 }
 
 /* Imagem */
@@ -32,8 +41,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 4px;
 }
+
 
 /* Conteúdo */
 .coupon-content {
