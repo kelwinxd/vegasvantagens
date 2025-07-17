@@ -104,16 +104,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cardsEl = document.querySelector(".cards");
     if (cardsEl) cardsEl.textContent = (loja.cartoes || []).join(", ");
 
-    const imageEls = document.querySelectorAll(".img-comercio");
-    if (imageEls && loja.imagens?.length > 0) {
-      imageEls.forEach(img => {
+  if (loja.imagens?.length > 0) {
+      loadersImg.forEach(({ img, loader }) => {
+        img.onload = () => {
+          img.style.display = "block";
+          loader.remove();
+        };
+        img.onerror = () => {
+          img.src = './imgs/default-image.png';
+          img.style.display = "block";
+          loader.remove();
+        };
         img.src = loja.imagens[1];
       });
     }
 
-    const logoEls = document.querySelectorAll(".img-logo img");
-    if (logoEls && loja.imagemPrincipal) {
-      logoEls.forEach(img => {
+    if (loja.imagemPrincipal) {
+      loadersLogo.forEach(({ img, loader }) => {
+        img.onload = () => {
+          img.style.display = "block";
+          loader.remove();
+        };
+        img.onerror = () => {
+          img.src = './imgs/default-image.png';
+          img.style.display = "block";
+          loader.remove();
+        };
         img.src = loja.imagemPrincipal;
       });
     }
