@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Função auxiliar para buscar cupons
+// Função auxiliar para buscar cupons
 async function fetchCuponsPorEstabelecimento(token, estabelecimentoId) {
   const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cupons/por-estabelecimento/${estabelecimentoId}`, {
     headers: {
@@ -117,11 +118,11 @@ if (window.location.pathname.includes("testes.html")) {
         card.className = "card-desconto";
         card.innerHTML = `
           <div class="card-image">
-            <img src="${cupom.imagens?.[0] || './imgs/default-image.png'}" alt="Imagem do Cupom">
+            <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
           </div>
           <div class="content">
-            <div class="tag">${cupom.titulo}</div>
-            <h2>${cupom.codigo}</h2>
+            <div class="tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
+            <h2>${cupom.titulo}</h2>
             <p>${cupom.descricao}</p>
           </div>
           <button>Ver Mais</button>
@@ -130,7 +131,7 @@ if (window.location.pathname.includes("testes.html")) {
         card.querySelector("button").addEventListener("click", () => {
           const modal = document.querySelector(".modal");
           if (!modal) return;
-          modal.querySelector(".modal-title").textContent = cupom.codigo;
+          modal.querySelector(".modal-title").textContent = cupom.titulo;
           modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
           modal.querySelector(".modal-descricao").textContent = cupom.descricao;
           modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
