@@ -115,7 +115,7 @@ if (window.location.pathname.includes("testes.html")) {
       container.innerHTML = "";
       cupons.forEach(cupom => {
         const card = document.createElement("div");
-        card.className = "card-desconto";
+        card.className = "coupon-card";
     card.innerHTML = `
   <div class="coupon-card">
     <div class="coupon-image">
