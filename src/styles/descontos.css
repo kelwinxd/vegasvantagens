@@ -4,6 +4,10 @@
     padding-top: 40px;
 }
 
+.card-image {
+    height: 170px;
+}
+
 .title-desc {
     text-align: left;
 }
@@ -19,7 +23,7 @@
 .card-desconto {
     flex: 1 1 calc(25%);
     min-width: calc(33% - 14px);
-    height: 470px;
+    height: 350px;
     background: #fff;
     text-align: center;
     max-width: 200px;
@@ -30,6 +34,7 @@
     flex-direction: column;
     overflow: hidden; 
     padding: 24px;
+     justify-content: space-between;
     
 
 
@@ -46,7 +51,7 @@
 .card-desconto img {
     width: 100%;
     height: 100%;
-    object-fit: contain; 
+    object-fit: cover; 
     border-radius: 8px 8px 0 0; 
 }
 
@@ -65,6 +70,10 @@
     transition: background-color 0.3s ease;
     margin-top: 20px;
     width: 100%;
+
+  margin-top: auto; /* 👈 Isso força o botão a ir pro final e evita colisões */
+  padding: 10px;
+
 }
 
 .card-desconto button:hover {

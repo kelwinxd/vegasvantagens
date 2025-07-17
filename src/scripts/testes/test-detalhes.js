@@ -124,8 +124,9 @@ if (window.location.pathname.includes("testes.html")) {
     <div class="tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
     <h2>${cupom.titulo}</h2>
     <p>${cupom.descricao}</p>
-    <button>Ver Mais</button>
+    
   </div>
+  <button>Ver Mais</button>
         `;
 
         card.querySelector("button").addEventListener("click", () => {
