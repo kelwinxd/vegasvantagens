@@ -8,7 +8,7 @@
 }
 
 /* Card */
-.coupon-card {
+
  .coupon-card {
   display: flex;
   flex-direction: column;
@@ -27,7 +27,7 @@
   margin: 0 auto;
 }
 
-}
+
 
 /* Imagem */
 .coupon-image {
