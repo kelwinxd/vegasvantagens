@@ -352,6 +352,7 @@ line-height: normal;
 
 .modal-logo {
   max-width: 320px;
+  height: 180px;
   margin-bottom: 20px;
   border-radius: 4px;
 }
