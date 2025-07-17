@@ -197,6 +197,7 @@ if (window.location.pathname.includes("testes.html")) {
 
         card.querySelector("button").addEventListener("click", () => {
           console.log('clicou!');
+          modal.style.display = 'block'
           const modal = document.querySelector(".modal");
           const overlay = document.querySelector(".modal-overlay");
           if (!modal || !overlay) return;
