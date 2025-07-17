@@ -1,3 +1,16 @@
+// Loader setup global
+const globalLoader = document.createElement("div");
+globalLoader.className = "loader";
+globalLoader.style.display = "none";
+document.body.appendChild(globalLoader);
+
+function showGlobalLoader() {
+  globalLoader.style.display = "block";
+}
+function hideGlobalLoader() {
+  globalLoader.style.display = "none";
+}
+
 async function getClientToken() {
   const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
     method: 'POST',
@@ -23,15 +36,8 @@ async function fetchStoreDetails(token, storeId) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
+  const hash = decodeURIComponent(window.location.hash).slice(1);
   const idMatch = hash.match(/^store-(\d+)$/);
-  
-   
-
-  const loaderCupons = document.createElement("div");
-  loaderCupons.className = "loader";
-  loaderCupons.style.display = "none";
-  couponGrid.parentElement.insertBefore(loaderCupons, couponGrid);
 
   if (!idMatch) {
     console.warn("Formato de hash inválido:", hash);
@@ -39,19 +45,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const storeId = idMatch[1];
-
-  const couponGrid = document.querySelector(".coupon-grid");
-
-
-
-// Insere antes da grid
-
+  showGlobalLoader();
 
   try {
-    // Obter token
     const token = await getClientToken();
-
-    // Buscar dados da loja
     const loja = await fetchStoreDetails(token, storeId);
 
     if (!loja) {
@@ -59,7 +56,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Atualiza os elementos da página
     document.querySelectorAll('.title-comercio').forEach(el => {
       el.textContent = loja.nome;
     });
@@ -95,11 +91,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   } catch (err) {
     console.error("Erro ao buscar detalhes da loja:", err.message);
+  } finally {
+    hideGlobalLoader();
   }
 });
 
-// Função auxiliar para buscar cupons
-// Função auxiliar para buscar cupons
 async function fetchCuponsPorEstabelecimento(token, estabelecimentoId) {
   const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cupons/por-estabelecimento/${estabelecimentoId}`, {
     headers: {
@@ -110,30 +106,33 @@ async function fetchCuponsPorEstabelecimento(token, estabelecimentoId) {
   return await resp.json();
 }
 
-// Atualização na DOMContentLoaded para página de testes.html
 if (window.location.pathname.includes("testes.html")) {
   document.addEventListener("DOMContentLoaded", async () => {
-    const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
+    const hash = decodeURIComponent(window.location.hash).slice(1);
     const idMatch = hash.match(/^store-(\d+)$/);
-
- 
-
     if (!idMatch) return;
     const storeId = idMatch[1];
-loaderCupons.style.display = "block";
+
+    const container = document.querySelector(".coupon-grid");
+    if (!container) return;
+
+    const loaderCupons = document.createElement("div");
+    loaderCupons.className = "loader";
+    loaderCupons.style.display = "none";
+    container.parentElement.insertBefore(loaderCupons, container);
+
+    loaderCupons.style.display = "block";
 
     try {
       const token = await getClientToken();
       const cupons = await fetchCuponsPorEstabelecimento(token, storeId);
 
-      const container = document.querySelector(".coupon-grid");
-      if (!container) return;
-
       container.innerHTML = "";
+
       cupons.forEach(cupom => {
         const card = document.createElement("div");
-card.className = "coupon-card";
-card.innerHTML = `
+        card.className = "coupon-card";
+        card.innerHTML = `
   <div class="coupon-image">
     <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
   </div>
@@ -145,20 +144,20 @@ card.innerHTML = `
   </div>
 `;
 
+        card.querySelector("button").addEventListener("click", () => {
+          console.log('clicou!');
+          const modal = document.querySelector(".modal");
+          const overlay = document.querySelector(".modal-overlay");
+          if (!modal || !overlay) return;
 
-       card.querySelector("button").addEventListener("click", () => {
-  console.log('clicou!');
-  const modal = document.querySelector(".modal");
-  const overlay = document.querySelector(".modal-overlay");
-  if (!modal || !overlay) return;
+          modal.querySelector(".modal-title").textContent = cupom.titulo;
+          modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
+          modal.querySelector(".modal-descricao").textContent = cupom.descricao;
+          modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
 
-  modal.querySelector(".modal-title").textContent = cupom.titulo;
-  modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
-  modal.querySelector(".modal-descricao").textContent = cupom.descricao;
-  modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
+          overlay.style.display = "flex";
+        });
 
-  overlay.style.display = "flex";
-});
         container.appendChild(card);
       });
 
@@ -173,7 +172,7 @@ card.innerHTML = `
     } catch (e) {
       console.error("Erro ao carregar cupons:", e.message);
     } finally {
-    loaderCupons.style.display = "none"; // 👈 esconde loader
-  }
+      loaderCupons.style.display = "none";
+    }
   });
 }
