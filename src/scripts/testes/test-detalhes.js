@@ -109,7 +109,7 @@ if (window.location.pathname.includes("testes.html")) {
       const token = await getClientToken();
       const cupons = await fetchCuponsPorEstabelecimento(token, storeId);
 
-      const container = document.querySelector(".cards-descontos");
+      const container = document.querySelector(".coupon-grid");
       if (!container) return;
 
       container.innerHTML = "";
