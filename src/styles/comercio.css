@@ -331,7 +331,7 @@ line-height: normal;
 .modal {
   background: #fff;
   border-radius: 12px;
-  padding: 30px 20px;
+  padding: 30px 48px;
   width: 90%;
   max-width: 400px;
   position: relative;
@@ -351,8 +351,9 @@ line-height: normal;
 }
 
 .modal-logo {
-  max-width: 120px;
+  max-width: 320px;
   margin-bottom: 20px;
+  border-radius: 4px;
 }
 
 .modal h2 {
