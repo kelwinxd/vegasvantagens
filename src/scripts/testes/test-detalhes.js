@@ -60,21 +60,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   const storeId = idMatch[1];
   showGlobalLoader();
 
-  const imgContainers = document.querySelectorAll(".img-comercio");
+  const imgContainers = document.querySelectorAll(".main-img, .main-img-tablet");
   const logoContainers = document.querySelectorAll(".img-logo img");
   const loadersImg = [];
   const loadersLogo = [];
 
   imgContainers.forEach(container => {
-    const loader = createInlineLoader(container);
-    loadersImg.push(loader);
-    container.querySelector("img").style.display = "none";
+    const img = container.querySelector("img.img-comercio");
+    if (img) {
+      img.style.display = "none";
+      const loader = createInlineLoader(container);
+      loadersImg.push({ img, loader });
+    }
   });
 
   logoContainers.forEach(img => {
-    const loader = createInlineLoader(img.parentElement);
-    loadersLogo.push(loader);
-    img.style.display = "none";
+    if (img) {
+      img.style.display = "none";
+      const loader = createInlineLoader(img.parentElement);
+      loadersLogo.push({ img, loader });
+    }
   });
 
   try {
