@@ -129,17 +129,19 @@ card.innerHTML = `
 `;
 
 
-        card.querySelector("button").addEventListener("click", () => {
-          console.log('clicou!')
-          const modal = document.querySelector(".modal");
-          if (!modal) return;
-          modal.querySelector(".modal-title").textContent = cupom.titulo;
-          modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
-          modal.querySelector(".modal-descricao").textContent = cupom.descricao;
-          modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
-          modal.style.display = "flex";
-        });
+       card.querySelector("button").addEventListener("click", () => {
+  console.log('clicou!');
+  const modal = document.querySelector(".modal");
+  const overlay = document.querySelector(".modal-overlay");
+  if (!modal || !overlay) return;
 
+  modal.querySelector(".modal-title").textContent = cupom.titulo;
+  modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
+  modal.querySelector(".modal-descricao").textContent = cupom.descricao;
+  modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
+
+  overlay.style.display = "flex";
+});
         container.appendChild(card);
       });
 
