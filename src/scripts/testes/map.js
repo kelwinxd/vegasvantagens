@@ -296,7 +296,8 @@ loader.style.display = "none";
 lojasList.parentElement.insertBefore(loader, lojasList);
 
 function mostrarLoader() {
-  document.getElementById("mensagem-vazia").style.display = "none";
+  const msg = document.getElementById("mensagem-vazia");
+if (msg) msg.style.display = "none";
   loader.style.display = "block";
 }
 function esconderLoader() {
