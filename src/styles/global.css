@@ -15,6 +15,7 @@
 @import url('./sobrenos.css');
 @import url('./cadastro-com.css');
 @import url('./admin.css');
+@import url('./cupom.css');
 
 html {
   scroll-behavior: smooth;

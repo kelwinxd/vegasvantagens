@@ -1,0 +1,100 @@
+.coupon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 32px;
+}
+
+.coupon-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #EDEDED;
+  border-radius: 8px;
+  box-shadow: 2px 2px 16px 0px rgba(0, 0, 0, 0.03);
+  padding: 24px;
+  width: calc(25% - 18px); /* 4 por linha com 24px de gap */
+  box-sizing: border-box;
+}
+
+.coupon-image {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.coupon-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.coupon-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.coupon-tag {
+  background-color: #4B57A3;
+  color: white;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.coupon-title {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  color: #000;
+  margin: 0;
+}
+
+.coupon-description {
+  font-size: 13px;
+  color: #555;
+  text-align: left;
+  margin: 0;
+}
+
+.coupon-button {
+  background-color: #4B57A3;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  margin-top: auto;
+  transition: background-color 0.3s ease;
+}
+
+.coupon-button:hover {
+  background-color: #727cbd;
+}
+
+/* Responsivo: 3 por linha no tablet */
+@media screen and (max-width: 1024px) {
+  .coupon-card {
+    width: calc(33.333% - 16px);
+  }
+}
+
+/* Responsivo: 1 por linha no celular */
+@media screen and (max-width: 768px) {
+  .coupon-card {
+    width: 100%;
+  }
+}

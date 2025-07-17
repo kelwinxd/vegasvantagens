@@ -116,18 +116,20 @@ if (window.location.pathname.includes("testes.html")) {
       cupons.forEach(cupom => {
         const card = document.createElement("div");
         card.className = "card-desconto";
-        card.innerHTML = `
-           <div class="card-image">
-    <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
+    card.innerHTML = `
+  <div class="coupon-card">
+    <div class="coupon-image">
+      <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
+    </div>
+    <div class="coupon-content">
+      <div class="coupon-tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
+      <h2 class="coupon-title">${cupom.titulo}</h2>
+      <p class="coupon-description">${cupom.descricao}</p>
+      <button class="coupon-button">Ver Mais</button>
+    </div>
   </div>
-  <div class="content">
-    <div class="tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
-    <h2>${cupom.titulo}</h2>
-    <p>${cupom.descricao}</p>
-    
-  </div>
-  <button>Ver Mais</button>
-        `;
+`;
+
 
         card.querySelector("button").addEventListener("click", () => {
           console.log('clicou!')
