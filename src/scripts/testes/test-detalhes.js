@@ -25,6 +25,13 @@ async function fetchStoreDetails(token, storeId) {
 document.addEventListener("DOMContentLoaded", async () => {
   const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
   const idMatch = hash.match(/^store-(\d+)$/);
+  
+   
+
+  const loaderCupons = document.createElement("div");
+  loaderCupons.className = "loader";
+  loaderCupons.style.display = "none";
+  couponGrid.parentElement.insertBefore(loaderCupons, couponGrid);
 
   if (!idMatch) {
     console.warn("Formato de hash inválido:", hash);
@@ -38,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 // Insere antes da grid
-couponGrid.parentElement.insertBefore(loaderCupons, couponGrid);
+
 
   try {
     // Obter token
@@ -108,9 +115,8 @@ if (window.location.pathname.includes("testes.html")) {
   document.addEventListener("DOMContentLoaded", async () => {
     const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
     const idMatch = hash.match(/^store-(\d+)$/);
-    const loaderCupons = document.createElement("div");
-loaderCupons.className = "loader";
-loaderCupons.style.display = "none";
+
+ 
 
     if (!idMatch) return;
     const storeId = idMatch[1];
