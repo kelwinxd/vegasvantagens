@@ -197,10 +197,10 @@ if (window.location.pathname.includes("testes.html")) {
 
         card.querySelector("button").addEventListener("click", () => {
           console.log('clicou!');
-          modal.style.display = 'block'
+          
           const modal = document.querySelector(".modal");
           const overlay = document.querySelector(".modal-overlay");
-          if (!modal || !overlay) return;
+          if (!modal || !overlay) modal.style.display = 'block';
 
           modal.querySelector(".modal-title").textContent = cupom.titulo;
           modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
