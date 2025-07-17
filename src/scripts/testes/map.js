@@ -303,10 +303,13 @@ function esconderLoader() {
   loader.style.display = "none";
 }
 function mostrarMensagemVazia() {
-  document.getElementById("mensagem-vazia").style.display = "block";
+  const msg = document.getElementById("mensagem-vazia");
+  if (msg) msg.style.display = "block";
 }
+
 function esconderMensagemVazia() {
-  document.getElementById("mensagem-vazia").style.display = "none";
+  const msg = document.getElementById("mensagem-vazia");
+  if (msg) msg.style.display = "none";
 }
 
 async function updateMapByCity(cidade, segmento, busca, cartao) {
