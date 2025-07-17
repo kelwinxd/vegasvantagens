@@ -117,15 +117,15 @@ if (window.location.pathname.includes("testes.html")) {
         const card = document.createElement("div");
         card.className = "card-desconto";
         card.innerHTML = `
-          <div class="card-image">
-            <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
-          </div>
-          <div class="content">
-            <div class="tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
-            <h2>${cupom.titulo}</h2>
-            <p>${cupom.descricao}</p>
-          </div>
-          <button>Ver Mais</button>
+         <div class="card-image">
+    <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom" />
+  </div>
+  <div class="content">
+    <div class="tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
+    <h2 style="font-weight: bold;">${cupom.titulo}</h2>
+    <p>${cupom.descricao}</p>
+  </div>
+  <button>Ver Mais</button>
         `;
 
         card.querySelector("button").addEventListener("click", () => {
