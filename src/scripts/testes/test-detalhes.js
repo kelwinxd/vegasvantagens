@@ -208,6 +208,7 @@ if (window.location.pathname.includes("testes.html")) {
           modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
 
           modal.style.display = "flex";
+          modal.style.flexDirection = 'column'
           overlay.style.display = "flex";
         });
 
