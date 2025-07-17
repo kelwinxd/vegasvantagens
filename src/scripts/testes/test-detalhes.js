@@ -11,6 +11,19 @@ function hideGlobalLoader() {
   globalLoader.style.display = "none";
 }
 
+function createInlineLoader(targetEl) {
+  const loader = document.createElement("div");
+  loader.className = "loader loader-inline";
+  loader.style.position = "absolute";
+  loader.style.top = "50%";
+  loader.style.left = "50%";
+  loader.style.transform = "translate(-50%, -50%)";
+  loader.style.zIndex = "10";
+  targetEl.style.position = "relative";
+  targetEl.appendChild(loader);
+  return loader;
+}
+
 async function getClientToken() {
   const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
     method: 'POST',
@@ -47,6 +60,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const storeId = idMatch[1];
   showGlobalLoader();
 
+  const imgContainers = document.querySelectorAll(".img-comercio");
+  const logoContainers = document.querySelectorAll(".img-logo img");
+  const loadersImg = [];
+  const loadersLogo = [];
+
+  imgContainers.forEach(container => {
+    const loader = createInlineLoader(container);
+    loadersImg.push(loader);
+    container.querySelector("img").style.display = "none";
+  });
+
+  logoContainers.forEach(img => {
+    const loader = createInlineLoader(img.parentElement);
+    loadersLogo.push(loader);
+    img.style.display = "none";
+  });
+
   try {
     const token = await getClientToken();
     const loja = await fetchStoreDetails(token, storeId);
@@ -69,17 +99,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cardsEl = document.querySelector(".cards");
     if (cardsEl) cardsEl.textContent = (loja.cartoes || []).join(", ");
 
-    const imageEls = document.querySelectorAll(".img-comercio");
-    if (imageEls && loja.imagens?.length > 0) {
-      imageEls.forEach(img => {
+    if (loja.imagens?.length > 0) {
+      imgContainers.forEach(container => {
+        const img = container.querySelector("img");
         img.src = loja.imagens[1];
+        img.style.display = "block";
       });
     }
 
-    const logoEls = document.querySelectorAll(".img-logo img");
-    if (logoEls && loja.imagemPrincipal) {
-      logoEls.forEach(img => {
+    if (loja.imagemPrincipal) {
+      logoContainers.forEach(img => {
         img.src = loja.imagemPrincipal;
+        img.style.display = "block";
       });
     }
 
@@ -93,6 +124,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Erro ao buscar detalhes da loja:", err.message);
   } finally {
     hideGlobalLoader();
+    loadersImg.forEach(l => l.remove());
+    loadersLogo.forEach(l => l.remove());
   }
 });
 
@@ -132,9 +165,11 @@ if (window.location.pathname.includes("testes.html")) {
       cupons.forEach(cupom => {
         const card = document.createElement("div");
         card.className = "coupon-card";
+        const imageSrc = cupom.imagens?.[0] || "";
+
         card.innerHTML = `
   <div class="coupon-image">
-    <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
+    <img style="display:none" onload="this.style.display='block'" onerror="this.src='./imgs/img-desc.png'" src="${imageSrc}" alt="Imagem do Cupom">
   </div>
   <div class="coupon-content">
     <div class="coupon-tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
@@ -165,7 +200,7 @@ if (window.location.pathname.includes("testes.html")) {
       if (closeBtn) {
         closeBtn.addEventListener("click", () => {
           document.querySelector(".modal").style.display = "none";
-          document.querySelector('.modal-overlay').style.display = 'none'
+          document.querySelector('.modal-overlay').style.display = 'none';
         });
       }
 
