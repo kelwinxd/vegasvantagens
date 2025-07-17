@@ -262,8 +262,15 @@ async function atualizarCidadesPorEstado(estadoId) {
       li.addEventListener("click", () => {
         filterCity.value = nome;
         filterCity.dispatchEvent(new Event("change"));
-        listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+        listaUl.querySelectorAll("li").forEach((el) => {
+          el.classList.remove("active")
+          el.classList.remove("selected")
+        }
+         
+        
+        );
         li.classList.add("active");
+        li.classList.add('selected')
 
         const title = listaUl.closest(".custom-select")?.querySelector(".custom-select-title");
         if (title) title.textContent = nomeFormatado;
@@ -492,7 +499,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const spOption = [...filterState.options].find(opt => opt.textContent === "SP");
   if (spOption) {
     filterState.value = spOption.value;
-    spOption.classList.add("selected")
+     const estadoLi = document.querySelector(`.custom-options[data-input-id='filterState'] li[data-value='${spOption.value}']`);
+    if (estadoLi) {
+      estadoLi.classList.add("selected");
+      const title = estadoLi.closest(".custom-select").querySelector(".custom-select-title");
+      if (title) title.textContent = estadoLi.textContent;
+    }
     await atualizarCidadesPorEstado(spOption.value);
 
     const cidadeOption = [...filterCity.options].find(opt => opt.textContent.toLowerCase() === "americana");
@@ -503,6 +515,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const listaUl = document.getElementById("list-ul");
       const cidadeLi = [...listaUl.querySelectorAll("li")].find(li => li.dataset.value?.toLowerCase() === "americana");
       if (cidadeLi) {
+     
         listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
         cidadeLi.classList.add("active");
         cidadeLi.classList.add('selected')
@@ -531,7 +544,7 @@ btnLimpar.addEventListener("click", limparDados);
 document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
   const title = selectWrapper.querySelector(".custom-select-title");
   const optionsList = selectWrapper.querySelector(".custom-options");
-  const listUl = document.querySelectorAll("#list-ul li")
+
   const hiddenInput = document.getElementById(optionsList.dataset.inputId);
 
   if (!title || !optionsList || !hiddenInput) return;
@@ -541,15 +554,7 @@ document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
     optionsList.classList.toggle("show-options");
   });
 
-  listUl.forEach((l) => {
-    l.addEventListener('click', () => {
-      listUl.forEach((li) => {
-        li.classList.remove('selected')
-      })
-    })
 
-    l.classList.add('selected')
-  })
 
   // Seleciona a opção ao clicar
   optionsList.querySelectorAll("li").forEach((option) => {
