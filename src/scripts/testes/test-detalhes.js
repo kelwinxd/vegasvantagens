@@ -33,6 +33,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const storeId = idMatch[1];
 
+  const couponGrid = document.querySelector(".coupon-grid");
+
+const loaderCupons = document.createElement("div");
+loaderCupons.className = "loader";
+loaderCupons.style.display = "none";
+
+// Insere antes da grid
+couponGrid.parentElement.insertBefore(loaderCupons, couponGrid);
+
   try {
     // Obter token
     const token = await getClientToken();
@@ -104,6 +113,7 @@ if (window.location.pathname.includes("testes.html")) {
 
     if (!idMatch) return;
     const storeId = idMatch[1];
+loaderCupons.style.display = "block";
 
     try {
       const token = await getClientToken();
@@ -149,11 +159,14 @@ card.innerHTML = `
       if (closeBtn) {
         closeBtn.addEventListener("click", () => {
           document.querySelector(".modal").style.display = "none";
+          document.querySelector('.modal-overlay').style.display = 'none'
         });
       }
 
     } catch (e) {
       console.error("Erro ao carregar cupons:", e.message);
-    }
+    } finally {
+    loaderCupons.style.display = "none"; // 👈 esconde loader
+  }
   });
 }
