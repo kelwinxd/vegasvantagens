@@ -129,6 +129,7 @@ if (window.location.pathname.includes("testes.html")) {
         `;
 
         card.querySelector("button").addEventListener("click", () => {
+          console.log('clicou!')
           const modal = document.querySelector(".modal");
           if (!modal) return;
           modal.querySelector(".modal-title").textContent = cupom.titulo;
