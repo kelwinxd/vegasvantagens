@@ -1,4 +1,5 @@
 .sobrenos {
+    margin-top: 50px;
     padding-inline: 120px;
     height: 700px;
 
@@ -37,4 +38,14 @@ line-height: normal;
 }
 .btn-header a {
     color: #fff;
+}
+
+@media screen and (max-width:580px)  {
+ 
+    .sobrenos h1 {
+        font-size: 30px;
+    }
+    .sobrenos .descricao, .sobrenos .frase {
+        font-size: 18px;
+    }
 }
