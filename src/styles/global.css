@@ -389,3 +389,7 @@ padding-left: var(--padding-body-desktop);
         border-bottom: 1px solid gray;
       }
       }
+
+      nav .btn-header {
+        color:#fff;
+      }

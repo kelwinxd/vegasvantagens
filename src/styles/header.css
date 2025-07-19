@@ -85,12 +85,16 @@ padding: 8px 12px;
     border-radius: 8px;
     border: none;
     font-size: 16px;
-    color: var(--font-color-btn);
+    
     cursor: pointer;
     font-weight: 600;
 
    
 
+}
+
+nav .btn-header a {
+    color:#fff;
 }
 
 nav .btn-header:hover {
@@ -273,7 +277,7 @@ justify-content: center;
 align-items: center;
 font-size: 20px;
 font-weight: 600;
-
+color: #fff;
            }
 
            .header {
