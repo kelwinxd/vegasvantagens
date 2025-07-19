@@ -1,6 +1,6 @@
 .sobrenos {
-  text-align: center;
-  padding: 40px 20px;
+  
+  padding: 40px 200px;
   font-family: Arial, sans-serif;
 }
 
@@ -13,21 +13,24 @@
 }
 
 .sobrenos-container h1 {
-  font-size: 1.5rem;
+  font-size: 40px;
   font-weight: 700;
   color: #1a4aa3;
   margin: 0;
+  text-align: center;
 }
 
 .sobrenos-container .frase {
-  font-size: 0.9rem;
+  font-size: 24px;
   color: #6b6b6b;
   margin-top: 4px;
   margin-bottom: 0;
+  text-align: center;
 }
 
 .sobrenos > p {
   max-width: 720px;
+  font-size: 24px;
   margin: 0 auto;
   font-size: 1rem;
   line-height: 1.6;
@@ -36,20 +39,26 @@
 
 /* 📱 Responsividade */
 @media (max-width: 1024px) {
+    .sobrenos {
+         padding: 40px 200px;
+    }
   .sobrenos-container h1 {
     font-size: 1.3rem;
   }
 
   .sobrenos-container .frase {
-    font-size: 0.85rem;
+    font-size: 18px;
   }
 
   .sobrenos > p {
-    font-size: 0.95rem;
+    font-size: 18px;
   }
 }
 
 @media (max-width: 768px) {
+       .sobrenos {
+         padding: 40px 192px;
+    }
   .sobrenos-container h1 {
     font-size: 1.1rem;
   }
@@ -64,6 +73,13 @@
 }
 
 @media (max-width: 480px) {
+    .sobrenos {
+         
+         padding: 40px 20px;
+  
+    }
+
+
   .sobrenos-container {
     padding: 10px 14px;
   }
