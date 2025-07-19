@@ -2,6 +2,7 @@
   
   padding: 40px 200px;
   font-family: Arial, sans-serif;
+  text-align: center;
 }
 
 .sobrenos-container {
@@ -29,7 +30,7 @@
 }
 
 .sobrenos > p {
-  max-width: 720px;
+  width: 80%;
   font-size: 24px;
   margin: 0 auto;
   font-size: 1rem;
@@ -37,10 +38,15 @@
   color: #2b2b2b;
 }
 
+.sobrenos .descricao {
+  text-align: justify;
+}
+
+
 /* 📱 Responsividade */
 @media (max-width: 1024px) {
     .sobrenos {
-         padding: 40px 200px;
+         padding: 40px 100px;
     }
   .sobrenos-container h1 {
     font-size: 1.3rem;
@@ -57,7 +63,7 @@
 
 @media (max-width: 768px) {
        .sobrenos {
-         padding: 40px 192px;
+         padding: 40px 50px;
     }
   .sobrenos-container h1 {
     font-size: 1.1rem;
