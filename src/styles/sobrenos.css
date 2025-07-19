@@ -4,6 +4,37 @@
 
 }
 
+
+.sobrenos h1 {
+    color: #4B57A3;
+
+text-align: center;
+font-family: Rubik;
+font-size: 40px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+}
+
+.sobrenos .frase {
+    color: #7E7E7E;
+text-align: center;
+font-family: Rubik;
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
+.sobrenos .descricao {
+    color: #7E7E7E;
+text-align: center;
+font-family: Rubik;
+font-size: 24px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+}
 .btn-header a {
     color: #fff;
 }
