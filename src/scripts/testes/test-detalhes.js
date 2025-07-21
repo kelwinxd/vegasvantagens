@@ -157,7 +157,7 @@ async function fetchCuponsPorEstabelecimento(token, estabelecimentoId) {
   return await resp.json();
 }
 
-if (window.location.pathname.includes("testes.html")) {
+if (window.location.pathname.includes("detalhes.html")) {
   document.addEventListener("DOMContentLoaded", async () => {
     const hash = decodeURIComponent(window.location.hash).slice(1);
     const idMatch = hash.match(/^store-(\d+)$/);

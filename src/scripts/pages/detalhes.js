@@ -1,399 +1,233 @@
-const titleComercio = document.querySelectorAll('.title-comercio')
-const adress = document.querySelector(".adress")
+// Loader setup global
+const globalLoader = document.createElement("div");
+globalLoader.className = "loader";
+globalLoader.style.display = "none";
+document.body.appendChild(globalLoader);
 
-const cityData = {
-  sp: {
-    americana: {
-      center: { lat: -22.740435, lng: -47.326196 },
-      points: [
-        {
-          name: "Zanini",
-          type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
-          card: ["vegas day", "vegas plus"],
-          phone:"(19) 3462-1940",
-          address: "Av. Dr. Antônio Lobo, 615 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.740250, lng: -47.328021 },
-          image:"./imgs/comercios/zanini-est.webp",
-          logo:"./imgs/logos/logo-zanini.png"
-        
-        },
-        {
-          name: "Mercadão dos Óculos",
-          type: ["ótica"],
-          card: ["vegas day", "vegas plus"],
-          phone:"(19) 3462-1940",
-          address: "Av. Dr. Antônio Lobo, 233 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.740082, lng: -47.330582 },
-          image:"./imgs/comercios/mercadaooculos.webp",
-          logo:"./imgs/logos/oculosmercadao.png"
-        },
-        {
-          name: "Intensos Barbearia",
-          type: ["barbearia"],
-          card: ["vegas day", "vegas plus"],
-          phone:"(19) 3462-1940",
-          address: "R. João Bernestein, 651 - Jardim São Vito, Americana - SP, 13473-200",
-          position: { lat: -22.737966, lng: -47.311791 },
-          logo:"./imgs/logos/intensos-barbearia.png"
-        },
-        {
-          name: "Cãochorro Petshop",
-          type: ["petshop"],
-          card: ["vegas day", "vegas plus"],
-          phone:"(19) 3462-1940",
-          address: "R. das Paineiras, 305 - Jardim Paulistano, Americana - SP, 13474-450",
-          position: { lat: -22.717230, lng: -47.303097 },
-          image:"./imgs/comercios/cachorro.webp",
-          logo:"./imgs/logos/caochorro-logo.png"
-        },
-        {
-          name: "Betta Suplementos",
-          type: ["alimentação"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
-          address: "R. Sete de Setembro, 135 - Centro, Americana - SP, 13465-300",
-          position: { lat: -22.739187, lng: -47.327828 },
-          logo:"./imgs/logos/beta-png.png"
-        },
-        {
-          name: "Boi que Mia",
-          type: ["restaurante"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
-          address: "R. das Paineiras, 378 - Jardim Paulistano, Americana - SP, 13474-450",
-          position: { lat: -22.716999, lng: -47.303373 },
-          image:"./imgs/comercios/boimia.jpg",
-          logo:"./imgs/logos/boi-logo.png"
-        },
-        {
-          name: "Casa Florindo",
-          type: ["restaurante"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Campos Salles, 181 - Centro, Americana - SP, 13465-400",
-          position: { lat: -22.738252, lng: -47.325693 },
-          logo:"./imgs/logos/florindo-logo.png"
-        },
-        {
-          name: "Deck Meia 13",
-          type: ["restaurante"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus"],
-          address: "R. Fortunato Faraone, 242 - Vila Rehder, Americana - SP, 13465-450",
-          position: { lat: -22.737541, lng: -47.326669 },
-          logo:"./imgs/logos/florindo-logo.png"
-        },
-        {
-          name: "Danny Cosméticos",
-          type: ["cosméticos"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Dr. Antônio Lobo, 455 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.739728, lng: -47.328574 },
-          logo:"./imgs/logos/danny-logo.png"
-        },
-        {
-          name: "Vidrovan",
-          type: ["veículos"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Paulista, 1015 - Vila Santa Catarina, Americana - SP, 13465-490",
-          position: { lat: -22.724245, lng: -47.323191 },
-         
-        },
-        {
-          name: "Maryara Panificadora & Doçaria",
-          type: ["restaurante"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
-          address: "Av. Afonso Arinos, 249 - Jardim da Paz, Americana - SP, 13474-000",
-          position: { lat: -22.703432, lng: -47.293846 }
-        },
-        {
-          name: "Rede Ferrara",
-          type: ["posto de combustível"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus", "vegas combustível"],
-          address: "Av. Nossa Sra. de Fátima, 373 - Parque Universitário, Americana - SP, 13468-280",
-          position: { lat: -22.716347, lng: -47.289679 }
-        },
-        {
-          name: "Casa de Carne Boi Forte",
-          type: ["açougue"],
-          phone:"(19) 3462-1940",
-          card: ["vegas day", "vegas plus", "vegas alimentação"],
-          address: "R. São Vito, 65 - Jardim São Vito, Americana - SP, 13473-230",
-          position: { lat: -22.736031, lng: -47.312421 }
-        },
-        {
-          name: "Shopping das Utilidades",
-          type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
-          card: ["vegas day", "vegas plus", "vegas alimentação"],
-          phone:"(19) 3462-1940",
-          address: "Av. Dr. Antônio Lobo, 275 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.739852, lng: -47.328970 }
-        }
-      ]
+function showGlobalLoader() {
+  globalLoader.style.display = "block";
+}
+function hideGlobalLoader() {
+  globalLoader.style.display = "none";
+}
+
+function createInlineLoader(targetEl) {
+  const loader = document.createElement("div");
+  loader.className = "loader loader-inline";
+  loader.style.position = "absolute";
+  loader.style.top = "50%";
+  loader.style.left = "50%";
+  loader.style.transform = "translate(-50%, -50%)";
+  loader.style.zIndex = "10";
+  targetEl.style.position = "relative";
+  targetEl.appendChild(loader);
+  return loader;
+}
+
+async function getClientToken() {
+  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientId: 'site_vegas_vantagens',
+      clientSecret: '8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0='
+    })
+  });
+  const data = await resp.json();
+  return data.accessToken;
+}
+
+async function fetchStoreDetails(token, storeId) {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${storeId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
     }
-  }
-};
-
-
-window.addEventListener("DOMContentLoaded", () => {
-const menuMobile = document.querySelector(".menu-hamb")
-const mainMenus = document.querySelector(".main-menus")
-const closeMenu = document.querySelector(".close-menu")
-  const menuOverlay = document.querySelector(".menu-overlay");
-
-closeMenu.addEventListener('click', () => {
-   mainMenus.classList.remove("active")
-   menuMobile.style.display = 'block'
-   closeMenu.style.display = 'none'
-     menuOverlay.classList.remove("active");
-
-})
-
-menuMobile.addEventListener("click", () => {
-   mainMenus.classList.add("active")
-   menuOverlay.classList.add("active");
-   menuMobile.style.display = 'none'
-   closeMenu.style.display = 'block'
-})
-
-  menuOverlay.addEventListener("click", () => {
-   mainMenus.classList.remove("active")
-   menuMobile.style.display = 'block'
-   closeMenu.style.display = 'none'
-   menuOverlay.classList.remove("active");
-
-})
-
-
-const modalOverlay = document.querySelector(".modal-overlay");
-  const closeBtn = document.querySelector(".close-btn");
-
-closeBtn.addEventListener("click", () => {
-    modalOverlay.style.display = "none";
   });
 
-
-  const hash = decodeURIComponent(window.location.hash.substring(1));
-  const [cidade, estado, ...nomePartes] = hash.split("-");
-  const nomeDoPonto = nomePartes.join(" ");
-
-  titleComercio.forEach((i) => {
-    i.textContent =  `${nomeDoPonto}`;
-  })
-
-  adress.textContent = `${cidade} | ${estado}`;
-
-  const cidadeData = cityData[estado]?.[cidade];
-
-  if (cidadeData) {
-    const pontoEncontrado = cidadeData.points.find(ponto => ponto.name.toLowerCase() === nomeDoPonto.toLowerCase());
-
-    if (pontoEncontrado) {
-      const comercioInfo = {
-        address: pontoEncontrado.address,
-        phone: pontoEncontrado.phone,
-        cards: pontoEncontrado.card,
-        img: pontoEncontrado.image || null,
-        logo: pontoEncontrado.logo || null,
-        type: pontoEncontrado.type || []
-      };
-
-      // Exibir dados no HTML
-      adress.textContent = comercioInfo.address;
-
-      const phoneElement = document.querySelector(".phone");
-      if (phoneElement) phoneElement.textContent = comercioInfo.phone;
-
-      const cardsElement = document.querySelector(".cards");
-      if (cardsElement) cardsElement.textContent = comercioInfo.cards.join(", ");
-
-      const imageElement = document.querySelectorAll(".img-comercio");
-    
-      if (imageElement && comercioInfo.img) {
-        imageElement.forEach((i) => {
-          i.src = comercioInfo.img
-        })
-      }
-
-      const logoElement = document.querySelectorAll(".img-logo img");
-      if (logoElement && comercioInfo.logo) {
-        logoElement.forEach((i) => {
-          i.src = comercioInfo.logo
-        })
-        
-        console.log("achei o logo")
-      } else {
-        console.log("nao exite logo")
-      }
-
-      const tagElement = document.querySelector(".tag-comercio");
-     if (tagElement && comercioInfo.type.length > 0) {
-  const tipo = comercioInfo.type[0];
-  tagElement.textContent = tipo.charAt(0).toUpperCase() + tipo.slice(1);
-}
-    }
-  }
-});
-
-
-const modalInfo = {
-  "mercadao-dos-oculos": {
-    logo: "./imgs/logos/oculosmercadao.png",
-    titulo: "20% de desconto no Mercadão dos Óculos!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem 20% de desconto em armações selecionadas + exame de vista gratuito.`,
-  },
-  "intensos-barbearia": {
-    logo: "./imgs/logos/intensos-barbearia.png",
-    titulo: "Benefício na Intensos Barbearia!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem 1 hidratação de cabelo no 1º corte + se fechar clube: corte gratuito.`,
-  },
-  "zanini": {
-    logo: "./imgs/logos/zanini-logo.png",
-    titulo: "10% de desconto na Zanini!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem 10% de desconto em qualquer produto da loja.`,
-  },
-  "caochorro-petshop": {
-    logo: "./imgs/logos/caochorro-logo.png",
-    titulo: "10% de desconto no Cãochorro Petshop!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem 10% de desconto em qualquer produto da loja.`,
-  },
-  "betta-suplementos": {
-    logo: "./imgs/logos/beta-logo.png",
-    titulo: "R$50 de cashback na Betta Suplementos!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem R$50 de cashback para clientes cadastrados na landing page exclusiva.`,
-  },
-  "boi-que-mia": {
-    logo: "./imgs/logos/boi-logo.png",
-    titulo: "Brinde no Boi Que Mia - Grill Bar!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas ganha 1 pão de alho ou queijo coalho por conta da casa.`,
-  },
-  "casa-florindo": {
-    logo: "./imgs/logos/florindo-logo.png",
-    titulo: "Desconto especial na Casa Florindo!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem desconto especial.`,
-  },
-  "danny-cosmeticos": {
-    logo: "./imgs/logos/danny-logo.png",
-    titulo: "Desconto especial na Danny Cosméticos!",
-    validade: "Válido até 31/12/2025.",
-    descricao: `Cliente Vegas tem desconto especial.`,
-  }
-};
-
-
-function formatarSlug(str) {
-  return str
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+  if (!resp.ok) throw new Error("Falha ao buscar estabelecimento");
+  return await resp.json();
 }
 
-function openModalByName(nome) {
-  const nomeSlug = formatarSlug(nome);
-  const info = modalInfo[nomeSlug];
-  console.log('clicou')
+document.addEventListener("DOMContentLoaded", async () => {
+  const hash = decodeURIComponent(window.location.hash).slice(1);
+  const idMatch = hash.match(/^store-(\d+)$/);
 
-  if (!info) {
-    console.warn("Informação não encontrada para:", nome);
+  if (!idMatch) {
+    console.warn("Formato de hash inválido:", hash);
     return;
   }
 
-  document.querySelector(".modal-logo").src = info.logo;
-  document.querySelector(".modal-logo").alt = nome;
-  document.querySelector(".modal-title").textContent = info.titulo;
-  document.querySelector(".modal-validade").innerHTML = info.validade;
-  document.querySelector(".modal-descricao").innerHTML = info.descricao;
+  const storeId = idMatch[1];
+  showGlobalLoader();
 
-  document.querySelector(".modal-overlay").style.display = "flex";
-}
+  const imgContainers = document.querySelectorAll(".main-img, .main-img-tablet");
+  const logoContainers = document.querySelectorAll(".img-logo img");
+  const loadersImg = [];
+  const loadersLogo = [];
 
+  imgContainers.forEach(container => {
+    const img = container.querySelector("img.img-comercio");
+    if (img) {
+      img.style.display = "none";
+      const loader = createInlineLoader(container);
+      loadersImg.push({ img, loader });
+    }
+  });
 
+  logoContainers.forEach(img => {
+    if (img) {
+      img.style.display = "none";
+      const loader = createInlineLoader(img.parentElement);
+      loadersLogo.push({ img, loader });
+    }
+  });
 
+  try {
+    const token = await getClientToken();
+    const loja = await fetchStoreDetails(token, storeId);
 
-document.addEventListener("DOMContentLoaded", () => {
-  const hash = decodeURIComponent(window.location.hash).slice(1); // remove o "#"
-  const partes = hash.split("-");
-  const nomeEmpresa = partes.slice(2).join("-").toLowerCase(); // pega o nome após cidade-estado
-   console.log(nomeEmpresa)
-  const cards = document.querySelectorAll(".card-desconto");
+    if (!loja) {
+      console.warn("Loja não encontrada.");
+      return;
+    }
 
-  if (nomeEmpresa) {
-    let encontrou = false;
-    cards.forEach(card => {
-      const verMais = card.querySelector("button")
-      const titulo = card.querySelector("h2").textContent.trim().toLowerCase();
-      card.style.height = 'auto'
-
-      verMais.addEventListener("click", () => openModalByName(nomeEmpresa))
-
-
-
-      console.log(titulo)
-      if (titulo.includes(nomeEmpresa) || titulo == nomeEmpresa) {
-        card.style.display = "block";
-        encontrou = true;
-      } else {
-        card.style.display = "none";
-      }
+    document.querySelectorAll('.title-comercio').forEach(el => {
+      el.textContent = loja.nome;
     });
 
-    if (!encontrou) {
-      console.warn("Nenhum card correspondente foi encontrado para:", nomeEmpresa);
+    const addressEl = document.querySelector(".adress");
+    if (addressEl) addressEl.textContent = `${loja.rua}, ${loja.numero}, ${loja.bairro} - ${loja.cidade}`;
+
+    const phoneEl = document.querySelector(".phone");
+    if (phoneEl) phoneEl.textContent = loja.telefone;
+
+    const cardsEl = document.querySelector(".cards");
+    if (cardsEl) cardsEl.textContent = (loja.cartoes || []).join(", ");
+
+  if (loja.imagens?.length > 0) {
+      loadersImg.forEach(({ img, loader }) => {
+        img.onload = () => {
+          img.style.display = "block";
+          loader.remove();
+        };
+        img.onerror = () => {
+          img.src = './imgs/default-image.png';
+          img.style.display = "block";
+          loader.remove();
+        };
+        img.src = loja.imagens[1];
+      });
     }
-  }
 
+    if (loja.imagemPrincipal) {
+      loadersLogo.forEach(({ img, loader }) => {
+        img.onload = () => {
+          img.style.display = "block";
+          loader.remove();
+        };
+        img.onerror = () => {
+          img.src = './imgs/default-image.png';
+          img.style.display = "block";
+          loader.remove();
+        };
+        img.src = loja.imagemPrincipal;
+      });
+    }
 
-  
-});
+    const tagEl = document.querySelector(".tag-comercio");
+    if (tagEl && loja.categorias?.length > 0) {
+      const categoria = loja.categorias[0];
+      tagEl.textContent = categoria.charAt(0).toUpperCase() + categoria.slice(1);
+    }
 
-
-const menuMobile = document.querySelector(".menu-hamb")
-const mainMenus = document.querySelector(".main-menus")
-const closeMenu = document.querySelector(".close-menu")
-
-closeMenu.addEventListener('click', () => {
-   mainMenus.classList.remove("active")
-   menuMobile.style.display = 'block'
-   closeMenu.style.display = 'none'
-
-})
-
-menuMobile.addEventListener("click", () => {
-   mainMenus.classList.add("active")
-   menuMobile.style.display = 'none'
-   closeMenu.style.display = 'block'
-})
-
-
-document.querySelectorAll('.avaliacao').forEach(avaliacaoDiv => {
-  const countSpan = avaliacaoDiv.querySelector('.count-avaliacao');
-  const starsDiv = avaliacaoDiv.querySelector('.stars');
-  
-  const rating = Math.floor(parseFloat(countSpan.textContent)); // só a parte inteira
-  const maxStars = 5;
-  
-  starsDiv.innerHTML = ''; // limpa
-  
-  for (let i = 1; i <= rating; i++) {
-    const img = document.createElement('img');
-    img.src = './imgs/icons/star.svg'; // estrela cheia
-    img.classList.add('star');
-    img.alt = `Star ${i}`;
-    starsDiv.appendChild(img);
+  } catch (err) {
+    console.error("Erro ao buscar detalhes da loja:", err.message);
+  } finally {
+    hideGlobalLoader();
   }
 });
 
+async function fetchCuponsPorEstabelecimento(token, estabelecimentoId) {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cupons/por-estabelecimento/${estabelecimentoId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!resp.ok) throw new Error("Falha ao buscar cupons");
+  return await resp.json();
+}
 
+if (window.location.pathname.includes("detalhes.html")) {
+  document.addEventListener("DOMContentLoaded", async () => {
+    const hash = decodeURIComponent(window.location.hash).slice(1);
+    const idMatch = hash.match(/^store-(\d+)$/);
+    if (!idMatch) return;
+    const storeId = idMatch[1];
 
+    const container = document.querySelector(".coupon-grid");
+    if (!container) return;
 
+    const loaderCupons = document.createElement("div");
+    loaderCupons.className = "loader";
+    loaderCupons.style.display = "none";
+    container.parentElement.insertBefore(loaderCupons, container);
+
+    loaderCupons.style.display = "block";
+
+    try {
+      const token = await getClientToken();
+      const cupons = await fetchCuponsPorEstabelecimento(token, storeId);
+
+      container.innerHTML = "";
+
+      cupons.forEach(cupom => {
+        const card = document.createElement("div");
+        card.className = "coupon-card";
+        card.innerHTML = `
+  <div class="coupon-image">
+    <img src="${cupom.imagens?.[0] || './imgs/img-desc.png'}" alt="Imagem do Cupom">
+  </div>
+  <div class="coupon-content">
+    <div class="coupon-tag">${cupom.tipo === "Percentual" ? `${cupom.valorDesconto}% OFF` : 'Desconto'}</div>
+    <h2 class="coupon-title">${cupom.titulo}</h2>
+    <p class="coupon-description">${cupom.descricao}</p>
+    <button class="coupon-button">Ver Mais</button>
+  </div>
+`;
+
+        card.querySelector("button").addEventListener("click", () => {
+          console.log('clicou!');
+          
+          const modal = document.querySelector(".modal");
+          const overlay = document.querySelector(".modal-overlay");
+          if (!modal || !overlay) return;
+
+          modal.querySelector(".modal-title").textContent = cupom.titulo;
+          modal.querySelector(".modal-validade").textContent = `Válido até ${new Date(cupom.dataExpiracao).toLocaleDateString()}`;
+          modal.querySelector(".modal-descricao").textContent = cupom.descricao;
+          modal.querySelector(".modal-logo").src = cupom.imagens?.[0] || "";
+
+          modal.style.display = "flex";
+          modal.style.flexDirection = 'column'
+          modal.style.alignItems = 'center'
+          overlay.style.display = "flex";
+        });
+
+        container.appendChild(card);
+      });
+
+      const closeBtn = document.querySelector(".modal .close-btn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          document.querySelector(".modal").style.display = "none";
+          document.querySelector('.modal-overlay').style.display = 'none'
+        });
+      }
+
+    } catch (e) {
+      console.error("Erro ao carregar cupons:", e.message);
+    } finally {
+      loaderCupons.style.display = "none";
+    }
+  });
+}
