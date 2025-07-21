@@ -1,5 +1,5 @@
 // Mapa
-import '../components/map.js'
+import '../testes/map.js'
 
 // Primeiro Banner
 import '../components/banner-slider.js'
@@ -8,7 +8,7 @@ import '../components/banner-slider.js'
 import '../components/banner-slide2.js'
 
 // Carrossel Logos
-import '../components/carrossel-logos.js'
+import '../testes/carrossel-logos-test.js'
 
 //Menu Mobile
 import '../components/menumobile.js'
