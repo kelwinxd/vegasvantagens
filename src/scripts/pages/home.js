@@ -1,5 +1,4 @@
-// Mapa
-import '../testes/map.js'
+
 
 // Primeiro Banner
 import '../components/banner-slider.js'
@@ -13,4 +12,3 @@ import '../testes/carrossel-logos-test.js'
 //Menu Mobile
 import '../components/menumobile.js'
 
-window.initMap = initMap;
