@@ -258,7 +258,7 @@ flex-shrink: 0;
 
 
 /*  Responsivos  */
- @media (max-width:1720px) {
+ @media (max-width:1820px) {
            .logo img {
             width: 240px;
             height: 67.937px;
