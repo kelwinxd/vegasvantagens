@@ -12,3 +12,5 @@ import '../testes/carrossel-logos-test.js'
 
 //Menu Mobile
 import '../components/menumobile.js'
+
+window.initMap = initMap;
