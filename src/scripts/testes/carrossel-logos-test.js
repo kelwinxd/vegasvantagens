@@ -1,3 +1,5 @@
+import { getClientToken, loginToken } from '../auth.js';
+
 const globalLoader = document.createElement("div");
 globalLoader.className = "loader";
 globalLoader.style.display = "none";
@@ -23,20 +25,7 @@ function createInlineLoader(targetEl) {
   return loader;
 }
 
-async function getClientToken() {
-  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      clientId: 'site_vegas_vantagens',
-      clientSecret: '8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0='
-    })
-  });
 
-  if (!resp.ok) throw new Error("Erro ao obter token");
-  const data = await resp.json();
-  return data.accessToken;
-}
 
 async function getEstabelecimentosDetalhados() {
   try {
