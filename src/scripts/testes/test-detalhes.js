@@ -1,4 +1,4 @@
-import { getClientToken, loginToken } from '../auth.js';
+
 
 // Loader setup global
 const globalLoader = document.createElement("div");
@@ -26,6 +26,18 @@ function createInlineLoader(targetEl) {
   return loader;
 }
 
+async function getClientToken() {
+  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientId: 'site_vegas_vantagens',
+      clientSecret: '8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0='
+    })
+  });
+  const data = await resp.json();
+  return data.accessToken;
+}
 
 async function fetchStoreDetails(token, storeId) {
   const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${storeId}`, {
