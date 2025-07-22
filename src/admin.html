@@ -62,6 +62,8 @@ os nossos clientes!</p>
     <h2>Cadastrar Estabelecimento</h2>
     <form id="formCadastro" onsubmit="event.preventDefault(); cadastrarEstabelecimento();">
 
+<div class="grid">
+
 
     <label>Nome</label>
     <input type="text" id="nomeEstab" required>
@@ -88,7 +90,9 @@ os nossos clientes!</p>
 <select id="categoriaId" required>
   <option value="">Carregando categorias...</option>
 </select>
+</div>
 
+<div class="grid">
 
 
 <!-- Depois: -->
@@ -129,8 +133,8 @@ os nossos clientes!</p>
 <label>Imagem Fachada </label>
 <input type="file" id="imagemAdicional">
 
-
     <button type="button" onclick="cadastrarEstabelecimento()" class="cadastrar">Cadastrar Estabelecimento</button>
+</div>
 
     </form>
   </div>
