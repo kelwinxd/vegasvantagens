@@ -365,7 +365,7 @@ lojasFiltradas.forEach(loja => {
 
 
         marker.addListener("click", () => {
-          window.location.href = `testes.html#store-${loja.id}`;
+          window.location.href = `detalhes.html#store-${loja.id}`;
         });
 
         markers.push(marker);
