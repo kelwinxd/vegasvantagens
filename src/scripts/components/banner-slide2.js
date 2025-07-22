@@ -84,7 +84,7 @@ function startAutoplay1() {
     document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
     updateSlidePosition1();
     updateBulletClasses1();
-  }, 4000);
+  }, 5000);
 }
 
 function stopAutoplay1() {

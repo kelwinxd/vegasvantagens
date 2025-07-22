@@ -59,9 +59,9 @@ function updateSlidePosition() {
     if (slide1.checked) {
         slidesContainer.style.transform = 'translateX(0%)';
     } else if (slide2.checked) {
-        slidesContainer.style.transform = 'translateX(-33.6%)';
+        slidesContainer.style.transform = 'translateX(-33.3%)';
     } else if (slide3.checked) {
-        slidesContainer.style.transform = 'translateX(-66.7%)';
+        slidesContainer.style.transform = 'translateX(-66.6%)';
     }
 }
 
