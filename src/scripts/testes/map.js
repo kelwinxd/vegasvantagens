@@ -1,3 +1,4 @@
+import { getClientToken, loginToken } from '../auth.js';
 let map, markers = [];
 
 function corrigirCoordenada(valor, tipo) {
@@ -79,28 +80,8 @@ async function initMap() {
 const searchInput = document.getElementById("searchInput");
 const btnLimpar = document.querySelector(".limpar");
 
-async function getClientToken() {
-  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      clientId: 'site_vegas_vantagens',
-      clientSecret: '8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0='
-    })
-  });
-  const data = await resp.json();
-  return data.accessToken; // adapte conforme resposta real
-}
 
-async function loginToken(email, senha) {
-  const resp = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, senha })
-  });
-  const data = await resp.json();
-  return data.accessToken;
-}
+
 
 async function fetchAllStores(accessToken) {
   try {

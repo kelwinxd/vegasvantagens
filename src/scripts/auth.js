@@ -1,7 +1,7 @@
 // auth.js
 let accessToken = null;
 let tokenTimestamp = null;
-const EXPIRATION_TIME = 50 * 60 * 1000; // 50 minutos
+const EXPIRATION_TIME = 60 * 60 * 1000; // 50 minutos
 
 export async function getClientToken() {
   const now = Date.now();
