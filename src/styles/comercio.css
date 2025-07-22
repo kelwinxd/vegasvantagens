@@ -351,8 +351,7 @@ line-height: normal;
 }
 
 .close-btn:hover {
-    background-color: red;
-    border-radius: 50%;
+color: red;
 }
 
 .modal-logo {

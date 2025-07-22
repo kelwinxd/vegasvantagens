@@ -88,7 +88,7 @@ async function montarCarrossel() {
     const id = est.id
     const nomeEncoded = encodeURIComponent(est.nome);
     const cidadeEncoded = encodeURIComponent(est.cidade);
-    link.href = `testes.html#store-${id}`;
+    link.href = `detalhes.html#store-${id}`;
 
     const img = document.createElement('img');
     img.src = est.imagemLogo;
