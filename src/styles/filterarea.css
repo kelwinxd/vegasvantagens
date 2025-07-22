@@ -217,6 +217,12 @@ border-radius: 8px;
     margin-bottom: 24px;
     cursor: pointer;
     background-color: transparent;
+
+
+  }
+
+  .limpar:hover {
+    filter: brightness(1.2);
   }
 
   #mensagem-vazia {

@@ -200,7 +200,7 @@ cursor: pointer;
 }
 
 .btn-right:hover, .btn-left:hover {
-    background-color: #434D9C;
+    filter: brightness(0.5);
 }
 
 .arrows {
