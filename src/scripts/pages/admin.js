@@ -485,7 +485,8 @@ function fecharModalEditar() {
 
 async function salvarAlteracoesEstab() {
   const token = localStorage.getItem("token");
-  const estabId = document.getElementById("editModal").dataset.estabId;
+  const estabId = document.getElementById("editId").value;
+
 
   const formData = new FormData();
   formData.append("id", estabId);
