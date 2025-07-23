@@ -283,19 +283,8 @@ function carregarCategorias() {
       const btnEditar = document.createElement("i");
       btnEditar.className = "fa-solid fa-pen-to-square";
 
-      btnEditar.addEventListener("click", () => {
- 
-  document.getElementById("editarId").value = estab.id;
-  document.getElementById("editarNome").value = estab.nome || "";
-  document.getElementById("editarRazaoSocial").value = estab.razaoSocial || "";
-  document.getElementById("editarCnpj").value = estab.cnpj || "";
-  document.getElementById("editarEndereco").value = estab.endereco || "";
-  document.getElementById("editarTelefone").value = estab.telefone || "";
-  document.getElementById("editarEmail").value = estab.emailContato || "";
-  document.getElementById("editarAtivo").checked = estab.ativo || false;
+      btnEditar.addEventListener("click", () => abrirModalEditar(estab));
 
-  document.getElementById("modalEditar").style.display = "flex";
-});
 
 
       const btnExcluir = document.createElement("i");
@@ -339,43 +328,186 @@ function carregarCategorias() {
   }
 }
 
-function fecharModalEditar() {
-  document.getElementById("modalEditar").style.display = "none";
-}
+//EDITAR
 
-async function salvarEdicaoEstabelecimento() {
+async function carregarCategoriasModal() {
   const token = localStorage.getItem("token");
-  const id = document.getElementById("editarId").value;
-
-  const body = {
-    nome: document.getElementById("editarNome").value,
-    razaoSocial: document.getElementById("editarRazaoSocial").value,
-    cnpj: document.getElementById("editarCnpj").value,
-    endereco: document.getElementById("editarEndereco").value,
-    telefone: document.getElementById("editarTelefone").value,
-    emailContato: document.getElementById("editarEmail").value,
-    ativo: document.getElementById("editarAtivo").checked
-  };
+  const select = document.getElementById("editCategoriaId");
 
   try {
-    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
+    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Categorias", {
+      headers: { "Authorization": "Bearer " + token }
     });
 
-    if (!res.ok) throw new Error("Erro ao editar");
+    const data = await res.json();
+    select.innerHTML = "";
+
+    data.forEach(cat => {
+      const option = document.createElement("option");
+      option.value = cat.id;
+      option.textContent = cat.nome;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar categorias:", err);
+    select.innerHTML = "<option value=''>Erro ao carregar</option>";
+  }
+}
+
+
+async function carregarEstadosModal() {
+  const token = localStorage.getItem("token");
+  const select = document.getElementById("editEstadoId");
+
+  try {
+    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estados", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    const data = await res.json();
+    select.innerHTML = "<option value=''>Selecione um estado</option>";
+
+    data.forEach(estado => {
+      const option = document.createElement("option");
+      option.value = estado.id;
+      option.textContent = estado.nome;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar estados:", err);
+  }
+}
+
+
+async function carregarCidades(isModal = false) {
+  const estadoId = isModal
+    ? document.getElementById("editEstadoId").value
+    : document.getElementById("estadoId").value;
+
+  const select = isModal
+    ? document.getElementById("editCidadeId")
+    : document.getElementById("cidadeId");
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    const data = await res.json();
+    select.innerHTML = "<option value=''>Selecione uma cidade</option>";
+
+    data.forEach(cidade => {
+      const option = document.createElement("option");
+      option.value = cidade.id;
+      option.textContent = cidade.nome;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar cidades:", err);
+  }
+}
+
+
+
+
+async function abrirModalEditar(estab) {
+  await carregarCategoriasModal();
+  await carregarEstadosModal();
+
+  // Setar os valores após o carregamento
+  document.getElementById("editCategoriaId").value = estab.categoriaId || "";
+  document.getElementById("editEstadoId").value = estab.estadoId || "";
+
+  await carregarCidades(true); // carrega cidades do estado selecionado
+  document.getElementById("editCidadeId").value = estab.cidadeId || "";
+
+
+  document.getElementById("editId").value = estab.id;
+  document.getElementById("editNomeEstab").value = estab.nome;
+  document.getElementById("editRazaoSocial").value = estab.razaoSocial || "";
+  document.getElementById("editCnpj").value = estab.cnpj || "";
+  document.getElementById("editEndereco").value = estab.endereco || "";
+  document.getElementById("editTelefone").value = estab.telefone || "";
+  document.getElementById("editEmailContato").value = estab.emailContato || "";
+  document.getElementById("editAtivoEstab").checked = estab.ativo;
+
+  document.getElementById("editCategoriaId").value = estab.categoriaId || "";
+  document.getElementById("editEstadoId").value = estab.estadoId || "";
+  document.getElementById("editCidadeId").value = estab.cidadeId || "";
+
+  document.getElementById("editRua").value = estab.rua || "";
+  document.getElementById("editNumero").value = estab.numero || "";
+  document.getElementById("editBairro").value = estab.bairro || "";
+  document.getElementById("editComplemento").value = estab.complemento || "";
+  document.getElementById("editCep").value = estab.cep || "";
+  document.getElementById("editLatitude").value = estab.latitude || "";
+  document.getElementById("editLongitude").value = estab.longitude || "";
+
+  document.getElementById("editLogoPreview").src = estab.imagemPrincipal || './imgs/default-image.png';
+  document.getElementById("editFachadaPreview").src = estab.imagemAdicional || './imgs/default-image.png';
+
+  document.getElementById("modalEditarOverlay").style.display = "flex";
+}
+
+function fecharModalEditar() {
+  document.getElementById("modalEditarOverlay").style.display = "none";
+}
+
+async function salvarAlteracoesEstab() {
+  const token = localStorage.getItem("token");
+  const estabId = document.getElementById("editModal").dataset.estabId;
+
+  const formData = new FormData();
+  formData.append("id", estabId);
+  formData.append("nome", document.getElementById("editNomeEstab").value);
+  formData.append("razaoSocial", document.getElementById("editRazaoSocial").value);
+  formData.append("cnpj", document.getElementById("editCnpj").value); // readOnly mas incluído
+  formData.append("endereco", document.getElementById("editEndereco").value);
+  formData.append("telefone", document.getElementById("editTelefone").value);
+  formData.append("emailContato", document.getElementById("editEmailContato").value);
+  formData.append("ativo", document.getElementById("editAtivoEstab").checked);
+  formData.append("categoriaId", document.getElementById("editCategoriaId").value);
+  formData.append("estadoId", document.getElementById("editEstadoId").value);
+  formData.append("cidadeId", document.getElementById("editCidadeId").value);
+  formData.append("rua", document.getElementById("editRua").value);
+  formData.append("numero", document.getElementById("editNumero").value);
+  formData.append("bairro", document.getElementById("editBairro").value);
+  formData.append("complemento", document.getElementById("editComplemento").value);
+  formData.append("cep", document.getElementById("editCep").value);
+  formData.append("latitude", document.getElementById("editLatitude").value);
+  formData.append("longitude", document.getElementById("editLongitude").value);
+
+  const imgLogo = document.getElementById("editImagemPrincipal").files[0];
+  const imgFachada = document.getElementById("editImagemAdicional").files[0];
+
+  if (imgLogo) formData.append("imagemPrincipal", imgLogo);
+  if (imgFachada) formData.append("imagemAdicional", imgFachada);
+
+  try {
+    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabId}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": "Bearer " + token
+        // Não inclua Content-Type aqui, o browser define automaticamente com multipart/form-data
+      },
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("Erro ao atualizar");
 
     alert("Estabelecimento atualizado com sucesso!");
-    fecharModalEditar();
-    buscarEstabelecimentos(); // Atualiza a lista
+    document.getElementById("editModal").style.display = "none";
+    buscarEstabelecimentos(); // Atualiza a lista na interface
   } catch (err) {
+    console.error("Erro ao salvar alterações:", err);
     alert("Erro ao salvar alterações: " + err.message);
   }
 }
+
+
+
 
 
 document.getElementById("filtroEstab").addEventListener("input", function () {

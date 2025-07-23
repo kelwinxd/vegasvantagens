@@ -142,39 +142,82 @@ os nossos clientes!</p>
 
     <div class="comercio-existentes" data-tag="comercio-ex">
        
-<div id="modalEditar" class="modal-overlay" style="display: none;">
-  <div class="modal-conteudo">
-    <span class="fechar-modal" onclick="fecharModalEditar()">×</span>
-
+<div id="modalEditarOverlay" class="modal-overlay" style="display:none">
+  <div class="modal-content">
+    <span class="close-modal" onclick="fecharModalEditar()">&times;</span>
+    <h2>Editar Estabelecimento</h2>
     <form id="formEditar" onsubmit="event.preventDefault(); salvarEdicaoEstabelecimento();">
-      <input type="hidden" id="editarId">
+      <input type="hidden" id="editId">
+
       <div class="grid">
         <label>Nome</label>
-        <input type="text" id="editarNome" required>
+        <input type="text" id="editNomeEstab" required>
 
         <label>Razão Social</label>
-        <input type="text" id="editarRazaoSocial">
+        <input type="text" id="editRazaoSocial">
 
         <label>CNPJ</label>
-        <input type="text" id="editarCnpj">
+        <input type="text" id="editCnpj" readonly>
 
         <label>Endereço</label>
-        <input type="text" id="editarEndereco">
+        <input type="text" id="editEndereco">
 
         <label>Telefone</label>
-        <input type="text" id="editarTelefone">
+        <input type="text" id="editTelefone">
 
         <label>Email de Contato</label>
-        <input type="email" id="editarEmail">
+        <input type="email" id="editEmailContato">
 
         <label>Ativo</label>
-        <input type="checkbox" id="editarAtivo">
+        <input type="checkbox" id="editAtivoEstab">
+
+        <label>Categoria</label>
+        <select id="editCategoriaId"></select>
       </div>
 
-      <button type="submit" class="cadastrar">Salvar Alterações</button>
+      <div class="grid">
+        <label>Estado</label>
+        <select id="editEstadoId" onchange="carregarCidades(true)" required></select>
+
+        <label>Cidade</label>
+        <select id="editCidadeId" required></select>
+
+        <label>Rua</label>
+        <input type="text" id="editRua">
+
+        <label>Número</label>
+        <input type="text" id="editNumero">
+
+        <label>Bairro</label>
+        <input type="text" id="editBairro">
+
+        <label>Complemento</label>
+        <input type="text" id="editComplemento">
+
+        <label>CEP</label>
+        <input type="text" id="editCep">
+
+        <label>Latitude</label>
+        <input type="number" id="editLatitude" step="any">
+
+        <label>Longitude</label>
+        <input type="number" id="editLongitude" step="any">
+
+        <label>Logo Atual</label><br>
+        <img id="editLogoPreview" src="" style="max-width: 100px; margin-bottom: 10px;"><br>
+        <input type="file" id="editImagemPrincipal">
+
+        <label>Imagem Fachada Atual</label><br>
+        <img id="editFachadaPreview" src="" style="max-width: 100px; margin-bottom: 10px;"><br>
+        <input type="file" id="editImagemAdicional">
+
+        <button onclick="salvarAlteracoesEstab()" class="cadastrar">Salvar Alterações</button>
+
+      </div>
     </form>
   </div>
 </div>
+
 
 
 
