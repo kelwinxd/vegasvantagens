@@ -283,6 +283,21 @@ function carregarCategorias() {
       const btnEditar = document.createElement("i");
       btnEditar.className = "fa-solid fa-pen-to-square";
 
+      btnEditar.addEventListener("click", () => {
+  document.querySelector('.modal-editar').style.display = 'flex'
+  document.getElementById("editarId").value = estab.id;
+  document.getElementById("editarNome").value = estab.nome || "";
+  document.getElementById("editarRazaoSocial").value = estab.razaoSocial || "";
+  document.getElementById("editarCnpj").value = estab.cnpj || "";
+  document.getElementById("editarEndereco").value = estab.endereco || "";
+  document.getElementById("editarTelefone").value = estab.telefone || "";
+  document.getElementById("editarEmail").value = estab.emailContato || "";
+  document.getElementById("editarAtivo").checked = estab.ativo || false;
+
+  document.getElementById("modalEditar").style.display = "flex";
+});
+
+
       const btnExcluir = document.createElement("i");
       btnExcluir.className = "fa-solid fa-trash";
 
@@ -323,6 +338,45 @@ function carregarCategorias() {
     console.error(err);
   }
 }
+
+function fecharModalEditar() {
+  document.getElementById("modalEditar").style.display = "none";
+}
+
+async function salvarEdicaoEstabelecimento() {
+  const token = localStorage.getItem("token");
+  const id = document.getElementById("editarId").value;
+
+  const body = {
+    nome: document.getElementById("editarNome").value,
+    razaoSocial: document.getElementById("editarRazaoSocial").value,
+    cnpj: document.getElementById("editarCnpj").value,
+    endereco: document.getElementById("editarEndereco").value,
+    telefone: document.getElementById("editarTelefone").value,
+    emailContato: document.getElementById("editarEmail").value,
+    ativo: document.getElementById("editarAtivo").checked
+  };
+
+  try {
+    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error("Erro ao editar");
+
+    alert("Estabelecimento atualizado com sucesso!");
+    fecharModalEditar();
+    buscarEstabelecimentos(); // Atualiza a lista
+  } catch (err) {
+    alert("Erro ao salvar alterações: " + err.message);
+  }
+}
+
 
 document.getElementById("filtroEstab").addEventListener("input", function () {
   const termo = this.value.toLowerCase();
