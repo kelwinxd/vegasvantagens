@@ -447,18 +447,31 @@ async function abrirModalEditar(estab) {
   document.getElementById("editLatitude").value = estab.latitude || "";
   document.getElementById("editLongitude").value = estab.longitude || "";
 
-const imgLogo = document.getElementById("previewImagemPrincipal");
-const imgFachada = document.getElementById("previewImagemAdicional");
+document.getElementById("editLogoPreview").src =
+  estab.imagemPrincipal || "./imgs/default-image.png";
 
-imgLogo.src = estab.imagemPrincipal || "./imgs/default-image.png";
+document.getElementById("editFachadaPreview").src =
+  estab.imagens && estab.imagens.length > 1
+    ? estab.imagens[1]
+    : "./imgs/default-image.png";
 
-if (estab.imagens && estab.imagens.length > 1) {
-  imgFachada.src = estab.imagens[1];
-} else {
-  imgFachada.src = "./imgs/default-image.png";
-}
   document.getElementById("modalEditarOverlay").style.display = "flex";
 }
+
+document.getElementById("editImagemPrincipal").addEventListener("change", function (e) {
+  const file = e.target.files[0];
+  if (file) {
+    document.getElementById("editLogoPreview").src = URL.createObjectURL(file);
+  }
+});
+
+document.getElementById("editImagemAdicional").addEventListener("change", function (e) {
+  const file = e.target.files[0];
+  if (file) {
+    document.getElementById("editFachadaPreview").src = URL.createObjectURL(file);
+  }
+});
+
 
 function fecharModalEditar() {
   document.getElementById("modalEditarOverlay").style.display = "none";
@@ -488,11 +501,9 @@ async function salvarAlteracoesEstab() {
   formData.append("latitude", document.getElementById("editLatitude").value);
   formData.append("longitude", document.getElementById("editLongitude").value);
 
-  const imgLogo = document.getElementById("editImagemPrincipal").files[0];
-  const imgFachada = document.getElementById("editImagemAdicional").files[0];
-
-  if (imgLogo) formData.append("imagemPrincipal", imgLogo);
-  if (imgFachada) formData.append("imagemAdicional", imgFachada);
+formData.append("imagemPrincipal", document.getElementById("editImagemPrincipal").files[0] || null);
+formData.append("imagemAdicional", document.getElementById("editImagemAdicional").files[0] || null);
+ 
 
   try {
     const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabId}`, {
