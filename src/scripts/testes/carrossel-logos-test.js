@@ -74,7 +74,7 @@ async function montarCarrossel() {
 
   estabelecimentos.forEach(est => {
     const link = document.createElement('a');
-    const id = est.id
+    const id = est.id;
     const nomeEncoded = encodeURIComponent(est.nome);
     const cidadeEncoded = encodeURIComponent(est.cidade);
     link.href = `detalhes.html#store-${id}`;
@@ -87,26 +87,35 @@ async function montarCarrossel() {
     track.appendChild(link);
   });
 
-  // Duplicar para efeito infinito
-  track.innerHTML += track.innerHTML;
+  if (estabelecimentos.length > 3) {
+    // DUPLICAR os itens para criar efeito contínuo
+    track.innerHTML += track.innerHTML;
 
-  let posX = 0;
-  let animationId;
-  const speed = 0.5;
+    let posX = 0;
+    let animationId;
+    const speed = 0.5;
 
-  function animate() {
-    posX -= speed;
-    if (Math.abs(posX) >= track.scrollWidth / 2) {
-      posX = 0;
+    function animate() {
+      posX -= speed;
+      if (Math.abs(posX) >= track.scrollWidth / 2) {
+        posX = 0;
+      }
+      track.style.transform = `translateX(${posX}px)`;
+      animationId = requestAnimationFrame(animate);
     }
-    track.style.transform = `translateX(${posX}px)`;
-    animationId = requestAnimationFrame(animate);
+
+    animate();
+
+    // Pausar animação ao passar o mouse
+    carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
+    carrossel.addEventListener('mouseleave', () => animate());
+  } else {
+    // CASO tenha 3 ou menos, manter layout fixo
+    track.style.transform = 'translateX(0)';
+    track.style.justifyContent = 'center'; // opcional: centraliza os logos
+    track.style.gap = '40px'; // espaçamento entre logos se quiser
   }
-
-  animate();
-
-  carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
-  carrossel.addEventListener('mouseleave', () => animate());
 }
+
 
 document.addEventListener("DOMContentLoaded", montarCarrossel);

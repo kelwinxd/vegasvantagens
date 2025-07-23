@@ -1,3 +1,5 @@
+
+
 // Loader setup global
 const globalLoader = document.createElement("div");
 globalLoader.className = "loader";

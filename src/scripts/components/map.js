@@ -1,130 +1,130 @@
-window.initMap = function () {
-  const defaultCenter = { lat: -23.561684, lng: -46.625378 };
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 10,
-    center: defaultCenter,
-  });
+import { getClientToken, loginToken } from '../auth.js';
+let map, markers = [];
+
+function corrigirCoordenada(valor, tipo) {
+  const num = parseFloat(valor);
+  if (isNaN(num)) return null;
+
+  // Corrige se estiver fora dos limites reais de coordenadas
+  if (tipo === "longitude" && (num > 180 || num < -180)) {
+    return num / 1e15;
+  }
+  if (tipo === "latitude" && (num > 90 || num < -90)) {
+    return num / 1e15;
+  }
+
+  return num;
 }
+
+async function initMap() {
+  try {
+    const accessToken = await getClientToken();
+    const lojas = await fetchAllStores(accessToken);
+
+
+    if (!lojas || lojas.length === 0) {
+      console.warn("Nenhuma loja encontrada.");
+ 
+      return;
+    }
+
+    // Pega a primeira loja com coordenadas válidas (corrigidas)
+    const primeiraComCoordValida = lojas.find(loja => {
+      const lat = corrigirCoordenada(loja.latitude, "latitude");
+      const lng = corrigirCoordenada(loja.longitude, "longitude");
+      return !isNaN(lat) && !isNaN(lng);
+    });
+
+    if (!primeiraComCoordValida) {
+      console.warn("Nenhuma coordenada válida encontrada.");
+      return;
+    }
+
+    const latInicial = corrigirCoordenada(primeiraComCoordValida.latitude, "latitude");
+    const lngInicial = corrigirCoordenada(primeiraComCoordValida.longitude, "longitude");
+
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: latInicial, lng: lngInicial },
+      zoom: 13
+    });
+
+    lojas.forEach(loja => {
+      const lat = corrigirCoordenada(loja.latitude, "latitude");
+      const lng = corrigirCoordenada(loja.longitude, "longitude");
+
+      console.log(`Loja: ${loja.nome}, Latitude corrigida: ${lat}, Longitude corrigida: ${lng}`);
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const marker = new google.maps.Marker({
+          position: { lat, lng },
+          map,
+          title: loja.nome
+        });
+
+        marker.addListener('click', () => {
+          window.location.href = `detalhes.html#store-${loja.id}`;
+        });
+
+        markers.push(marker);
+      }
+    });
+
+  } catch (error) {
+    console.error("Erro ao inicializar o mapa:", error.message);
+  }
+}
+
 
 
 
 const searchInput = document.getElementById("searchInput");
 const btnLimpar = document.querySelector(".limpar");
 
-const cityData = {
-  sp: {
-    americana: {
-      center: { lat: -22.740435, lng: -47.326196 },
-      points: [
-        {
-          name: "Zanini",
-          type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Dr. Antônio Lobo, 615 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.740250, lng: -47.328021 },
-          image:"./imgs/comercios/zanini-est.webp"
-        },
-        {
-          name: "Mercadão dos Óculos",
-          type: ["ótica"],
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Dr. Antônio Lobo, 233 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.740082, lng: -47.330582 },
-          image:"./imgs/comercios/mercadaooculos.webp"
-        },
-        {
-          name: "Intensos Barbearia",
-          type: ["barbearia"],
-          card: ["vegas day", "vegas plus"],
-          address: "R. João Bernestein, 651 - Jardim São Vito, Americana - SP, 13473-200",
-          position: { lat: -22.737966, lng: -47.311791 }
-        },
-        {
-          name: "Cãochorro Petshop",
-          type: ["petshop"],
-          card: ["vegas day", "vegas plus"],
-          address: "R. das Paineiras, 305 - Jardim Paulistano, Americana - SP, 13474-450",
-          position: { lat: -22.717230, lng: -47.303097 },
-          image:"./imgs/comercios/cachorro.webp"
-        },
-        {
-          name: "Betta Suplementos",
-          type: ["alimentação"],
-          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
-          address: "R. Sete de Setembro, 135 - Centro, Americana - SP, 13465-300",
-          position: { lat: -22.739187, lng: -47.327828 }
-        },
-        {
-          name: "Boi que Mia",
-          type: ["restaurante"],
-          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
-          address: "R. das Paineiras, 378 - Jardim Paulistano, Americana - SP, 13474-450",
-          position: { lat: -22.716999, lng: -47.303373 },
-          image:"./imgs/comercios/boimia.jpg"
-        },
-        {
-          name: "Casa Florindo",
-          type: ["restaurante"],
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Campos Salles, 181 - Centro, Americana - SP, 13465-400",
-          position: { lat: -22.738252, lng: -47.325693 }
-        },
-        {
-          name: "Deck Meia 13",
-          type: ["restaurante"],
-          card: ["vegas day", "vegas plus"],
-          address: "R. Fortunato Faraone, 242 - Vila Rehder, Americana - SP, 13465-450",
-          position: { lat: -22.737541, lng: -47.326669 }
-        },
-        {
-          name: "Danny Cosméticos",
-          type: ["cosméticos"],
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Dr. Antônio Lobo, 455 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.739728, lng: -47.328574 }
-        },
-        {
-          name: "Vidrovan",
-          type: ["veículos"],
-          card: ["vegas day", "vegas plus"],
-          address: "Av. Paulista, 1015 - Vila Santa Catarina, Americana - SP, 13465-490",
-          position: { lat: -22.724245, lng: -47.323191 }
-        },
-        {
-          name: "Maryara Panificadora & Doçaria",
-          type: ["restaurante"],
-          card: ["vegas day", "vegas plus", "vegas alimentação", "vegas refeição"],
-          address: "Av. Afonso Arinos, 249 - Jardim da Paz, Americana - SP, 13474-000",
-          position: { lat: -22.703432, lng: -47.293846 }
-        },
-        {
-          name: "Rede Ferrara",
-          type: ["posto de combustível"],
-          card: ["vegas day", "vegas plus", "vegas combustível"],
-          address: "Av. Nossa Sra. de Fátima, 373 - Parque Universitário, Americana - SP, 13468-280",
-          position: { lat: -22.716347, lng: -47.289679 }
-        },
-        {
-          name: "Casa de Carne Boi Forte",
-          type: ["açougue"],
-          card: ["vegas day", "vegas plus", "vegas alimentação"],
-          address: "R. São Vito, 65 - Jardim São Vito, Americana - SP, 13473-230",
-          position: { lat: -22.736031, lng: -47.312421 }
-        },
-        {
-          name: "Shopping das Utilidades",
-          type: ["presentes", "utensílios domésticos", "variedades", "brinquedos"],
-          card: ["vegas day", "vegas plus", "vegas alimentação"],
-          address: "Av. Dr. Antônio Lobo, 275 - Centro, Americana - SP, 13465-005",
-          position: { lat: -22.739852, lng: -47.328970 }
-        }
-      ]
-    }
-  }
-};
 
-let map;
-let markers = [];
+
+
+async function fetchAllStores(accessToken) {
+  try {
+    
+    // Buscar lista resumida
+    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (!respLista.ok) throw new Error("Erro ao buscar lista geral");
+    const lista = await respLista.json();
+
+    // Buscar detalhes um a um
+    const detalhes = await Promise.all(
+      lista.map(async loja => {
+        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${loja.id}`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!detalheResp.ok) return null;
+        return await detalheResp.json();
+      })
+    );
+
+    return detalhes.filter(e => e && e.latitude && e.longitude);
+
+  } catch (err) {
+
+    console.error("Erro ao buscar estabelecimentos completos:", err.message);
+    return [];
+  }
+}
+
+async function fetchStoreDetails(loginToken, storeId) {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${storeId}`, {
+    headers: {
+      'Authorization': `Bearer ${loginToken}`
+    }
+  });
+  return resp.json(); // retorna dados completos incl. lat/lng, categorias, imagens...
+}
+
+
+
+
 
 // Elementos
 const filterState = document.getElementById("filterState");
@@ -141,128 +141,258 @@ const filterCard = document.getElementById("filterCard");
 const lojasList = document.querySelector(".produtoLista");
 const mapContainer = document.getElementById("map"); 
 
-// Inicializa o mapa
-
+// menu mobile
+// Atualiza o select de cidades baseado no estado
 filterState.addEventListener("change", () => {
-  const estado = filterState.value;
-  const listaUl = document.getElementById("list-ul");
-  
-  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-
-  if (cityData[estado]) {
-
-    listaUl.innerHTML = ""; 
-    Object.keys(cityData[estado]).forEach(cidade => {
-      const opt = document.createElement("option");
-
-      opt.value = cidade;
-      opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-      filterCity.appendChild(opt);
-
-  // LI (para a UI customizada)
-    const li = document.createElement("li");
-    li.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-    li.dataset.value = cidade;
-
-    // Evento de clique para atualizar o filtro
-    li.addEventListener("click", () => {
-      filterCity.value = cidade; // atualiza o select
-      filterCity.dispatchEvent(new Event("change")); // dispara o evento de filtro
-    });
-
-    listaUl.appendChild(li);
-    });
-
-
-
-
-  }
-
-  filtrar();
+  atualizarCidadesPorEstado(filterState.value.toLowerCase());
 });
 
 
 
 
-function updateMapByCity(cidade, segmento, busca, cartao) {
-  markers.forEach(m => m.setMap(null));
-  markers = [];
-  lojasList.innerHTML = "";
-
-   let count = 0;
-
-  for (const estado in cityData) {
-    if (cityData[estado][cidade]) {
-      const cidadeData = cityData[estado][cidade];
-      if (cidadeData.center && cidadeData.points.length > 0) {
-  map.setCenter(cidadeData.center);
-  map.setZoom(13);
+async function fetchCidadesPorEstado(estadoId) {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`);
+  return await resp.json();
 }
+
+async function carregarEstados() {
+  try {
+    const accessToken = await getClientToken();
+    const resp = await fetch("https://apivegasvantagens-production.up.railway.app/api/UnidadesFederativas", {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    const estados = await resp.json();
+
+    filterState.innerHTML = '<option value="">Todos os Estados</option>';
+    const listEstados = document.querySelector(".custom-options[data-input-id='filterState']");
+    if (listEstados) listEstados.innerHTML = '<li data-value="">Todos os Estados</li>';
+
+    estados.forEach(estado => {
+      const opt = document.createElement("option");
+      opt.value = estado.id;
+      opt.textContent = estado.sigla;
+      filterState.appendChild(opt);
+
+      const li = document.createElement("li");
+      li.dataset.value = estado.id;
+      li.textContent = estado.sigla;
+      listEstados.appendChild(li);
+
+      li.addEventListener("click", async () => {
+        filterState.value = estado.id;
+        document.querySelector(".custom-select-title").textContent = estado.sigla;
+
+        listEstados.querySelectorAll("li").forEach(el => el.classList.remove("selected"));
+        li.classList.add("selected");
+
+        await atualizarCidadesPorEstado(estado.id);
+      });
+    });
+
+    const sp = estados.find(e => e.sigla.toLowerCase() === "sp");
+    if (sp) {
+      filterState.value = sp.id;
+      document.querySelector(".custom-select-title").textContent = sp.sigla;
+      await atualizarCidadesPorEstado(sp.id);
+    }
+
+  } catch (err) {
+    console.error("Erro ao carregar estados:", err);
+  }
+}
+
+
+
+async function atualizarCidadesPorEstado(estadoId) {
+  if (!estadoId) return;
+
+  const listaUl = document.getElementById("list-ul");
+  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
+  listaUl.innerHTML = `<li data-value="">Todas as Cidades</li>`;
+
+  try {
+    const accessToken = await getClientToken();
+    const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (!resp.ok) {
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+    lojasList.innerHTML = "";
+      throw new Error("Cidades não encontradas para este estado.");
       
 
-      cidadeData.points.forEach(ponto => {
-        const nomeMatch = !busca || ponto.name.toLowerCase().includes(busca.toLowerCase());
-        const segMatch = !segmento || ponto.type.includes(segmento);
-        const cardMatch = !cartao || ponto.card.includes(cartao);
+    } 
 
-        if (nomeMatch && segMatch && cardMatch) {
-          const marker = new google.maps.Marker({
-            position: ponto.position,
-            map: map,
-            title: ponto.name
-          });
-          markers.push(marker);
+    const cidades = await resp.json();
 
-          const li = document.createElement("li");
-          li.classList.add("place-card");
-          li.dataset.city = cidade;
-          li.dataset.state = estado;
-          li.dataset.seg = ponto.type.join(",");
-          li.dataset.card = ponto.card.join(",");
-          li.dataset.tags = `${ponto.name.toLowerCase()} ${ponto.address.toLowerCase()}`;
+    cidades.forEach(cidade => {
+      const nome = cidade.nome;
+      const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1);
 
-          li.innerHTML = `
-         
-            <div class="place-image">
-              <img src="${ponto.image ? ponto.image : './imgs/default-image.png' }" alt="${ponto.name}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
-            </div>
-            <div class="place-details">
-              <h3>${ponto.name}</h3>
-              <p class="address">${ponto.address}</p>
-              <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
-              <button class ="btn-card-map"> Saiba Mais </button>
-            </div>
-       
-          `;
-           
-          lojasList.appendChild(li);
-          count++
+      const opt = document.createElement("option");
+      opt.value = nome;
+      opt.textContent = nomeFormatado;
+      filterCity.appendChild(opt);
 
-          const resultsCount = document.querySelector(".resultscount span")
-          
-          resultsCount.textContent = `${count}`
-          if(li){
-            li.addEventListener("click", () => {
-              // Formata a hash com base no nome, cidade e estado
-              const hash = encodeURIComponent(`${cidade}-${estado}-${ponto.name}`);
-              window.location.href = `detalhes.html#${hash}`;
+      const li = document.createElement("li");
+      li.textContent = nomeFormatado;
+      li.dataset.value = nome;
 
-            
-
-
-            });
-          }
-
-              if (count >= 4) {
-            li.classList.add('hidden');
-            console.log("escondido")
-          }
-
-          
-          
+      li.addEventListener("click", () => {
+        filterCity.value = nome;
+        filterCity.dispatchEvent(new Event("change"));
+        listaUl.querySelectorAll("li").forEach((el) => {
+          el.classList.remove("active")
+          el.classList.remove("selected")
         }
+         
+        
+        );
+        li.classList.add("active");
+        li.classList.add('selected')
+
+        const title = listaUl.closest(".custom-select")?.querySelector(".custom-select-title");
+        if (title) title.textContent = nomeFormatado;
       });
+
+      listaUl.appendChild(li);
+    });
+  } catch (error) {
+    console.warn("Falha ao carregar cidades:", error.message);
+  }
+
+  filtrar();
+}
+
+// Criação do elemento loader no HTML (adicione dinamicamente)
+const loader = document.createElement("div");
+loader.className = "loader";
+loader.style.display = "none";
+lojasList.parentElement.insertBefore(loader, lojasList);
+
+function mostrarLoader() {
+  const msg = document.getElementById("mensagem-vazia");
+if (msg) msg.style.display = "none";
+  loader.style.display = "block";
+}
+function esconderLoader() {
+  loader.style.display = "none";
+}
+function mostrarMensagemVazia() {
+  const msg = document.getElementById("mensagem-vazia");
+  if (msg) msg.style.display = "block";
+}
+
+function esconderMensagemVazia() {
+  const msg = document.getElementById("mensagem-vazia");
+  if (msg) msg.style.display = "none";
+}
+
+async function updateMapByCity(cidade, segmento, busca, cartao) {
+  try {
+    mostrarLoader()
+    const accessToken = await getClientToken();
+    const lojas = await fetchAllStores(accessToken);
+
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+    lojasList.innerHTML = "";
+
+    let count = 0;
+
+    const lojasFiltradas = lojas.filter(loja => {
+      const nomeMatch = !busca || loja.nome.toLowerCase().includes(busca.toLowerCase());
+      const cidadeMatch = !cidade || loja.cidade.toLowerCase() === cidade.toLowerCase();
+      const segMatch = !segmento || loja.categorias?.some(cat => cat.toLowerCase().includes(segmento.toLowerCase()));
+      const cardMatch = !cartao || loja.cartoes?.includes(cartao); // ajuste se necessário
+
+      return nomeMatch && cidadeMatch && segMatch && cardMatch;
+    });
+
+    console.log("Lojas filtradas:", lojasFiltradas);
+
+
+
+    if (lojasFiltradas.length === 0) {
+      mostrarMensagemVazia();
+      return;
     }
+
+    const cidadeCentro = lojasFiltradas[0];
+  const centroLat = corrigirCoordenada(cidadeCentro.latitude, "latitude");
+const centroLng = corrigirCoordenada(cidadeCentro.longitude, "longitude");
+
+if (!isNaN(centroLat) && !isNaN(centroLng)) {
+  map.setCenter({ lat: centroLat, lng: centroLng });
+  map.setZoom(13);
+}
+
+lojasFiltradas.forEach(loja => {
+  const lat = corrigirCoordenada(loja.latitude, "latitude");
+  const lng = corrigirCoordenada(loja.longitude, "longitude");
+
+  if (!isNaN(lat) && !isNaN(lng)) {
+    const marker = new google.maps.Marker({
+      position: { lat, lng },
+      map,
+      title: loja.nome
+    });
+
+
+        marker.addListener("click", () => {
+          window.location.href = `detalhes.html#store-${loja.id}`;
+        });
+
+        markers.push(marker);
+
+        const li = document.createElement("li");
+        li.classList.add("place-card");
+        li.dataset.city = loja.cidade;
+        li.dataset.state = ""; // pode incluir se for necessário depois
+        li.dataset.seg = loja.categorias?.join(",") || "";
+        li.dataset.card = loja.cartoes?.join(",") || "";
+        li.dataset.tags = `${loja.nome.toLowerCase()} ${loja.rua?.toLowerCase() || ""}`;
+
+        li.innerHTML = `
+          <div class="place-image">
+            <img src="${loja.imagens[0] || './imgs/default-image.png'}" alt="${loja.nome}" onerror="this.onerror=null;this.src='./imgs/default-image.png';">
+          </div>
+          <div class="place-details">
+            <h3>${loja.nome}</h3>
+            <p class="address">${loja.rua}, ${loja.numero}, ${loja.bairro}</p>
+            <p class="distance"><img src="./imgs/icons/location.svg" /> 5.0 km</p>
+            <button class="btn-card-map">Saiba Mais</button>
+          </div>
+        `;
+
+        lojasList.appendChild(li);
+        count++;
+
+        const resultsCount = document.querySelector(".resultscount span");
+        resultsCount.textContent = `${count}`;
+
+        li.addEventListener("click", () => {
+          const hash = encodeURIComponent(`store-${loja.id}`);
+          window.location.href = `detalhes.html#${hash}`;
+        });
+
+      /*  if (count >= 4) {
+          li.classList.add("hidden");
+        }*/
+      }
+    });
+
+  } catch (err) {
+    console.error("Erro ao atualizar mapa:", err.message);
+     mostrarMensagemVazia();
+  }finally {
+    esconderLoader();
   }
 
 const totalItems = lojasList.querySelectorAll("li").length;
@@ -308,6 +438,8 @@ buttonVerMais.addEventListener("click", () => {
     buttonVerMais.classList.add("expanded");
   }
 });
+
+
 // Filtro principal
 function filtrar() {
   const search = searchInput.value.toLowerCase();
@@ -357,7 +489,7 @@ function filtrar() {
 
 function limparDados() {
   // Resetar os selects e o campo de busca
-  filterState.value = "";
+  filterState.value = "sp";
   filterCity.innerHTML = '<option value="">Todas as Cidades</option>';
   filterSegment.value = "";
   filterCard.value = "";
@@ -374,68 +506,43 @@ function limparDados() {
   map.setZoom(10);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const estadoPadrao = "sp";
-  const cidadePadrao = "americana";
+document.addEventListener("DOMContentLoaded", async () => {
+  await carregarEstados();
 
-  // Define estado
-  filterState.value = estadoPadrao;
+  // Define SP e cidade Americana após carregar estados e cidades
+  const spOption = [...filterState.options].find(opt => opt.textContent === "SP");
+  if (spOption) {
+    filterState.value = spOption.value;
+     const estadoLi = document.querySelector(`.custom-options[data-input-id='filterState'] li[data-value='${spOption.value}']`);
+    if (estadoLi) {
+      estadoLi.classList.add("selected");
+      const title = estadoLi.closest(".custom-select").querySelector(".custom-select-title");
+      if (title) title.textContent = estadoLi.textContent;
+    }
+    await atualizarCidadesPorEstado(spOption.value);
 
-  // Limpa selects e lista
-  filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-  const listaUl = document.getElementById("list-ul");
-  listaUl.innerHTML = "";
-
-  // Cria li "Todas as Cidades"
-  const liDefault = document.createElement("li");
-  liDefault.textContent = "Todas as Cidades";
-  liDefault.dataset.value = "";
-  listaUl.appendChild(liDefault);
-
-  // Popular cidades e <li>s com base no estado
-  Object.keys(cityData[estadoPadrao]).forEach(cidade => {
-    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-
-    // Adiciona ao <select>
-    const opt = document.createElement("option");
-    opt.value = cidade;
-    opt.textContent = nomeFormatado;
-    filterCity.appendChild(opt);
-
-    // Adiciona ao <ul>
-    const li = document.createElement("li");
-    li.textContent = nomeFormatado;
-    li.dataset.value = cidade;
-
-    // Evento: atualizar <select> e aplicar classe 'active'
-    li.addEventListener("click", () => {
-      filterCity.value = cidade;
+    const cidadeOption = [...filterCity.options].find(opt => opt.textContent.toLowerCase() === "americana");
+    if (cidadeOption) {
+      filterCity.value = cidadeOption.value;
       filterCity.dispatchEvent(new Event("change"));
 
-      // Remove 'active' de todos e adiciona no selecionado
-      listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-      li.classList.add("active");
-    });
+      const listaUl = document.getElementById("list-ul");
+      const cidadeLi = [...listaUl.querySelectorAll("li")].find(li => li.dataset.value?.toLowerCase() === "americana");
+      if (cidadeLi) {
+     
+        listaUl.querySelectorAll("li").forEach(el => el.classList.remove("active"));
+        cidadeLi.classList.add("active");
+        cidadeLi.classList.add('selected')
 
-    listaUl.appendChild(li);
-  });
-
-  // Define cidade no <select>
-  filterCity.value = cidadePadrao;
-
-  // Aplica 'active' ao li correspondente
-  listaUl.querySelectorAll("li").forEach(li => {
-    li.classList.remove("active");
-    if (li.dataset.value === cidadePadrao) {
-      li.classList.add("active");
+        console.log(cidadeLi)
+      }
     }
-  });
+  }
 
-  
-
-  // Aplica o filtro
-  filtrar();
+  await initMap();
 });
+
+
 
 
 // Eventos
@@ -451,6 +558,7 @@ btnLimpar.addEventListener("click", limparDados);
 document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
   const title = selectWrapper.querySelector(".custom-select-title");
   const optionsList = selectWrapper.querySelector(".custom-options");
+
   const hiddenInput = document.getElementById(optionsList.dataset.inputId);
 
   if (!title || !optionsList || !hiddenInput) return;
@@ -460,31 +568,42 @@ document.querySelectorAll(".custom-select").forEach((selectWrapper) => {
     optionsList.classList.toggle("show-options");
   });
 
+
+
   // Seleciona a opção ao clicar
-optionsList.querySelectorAll("li").forEach((option) => {
-  option.addEventListener("click", () => {
-    const value = option.getAttribute("data-value");
+  optionsList.querySelectorAll("li").forEach((option) => {
+    option.addEventListener("click", async () => {
+      const value = option.getAttribute("data-value");
+      console.log(value)
 
-    // Remove "selected" de todos os <li> DENTRO dessa optionsList
-    optionsList.querySelectorAll("li").forEach((li) => {
-      li.classList.remove("selected");
+      // Remove "selected" de todos os <li> DENTRO dessa optionsList
+      optionsList.querySelectorAll("li").forEach((li) => {
+        li.classList.remove("selected");
+      });
+
+      // Adiciona "selected" no clicado
+      option.classList.add("selected");
+
+      // Atualiza o input oculto e o título
+      hiddenInput.value = value;
+      console.log("hiddenInput: ", hiddenInput.value)
+      title.textContent = option.textContent;
+
+      // Fecha a lista de opções
+      optionsList.classList.remove("show-options");
+
+      // Se for o input de estado, atualiza as cidades
+    if (hiddenInput.id === "filterState") {
+  await atualizarCidadesPorEstado(value.toLowerCase());
+
+
+} else {
+  // Para cidade, segmento, cartão...
+  hiddenInput.dispatchEvent(new Event("change"));
+}
+
     });
-
-    // Adiciona "selected" no clicado
-    option.classList.add("selected");
-
-    // Atualiza o input oculto e o título
-    hiddenInput.value = value;
-    title.textContent = option.textContent;
-
-    // Fecha a lista de opções
-    optionsList.classList.remove("show-options");
-
-    // Dispara evento de mudança (se necessário)
-    hiddenInput.dispatchEvent(new Event("change"));
   });
-});
-
 
   // Fecha o menu se clicar fora
   document.addEventListener("click", (e) => {
@@ -493,6 +612,8 @@ optionsList.querySelectorAll("li").forEach((option) => {
     }
   });
 });
+
+
 
 const btnCloseFilter = document.querySelector(".close-filter")
 const mobileFilter = document.querySelector(".mobile-btns")
@@ -527,59 +648,12 @@ btnFilter.addEventListener('click', () => {
         optionList.querySelectorAll('li').forEach(el => el.classList.remove('selected'));
         li.classList.add('selected');
 
+
+
         // Dispara evento de mudança, caso haja lógica atrelada
         select.dispatchEvent(new Event('change'));
       });
     });
   });
 
-
-
-
-  
-/*
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-
-    // Usa a API de geocodificação reversa do Google para obter cidade/estado
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        let cidadeDetectada = "";
-        let estadoDetectado = "";
-
-        for (const comp of results[0].address_components) {
-          if (comp.types.includes("administrative_area_level_2")) {
-            cidadeDetectada = comp.long_name.toLowerCase();
-          }
-          if (comp.types.includes("administrative_area_level_1")) {
-            estadoDetectado = comp.short_name.toLowerCase(); // 'SP', 'RJ'...
-          }
-        }
-
-        // Se a cidade/estado detectados existirem no seu cityData, selecione
-        if (cityData[estadoDetectado] && cityData[estadoDetectado][cidadeDetectada]) {
-          filterState.value = estadoDetectado;
-
-          // Atualiza as opções de cidade
-          filterCity.innerHTML = `<option value="">Todas as Cidades</option>`;
-          Object.keys(cityData[estadoDetectado]).forEach(cidade => {
-            const opt = document.createElement("option");
-            opt.value = cidade;
-            opt.textContent = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-            filterCity.appendChild(opt);
-          });
-
-          filterCity.value = cidadeDetectada;
-          filtrar(); // Aplica o filtro
-        }
-      }
-    });
-  });
-}
-*/
-// Atualiza o select de cidades baseado no estado
+window.initMap = initMap;
