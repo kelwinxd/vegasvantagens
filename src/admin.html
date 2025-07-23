@@ -177,10 +177,15 @@ os nossos clientes!</p>
 
       <div class="grid">
         <label>Estado</label>
-        <select id="editEstadoId" onchange="carregarCidades2()" required></select>
+        <select id="editEstadoId" onchange="carregarCidades2()">
+          <option value="">Selecione um estado</option>
+        </select>
 
         <label>Cidade</label>
-        <select id="editCidadeId" required></select>
+        <select id="editCidadeId" required>
+
+          <option value="">Selecione uma cidade</option>
+        </select>
 
         <label>Rua</label>
         <input type="text" id="editRua">

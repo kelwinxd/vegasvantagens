@@ -390,7 +390,7 @@ async function carregarCidades2() {
 
   if (!estadoId2 || !token) return;
 
-  fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${editEstadoId}`, {
+  fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId2}`, {
     headers: {
       "Authorization": "Bearer " + token
     }
