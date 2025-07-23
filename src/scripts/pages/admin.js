@@ -483,7 +483,7 @@ function fecharModalEditar() {
   document.getElementById("modalEditarOverlay").style.display = "none";
 }
 
-export async function salvarAlteracoesEstab() {
+ async function salvarAlteracoesEstab() {
   const id = document.getElementById("editId").value;
   const token = localStorage.getItem("token");
 
