@@ -7,7 +7,7 @@ import '../components/banner-slider.js'
 import '../components/banner-slide2.js'
 
 // Carrossel Logos
-import '../testes/carrossel-logos-test.js'
+import '../components/carrossel-logos.js'
 
 //Menu Mobile
 import '../components/menumobile.js'
