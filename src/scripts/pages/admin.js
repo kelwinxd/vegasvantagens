@@ -284,7 +284,7 @@ function carregarCategorias() {
       btnEditar.className = "fa-solid fa-pen-to-square";
 
       btnEditar.addEventListener("click", () => {
-  document.querySelector('.modal-editar').style.display = 'flex'
+ 
   document.getElementById("editarId").value = estab.id;
   document.getElementById("editarNome").value = estab.nome || "";
   document.getElementById("editarRazaoSocial").value = estab.razaoSocial || "";
