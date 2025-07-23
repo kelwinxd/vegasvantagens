@@ -331,84 +331,90 @@ function carregarCategorias() {
 //EDITAR
 
 async function carregarCategoriasModal() {
-  const token = localStorage.getItem("token");
-  const select = document.getElementById("editCategoriaId");
+   const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado para carregar as categorias.");
+    return;
+  }
 
-  try {
-    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Categorias", {
-      headers: { "Authorization": "Bearer " + token }
-    });
+  fetch("https://apivegasvantagens-production.up.railway.app/api/CategoriasEstabelecimentos", {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar categorias: " + res.status);
+    return res.json();
+  })
+  .then(data => {
+    const select = document.getElementById("editCategoriaId");
+    select.innerHTML = ""; // Limpa os options
 
-    if (!res.ok) throw new Error("Resposta inválida");
-
-    const data = await res.json();
-    select.innerHTML = "";
-
-    data.forEach(cat => {
+    data.forEach(categoria => {
       const option = document.createElement("option");
-      option.value = cat.id;
-      option.textContent = cat.nome;
+      option.value = categoria.id;
+      option.textContent = categoria.nome;
       select.appendChild(option);
     });
-  } catch (err) {
-    console.error("Erro ao carregar categorias:", err);
-    select.innerHTML = "<option value=''>Erro ao carregar</option>";
-  }
+  })
+  .catch(err => {
+    alert("Erro ao carregar categorias: " + err.message);
+    console.error(err);
+  });
 }
 
 
 async function carregarEstadosModal() {
-  const token = localStorage.getItem("token");
-  const select = document.getElementById("editEstadoId");
+  const estados = [
+    { id: 1, nome: "São Paulo" },
+    { id: 2, nome: "Rio de Janeiro" },
+    { id: 3, nome: "Minas Gerais" }
+  ];
 
-  try {
-    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estados", {
-      headers: { "Authorization": "Bearer " + token }
-    });
+  const selectEstado = document.getElementById("editEstadoId");
+  estados.forEach(estado => {
+    const option = document.createElement("option");
+    option.value = estado.id;
+    option.textContent = estado.nome;
+    selectEstado.appendChild(option);
+  });
 
-    const data = await res.json();
-    select.innerHTML = "<option value=''>Selecione um estado</option>";
+   console.log("Estados carregados:", Array.from(selectEstado.options).map(o => o.textContent));
 
-    data.forEach(estado => {
-      const option = document.createElement("option");
-      option.value = estado.id;
-      option.textContent = estado.nome;
-      select.appendChild(option);
-    });
-  } catch (err) {
-    console.error("Erro ao carregar estados:", err);
-  }
 }
 
 
-async function carregarCidades(isModal = false) {
-  const estadoId = isModal
-    ? document.getElementById("editEstadoId").value
-    : document.getElementById("estadoId").value;
-
-  const select = isModal
-    ? document.getElementById("editCidadeId")
-    : document.getElementById("cidadeId");
-
+async function carregarCidades2() {
+  const estadoId2 = document.getElementById("editEstadoId").value;
   const token = localStorage.getItem("token");
 
-  try {
-    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
-      headers: { "Authorization": "Bearer " + token }
-    });
+  if (!estadoId2 || !token) return;
 
-    const data = await res.json();
-    select.innerHTML = "<option value=''>Selecione uma cidade</option>";
-
-    data.forEach(cidade => {
+  fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar cidades.");
+    return res.json();
+  })
+  .then(cidades => {
+    const selectCidade = document.getElementById("editCidadeId");
+    selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+    cidades.forEach(cidade => {
       const option = document.createElement("option");
       option.value = cidade.id;
       option.textContent = cidade.nome;
-      select.appendChild(option);
+      selectCidade.appendChild(option);
     });
-  } catch (err) {
-    console.error("Erro ao carregar cidades:", err);
-  }
+  })
+  .catch(err => {
+    alert("Erro ao carregar cidades: " + err.message);
+    console.error(err);
+  });
+
+  console.log("carregarCidades() chamado com estadoId =", estadoId2);
 }
 
 
