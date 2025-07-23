@@ -10,14 +10,16 @@
     }
 
     .carrossel-track {
-      display: flex;
-      width: calc(200px * 16); /* 6 imagens duplicadas = 12 */
-      animation: scroll 20s linear infinite;
-      gap: 16px;
-     
-      
-     
-    }
+  display: flex;
+  gap: 16px;
+  /* não aplica animação por padrão */
+}
+
+.carrossel-track.animate-scroll {
+  animation: scroll 20s linear infinite;
+  width: max-content; /* ou calc(...) se precisar fixar largura duplicada */
+}
+
      
     .carrossel-track img {
       width: 60px;

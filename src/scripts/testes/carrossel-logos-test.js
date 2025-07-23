@@ -88,33 +88,34 @@ async function montarCarrossel() {
   });
 
   if (estabelecimentos.length > 3) {
-    // DUPLICAR os itens para criar efeito contínuo
-    track.innerHTML += track.innerHTML;
+  // DUPLICAR os itens
+  track.innerHTML += track.innerHTML;
+  track.classList.add('animate-scroll'); // <=== ativa animação
 
-    let posX = 0;
-    let animationId;
-    const speed = 0.5;
+  let posX = 0;
+  let animationId;
+  const speed = 0.5;
 
-    function animate() {
-      posX -= speed;
-      if (Math.abs(posX) >= track.scrollWidth / 2) {
-        posX = 0;
-      }
-      track.style.transform = `translateX(${posX}px)`;
-      animationId = requestAnimationFrame(animate);
+  function animate() {
+    posX -= speed;
+    if (Math.abs(posX) >= track.scrollWidth / 2) {
+      posX = 0;
     }
-
-    animate();
-
-    // Pausar animação ao passar o mouse
-    carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
-    carrossel.addEventListener('mouseleave', () => animate());
-  } else {
-    // CASO tenha 3 ou menos, manter layout fixo
-    track.style.transform = 'translateX(0)';
-    track.style.justifyContent = 'center'; // opcional: centraliza os logos
-    track.style.gap = '40px'; // espaçamento entre logos se quiser
+    track.style.transform = `translateX(${posX}px)`;
+    animationId = requestAnimationFrame(animate);
   }
+
+  animate();
+
+  carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
+  carrossel.addEventListener('mouseleave', () => animate());
+} else {
+  track.style.transform = 'translateX(0)';
+  track.classList.remove('animate-scroll'); // <=== remove animação
+  track.style.justifyContent = 'center';
+  track.style.animation = 'none'; // <=== extra fallback
+}
+
 }
 
 
