@@ -483,55 +483,90 @@ function fecharModalEditar() {
   document.getElementById("modalEditarOverlay").style.display = "none";
 }
 
-async function salvarAlteracoesEstab() {
+export async function salvarAlteracoesEstab() {
+  const id = document.getElementById("editId").value;
   const token = localStorage.getItem("token");
-  const estabId = document.getElementById("editId").value;
 
+  const inputLogo = document.getElementById("editImagemPrincipal");
+  const inputFachada = document.getElementById("editImagemAdicional");
+  const imagemPrincipalAtual = document.getElementById("editLogoPreview").src;
+  const imagemFachadaAtual = document.getElementById("editFachadaPreview").src;
 
-  const formData = new FormData();
-  formData.append("id", estabId);
-  formData.append("nome", document.getElementById("editNomeEstab").value);
-  formData.append("razaoSocial", document.getElementById("editRazaoSocial").value);
-  formData.append("cnpj", document.getElementById("editCnpj").value); // readOnly mas incluído
-  formData.append("endereco", document.getElementById("editEndereco").value);
-  formData.append("telefone", document.getElementById("editTelefone").value);
-  formData.append("emailContato", document.getElementById("editEmailContato").value);
-  formData.append("ativo", document.getElementById("editAtivoEstab").checked);
-  formData.append("categoriaId", document.getElementById("editCategoriaId").value);
-  formData.append("estadoId", document.getElementById("editEstadoId").value);
-  formData.append("cidadeId", document.getElementById("editCidadeId").value);
-  formData.append("rua", document.getElementById("editRua").value);
-  formData.append("numero", document.getElementById("editNumero").value);
-  formData.append("bairro", document.getElementById("editBairro").value);
-  formData.append("complemento", document.getElementById("editComplemento").value);
-  formData.append("cep", document.getElementById("editCep").value);
-  formData.append("latitude", document.getElementById("editLatitude").value);
-  formData.append("longitude", document.getElementById("editLongitude").value);
+  let imagemPrincipalURL = imagemPrincipalAtual;
+  let imagemFachadaURL = imagemFachadaAtual;
 
-formData.append("imagemPrincipal", document.getElementById("editImagemPrincipal").files[0] || null);
-formData.append("imagemAdicional", document.getElementById("editImagemAdicional").files[0] || null);
- 
+  // Upload logo se trocado
+  if (inputLogo.files.length > 0) {
+    const formData = new FormData();
+    formData.append("imagem", inputLogo.files[0]);
 
-  try {
-    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabId}`, {
-      method: "PUT",
-      headers: {
-        "Authorization": "Bearer " + token
-        // Não inclua Content-Type aqui, o browser define automaticamente com multipart/form-data
-      },
+    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Upload", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token },
       body: formData
     });
 
-    if (!res.ok) throw new Error("Erro ao atualizar");
+    if (res.ok) {
+      const data = await res.json();
+      imagemPrincipalURL = data.url;
+    }
+  }
 
+  // Upload fachada se trocado
+  if (inputFachada.files.length > 0) {
+    const formData = new FormData();
+    formData.append("imagem", inputFachada.files[0]);
+
+    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Upload", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token },
+      body: formData
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      imagemFachadaURL = data.url;
+    }
+  }
+
+  const estabelecimento = {
+    id: parseInt(id),
+    nome: document.getElementById("editNomeEstab").value,
+    razaoSocial: document.getElementById("editRazaoSocial").value,
+    cnpj: document.getElementById("editCnpj").value,
+    rua: document.getElementById("editRua").value,
+    numero: document.getElementById("editNumero").value,
+    bairro: document.getElementById("editBairro").value,
+    complemento: document.getElementById("editComplemento").value,
+    cep: document.getElementById("editCep").value,
+    cidade: document.getElementById("editCidadeId").selectedOptions[0]?.textContent || "",
+    telefone: document.getElementById("editTelefone").value,
+    emailContato: document.getElementById("editEmailContato").value,
+    latitude: parseFloat(document.getElementById("editLatitude").value),
+    longitude: parseFloat(document.getElementById("editLongitude").value),
+    categorias: [document.getElementById("editCategoriaId").value],
+    imagens: [imagemPrincipalURL, imagemFachadaURL],
+    imagemPrincipal: imagemPrincipalURL
+  };
+
+  try {
+    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify([estabelecimento])
+    });
+
+    if (!res.ok) throw new Error("Erro ao atualizar");
     alert("Estabelecimento atualizado com sucesso!");
-    document.getElementById("editModal").style.display = "none";
-    buscarEstabelecimentos(); // Atualiza a lista na interface
   } catch (err) {
     console.error("Erro ao salvar alterações:", err);
     alert("Erro ao salvar alterações: " + err.message);
   }
 }
+
 
 
 
