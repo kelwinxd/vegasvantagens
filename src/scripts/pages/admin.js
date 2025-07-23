@@ -339,6 +339,8 @@ async function carregarCategoriasModal() {
       headers: { "Authorization": "Bearer " + token }
     });
 
+    if (!res.ok) throw new Error("Resposta inválida");
+
     const data = await res.json();
     select.innerHTML = "";
 
@@ -445,9 +447,16 @@ async function abrirModalEditar(estab) {
   document.getElementById("editLatitude").value = estab.latitude || "";
   document.getElementById("editLongitude").value = estab.longitude || "";
 
-  document.getElementById("editLogoPreview").src = estab.imagemPrincipal || './imgs/default-image.png';
-  document.getElementById("editFachadaPreview").src = estab.imagemAdicional || './imgs/default-image.png';
+const imgLogo = document.getElementById("previewImagemPrincipal");
+const imgFachada = document.getElementById("previewImagemAdicional");
 
+imgLogo.src = estab.imagemPrincipal || "./imgs/default-image.png";
+
+if (estab.imagens && estab.imagens.length > 1) {
+  imgFachada.src = estab.imagens[1];
+} else {
+  imgFachada.src = "./imgs/default-image.png";
+}
   document.getElementById("modalEditarOverlay").style.display = "flex";
 }
 
