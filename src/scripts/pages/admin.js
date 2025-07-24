@@ -487,66 +487,24 @@ function fecharModalEditar() {
   const id = document.getElementById("editId").value;
   const token = localStorage.getItem("token");
 
-  const inputLogo = document.getElementById("editImagemPrincipal");
-  const inputFachada = document.getElementById("editImagemAdicional");
-  const imagemPrincipalAtual = document.getElementById("editLogoPreview").src;
-  const imagemFachadaAtual = document.getElementById("editFachadaPreview").src;
-
-  let imagemPrincipalURL = imagemPrincipalAtual;
-  let imagemFachadaURL = imagemFachadaAtual;
-
-  // Upload logo se trocado
-  if (inputLogo.files.length > 0) {
-    const formData = new FormData();
-    formData.append("imagem", inputLogo.files[0]);
-
-    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Upload", {
-      method: "POST",
-      headers: { "Authorization": "Bearer " + token },
-      body: formData
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      imagemPrincipalURL = data.url;
-    }
-  }
-
-  // Upload fachada se trocado
-  if (inputFachada.files.length > 0) {
-    const formData = new FormData();
-    formData.append("imagem", inputFachada.files[0]);
-
-    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Upload", {
-      method: "POST",
-      headers: { "Authorization": "Bearer " + token },
-      body: formData
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      imagemFachadaURL = data.url;
-    }
-  }
-
-  const estabelecimento = {
-    id: parseInt(id),
+  // Montagem do payload com os campos válidos exigidos pela API
+  const payload = {
     nome: document.getElementById("editNomeEstab").value,
     razaoSocial: document.getElementById("editRazaoSocial").value,
     cnpj: document.getElementById("editCnpj").value,
+    endereco: document.getElementById("editEndereco").value,
+    telefone: document.getElementById("editTelefone").value,
+    emailContato: document.getElementById("editEmailContato").value,
+    ativo: document.getElementById("editAtivoEstab").checked,
+    categoriaId: parseInt(document.getElementById("editCategoriaId").value),
+    cidadeId: parseInt(document.getElementById("editCidadeId").value),
     rua: document.getElementById("editRua").value,
     numero: document.getElementById("editNumero").value,
     bairro: document.getElementById("editBairro").value,
     complemento: document.getElementById("editComplemento").value,
     cep: document.getElementById("editCep").value,
-    cidade: document.getElementById("editCidadeId").selectedOptions[0]?.textContent || "",
-    telefone: document.getElementById("editTelefone").value,
-    emailContato: document.getElementById("editEmailContato").value,
     latitude: parseFloat(document.getElementById("editLatitude").value),
-    longitude: parseFloat(document.getElementById("editLongitude").value),
-    categorias: [document.getElementById("editCategoriaId").value],
-    imagens: [imagemPrincipalURL, imagemFachadaURL],
-    imagemPrincipal: imagemPrincipalURL
+    longitude: parseFloat(document.getElementById("editLongitude").value)
   };
 
   try {
@@ -556,10 +514,11 @@ function fecharModalEditar() {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify([estabelecimento])
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) throw new Error("Erro ao atualizar");
+
     alert("Estabelecimento atualizado com sucesso!");
   } catch (err) {
     console.error("Erro ao salvar alterações:", err);
