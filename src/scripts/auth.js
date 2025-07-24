@@ -1,23 +1,25 @@
-// auth.js
 let accessToken = null;
 let tokenTimestamp = null;
 const EXPIRATION_TIME = 60 * 60 * 1000; // 50 minutos
 
+const API_BASE = window.env.API_BASE_URL;
+const CLIENT_ID = window.env.CLIENT_ID;
+const CLIENT_SECRET = window.env.CLIENT_SECRET;
+
 export async function getClientToken() {
   const now = Date.now();
 
-  // Reutiliza token se ainda estiver válido
   if (accessToken && tokenTimestamp && (now - tokenTimestamp < EXPIRATION_TIME)) {
     return accessToken;
   }
 
   try {
-    const response = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/client-token', {
+    const response = await fetch(`${API_BASE}/api/Auth/client-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        clientId: 'site_vegas_vantagens',
-        clientSecret: '8iYQ340vgwr4R1rOsdTg341m1/QEyGfLOIMkGQUasu0='
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET
       })
     });
 
@@ -36,7 +38,7 @@ export async function getClientToken() {
 
 export async function loginToken(email, senha) {
   try {
-    const response = await fetch('https://apivegasvantagens-production.up.railway.app/api/Auth/login', {
+    const response = await fetch(`${API_BASE}/api/Auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha })

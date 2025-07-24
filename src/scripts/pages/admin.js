@@ -1,3 +1,7 @@
+
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".painel button");
   const sections = document.querySelectorAll(".telas > div");
