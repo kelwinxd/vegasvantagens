@@ -109,11 +109,11 @@ async function montarCarrossel() {
 
   carrossel.addEventListener('mouseenter', () => cancelAnimationFrame(animationId));
   carrossel.addEventListener('mouseleave', () => animate());
-} else {
+}else {
   track.style.transform = 'translateX(0)';
-  track.classList.remove('animate-scroll'); // <=== remove animação
-  track.style.justifyContent = 'center';
-  track.style.animation = 'none'; // <=== extra fallback
+  track.classList.remove('animate-scroll');
+  track.style.animation = 'none'; // remove animação se tiver
+  track.style.justifyContent = 'flex-start'; // <=== ALINHAR À ESQUERDA
 }
 
 }
