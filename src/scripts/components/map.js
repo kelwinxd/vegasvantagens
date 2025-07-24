@@ -130,7 +130,6 @@ async function fetchStoreDetails(loginToken, storeId) {
 const filterState = document.getElementById("filterState");
 const filterCity = document.getElementById("filterCity");
 const filterSegment = document.getElementById("filterSegment");
-const filterCard = document.getElementById("filterCard");
 
 
 
@@ -311,7 +310,7 @@ async function updateMapByCity(cidade, segmento, busca) {
       const cidadeMatch = !cidade || loja.cidade.toLowerCase() === cidade.toLowerCase();
       const segMatch = !segmento || loja.categorias?.some(cat => cat.toLowerCase().includes(segmento.toLowerCase()));
 
-      return nomeMatch && cidadeMatch && segMatch && cardMatch;
+      return nomeMatch && cidadeMatch && segMatch;
     });
 
     console.log("Lojas filtradas:", lojasFiltradas);
@@ -455,7 +454,6 @@ function filtrar() {
     const cidades = item.dataset.city.split(",");
     const estadoItem = item.dataset.state;
     const seg = item.dataset.seg;
-    const cards = item.dataset.card.split(",");
     const tags = item.dataset.tags.toLowerCase();
 
     const nomeOuTagMatch = !search || nome.includes(search) || tags.includes(search);
@@ -463,7 +461,7 @@ function filtrar() {
     const cidadeMatch = !cidade || cidades.includes(cidade);
     const segMatch = !segmento || seg === segmento;
 
-    const mostrar = nomeOuTagMatch && estadoMatch && cidadeMatch && segMatch && cardMatch;
+    const mostrar = nomeOuTagMatch && estadoMatch && cidadeMatch && segMatch;
 
     item.style.display = mostrar ? "block" : "none";
 
@@ -489,7 +487,7 @@ function limparDados() {
   filterState.value = "sp";
   filterCity.innerHTML = '<option value="">Todas as Cidades</option>';
   filterSegment.value = "";
-  filterCard.value = "";
+
   searchInput.value = "";
 
   // Limpar lista de lojas e marcadores
@@ -545,7 +543,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Eventos
 filterCity.addEventListener("change", filtrar);
 filterSegment.addEventListener("change", filtrar);
-filterCard.addEventListener("change", filtrar);
 searchInput.addEventListener("input", filtrar);
 btnLimpar.addEventListener("click", limparDados);
 
