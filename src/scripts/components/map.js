@@ -294,7 +294,7 @@ function esconderMensagemVazia() {
   if (msg) msg.style.display = "none";
 }
 
-async function updateMapByCity(cidade, segmento, busca, cartao) {
+async function updateMapByCity(cidade, segmento, busca) {
   try {
     mostrarLoader()
     const accessToken = await getClientToken();
@@ -310,7 +310,6 @@ async function updateMapByCity(cidade, segmento, busca, cartao) {
       const nomeMatch = !busca || loja.nome.toLowerCase().includes(busca.toLowerCase());
       const cidadeMatch = !cidade || loja.cidade.toLowerCase() === cidade.toLowerCase();
       const segMatch = !segmento || loja.categorias?.some(cat => cat.toLowerCase().includes(segmento.toLowerCase()));
-      const cardMatch = !cartao || loja.cartoes?.includes(cartao); // ajuste se necessário
 
       return nomeMatch && cidadeMatch && segMatch && cardMatch;
     });
@@ -446,7 +445,6 @@ function filtrar() {
   const estado = filterState.value;
   const cidade = filterCity.value;
   const segmento = filterSegment.value;
-  const cartao = filterCard.value;
 
   const produtoLista = document.querySelectorAll(".produtoLista li");
 
@@ -464,7 +462,6 @@ function filtrar() {
     const estadoMatch = !estado || estadoItem === estado;
     const cidadeMatch = !cidade || cidades.includes(cidade);
     const segMatch = !segmento || seg === segmento;
-    const cardMatch = !cartao || cards.includes(cartao);
 
     const mostrar = nomeOuTagMatch && estadoMatch && cidadeMatch && segMatch && cardMatch;
 
@@ -479,10 +476,10 @@ function filtrar() {
 
   // Atualizar o mapa baseado na(s) cidade(s) encontradas
   if (cidade) {
-    updateMapByCity(cidade, segmento, search, cartao);
+    updateMapByCity(cidade, segmento, search);
   } else if (cidadesFiltradas.size === 1) {
     const unicaCidade = [...cidadesFiltradas][0];
-    updateMapByCity(unicaCidade, segmento, search, cartao);
+    updateMapByCity(unicaCidade, segmento, search);
   }
 
 }
