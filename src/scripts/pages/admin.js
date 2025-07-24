@@ -452,7 +452,7 @@ async function abrirModalEditar(estab) {
   document.getElementById("editCep").value = estab.cep || "";
   document.getElementById("editLatitude").value = estab.latitude || "";
   document.getElementById("editLongitude").value = estab.longitude || "";
-
+/*
 document.getElementById("editLogoPreview").src =
   estab.imagemPrincipal || "./imgs/default-image.png";
 
@@ -460,7 +460,7 @@ document.getElementById("editFachadaPreview").src =
   estab.imagens && estab.imagens.length > 1
     ? estab.imagens[1]
     : "./imgs/default-image.png";
-
+*/
   document.getElementById("modalEditarOverlay").style.display = "flex";
 }
 
