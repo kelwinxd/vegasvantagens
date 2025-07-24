@@ -329,6 +329,7 @@ line-height: normal;
 }
 
 .modal {
+    display: none;
   background: #fff;
   border-radius: 12px;
   padding: 30px 48px;
