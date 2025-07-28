@@ -53,15 +53,7 @@ html {
 
     }
 
-    .main-title {
-      color: #4B57A3;
-
-font-size: 32px;
-font-style: normal;
-font-weight: 700;
-text-align: left;
-padding-left: var(--padding-body-desktop);
-    }
+ 
 
 
     ::-webkit-scrollbar {

@@ -1,6 +1,8 @@
 const slide11 = document.getElementById('slide11');
 const slide22 = document.getElementById('slide22');
 const slide33 = document.getElementById('slide33');
+const slide44 = document.getElementById('slide44');
+const slide55 = document.getElementById('slide55');
 const slidesContainer1 = document.querySelector('.slides1');
 const bullets1 = document.querySelectorAll('.bullet1');
 
@@ -12,38 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
   atualizarSrcDasImagens1();
 });
 
-// Obtém tamanho do banner conforme o viewport
+// Tamanhos do banner
 function getBannerSize1() {
   const width = window.innerWidth;
-
-  if (width >= 1440) {
-    console.log("1520X450");
-    return '1520X450';
-  }
-  if (width >= 1024) {
-    console.log("1232X365");
-    return '1232X365';
-  }
-  if (width >= 768) {
-    console.log("768X360");
-    return '768X360';
-  }
-  if (width >= 480) {
-    console.log("402X520");
-    return '402X520';
-  }
-
+  if (width >= 1440) return '1520X450';
+  if (width >= 1024) return '1232X365';
+  if (width >= 768) return '768X360';
+  if (width >= 480) return '402X520';
   return '402X520';
 }
 
-// Formata o nome do arquivo, remove acento e espaços
+// Remove acentos
 function formatFileName1(str) {
-  return str
-    .replace(/ /g, '_')
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+  return str.replace(/ /g, '_').normalize("NFD").replace(/[\u0300-\u036f]/g, '');
 }
 
-// Atualiza src das imagens com base no tamanho da tela
+// Atualiza imagens responsivas
 function atualizarSrcDasImagens1() {
   const slides = document.querySelectorAll('.slides1 img');
   const tamanho = getBannerSize1();
@@ -55,32 +41,23 @@ function atualizarSrcDasImagens1() {
   });
 }
 
-// Atualiza a posição do slide com base no slide ativo
+// Atualiza a posição dos slides
 function updateSlidePosition1() {
-  if (slide11.checked) {
-    slidesContainer1.style.transform = 'translateX(0%)';
-  } else if (slide22.checked) {
-    slidesContainer1.style.transform = 'translateX(-33.3%)';
-  } else if (slide33.checked) {
-    slidesContainer1.style.transform = 'translateX(-66.6%)';
-  }
+  const index = currentSlide1 - 1;
+  slidesContainer1.style.transform = `translateX(-${index * 20}%)`; // 5 slides = 20%
 }
 
-// Atualiza os bullets
+// Atualiza bullets
 function updateBulletClasses1() {
   bullets1.forEach((bullet, index) => {
-    if (index + 1 === currentSlide1) {
-      bullet.classList.add('bullet-ativo');
-    } else {
-      bullet.classList.remove('bullet-ativo');
-    }
+    bullet.classList.toggle('bullet-ativo', index + 1 === currentSlide1);
   });
 }
 
-// Autoplay dos slides
+// Autoplay com 5 slides
 function startAutoplay1() {
   autoPlayInterval1 = setInterval(() => {
-    currentSlide1 = currentSlide1 % 3 + 1;
+    currentSlide1 = currentSlide1 % 5 + 1;
     document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
     updateSlidePosition1();
     updateBulletClasses1();
@@ -97,31 +74,40 @@ slide11.addEventListener('change', () => {
   updateSlidePosition1();
   updateBulletClasses1();
 });
-
 slide22.addEventListener('change', () => {
   currentSlide1 = 2;
   updateSlidePosition1();
   updateBulletClasses1();
 });
-
 slide33.addEventListener('change', () => {
   currentSlide1 = 3;
   updateSlidePosition1();
   updateBulletClasses1();
 });
+slide44.addEventListener('change', () => {
+  currentSlide1 = 4;
+  updateSlidePosition1();
+  updateBulletClasses1();
+});
+slide55.addEventListener('change', () => {
+  currentSlide1 = 5;
+  updateSlidePosition1();
+  updateBulletClasses1();
+});
 
+// Botões
 const btnLeft1 = document.querySelector('.btn-left1');
 const btnRight1 = document.querySelector('.btn-right1');
 
 btnLeft1.addEventListener('click', () => {
-  currentSlide1 = currentSlide1 === 1 ? 3 : currentSlide1 - 1;
+  currentSlide1 = currentSlide1 === 1 ? 5 : currentSlide1 - 1;
   document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
   updateSlidePosition1();
   updateBulletClasses1();
 });
 
 btnRight1.addEventListener('click', () => {
-  currentSlide1 = currentSlide1 === 3 ? 1 : currentSlide1 + 1;
+  currentSlide1 = currentSlide1 === 5 ? 1 : currentSlide1 + 1;
   document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
   updateSlidePosition1();
   updateBulletClasses1();
