@@ -393,6 +393,13 @@ font-size: 13px;
       opacity: 0;
     }
 
+    .resultscount {
+
+ padding-left: var(--padding-body-mobile);
+
+
+}
+
   
     .title-mp {
       color: #4B57A3;
