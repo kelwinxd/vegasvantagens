@@ -3,7 +3,9 @@
       background-color: white;
       padding: 20px 0;
       width: 85%;
-      margin: 0 auto;
+       max-width: 1520px;
+    margin: 0 auto;
+
       padding-inline: var(--padding-body-desktop);
     
      

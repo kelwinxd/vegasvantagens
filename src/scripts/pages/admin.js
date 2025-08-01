@@ -1,8 +1,10 @@
-
+import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../auth.js';
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
+
+
   const buttons = document.querySelectorAll(".painel button");
   const sections = document.querySelectorAll(".telas > div");
 
@@ -64,7 +66,7 @@ async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, princi
   formData.append("imagem", imagemFile);
 
   const resposta = await fetch(
-    `https://apivegasvantagens-production.up.railway.app/api/estabelecimentos/${estabelecimentoId}/imagens?principal=${principal}`,
+    `${API_BASE}/api/estabelecimentos/${estabelecimentoId}/imagens?principal=${principal}`,
     {
       method: "POST",
       headers: {
@@ -89,7 +91,7 @@ function carregarCidades() {
 
   if (!estadoId || !token) return;
 
-  fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
+  fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId}`, {
     headers: {
       "Authorization": "Bearer " + token
     }
@@ -124,7 +126,7 @@ function carregarCategorias() {
     return;
   }
 
-  fetch("https://apivegasvantagens-production.up.railway.app/api/CategoriasEstabelecimentos", {
+  fetch(`${API_BASE}/api/CategoriasEstabelecimentos`, {
     headers: {
       "Authorization": "Bearer " + token
     }
@@ -183,7 +185,7 @@ function carregarCategorias() {
   };
 
   try {
-    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/Criar", {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos/Criar`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -219,7 +221,7 @@ function carregarCategorias() {
 
   async function vincularCategoria(estabelecimentoId, categoriaId) {
   const token = localStorage.getItem("token");
-  await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estabelecimentoId}/vincular-categorias`, {
+  await fetch(`${API_BASE}/api/Estabelecimentos/${estabelecimentoId}/vincular-categorias`, {
     method: "POST", // ← alterado de PUT para POST
     headers: {
       "Content-Type": "application/json",
@@ -243,7 +245,7 @@ function carregarCategorias() {
   listaCards.innerHTML = "";
 
   try {
-    const res = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos", {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -259,7 +261,7 @@ function carregarCategorias() {
 
     const detalhes = await Promise.all(
       data.map(estab =>
-        fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estab.id}`, {
+        fetch(`${API_BASE}/api/Estabelecimentos/${estab.id}`, {
           headers: { "Authorization": "Bearer " + token }
         }).then(r => r.json())
       )
@@ -298,7 +300,7 @@ function carregarCategorias() {
       btnExcluir.addEventListener("click", async () => {
         if (confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) {
           try {
-            const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${estab.id}`, {
+            const res = await fetch(`${API_BASE}/api/Estabelecimentos/${estab.id}`, {
               method: "DELETE",
               headers: {
                 "Authorization": "Bearer " + token
@@ -341,7 +343,7 @@ async function carregarCategoriasModal() {
     return;
   }
 
-  fetch("https://apivegasvantagens-production.up.railway.app/api/CategoriasEstabelecimentos", {
+  fetch(`${API_BASE}/api/CategoriasEstabelecimentos`, {
     headers: {
       "Authorization": "Bearer " + token
     }
@@ -394,7 +396,7 @@ async function carregarCidades2() {
 
   if (!estadoId2 || !token) return;
 
-  fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId2}`, {
+  fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId2}`, {
     headers: {
       "Authorization": "Bearer " + token
     }
@@ -512,7 +514,7 @@ function fecharModalEditar() {
   };
 
   try {
-    const res = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${id}`, {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

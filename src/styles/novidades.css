@@ -1,6 +1,8 @@
 .voce-sabia {
   margin-top: 90px;
   padding-inline: 180px;
+      max-width: 1520px;
+    margin: 0 auto;
  
 
  
@@ -10,7 +12,8 @@
     padding-inline: 104px;
     height: auto;
     
-    width: 100%;
+        max-width: 1520px;
+    margin: 0 auto;
    
     margin-bottom: 50px;
     

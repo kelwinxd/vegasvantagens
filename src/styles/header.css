@@ -1,7 +1,9 @@
 @import url("./global.css");
 
 .hero-header {
-    width: 100%;
+    
+    max-width: 1520px;
+    margin: 0 auto;
     
     padding-inline:var(--padding-body-desktop);
     margin-bottom: 90px;
@@ -36,7 +38,7 @@ flex-shrink: 0;
 }
 
 .header {
-    width: 100%;
+     max-width: 1520px;
     margin: 0 auto;
 
     
@@ -261,6 +263,9 @@ flex-shrink: 0;
 }
 
    .main-title {
+     max-width: 1520px;
+    margin: 0 auto;
+    
       color: #4B57A3;
 
 font-size: 32px;

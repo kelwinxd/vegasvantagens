@@ -3,6 +3,7 @@
     height: 100%;
     width: 100%;
     padding-inline: 104px;
+        max-width: 1520px;
     
     margin: 0 auto;
   
@@ -170,7 +171,8 @@ aspect-ratio: 1/1;
 
 
 .desc-ofertas {
-    width: 100%;
+        max-width: 1520px;
+    margin: 0 auto;
     padding-inline: 104px;
     
 }

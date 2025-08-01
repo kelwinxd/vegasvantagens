@@ -2,9 +2,9 @@ let accessToken = null;
 let tokenTimestamp = null;
 const EXPIRATION_TIME = 60 * 60 * 1000; // 50 minutos
 
-const API_BASE = window.env.API_BASE_URL;
-const CLIENT_ID = window.env.CLIENT_ID;
-const CLIENT_SECRET = window.env.CLIENT_SECRET;
+export const API_BASE = window.env.API_BASE_URL;
+export const CLIENT_ID = window.env.CLIENT_ID;
+export const CLIENT_SECRET = window.env.CLIENT_SECRET;
 
 export async function getClientToken() {
   const now = Date.now();

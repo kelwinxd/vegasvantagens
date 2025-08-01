@@ -6,7 +6,8 @@
     margin-bottom: 100px;
     
     
-    
+        max-width: 1520px;
+    margin: 0 auto;
     position: relative;
 
 }

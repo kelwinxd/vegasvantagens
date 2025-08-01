@@ -88,12 +88,14 @@
     </form>
    
   </div>
+   <script src="./scripts/env.js"></script>
    <script>
+    import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../auth.js';
     function fazerLogin() {
       const email = document.getElementById("email").value;
       const senha = document.getElementById("senha").value;
 
-      fetch("https://apivegasvantagens-production.up.railway.app/api/Auth/login", {
+      fetch(`${API_BASE}/api/Auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senha })
@@ -127,7 +129,7 @@
         return;
       }
 
-      fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimento", {
+      fetch(`${API_BASE}/api/Estabelecimento`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
