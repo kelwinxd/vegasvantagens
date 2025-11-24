@@ -1,15 +1,62 @@
 const slide1 = document.getElementById('slide1');
 const slide2 = document.getElementById('slide2');
 const slide3 = document.getElementById('slide3');
-const slidesContainer = document.querySelector('.slides');
+const slide4 = document.getElementById('slide4');
+const slide5 = document.getElementById('slide5');
+const slide6 = document.getElementById('slide6');
+const slide7 = document.getElementById('slide7');
+const slide8 = document.getElementById('slide8');
+const banners = document.querySelector('.slides');
 const bullets = document.querySelectorAll('.bullet'); // Supondo que os bullets tenham a classe '.bullet'
 
 let currentSlide = 1;
 let autoPlayInterval;
 
 document.addEventListener("DOMContentLoaded", () => {
-  atualizarSrcDasImagens(); // Executa ao carregar
+  atualizarSrcDasImagens(); 
+  enableSlideLinks();
+  // Executa ao carregar
 });
+
+// <<< função que ativa os links dos slides (sem <a>)
+function enableSlideLinks() {
+  // delegação no container (não quebra seu layout)
+  banners.addEventListener('click', (e) => {
+    const img = e.target.closest('img'); // clicou numa <img>?
+    if (!img || !banners.contains(img)) return;
+
+    // 1) tenta data-href na própria imagem
+    let href = img.dataset.href?.trim();
+
+    
+
+    // 🚫 Se não tiver link, não faz nada
+    if (!href) return;
+
+    // Redireciona (mesma aba)
+    window.location.href = href;
+  });
+
+  // ♿ Acessibilidade + cursor SOMENTE para imagens com link
+  document.querySelectorAll('.slides img').forEach(img => {
+    const hasHref =
+      (img.dataset.href && img.dataset.href.trim() !== '')
+
+    if (hasHref) {
+      img.style.cursor = 'pointer';
+      img.tabIndex = 0; // permite foco no teclado
+      img.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          img.click();
+        }
+      });
+    } else {
+      img.style.cursor = 'default';
+      img.removeAttribute('tabIndex');
+    }
+  });
+}
 
 function getBannerSize() {
   const width = window.innerWidth;
@@ -48,22 +95,31 @@ function atualizarSrcDasImagens() {
   slides.forEach(img => {
     const base = formatFileName(img.getAttribute('data-base')); // ainda precisa formatar o nome do arquivo
     const folder = img.getAttribute('data-folder'); // usa o nome exato da pasta
-    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.jpg`;
+    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.jpg?v=3`;
+
+    img.onerror = () => {
+    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.png?v=3`;
+  };
   });
 }
 
 
 
-// Atualiza a posição do slide com base no slide ativo
 function updateSlidePosition() {
-    if (slide1.checked) {
-        slidesContainer.style.transform = 'translateX(0%)';
-    } else if (slide2.checked) {
-        slidesContainer.style.transform = 'translateX(-33.3%)';
-    } else if (slide3.checked) {
-        slidesContainer.style.transform = 'translateX(-66.6%)';
+    const slides = [slide1, slide2, slide3, slide4, slide5, slide6, slide7, slide8];
+    const totalSlides = slides.length;
+
+    // Encontra o índice do slide ativo (0, 1, 2...)
+    const activeIndex = slides.findIndex(slide => slide.checked);
+
+    if (activeIndex >= 0) {
+        const translateValue = -(100 / totalSlides) * activeIndex;
+        // Mantém alta precisão (até 10 casas decimais)
+        banners.style.transform = `translateX(${translateValue.toFixed(10)}%)`;
     }
 }
+
+
 
 // Atualiza os bullets, colocando a cor branca no ativo
 function updateBulletClasses() {
@@ -76,14 +132,14 @@ function updateBulletClasses() {
     });
 }
 
-// Função de autoplay (muda o slide a cada 3 segundos)
+// Função de autoplay (muda o slide a cada 10 segundos)
 function startAutoplay() {
     autoPlayInterval = setInterval(() => {
-        currentSlide = currentSlide % 3 + 1; // Vai de 1 a 3 e volta para 1
+        currentSlide = currentSlide % 8 + 1; // Vai de 1 a 6 e volta para 1
         document.getElementById(`slide${currentSlide}`).checked = true;
         updateSlidePosition();
         updateBulletClasses();
-    }, 4000);
+    }, 15000);
 }
 
 // Para o autoplay (caso queira parar em algum evento)
@@ -97,15 +153,40 @@ slide1.addEventListener('change', () => {
     updateSlidePosition();
     updateBulletClasses();
 });
-
 slide2.addEventListener('change', () => {
     currentSlide = 2;
     updateSlidePosition();
     updateBulletClasses();
 });
-
 slide3.addEventListener('change', () => {
     currentSlide = 3;
+    updateSlidePosition();
+    updateBulletClasses();
+});
+slide4.addEventListener('change', () => {
+    currentSlide = 4;
+    updateSlidePosition();
+    updateBulletClasses();
+});
+slide5.addEventListener('change', () => {
+    currentSlide = 5;
+    updateSlidePosition();
+    updateBulletClasses();
+});
+slide6.addEventListener('change', () => {
+    currentSlide = 6;
+    updateSlidePosition();
+    updateBulletClasses();
+});
+
+slide7.addEventListener('change', () => {
+    currentSlide = 7;
+    updateSlidePosition();
+    updateBulletClasses();
+});
+
+slide8.addEventListener('change', () => {
+    currentSlide = 8;
     updateSlidePosition();
     updateBulletClasses();
 });
@@ -114,22 +195,18 @@ const btnLeft = document.querySelector('.btn-left');
 const btnRight = document.querySelector('.btn-right');
 
 btnLeft.addEventListener('click', () => {
-    currentSlide = currentSlide === 1 ? 3 : currentSlide - 1;
+    currentSlide = currentSlide === 1 ? 8 : currentSlide - 1;
     document.getElementById(`slide${currentSlide}`).checked = true;
     updateSlidePosition();
-    updateBulletClasses();
-    // Não parar autoplay!
+    updateBulletClasses(); // Não parar autoplay!
 });
 
 btnRight.addEventListener('click', () => {
-    currentSlide = currentSlide === 3 ? 1 : currentSlide + 1;
+    currentSlide = currentSlide === 8 ? 1 : currentSlide + 1;
     document.getElementById(`slide${currentSlide}`).checked = true;
     updateSlidePosition();
-    updateBulletClasses();
-    // Não parar autoplay!
+    updateBulletClasses(); // Não parar autoplay!
 });
-
-
 
 // Inicializa a posição do slide
 updateSlidePosition();
@@ -137,7 +214,6 @@ updateBulletClasses();
 
 // Inicia o autoplay
 startAutoplay();
-
 
 
 /* 
@@ -235,5 +311,10 @@ function startAutoplay() {
 function stopAutoplay() {
   clearInterval(autoPlayInterval);
 }
+
+*/
+
+/*
+Arquivo modificado versao 2
 
 */

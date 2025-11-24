@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/global.css">
+    <link rel="stylesheet" href="./styles/global.css?v=28">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" type="image/png" href="./imgs/Vector.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 
     <title>Vegas Benefícios</title>
 </head>
@@ -16,7 +18,7 @@
     <div class="header">
         <nav>
             <div class="logo">
-                <a href="./index.html">
+                <a href="./index.html?v=2">
                     <img src="./imgs/logos/Logo.svg" alt="">
                 </a>
             </div>
@@ -24,15 +26,16 @@
           
 
            
-            <ul class="menu-desktop">
+         
+             <ul class="menu-desktop">
                
-                <li></li>
+                
      
               
             </ul>
 
             <button class="btn-header menu-desktop">
-               <a href="./sobrenos.html">Sobre o Clube</a>
+               <li><a href="./sobrenos.html?v=2">Sobre o Clube</a></li>
             
             </button>
               
@@ -41,15 +44,14 @@
               <div class="main-menus">
                      <ul >
                
-              
+                <li><a href="./sobrenos.html?v=2">Sobre o Clube</a></li>
      
               
             </ul>
 
-       
-                 <a href="./sobrenos.html" class="btn-header">Sobre o Clube</a>
+           <button>
             
-        
+           </button>
               </div>
              <div class="menu-hamb">
             <img src="./imgs/icons/menu.svg" alt="">
@@ -67,31 +69,80 @@
         <input type="radio" name="slide" id="slide1" checked>
         <input type="radio" name="slide" id="slide2">
         <input type="radio" name="slide" id="slide3">
+        <input type="radio" name="slide" id="slide4">
+        <input type="radio" name="slide" id="slide5">
+        <input type="radio" name="slide" id="slide6">
+        <input type="radio" name="slide" id="slide7">
+        <input type="radio" name="slide" id="slide8">
     
         <div class="slides">
           <!---SLIDES-->  
             <img src="./imgs/banners/ZANINI/ZANINI_1520X450.jpg" 
             class="slide slide1" 
             data-base="ZANINI"
-            data-folder="ZANINI-" alt="">
+            data-folder="ZANINI-" 
+            alt=""
+            data-href="./detalhes.html#store-3"
+            >
            <img 
   src="./imgs/banners/BETTASUPLEMENTOS/BETTASUPLEMENTOS_1520X450.jpg"
   class="slide slide2"
   data-base="BETTASUPLEMENTOS"
   data-folder="BETTASUPLEMENTOS"
   alt=""
+  data-href="./detalhes.html#store-6"
 >
             <img src="./imgs/banners/CAOCHORRO/CAOCHORRO_1520X450.jpg"
              class="slide slide3"
                data-base="CAOCHORRO"
        data-folder="CAOCHORRO"
+              alt=""
+              data-href="./detalhes.html#store-7"
+              >
+
+              <img src="./imgs/banners/INTENSOSBARBEARIA/INTENSOSBARBEARIA_1520X450.jpg"
+             class="slide slide4"
+               data-base="INTENSOSBARBEARIA"
+       data-folder="INTENSOSBARBEARIA"
               alt="">
+
+               <img src="./imgs/banners/MERCADAODOSOCULOS/MERCADAODOSOCULOS_1520X450.jpg"
+             class="slide slide5"
+               data-base="MERCADAODOSOCULOS"
+       data-folder="MERCADAODOSOCULOS"
+              alt="">
+
+              <img src="./imgs/banners/VIDROVAN/VIDROVAN_1520X450.jpg"
+             class="slide slide6"
+               data-base="VIDROVAN"
+       data-folder="VIDROVAN"
+              alt="">
+
+               <img src="./imgs/banners/PASTEUR/PASTEUR_1520X450.png"
+             class="slide slide7"
+               data-base="PASTEUR"
+       data-folder="PASTEUR"
+              alt="">
+
+              <img src="./imgs/banners/BOIQUEMIA/BOIQUEMIA_1520X450.png"
+             class="slide slide8"
+               data-base="BOIQUEMIA"
+       data-folder="BOIQUEMIA"
+       data-href="./detalhes.html#store-5"
+              alt="">
+
+
         </div>
-    
+    <!-- -->
         <div class="navigation-slides bullets">
             <label class="bar bullet" for="slide1"></label>
             <label class="bar bullet" for="slide2"></label>
             <label class="bar bullet" for="slide3"></label>
+            <label class="bar bullet" for="slide4"></label>
+            <label class="bar bullet" for="slide5"></label>
+            <label class="bar bullet" for="slide6"></label>
+               <label class="bar bullet" for="slide7"></label>
+               <label class="bar bullet" for="slide8"></label>
         </div>
 
         <div class="arrows">
@@ -341,19 +392,7 @@
     <div class="custom-select-title">Segmento</div>
     <ul class="custom-options" data-input-id="filterSegment">
       <li data-value="">Todos os Segmentos</li>
-      <li data-value="presentes">Presentes</li>
-      <li data-value="utensílios domésticos">Utensílios Domésticos</li>
-      <li data-value="variedades">Variedades</li>
-      <li data-value="brinquedos">Brinquedos</li>
-      <li data-value="ótica">Ótica</li>
-      <li data-value="barbearia">Barbearia</li>
-      <li data-value="petshop">Petshop</li>
-      <li data-value="alimentação">Alimentação</li>
-      <li data-value="restaurante">Restaurante</li>
-      <li data-value="cosméticos">Cosméticos</li>
-      <li data-value="veículos">Veículos</li>
-      <li data-value="posto de combustível">Posto de Combustível</li>
-      <li data-value="açougue">Açougue</li>
+      
     </ul>
   </div>
 </div>
@@ -363,9 +402,7 @@
 </div>
               
                 <select id="filterState" class="select-desktop">
-                  <option value="">Todos os Estados</option>
-                  <option value="sp">São Paulo</option>
-                  <option value="rj">Rio de Janeiro</option>
+                
                   <!-- Adicione mais estados -->
                 </select>
               
@@ -377,19 +414,7 @@
               
                 <select id="filterSegment" class="select-desktop">
                     <option value="">Todos os Segmentos</option>
-    <option value="presentes">Presentes</option>
-    <option value="utensílios domésticos">Utensílios Domésticos</option>
-    <option value="variedades">Variedades</option>
-    <option value="brinquedos">Brinquedos</option>
-    <option value="ótica">Ótica</option>
-    <option value="barbearia">Barbearia</option>
-    <option value="petshop">Petshop</option>
-    <option value="alimentação">Alimentação</option>
-    <option value="restaurante">Restaurante</option>
-    <option value="cosméticos">Cosméticos</option>
-    <option value="veículos">Veículos</option>
-    <option value="posto de combustível">Posto de Combustível</option>
-    <option value="açougue">Açougue</option>
+    
                 </select>
               
             
@@ -404,7 +429,7 @@
           
                 <div class="lojas">
  
-                    
+                     <div id="list-skeleton" class="skeleton-list" aria-hidden="true"></div>
                     <ul class="produtoLista">
                        <div id="mensagem-vazia">Ainda nenhum resultado, filtre para ver.</div>
                           
@@ -417,6 +442,7 @@
                 
 
                 <div class="map-container">
+                   <div id="map-skeleton" class="skeleton-map" aria-hidden="true"></div>
                     <div class="map" id="map">
 
                     </div>
@@ -440,24 +466,24 @@
 <input type="radio" name="slide" id="slide55">
     
         <div class="slides1">
-            
-            <img src="./imgs/banners/FARMACIA/FARMACIA_1520X450.jpg" class="slide slide11" alt="" data-base="FARMACIA" data-folder="FARMACIA">
-            <img src="./imgs/banners/FGTS/FGTS_1520X450.jpg" class="slide slide22" alt=""
-            data-base="FGTS" data-folder="FGTS"
+     
+            <img src="./imgs/banners/FARMACIA/FARMACIA_1520X450.png?v=9" class="slide slide11" alt="" data-href="./farmacia.html?v=3" data-base="FARMACIA" data-folder="FARMACIA">
+            <img src="./imgs/banners/FGTS/FGTS_1520X450.png?v=9" class="slide slide22" alt="" data-href="https://app.lincredfacil.com.br/antecipacao-fgts-vegas/?utm_source=lnc_app_lp_vegas&utm_medium=botao&utm_campaign=vegas_fgts"
+            data-base="FGTS"  data-folder="FGTS" data-href="https://app.lincredfacil.com.br/antecipacao-fgts-vegas/?utm_source=lnc_app_lp_vegas&utm_medium=botao&utm_campaign=vegas_fgts"
             >
-            <img src="./imgs/banners/MEDIQUO/MEDIQUO_1520X450.jpg" 
-            class="slide slide33" 
+            <img src="./imgs/banners/MEDIQUO/MEDIQUO_1520X450.png?v=9" 
+            class="slide slide33" data-href="./mediquo.html"
             data-base="MEDIQUO" data-folder="MEDIQUO-"
             alt="">
 
-            <img src="./imgs/banners/TOTALPASS/TOTALPASS_1520X450.jpg"
-             class="slide slide44"
+            <img src="./imgs/banners/TOTALPASS/TOTALPASS_1520X450.png?v=9"
+             class="slide slide44" data-href="./totalpass.html?v=3" 
                data-base="TOTALPASS"
        data-folder="TOTALPASS"
               alt="">
 
-                  <img src="./imgs/banners/WELLHUB/WELLHUB_1520X450.jpg"
-             class="slide slide55"
+              <img src="./imgs/banners/WELLHUB/WELLHUB_1520X450.png?v=9"
+             class="slide slide55" data-href="./wellhub.html"
                data-base="WELLHUB"
        data-folder="WELLHUB"
               alt="">
@@ -590,7 +616,7 @@ Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Enco
 
 
 
-    
+    <!--- footer -->
 
 <footer>
   <div class="content-brand">
@@ -711,13 +737,11 @@ Navegue pelas categorias, utilize a busca ou explore os comércios no mapa. Enco
 
  
      <script src="./scripts/env.js"></script>
-    <script type="module" src="./scripts/pages/home.js" defer></script>
-      <script type="module" src="./scripts/components/map.js" defer></script>
+    <script type="module" src="./scripts/pages/home.js?v=31" defer></script>
+      <script type="module" src="./scripts/components/map.js?v=26" defer></script>
    
-    <script defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzKJEV_2uVpJCajZAofAb5l6Gzhu9mNgw"
-     onload="window.initMap()"
-    >
+   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
   </script>
 </body>
 </html>

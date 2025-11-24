@@ -2,8 +2,8 @@
       overflow: hidden;
       background-color: white;
       padding: 20px 0;
-      width: 85%;
-       max-width: 1520px;
+      width: 85%;/*85%*/
+      max-width:1420px;
     margin: 0 auto;
 
       padding-inline: var(--padding-body-desktop);
@@ -11,32 +11,31 @@
      
     }
 
-    .carrossel-track {
+    
+
+.carrossel-track {
   display: flex;
   gap: 16px;
   /* não aplica animação por padrão */
 }
 
 .carrossel-track.animate-scroll {
-  animation: scroll 20s linear infinite;
+  animation: scroll 50s linear infinite;
   width: max-content; /* ou calc(...) se precisar fixar largura duplicada */
 }
 
      
-    .carrossel-track img {
-      width: 60px;
-
-      
-      
-      
-      transition: filter 0.3s;
-      cursor: pointer;
-      flex-shrink: 0;
-aspect-ratio: 1/1;
-object-fit:cover;
-z-index: 500;
-
-    }
+  .carrossel-track img {
+    width: 120px;            /* largura da caixa */
+    height: 80px;            /* altura da caixa */
+    object-fit: contain;     /* mantém proporção original */
+    background-color: white; /* fundo neutro */
+    padding: 8px;            /* espaço interno */
+    transition: filter 0.3s;
+    cursor: pointer;
+    flex-shrink: 0;
+    z-index: 500;
+}
 
   
      .carrossel-track img:hover {

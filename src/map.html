@@ -1,375 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/global.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <title>Vegas Benefícios</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./styles/global.css">
+  <title>Document</title>
 </head>
 <body>
-    
 
-
-    <div class="header">
-      <p></p>
-        <nav>
-            <div class="logo">
-                <a href="./index.html">
-                    <img src="./imgs/logos/Logo.svg" alt="">
-                </a>
-            </div>
-
-          
-
-           
-            <ul class="menu-desktop">
-               
-                <li><a href="./sobrenos.html">Sobre o Clube</a></li>
-     
-              
-            </ul>
-
-            <button class="btn-header menu-desktop">
-                <a href="./cadastro-com.html">Faça Parte do Clube</a>
-            
-            </button>
-              
-
-            
-              <div class="main-menus">
-                     <ul >
-               
-                <li><a href="./sobrenos.html">Sobre o Clube</a></li>
-     
-              
-            </ul>
-
-            <button class="btn-header">
-                <a href="./cadastro-com.html">Faça Parte do Clube</a>
-            
-            </button>
-              </div>
-             <div class="menu-hamb">
-            <img src="./imgs/icons/menu.svg" alt="">
-        </div>
-
-        <div class="close-menu">
-            <img src="./imgs/icons/close.svg" alt="">
-        </div>
-        </nav>
-
-              <div class="menu-overlay"></div>
+    <article class="coupon-card" data-cupom="boi que mia">
+    <div class="coupon-media">
+      <img src="./imgs/boimia-cupom.png" alt="Cliente no mercado" loading="lazy">
+      <span class="coupon-badge">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a3 3 0 0 1 3-3h8.5a1 1 0 0 1 .7.29l4.5 4.5a1 1 0 0 1 .3.71V15a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6zM8.5 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>
+        <strong>Entrada por conta da casa!</strong>
+      </span>
     </div>
- 
 
-   
-    <section class="melhor-oferta" id="mp">
-        <h1 class="title-mp">Encontre as melhores ofertas para você</h1>
-        <div class="filter-area">
-            <div class="container-limpar">
-                <button class="limpar">
-                  Limpar Filtros <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-              
-            <div class="filter-btns">
-                <div class="search-text">
-                    <i class="fa fa-search"></i>
-
-                    <input type="text" class="textinput" id="searchInput" placeholder="Buscar por nome ou palavra-chave..." />
-                    <button class="mobile-filter"><img src="./imgs/icons/filtericon.svg" alt=""></button>
-                </div>
-              
-<div class="overlay"></div>
-                  <div class="mobile-btns">
-                    <div class="header-mobile-btn">
-                        <span class="close-filter">X</span>
-                        <h2>Filtros</h2>
-                    </div>
-<div class="custom-select-group">
-  <div class="custom-select">
-    <div class="custom-select-title">Estado</div>
-    <ul class="custom-options" data-input-id="filterState">
-     
-    </ul>
-  </div>
-</div>
-<!-- Cidades -->
-<div class="custom-select-group">
-  <div class="custom-select">
-    <div class="custom-select-title">Cidade</div>
-    <ul class="custom-options list-ul" id="list-ul" data-input-id="filterCity">
-      <li data-value="">Todas as Cidades</li>
-   
-      <!-- Cidades dinâmicas via JS -->
-    </ul>
-  </div>
-</div>
-
-             <div class="custom-select-group">
-  <div class="custom-select">
-    <div class="custom-select-title">Segmento</div>
-    <ul class="custom-options" data-input-id="filterSegment">
-      <li data-value="">Todos os Segmentos</li>
-      <li data-value="presentes">Presentes</li>
-      <li data-value="utensílios domésticos">Utensílios Domésticos</li>
-      <li data-value="variedades">Variedades</li>
-      <li data-value="brinquedos">Brinquedos</li>
-      <li data-value="ótica">Ótica</li>
-      <li data-value="barbearia">Barbearia</li>
-      <li data-value="petshop">Petshop</li>
-      <li data-value="alimentação">Alimentação</li>
-      <li data-value="restaurante">Restaurante</li>
-      <li data-value="cosméticos">Cosméticos</li>
-      <li data-value="veículos">Veículos</li>
-      <li data-value="posto de combustível">Posto de Combustível</li>
-      <li data-value="açougue">Açougue</li>
-    </ul>
-  </div>
-</div>
-
-  <!-- Cartões -->
- <div class="custom-select-group">
-  <div class="custom-select">
-    <div class="custom-select-title">Cartão</div>
-    <ul class="custom-options" data-input-id="filterCard">
-      <li data-value="">Todos os Cartões</li>
-      <li data-value="vegas day">Vegas Day</li>
-      <li data-value="vegas plus">Vegas Plus</li>
-      <li data-value="vegas alimentação">Vegas Alimentação</li>
-      <li data-value="vegas refeição">Vegas Refeição</li>
-      <li data-value="vegas combustível">Vegas Combustível</li>
-    </ul>
-  </div>
-</div>
-</div>
-              
-                <select id="filterState" class="select-desktop">
-                  <option value="">Todos os Estados</option>
-                  <option value="sp">São Paulo</option>
-                  <option value="rj">Rio de Janeiro</option>
-                  <!-- Adicione mais estados -->
-                </select>
-              
-                <select id="filterCity" class="select-desktop">
-                  <option value="">Todas as Cidades</option>
-      
-                  <!-- Preenchido dinamicamente com base no estado -->
-                </select>
-              
-                <select id="filterSegment" class="select-desktop">
-                    <option value="">Todos os Segmentos</option>
-    <option value="presentes">Presentes</option>
-    <option value="utensílios domésticos">Utensílios Domésticos</option>
-    <option value="variedades">Variedades</option>
-    <option value="brinquedos">Brinquedos</option>
-    <option value="ótica">Ótica</option>
-    <option value="barbearia">Barbearia</option>
-    <option value="petshop">Petshop</option>
-    <option value="alimentação">Alimentação</option>
-    <option value="restaurante">Restaurante</option>
-    <option value="cosméticos">Cosméticos</option>
-    <option value="veículos">Veículos</option>
-    <option value="posto de combustível">Posto de Combustível</option>
-    <option value="açougue">Açougue</option>
-                </select>
-              
-                <select id="filterCard" class="select-desktop">
-                    <option value="">Todos os Cartões</option>
-                    <option value="vegas day">Vegas Day</option>
-                    <option value="vegas plus">Vegas Plus</option>
-                    <option value="vegas alimentação">Vegas Alimentação</option>
-                    <option value="vegas refeição">Vegas Refeição</option>
-                    <option value="vegas combustível">Vegas Combustível</option>
-                </select>
-              
-              </div>
-
-                
-            
-              </div>
-                 <p class="resultscount">Foram encontrados <span></span> Resultados</p>
-              <div class="filter-results">
-          
-                <div class="lojas">
- 
-                    
-                    <ul class="produtoLista">
-                       <div id="mensagem-vazia">Ainda nenhum resultado, filtre para ver.</div>
-                          
-                    </ul>
-
-              
-                </div>
-
-
-                
-
-                <div class="map-container">
-                    <div class="map" id="map">
-
-                    </div>
-                       
-                </div>
-
-                    
-              </div>
-                <button class="vermais">Ver Mais <img src="./imgs/icons/more_horiz.svg" alt=""></button>
-      
-    </section>
-
- 
-    
-
-
-
-    
-
-    <footer>
-       <div class="content-brand">
-        <img src="./imgs/logo-white.png" class="logo-footer" style=" padding-top: 20px;" alt="" >
-        <img src="./imgs/logos/logo-abbt 1.svg" style="width: 10%;" alt="">
-        <img src="./imgs/logos/logo-empresa-brasileira.svg" alt="">
-       
-       </div>
-
-       <div class="menu-footer">
-        <div class="links-rapidos m-f locals">
-            <div class="card-footer">
-                <i class="fas fa-map-marker-alt"></i>
-                <div>
-                    <h2>Americana</h2>
-                    <p>R. Tamôio, 526 - Vila Santa Catarina | 13466-250 </p>
-                </div>
-         
-
-            </div>
-
-            <div class="card-footer">
-           <i class="fa-brands fa-whatsapp"></i>
-                <div>
-                    <h2>19 2108.2900</h2>
-                    <p>segunda a sexta 8h às 20h,
-                        aos sábados das 8h às 18h</p>
-                </div>
-         
-
-            </div>
-
-            <div class="card-footer">
-<i class="fa-solid fa-phone"></i>
-
-                <div>
-                    <h2>19 2108.2908</h2>
-                    <p>segunda a sexta 8h às 20h,
-                        aos sábados das 8h às 18h</p>
-                </div>
-               
-
-            </div>
- 
-            <div class="card-footer">
-            <i class="fas fa-envelope"></i>
-
-
-                <div>
-               
-                    <p>atendimento@vegascard.com.br</p>
-                </div>
-               
-            </div>
+    <div class="coupon-body">
+      <div class="coupon-meta">
+        <span class="meta-cat">
+          <img src="./imgs/icons/hamb-icon.svg" alt="">
+          Alimentação
+        </span>
+        <div class="meta-pills">
+          <span class="pill">Alimentação</span>
+          <span class="pill pill-alt">Plus</span>
+          <span>+</span>
         </div>
-          
-        <div class="links-rapidos m-f menus ">
-            <div class="link-div">
-                <h2>Sobre Nós</h2>
-                <ul>
-                     <li><a href="">A Vegas</a></li>
-                     <li><a href="">Vegas Cultural</a></li>
-                     <li><a href="">Notícias</a></li>
-                    
-                </ul>
-            </div>
+      </div>
 
-            <div class="link-div">
-                <h2>Soluções</h2>
-                <ul>
-                     <li><a href="">PAT</a></li>
-                     <li><a href="">Convênios</a></li>
-                     <li><a href="">Bônus</a></li>
-                     <li><a href="">Mobilidade</a></li>
-                     <li><a href="">Bem-Estar e Saúde</a></li>
-                     <li><a href="">Entreterimento</a></li>
-                     <li><a href="">Gestão PME</a></li>
-                </ul>
-            </div>
-         
-        </div>
+      <h3 class="coupon-title">Entrada por conta da casa no Boi que Mia!</h3>
+      <p class="coupon-sub">Pagando com o seu Vegas, você garante porções selecionadas, por conta da casa!</p>
 
-        <div class="links-rapidos menus m-f footer-menus">
-            <div class="link-div">
-                <h2>Área do cliente</h2>
-                <ul>
-                     <li><a href="">Meu Cartão</a></li>
-                     <li><a href="">Portal RH</a></li>
-                     <li><a href="">Meu Estabelecimento</a></li>
-                     <li><a href="">Meu Rastreador</a></li>
-                </ul>
-            </div>
-
-            <div class="link-div">
-                <h2>Estabelecimento</h2>
-                <ul>
-                     <li><a href="">Quero ser Estabelecimento</a></li>
-                     <li><a href="">Rede Credenciada</a></li>
-                
-                </ul>
-            </div>
-
-            <div class="link-div">
-                <a href=""><h2>Trabalhe Conosco</h2></a>
-                <a href=""><h2>Tire Suas Dúvidas</h2></a>
-            </div>
-         
-        </div>
-
-        <div class="app menus m-f" >
-            <h2>Baixe o App</h2>
-            <ul>
-               <a href=""><li>IOS</li></a>
-               <a href=""><li>Android</li></a>
-            </ul>
-
-            <div class="midia-links">
-                <a href=""><i class="fab fa-instagram-square social-media"></i>  </a>
-                <a href=""><i class="fab fa-facebook-square social-media"></i> </a>
-                <a href=""><i class="fab fa-youtube-square social-media"></i>   </a>
-                <a href=""><i class="fab fa-linkedin social-media"></i>  </a>
-            </div>
-        </div>
-       </div>
-
-       
-    </footer>
-
-    <div class="down-footer">
-        <p>Acesse nossa Política de Privacidade.</p>
-        <p>Copyright ©2025 Vegas Card do Brasil. Todos os direitos reservados. Desenvolvido por []</p>
-       </div>
-
- 
-
-    <script src="./scripts/testes/map.js" defer></script>
-
-  <script src="./scripts/components/menumobile.js"></script>
-      <script defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzKJEV_2uVpJCajZAofAb5l6Gzhu9mNgw"
-     onload="window.initMap()"
-    >
-    
-  </script>
-      
+      <button class="coupon-cta" type="button">Ver Oferta</button>
+    </div>
+  </article>
 </body>
 </html>

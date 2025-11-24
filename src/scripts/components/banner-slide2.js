@@ -5,6 +5,16 @@ const slide44 = document.getElementById('slide44');
 const slide55 = document.getElementById('slide55');
 const slidesContainer1 = document.querySelector('.slides1');
 const bullets1 = document.querySelectorAll('.bullet1');
+// (logo após seus const já existentes)
+
+
+// <<< MAPA opcional por data-base (fallback se não houver data-href na imagem)
+const routesByBase1 = {
+  FARMACIA: 'farmacia.html',
+  FGTS: '/campanhas/fgts',
+  MEDIQUO: '/campanhas/mediquo',
+};
+
 
 let currentSlide1 = 1;
 let autoPlayInterval1;
@@ -24,6 +34,59 @@ function getBannerSize1() {
   return '402X520';
 }
 
+// Executa ao carregar
+document.addEventListener("DOMContentLoaded", () => {
+  atualizarSrcDasImagens1();
+
+  // <<< habilita clique nas imagens
+  enableSlideLinks1();
+});
+
+// <<< função que ativa os links dos slides (sem <a>)
+function enableSlideLinks1() {
+  // delegação no container (não quebra seu layout)
+  slidesContainer1.addEventListener('click', (e) => {
+    const img = e.target.closest('img'); // clicou numa <img>?
+    if (!img || !slidesContainer1.contains(img)) return;
+
+    // 1) tenta data-href na própria imagem
+    let href = img.dataset.href?.trim();
+
+    // 2) se não tiver, usa o mapa por data-base
+    if (!href) {
+      const base = (img.dataset.base || '').toUpperCase();
+      href = routesByBase1?.[base]?.trim();
+    }
+
+    // 🚫 Se não tiver link, não faz nada
+    if (!href) return;
+
+    // Redireciona (mesma aba)
+    window.location.href = href;
+  });
+
+  // ♿ Acessibilidade + cursor SOMENTE para imagens com link
+  document.querySelectorAll('.slides1 img').forEach(img => {
+    const hasHref =
+      (img.dataset.href && img.dataset.href.trim() !== '') ||
+      (routesByBase1?.[(img.dataset.base || '').toUpperCase()]);
+
+    if (hasHref) {
+      img.style.cursor = 'pointer';
+      img.tabIndex = 0; // permite foco no teclado
+      img.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          img.click();
+        }
+      });
+    } else {
+      img.style.cursor = 'default';
+      img.removeAttribute('tabIndex');
+    }
+  });
+}
+
 // Remove acentos
 function formatFileName1(str) {
   return str.replace(/ /g, '_').normalize("NFD").replace(/[\u0300-\u036f]/g, '');
@@ -37,7 +100,11 @@ function atualizarSrcDasImagens1() {
   slides.forEach(img => {
     const base = formatFileName1(img.getAttribute('data-base'));
     const folder = img.getAttribute('data-folder');
-    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.jpg`;
+    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.png?v=10`;
+
+    img.onerror = () => {
+    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.jpg?v=10`;
+  };
   });
 }
 
@@ -61,7 +128,7 @@ function startAutoplay1() {
     document.getElementById(`slide${currentSlide1}${currentSlide1}`).checked = true;
     updateSlidePosition1();
     updateBulletClasses1();
-  }, 5000);
+  }, 15000);
 }
 
 function stopAutoplay1() {

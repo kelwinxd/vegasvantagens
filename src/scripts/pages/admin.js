@@ -191,21 +191,24 @@ function carregarCategorias() {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+    
     });
 
     if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
     const estab = await res.json();
 
     alert("Estabelecimento cadastrado com sucesso!");
+    //adicionar primeiro a imagem adicional
+    if (imagemAdicional.files.length > 0) {
+      await enviarImagemEstabelecimento(estab.id, imagemAdicional.files[0], false);
+    }
 
     if (imagemPrincipal.files.length > 0) {
       await enviarImagemEstabelecimento(estab.id, imagemPrincipal.files[0], true);
     }
 
-    if (imagemAdicional.files.length > 0) {
-      await enviarImagemEstabelecimento(estab.id, imagemAdicional.files[0], false);
-    }
+  
 
     if (categoriaId) {
       await vincularCategoria(estab.id, categoriaId);
@@ -260,14 +263,21 @@ function carregarCategorias() {
     }
 
     const detalhes = await Promise.all(
-      data.map(estab =>
-        fetch(`${API_BASE}/api/Estabelecimentos/${estab.id}`, {
-          headers: { "Authorization": "Bearer " + token }
-        }).then(r => r.json())
-      )
-    );
-
-    detalhes.forEach(estab => {
+  data.map(estab =>
+    fetch(`${API_BASE}/api/Estabelecimentos/${estab.id}`, {
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(r => {
+      if (!r.ok) throw new Error(`Erro ao buscar detalhes do ID ${estab.id}: ${r.status}`);
+      return r.json();
+    })
+    .catch(err => {
+      console.warn("Falha ao buscar estabelecimento:", err);
+      return null; // para evitar quebra no .forEach
+    })
+  )
+);
+    detalhes.filter(e => e !== null).forEach(estab => {
       const card = document.createElement("div");
       card.className = "card-estab";
       card.setAttribute("data-nome", estab.nome.toLowerCase());
@@ -470,19 +480,7 @@ document.getElementById("editFachadaPreview").src =
   document.getElementById("modalEditarOverlay").style.display = "flex";
 }
 
-document.getElementById("editImagemPrincipal").addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    document.getElementById("editLogoPreview").src = URL.createObjectURL(file);
-  }
-});
 
-document.getElementById("editImagemAdicional").addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    document.getElementById("editFachadaPreview").src = URL.createObjectURL(file);
-  }
-});
 
 
 function fecharModalEditar() {
@@ -546,3 +544,10 @@ document.getElementById("filtroEstab").addEventListener("input", function () {
     card.style.display = nome.includes(termo) ? "flex" : "none";
   });
 });
+
+window.carregarCidades = carregarCidades;
+window.cadastrarEstabelecimento = cadastrarEstabelecimento;
+window.fecharModalEditar = fecharModalEditar;
+window.salvarAlteracoesEstab = salvarAlteracoesEstab;
+window.carregarCidades2 = carregarCidades2;
+window.abrirModalEditar = abrirModalEditar;

@@ -31,15 +31,21 @@
 
 .main-img {
     flex: 1.3;
+    max-height: 550px;
    
     
 }
 
+.sem-cupom {
+    display: none;
+    padding-bottom: 5rem;
+}
+
 .main-img img {
   width: 100%;
-  height: auto;
+  height: 100%;
   border-radius: 8px;
-  object-fit: contain; /* ou 'cover', dependendo da estética desejada */
+  object-fit: cover; /* ou 'cover', dependendo da estética desejada */
 }
 
 .main-info {
@@ -150,7 +156,7 @@ aspect-ratio: 1/1;
 .info-cards {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
  
 }
 
@@ -405,6 +411,15 @@ background-color: transparent;
     font-size: 14px;
     color: #1E1E1E;
 }
+
+ .modal {
+        display: flex;
+width: 754px;
+padding: 24px 48px 48px 48px;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+    }
 }
 
 @media screen and (max-width:768px){
@@ -594,5 +609,9 @@ gap: 8px;
 
 
 
+}
+
+.msg-no {
+  display:none;
 }
 
