@@ -81,7 +81,7 @@ function esconderMensagemVazia(){ const msg = document.getElementById("mensagem-
 async function carregarEstados() {
   try {
     const accessToken = await getClientToken();
-    const resp = await fetch("https://apiclubedevantagens.vegascard.com.br/api/UnidadesFederativas", {
+    const resp = await fetch("https://apivegasvantagens-production.up.railway.app/api/UnidadesFederativas", {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     const estados = await resp.json();
@@ -221,7 +221,7 @@ if (liTodasCidades) {
     if (LOJAS_CACHE.length === 0) LOJAS_CACHE = await fetchAllStores(accessToken);
 
     // cidades no estado (API) — e cruzamos com as que têm lojas
-    const resp = await fetch(`https://apiclubedevantagens.vegascard.com.br/api/Cidades/por-estado/${estadoId}`, {
+    const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     if (!resp.ok) throw new Error("Cidades não encontradas para este estado.");
