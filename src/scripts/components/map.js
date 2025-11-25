@@ -19,7 +19,7 @@ function corrigirCoordenada(valor, tipo) {
 // ---------------- API ----------------
 async function fetchAllStores(accessToken) {
   try {
-    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app', {
+    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app/Estabelecimentos', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     if (!respLista.ok) throw new Error("Erro ao buscar lista geral");
@@ -27,7 +27,7 @@ async function fetchAllStores(accessToken) {
 
     const detalhes = await Promise.all(
       lista.map(async loja => {
-        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/${loja.id}`, {
+        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/Estabelecimentos/${loja.id}`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (!detalheResp.ok) return null;
