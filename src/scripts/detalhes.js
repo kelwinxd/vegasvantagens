@@ -30,7 +30,7 @@ function createInlineLoader(targetEl) {
 
 
 async function fetchStoreDetails(token, storeId) {
-  const resp = await fetch(`https://apiclubedevantagens.vegascard.com.br/api/Estabelecimentos/${storeId}`, {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/${storeId}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
