@@ -364,7 +364,7 @@ async function updateMapaLista({ cidade="", segmento="", busca="" }) {
     } else {
     imagemLoja = (loja.imagens && loja.imagens[0]) || './imgs/default-image.png';
     }
-
+//edit
       li.innerHTML = `
         <div class="place-image">
           <img src="${imagemLoja}" alt="${loja.nome}"
