@@ -219,7 +219,7 @@ if (liTodasCidades) {
     const accessToken = await getClientToken();
 
     if (LOJAS_CACHE.length === 0) LOJAS_CACHE = await fetchAllStores(accessToken);
-
+//editado
     // cidades no estado (API) — e cruzamos com as que têm lojas
     const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cidades/por-estado/${estadoId}`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
