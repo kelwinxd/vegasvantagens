@@ -233,7 +233,7 @@ async function fetchAllStores(accessToken) {
   try {
     
     // Buscar lista resumida
-    const respLista = await fetch('https://apiclubedevantagens.vegascard.com.br/api/Estabelecimentos', {
+    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     if (!respLista.ok) throw new Error("Erro ao buscar lista geral");
@@ -242,7 +242,7 @@ async function fetchAllStores(accessToken) {
     // Buscar detalhes um a um
     const detalhes = await Promise.all(
       lista.map(async loja => {
-        const detalheResp = await fetch(`https://apiclubedevantagens.vegascard.com.br/api/Estabelecimentos/${loja.id}`, {
+        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/${loja.id}`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (!detalheResp.ok) return null;
@@ -260,7 +260,7 @@ async function fetchAllStores(accessToken) {
 }
 
 async function fetchStoreDetails(loginToken, storeId) {
-  const resp = await fetch(`https://apiclubedevantagens.vegascard.com.br/api/Estabelecimentos/${storeId}`, {
+  const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/${storeId}`, {
     headers: {
       'Authorization': `Bearer ${loginToken}`
     }
