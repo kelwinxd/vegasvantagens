@@ -358,12 +358,12 @@ async function updateMapaLista({ cidade="", segmento="", busca="" }) {
       li.dataset.card  = (loja.cartoes || []).join(",") || "";
       li.dataset.tags  = `${(loja.nome||"").toLowerCase()} ${(loja.rua||"").toLowerCase()}`;
 
-      let imagemLoja;
-      if (loja.id === 3) {
-    imagemLoja = './imgs/zanini-cupom.png'; // caminho da imagem fixa
-    } else {
-    imagemLoja = (loja.imagens && loja.imagens[0]) || './imgs/default-image.png';
-    }
+    const fachada = loja.imagens?.find(img => img.fachada);
+
+    imagemLoja =  
+        fachada?.url ||
+        loja.imagemPrincipal ||
+        './imgs/default-image.png';
 //edit
       li.innerHTML = `
         <div class="place-image">
