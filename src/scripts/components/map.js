@@ -324,6 +324,10 @@ function centralizarNoConjunto() {
 // ---------------- List + Mapa ----------------
 async function updateMapaLista({ cidade="", segmento="", busca="" }) {
   try {
+    function fixUrl(url) {
+  if (!url) return url;
+  return url.replace("http://", "https://");
+}
     mostrarLoader();
     const accessToken = await getClientToken();
     if (LOJAS_CACHE.length === 0) LOJAS_CACHE = await fetchAllStores(accessToken);
@@ -363,8 +367,8 @@ async function updateMapaLista({ cidade="", segmento="", busca="" }) {
     console.log("imgPrincipal: ", loja.imagemPrincipal)
 
     let imagemLoja =  
-        fachada?.url ||
-        loja.imagemPrincipal ||
+        fixUrl(fachada?.url) ||
+        fixUrl(loja.imagemPrincipal) ||
         './imgs/default-image.png';
 //edit
       li.innerHTML = `
