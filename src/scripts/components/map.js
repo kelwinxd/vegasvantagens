@@ -360,7 +360,7 @@ async function updateMapaLista({ cidade="", segmento="", busca="" }) {
 
     const fachada = loja.imagens?.find(img => img.fachada);
 
-    imagemLoja =  
+    let imagemLoja =  
         fachada?.url ||
         loja.imagemPrincipal ||
         './imgs/default-image.png';
