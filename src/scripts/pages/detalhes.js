@@ -158,7 +158,7 @@ if (avaliacaoEl) {
   }
 }
   console.log(loja.imagens)
-
+  const logoImg = loja.imagens?.find(img => img.fachada);
   if (loja.imagens?.length > 0) {
       loadersImg.forEach(({ img, loader }) => {
         img.onload = () => {
@@ -170,15 +170,13 @@ if (avaliacaoEl) {
           img.style.display = "block";
           loader.remove();
         };
-     const logoImg = loja.imagens?.find(img => img.logo);   // 👇 se for a loja de ID 3, usa a imagem fixa do front
-    if (loja.id === 3) {
-      img.src = './imgs/zanini-cupom.png';
-    } else {
-      img.src = logoImg?.url;
-    }
+        // 👇 se for a loja de ID 3, usa a imagem fixa do front
+      
+     img.src = logoImg?.url;
+    
       });
     }
-    const fachadaImg = loja.imagens?.find(img => img.fachada);
+    const fachadaImg = loja.imagens?.find(img => img.logo);
     if (loja.imagens?.length > 0) {
       loadersLogo.forEach(({ img, loader }) => {
         img.onload = () => {
