@@ -100,10 +100,10 @@ function atualizarSrcDasImagens1() {
   slides.forEach(img => {
     const base = formatFileName1(img.getAttribute('data-base'));
     const folder = img.getAttribute('data-folder');
-    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.png?v=12`;
+    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.png?v=14`;
 
     img.onerror = () => {
-    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.jpg?v=12`;
+    img.src = `./imgs/banners/${folder}/${base}_${tamanho}.jpg?v=14`;
   };
   });
 }
