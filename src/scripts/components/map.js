@@ -286,6 +286,7 @@ function adicionarMarcador(loja) {
   // URLs do Google Maps
   const gmapView = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
   const gmapDir  = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  const mapUrl = loja.mapaUrl ? loja.mapaUrl : gmapDir
 
  const marker = L.marker([lat, lng]).addTo(markersGroup)
   .bindPopup(`
@@ -294,7 +295,7 @@ function adicionarMarcador(loja) {
     <i>${(loja.categorias || []).join(", ")}</i><br>
     <a href="${gmapView}" target="_blank" rel="noopener">Ver no Google Maps</a>
     &nbsp;•&nbsp;
-    <a href="${gmapDir}" target="_blank" rel="noopener">Traçar rota</a>
+    <a href="${mapUrl}" target="_blank" rel="noopener">Traçar rota</a>
   `)
   .bindTooltip(loja.nome, {
     permanent: true,      // <- sempre visível
@@ -308,7 +309,7 @@ function adicionarMarcador(loja) {
   // 👉 Se quiser que ao clicar no marker já abra o Google Maps (sem popup),
   //    descomente as duas linhas abaixo.
  marker.off('click'); // remove algum click antigo (ex.: ir para detalhes)
- marker.on('click', () => window.open(gmapView, '_blank', 'noopener'));
+ marker.on('click', () => window.open(mapUrl, '_blank', 'noopener'));
 
   markers.push(marker);
   return marker;

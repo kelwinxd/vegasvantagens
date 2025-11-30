@@ -129,7 +129,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       el.textContent = loja.nome;
     });
 
-    const linkMapa = `https://www.google.com/maps/search/?api=1&query=${loja.latitude},${loja.longitude}`;
+    const linkCruMapa = `https://www.google.com/maps/search/?api=1&query=${loja.latitude},${loja.longitude}`
+    const linkMapa = loja.mapaUrl ? loja.mapaUrl : linkCruMapa;
 
     document.querySelectorAll(".coupon-modal .cm-cta").forEach(btn => {
   btn.href = linkMapa;
@@ -158,7 +159,8 @@ if (avaliacaoEl) {
   }
 }
   console.log(loja.imagens)
-  const logoImg = loja.imagens?.find(img => img.fachada);
+  const FachadaImg = loja.imagens?.find(img => img.fachada);
+  
   if (loja.imagens?.length > 0) {
       loadersImg.forEach(({ img, loader }) => {
         img.onload = () => {
@@ -172,11 +174,13 @@ if (avaliacaoEl) {
         };
         // 👇 se for a loja de ID 3, usa a imagem fixa do front
       
-     img.src = logoImg?.url;
+     img.src = FachadaImg?.url;
     
       });
+
+      console.log(FachadaImg, "Imagem Fachada")
     }
-    const fachadaImg = loja.imagens?.find(img => img.logo);
+    const logoImg = loja.imagens?.find(img => img.logo);
     if (loja.imagens?.length > 0) {
       loadersLogo.forEach(({ img, loader }) => {
         img.onload = () => {
@@ -188,8 +192,10 @@ if (avaliacaoEl) {
           img.style.display = "block";
           loader.remove();
         };
-        img.src = fachadaImg?.url;
+        img.src = logoImg?.url;
       });
+
+      console.log(logoImg, "Imagem Logo")
     }
 
     const tagEl = document.querySelector(".tag-comercio");
