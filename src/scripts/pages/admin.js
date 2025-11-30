@@ -169,8 +169,8 @@ function carregarCategorias() {
   const nome = document.getElementById("nomeEstab").value;
   const ativo = document.getElementById("ativoEstab").checked;
   const categoriaId = parseInt(document.getElementById("categoriaId").value);
-  const imagemPrincipal = document.getElementById("imagemPrincipal");
-  const imagemAdicional = document.getElementById("imagemAdicional");
+  const ImagemLogo = document.getElementById("ImagemLogo");
+  const imagemFachada = document.getElementById("ImagemFachada");
 
   const data = {
     nome,
@@ -212,8 +212,8 @@ function carregarCategorias() {
 }
 
    // imagem logo (sempre leva principal=true)
-if (imagemLogo.files.length > 0) {
-  await enviarImagemEstabelecimento(estab.id, imagemLogo.files[0], "logo");
+if (ImagemLogo.files.length > 0) {
+  await enviarImagemEstabelecimento(estab.id, ImagemLogo.files[0], "logo");
 }
 
   
