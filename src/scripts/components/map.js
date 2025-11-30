@@ -366,14 +366,30 @@ async function updateMapaLista({ cidade="", segmento="", busca="" }) {
     const fachada = loja.imagens
   ?.filter(img => img.fachada)
   .slice(-1)[0];
-    console.log("fachada: ", fachada?.url)
-    console.log("imgPrincipal: ", loja.imagemPrincipal)
 
-    let imagemLoja =  
-        fixUrl(fachada?.url) ||
-        fixUrl(loja.imagemPrincipal) ||
-        './imgs/default-image.png';
-//edit
+console.log("fachada: ", fachada?.url);
+console.log("imgPrincipal: ", loja.imagemPrincipal);
+
+const tentativaUrl =
+  fixUrl(fachada?.url) ||
+  fixUrl(loja.imagemPrincipal) ||
+  "./imgs/default-image.png";
+
+const preload = new Image();
+preload.src = tentativaUrl;
+
+preload.onload = () => {
+  document.querySelectorAll(".img-comercio").forEach(img => {
+    img.src = tentativaUrl;
+  });
+};
+
+preload.onerror = () => {
+  document.querySelectorAll(".img-comercio").forEach(img => {
+    img.src = "./imgs/default-image.png";
+  });
+};
+
       li.innerHTML = `
         <div class="place-image">
           <img src="${imagemLoja}" alt="${loja.nome}"
