@@ -60,13 +60,19 @@ function carregarEstados() {
  
 }
 
-async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, principal) {
+async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, tipo) {
   const token = localStorage.getItem("token");
   const formData = new FormData();
   formData.append("imagem", imagemFile);
 
+  let query = "";
+
+  if (tipo === "principal") query = "principal";
+  if (tipo === "fachada") query = "fachada";
+  if (tipo === "logo") query = "logo&principal=true"; // regra especial para logo
+
   const resposta = await fetch(
-    `${API_BASE}/api/estabelecimentos/${estabelecimentoId}/imagens?principal=${principal}`,
+    `${API_BASE}/api/estabelecimentos/${estabelecimentoId}/imagens?${query}`,
     {
       method: "POST",
       headers: {
@@ -81,6 +87,7 @@ async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, princi
     throw new Error("Erro ao enviar imagem: " + erro);
   }
 }
+
 
 
 function carregarCidades() {
@@ -200,13 +207,14 @@ function carregarCategorias() {
 
     alert("Estabelecimento cadastrado com sucesso!");
     //adicionar primeiro a imagem adicional
-    if (imagemAdicional.files.length > 0) {
-      await enviarImagemEstabelecimento(estab.id, imagemAdicional.files[0], false);
-    }
+   if (imagemFachada.files.length > 0) {
+  await enviarImagemEstabelecimento(estab.id, imagemFachada.files[0], "fachada");
+}
 
-    if (imagemPrincipal.files.length > 0) {
-      await enviarImagemEstabelecimento(estab.id, imagemPrincipal.files[0], true);
-    }
+   // imagem logo (sempre leva principal=true)
+if (imagemLogo.files.length > 0) {
+  await enviarImagemEstabelecimento(estab.id, imagemLogo.files[0], "logo");
+}
 
   
 
