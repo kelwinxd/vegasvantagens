@@ -143,22 +143,35 @@ if (avaliacaoEl) {
   }
 }
 
-// -- loaders inicio
-  const FachadaImg = loja.imagens?.find(img => img.fachada);
-const LogoImg = loja.imagens?.find(img => img.logo);
+ const FachadaImg = loja.imagens?.find(img => img.fachada);
+    const LogoImg = loja.imagens?.find(img => img.logo);
 
-// === TODAS AS IMAGENS PRINCIPAIS (fachada) ===
-document.querySelectorAll(".img-comercio").forEach(img => {
-  img.src = FachadaImg?.url || "./imgs/default-image.png";
-});
+    const fachadaUrl = FachadaImg?.url || "./imgs/default-image.png";
 
-// === TODAS AS IMAGENS DE LOGO ===
-document.querySelectorAll(".img-logo img").forEach(img => {
-  img.src = LogoImg?.url || "./imgs/default-image.png";
-});
+    // Pré-carregamento da imagem da fachada
+    const preload = new Image();
+    preload.src = fachadaUrl;
 
-console.log("Imagem Fachada:", FachadaImg);
-console.log("Imagem Logo:", LogoImg);
+    preload.onload = () => {
+      document.querySelectorAll(".img-comercio").forEach(img => {
+        img.src = fachadaUrl;
+      });
+    };
+
+    preload.onerror = () => {
+      console.warn("Erro ao carregar imagem de fachada:", fachadaUrl);
+      document.querySelectorAll(".img-comercio").forEach(img => {
+        img.src = "./imgs/default-image.png";
+      });
+    };
+
+    // === IMAGEM DE LOGO ===
+    document.querySelectorAll(".img-logo img").forEach(img => {
+      img.src = LogoImg?.url || "./imgs/default-image.png";
+    });
+
+    console.log("Imagem Fachada:", FachadaImg);
+    console.log("Imagem Logo:", LogoImg);
     //loaders fim
 
     const tagEl = document.querySelector(".tag-comercio");
