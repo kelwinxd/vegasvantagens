@@ -143,8 +143,10 @@ if (avaliacaoEl) {
   }
 }
 
- const FachadaImg = loja.imagens?.find(img => img.fachada);
-    const LogoImg = loja.imagens?.find(img => img.logo);
+ const FachadaImg = loja.imagens
+  ?.filter(img => img.fachada)
+  .slice(-1)[0];
+ const LogoImg = loja.imagens?.find(img => img.logo);
 
     const fachadaUrl = FachadaImg?.url || "./imgs/default-image.png";
 
