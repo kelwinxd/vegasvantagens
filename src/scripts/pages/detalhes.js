@@ -90,27 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const storeId = idMatch[1];
   showGlobalLoader();
 
-  const imgContainers = document.querySelectorAll(".main-img, .main-img-tablet");
-  const logoContainers = document.querySelectorAll(".img-logo img");
-  const loadersImg = [];
-  const loadersLogo = [];
+  //Loaders --inicio
 
-  imgContainers.forEach(container => {
-    const img = container.querySelector("img.img-comercio");
-    if (img) {
-      img.style.display = "none";
-      const loader = createInlineLoader(container);
-      loadersImg.push({ img, loader });
-    }
-  });
 
-  logoContainers.forEach(img => {
-    if (img) {
-      img.style.display = "none";
-      const loader = createInlineLoader(img.parentElement);
-      loadersLogo.push({ img, loader });
-    }
-  });
+  
+  //Loader----fim
 
   try {
     const token = await getClientToken();
@@ -158,45 +142,24 @@ if (avaliacaoEl) {
     console.log("nao conseguiu aparecer a desc") // oculta se não houver match
   }
 }
-  console.log(loja.imagens)
+
+// -- loaders inicio
   const FachadaImg = loja.imagens?.find(img => img.fachada);
-  
-  if (loja.imagens?.length > 0) {
-      loadersImg.forEach(({ img, loader }) => {
-        img.onload = () => {
-          img.style.display = "block";
-          loader.remove();
-        };
-        img.onerror = () => {
-          img.src = './imgs/default-image.png';
-          img.style.display = "block";
-          loader.remove();
-        };
-        // 👇 se for a loja de ID 3, usa a imagem fixa do front
-      
-     img.src = FachadaImg?.url;
-    
-      });
+const LogoImg = loja.imagens?.find(img => img.logo);
 
-      console.log(FachadaImg, "Imagem Fachada")
-    }
-    const logoImg = loja.imagens?.find(img => img.logo);
-    if (loja.imagens?.length > 0) {
-      loadersLogo.forEach(({ img, loader }) => {
-        img.onload = () => {
-          img.style.display = "block";
-          loader.remove();
-        };
-        img.onerror = () => {
-          img.src = './imgs/default-image.png';
-          img.style.display = "block";
-          loader.remove();
-        };
-        img.src = logoImg?.url;
-      });
+// === TODAS AS IMAGENS PRINCIPAIS (fachada) ===
+document.querySelectorAll(".img-comercio").forEach(img => {
+  img.src = FachadaImg?.url || "./imgs/default-image.png";
+});
 
-      console.log(logoImg, "Imagem Logo")
-    }
+// === TODAS AS IMAGENS DE LOGO ===
+document.querySelectorAll(".img-logo img").forEach(img => {
+  img.src = LogoImg?.url || "./imgs/default-image.png";
+});
+
+console.log("Imagem Fachada:", FachadaImg);
+console.log("Imagem Logo:", LogoImg);
+    //loaders fim
 
     const tagEl = document.querySelector(".tag-comercio");
     if (tagEl && loja.categorias?.length > 0) {
