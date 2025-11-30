@@ -363,7 +363,9 @@ async function updateMapaLista({ cidade="", segmento="", busca="" }) {
       li.dataset.card  = (loja.cartoes || []).join(",") || "";
       li.dataset.tags  = `${(loja.nome||"").toLowerCase()} ${(loja.rua||"").toLowerCase()}`;
 
-    const fachada = loja.imagens?.find(img => img.fachada);
+    const fachada = loja.imagens
+  ?.filter(img => img.fachada)
+  .slice(-1)[0];
     console.log("fachada: ", fachada?.url)
     console.log("imgPrincipal: ", loja.imagemPrincipal)
 
