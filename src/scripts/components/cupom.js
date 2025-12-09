@@ -34,6 +34,7 @@ async function carregarCupons(estabelecimentoId) {
 
         const text = await response.text();
         const cupons = text ? JSON.parse(text) : [];
+        console.log(cupons)
 
         if (!cupons.length) {
             mostrarMensagemSemCupons();
@@ -61,7 +62,7 @@ function renderizarCupons(cupons) {
     grid.innerHTML = "";
 
     cupons.forEach(cupom => {
-        const img = cupom.imagens?.[0] ?? "./imgs/cupom-default.png";
+        const img = cupom.imagens?.[0] || "./imgs/bg-hero.png";
 
         const cartoes = cupom.cartoesAceitos.slice(0, 2);
         const pills = cartoes.map(c => `<span class="pill">${c.nome}</span>`).join("");
