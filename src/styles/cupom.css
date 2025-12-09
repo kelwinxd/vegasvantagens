@@ -619,6 +619,7 @@ height: 14px;
   scroll-padding-left:16px;
   padding-bottom: 12px;   /* respiro para a barra */
   -webkit-overflow-scrolling: touch;
+  height: 100%;
 
 
 }
