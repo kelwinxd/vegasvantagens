@@ -189,6 +189,7 @@ if (avaliacaoEl) {
   }
 });
 
+/*
 function mostrarCuponsDoEstabelecimento(estabelecimento) {
   const nomeEstabelecimento = normalizarTexto(estabelecimento?.nome || '');
   const todosCupons = document.querySelectorAll('article.coupon-card');
@@ -242,6 +243,7 @@ function mostrarCuponsDoEstabelecimento(estabelecimento) {
   return encontrouAlgum; // útil se quiser saber no chamador
 }
 
+/*
 
 /*
 
@@ -435,6 +437,7 @@ if (window.location.pathname.includes("detalhes.html")) {
 // Abre um único modal global ao clicar em qualquer .coupon-cta
 // pega todos os botões e liga cada um ao seu modal correspondente
 // Overlay ultra-robusto (inline styles, ignorando CSS externo)
+/*
 function ensureOverlay() {
   let ov = document.getElementById('__coupon_overlay__');
   if (!ov) {
@@ -474,7 +477,10 @@ function hideOverlay() {
   ov.style.pointerEvents = 'none';
 }
 
+
+*/
 // ===== Integra com seus botões/modais =====
+/*
 document.querySelectorAll('.coupon-card .coupon-cta').forEach(btn => {
   const key = btn.dataset.target;
   const modal = document.querySelector(`.coupon-modal[data-modal="${key}"]`);
@@ -508,9 +514,10 @@ document.querySelectorAll('.coupon-card .coupon-cta').forEach(btn => {
   });
 });
 
-
+/*
  
 // atualizar barra do cupom
+/*
 (() => {
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
@@ -614,6 +621,7 @@ document.querySelectorAll('.coupon-card .coupon-cta').forEach(btn => {
   window.initCouponRail = initRail;
 })();
 
+*/
 
 
 
