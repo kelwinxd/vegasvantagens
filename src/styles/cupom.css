@@ -627,9 +627,20 @@ height: 14px;
 .coupon-grid{ scrollbar-width:none; }
 
 /* cards com snap */
-.coupon-card{
-  flex:0 0 clamp(260px, 28vw, 340px);
-  scroll-snap-align:start;
+.coupon-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px; /* garante altura */
+}
+
+.coupon-media img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
 }
 
 /* ===== Barra de progresso ===== */
