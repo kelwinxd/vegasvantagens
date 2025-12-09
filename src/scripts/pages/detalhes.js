@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     console.log(loja)
 
-    mostrarCuponsDoEstabelecimento(loja);
+
 
     document.querySelectorAll('.title-comercio').forEach(el => {
       el.textContent = loja.nome;
