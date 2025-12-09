@@ -245,6 +245,62 @@ function mostrarCuponsDoEstabelecimento(estabelecimento) {
 
 /*
 
+
+function mostrarCuponsDoEstabelecimento(estabelecimento) {
+  const nomeEstabelecimento = normalizarTexto(estabelecimento?.nome || '');
+  const todosCupons = document.querySelectorAll('article.coupon-card');
+
+  let encontrouAlgum = false;
+
+  todosCupons.forEach(cupom => {
+    const nomeCupom = normalizarTexto(cupom.dataset.cupom || '');
+    const corresponde = nomeCupom && nomeEstabelecimento.includes(nomeCupom);
+
+    cupom.style.display = corresponde ? 'flex' : 'none';
+    if (corresponde) encontrouAlgum = true;
+
+    console.log('cupom:', nomeCupom, '| corresponde:', corresponde, '| loja:', nomeEstabelecimento);
+  });
+
+  // container da seção de cupons (já existente)
+  const containerCupons = document.querySelector('.coupons-section');
+
+
+
+  // cria/pega a mensagem de "sem cupons"
+  let msg = document.getElementById('no-coupons-msg');
+  if (!msg) {
+    msg = document.createElement('p');
+    msg.id = 'no-coupons-msg';
+    msg.className = 'no-coupons-msg';
+    msg.textContent = 'No momento não há cupons disponíveis para este estabelecimento.';
+    msg.setAttribute('aria-live', 'polite');
+
+    // onde anexar: abaixo do grid, dentro da seção
+    // tenta colocar após a grade se existir
+    const grid = containerCupons?.querySelector('.coupon-grid');
+    if (grid && grid.parentElement) {
+      grid.parentElement.insertBefore(msg, grid.nextSibling);
+    } else if (containerCupons) {
+      containerCupons.appendChild(msg);
+    } else {
+      // fallback: coloca no body (não recomendado, mas evita sumir)
+      document.body.appendChild(msg);
+    }
+  }
+ 
+
+  // liga/desliga seção + mensagem
+  if (containerCupons) {
+    containerCupons.style.display = encontrouAlgum ? 'block' : 'block'; // mantém a seção para mostrar a msg
+  }
+  msg.style.display = encontrouAlgum ? 'none' : 'block';
+
+  return encontrouAlgum; // útil se quiser saber no chamador
+}
+
+
+
 function mostrarCuponsDoEstabelecimento(estabelecimento) {
   const nomeEstabelecimento = normalizarTexto(estabelecimento?.nome || '');
 
@@ -454,7 +510,7 @@ document.querySelectorAll('.coupon-card .coupon-cta').forEach(btn => {
 
 
  
-
+// atualizar barra do cupom
 (() => {
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
