@@ -7,18 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
     carregarCupons(storeId);
 });
 
-/* ============================================================
-    Extrair o ID do Estabelecimento pela URL
-============================================================ */
 function extrairStoreIdDaURL() {
     const hash = window.location.hash;
     if (!hash.includes("store-")) return null;
     return hash.replace("#store-", "");
 }
 
-/* ============================================================
-    Carregar cupons com Token
-============================================================ */
 async function carregarCupons(estabelecimentoId) {
     try {
         const token = await getClientToken();
@@ -38,8 +32,18 @@ async function carregarCupons(estabelecimentoId) {
             return;
         }
 
-        const cupons = await response.json();
+        const text = await response.text();
+        const cupons = text ? JSON.parse(text) : [];
+        console.log(cupons)
+
+        if (!cupons.length) {
+            mostrarMensagemSemCupons();
+            return;
+        }
+
         renderizarCupons(cupons);
+        criarModais(cupons);
+        ativarAberturaDeModais();
 
     } catch (err) {
         console.error("Erro ao carregar cupons:", err);
@@ -47,97 +51,112 @@ async function carregarCupons(estabelecimentoId) {
     }
 }
 
-/* ============================================================
-    Renderizar cards dos cupons
-============================================================ */
-function renderizarCupons(cupons) {
-    const container = document.getElementById("cupons-container");
-    container.innerHTML = "";
+function mostrarMensagemSemCupons() {
+    const msg = document.getElementById("no-coupons-msg");
+    msg.style.display = "block";
+}
 
-    if (!cupons || cupons.length === 0) {
-        mostrarMensagemSemCupons();
-        return;
-    }
+function renderizarCupons(cupons) {
+    const container = document.querySelector(".coupon-grid");
+    container.innerHTML = ""; 
 
     cupons.forEach(cupom => {
-        const card = document.createElement("article");
-        card.classList.add("coupon-card");
+        const doisCartoes = cupom.cartoesAceitos.slice(0, 2)
+            .map(c => `<span class="pill">${c.nome}</span>`)
+            .join("");
 
-        card.innerHTML = `
+        container.insertAdjacentHTML("beforeend", `
+        <article class="coupon-card">
+
             <div class="coupon-media">
-                <img src="${cupom.imagem || './imgs/default.png'}" alt="Imagem do cupom">
-                <span class="coupon-badge">${cupom.desconto || 'Desconto'}</span>
+                <img src="${cupom.urlImagem || './imgs/woman-card.png'}" loading="lazy">
+                <span class="coupon-badge">
+                    <strong>${cupom.titulo}</strong>
+                </span>
             </div>
 
-            <div class="coupon-content">
-                <h3>${cupom.titulo}</h3>
-                <p>${cupom.descricao}</p>
+            <div class="coupon-body">
 
-                <div class="coupon-actions">
-                    <button class="btn-detalhes" data-id="${cupom.id}">Ver detalhes</button>
-                    <button class="btn-usar" data-id="${cupom.id}" data-codigo="${cupom.codigo}">Usar cupom</button>
+                <div class="coupon-meta">
+                    <span class="meta-cat">Utilidades</span>
+                    <div class="meta-pills">${doisCartoes}</div>
                 </div>
+
+                <h3 class="coupon-title">${cupom.titulo}</h3>
+                <p class="coupon-sub">${cupom.descricao}</p>
+
+                <button class="coupon-cta" type="button" data-modal-target="${cupom.codigo}">
+                    Ver Oferta
+                </button>
+
+                <p class="coupon-valid">Válido até ${cupom.validade}</p>
             </div>
-        `;
 
-        container.appendChild(card);
-    });
-
-    // Eventos dos botões
-    document.querySelectorAll(".btn-detalhes").forEach(btn => {
-        btn.addEventListener("click", abrirModalDetalhes);
-    });
-
-    document.querySelectorAll(".btn-usar").forEach(btn => {
-        btn.addEventListener("click", abrirModalUsar);
+        </article>
+        `);
     });
 }
 
-/* ============================================================
-    Modal — DETALHES DO CUPOM
-============================================================ */
-function abrirModalDetalhes(event) {
-    const id = event.target.dataset.id;
 
-    const card = event.target.closest(".coupon-card");
-    const titulo = card.querySelector("h3").textContent;
-    const descricao = card.querySelector("p").textContent;
+function criarModais(cupons) {
+    const container = document.body;
+    
+    cupons.forEach(cupom => {
+        const todosCartoes = cupom.cartoesAceitos
+            .map(c => `<span class="cm-pill">${c.nome}</span>`)
+            .join("");
 
-    const modal = document.getElementById("modal-detalhes");
-    modal.querySelector(".modal-titulo").textContent = titulo;
-    modal.querySelector(".modal-desc").textContent = descricao;
+        container.insertAdjacentHTML("beforeend", `
+        <dialog class="coupon-modal" data-modal="${cupom.codigo}">
+            <button class="cm-close" aria-label="Fechar">&times;</button>
 
-    modal.classList.add("active");
+            <div class="cm-wrap">
+
+                <div class="cm-topchips">
+                    <span class="cm-chip"><img src="./imgs/utils-icon.png" alt="">Fitness</span>
+                </div>
+
+                <div class="cm-badge">
+                    <h2 class="cm-title">${cupom.titulo}</h2>
+                </div>
+
+                <p class="cm-sub">${cupom.modalDescricao}</p>
+
+                <p class="aceitos-cm">Cartões Aceitos:</p>
+                <div class="cm-pills">
+                    ${todosCartoes}
+                </div>
+
+                <div class="cm-alert">
+                    <div class="flex-alert">
+                        <img src="./imgs/alert-icon.png" alt=""><strong>Atenção!</strong>
+                    </div>
+                    <p class="subvalid-cm">
+                        Não acumulável com outras promoções. Apresente o cupom no momento do pedido.
+                    </p>
+                </div>
+
+                <a href="#" class="cm-cta" role="button">Consultar no mapa</a>
+            </div>
+        </dialog>
+        `);
+    });
 }
 
-function fecharModalDetalhes() {
-    document.getElementById("modal-detalhes").classList.remove("active");
-}
+function ativarAberturaDeModais() {
+    const botoes = document.querySelectorAll("[data-modal-target]");
 
-/* ============================================================
-    Modal — USAR CUPOM
-============================================================ */
-function abrirModalUsar(event) {
-    const codigo = event.target.dataset.codigo;
+    botoes.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const codigo = btn.getAttribute("data-modal-target");
+            const modal = document.querySelector(`dialog[data-modal="${codigo}"]`);
+            if (modal) modal.showModal();
+        });
+    });
 
-    const modal = document.getElementById("modal-usar");
-    modal.querySelector(".codigo-cupom").textContent = codigo;
-
-    modal.classList.add("active");
-}
-
-function fecharModalUsar() {
-    document.getElementById("modal-usar").classList.remove("active");
-}
-
-/* ============================================================
-    Caso não exista cupom
-============================================================ */
-function mostrarMensagemSemCupons() {
-    const container = document.getElementById("cupons-container");
-    container.innerHTML = `
-        <p style="text-align:center; opacity:0.6">
-            Nenhum cupom disponível.
-        </p>
-    `;
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("cm-close")) {
+            e.target.closest("dialog").close();
+        }
+    });
 }
