@@ -374,7 +374,7 @@ const tentativaUrl =
   fixUrl(fachada?.url) ||
   fixUrl(loja.imagemPrincipal) ||
   "./imgs/default-image.png";
-
+const imagemLoja = fachada?.url || loja.imagemPrincipal || "./imgs/default-image.png"
 const preload = new Image();
 preload.src = tentativaUrl;
 
