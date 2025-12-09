@@ -686,9 +686,6 @@ height: 14px;
   .coupon-card{ width: 100%; min-width: 80%; }
 }
 
-.coupon-card {
-  display: none;
-}
 
 .no-coupons-msg{
   margin-top: 16px;
