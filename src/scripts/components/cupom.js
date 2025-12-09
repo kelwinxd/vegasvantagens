@@ -61,15 +61,16 @@ function renderizarCupons(cupons) {
     container.innerHTML = ""; 
 
     cupons.forEach(cupom => {
+        console.log("cupom vindo:", cupom)
         const doisCartoes = cupom.cartoesAceitos.slice(0, 2)
             .map(c => `<span class="pill">${c.nome}</span>`)
             .join("");
-
+        console.log("imagem cupom",cupom.imagens[0])
         container.insertAdjacentHTML("beforeend", `
         <article class="coupon-card">
 
             <div class="coupon-media">
-                <img src="${cupom.urlImagem || './imgs/woman-card.png'}" loading="lazy">
+                <img src="${cupom.imagens[0] || './imgs/woman-card.png'}" loading="lazy">
                 <span class="coupon-badge">
                     <strong>${cupom.titulo}</strong>
                 </span>
