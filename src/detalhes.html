@@ -184,13 +184,46 @@
 
 <div class="coupon-rail">
 
-  <div class="coupon-grid">
-    <p id="no-coupons-msg" class="no-coupons-msg">No momento não há cupons disponíveis para este estabelecimento.</p>
+<div id="coupon-grid" class="coupon-grid"></div>
 
+<div id="coupon-overlay" class="coupon-overlay"></div>
 
- 
+<!-- Modal dinâmico -->
+<div id="coupon-modal" class="coupon-modal">
+  <div class="cm-wrap">
+    <button class="cm-close" id="modal-close">&times;</button>
 
+    <div class="cm-topchips">
+      <div class="cm-chip" id="modal-categories"></div>
+      <div class="cm-chip" id="modal-estab"></div>
+    </div>
+
+    <div class="cm-badge">
+      <img id="modal-image" src="" alt="Imagem do cupom">
+    </div>
+
+    <h2 class="cm-title" id="modal-title"></h2>
+    <p class="cm-sub" id="modal-desc"></p>
+
+    <p class="aceitos-cm">Itens aceitos:</p>
+    <div class="cm-pills" id="modal-items"></div>
+
+    <div class="cm-alert">
+      <div class="flex-alert">
+        <img src="./imgs/alert.png" alt="">
+        <strong id="modal-price"></strong>
+      </div>
+    </div>
+
+    <p class="valid-cm" id="modal-valid"></p>
+    <p class="subvalid-cm" id="modal-subvalid"></p>
+
+    <p class="cm-fineprint" id="modal-fineprint"></p>
+
+    <a href="#" target="_blank" class="cm-cta" id="modal-button">Resgatar Cupom</a>
+  </div>
 </div>
+
  <div class="cs-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <span class="cs-thumb"></span>
   </div>
@@ -564,7 +597,7 @@
       <script src="./scripts/env.js"></script>
     <script type="module" src="./scripts/pages/detalhes.js?v=70"></script>
     <script src="./scripts/components/menumobile.js"></script>
-    <script type="module" src="./scripts/components/cupom.js?v=6"></script>
+    <script type="module" src="./scripts/components/cupom.js?v=7"></script>
 
   
   <div class="coupon-overlay"></div> 
