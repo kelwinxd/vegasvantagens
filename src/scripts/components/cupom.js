@@ -57,12 +57,24 @@ function mostrarMensagemSemCupons() {
 }
 
 function renderizarCupons(cupons) {
+    console.log("Renderizando cupons...", cupons);
+
     const grid = document.querySelector(".coupon-grid");
+    console.log("Container encontrado?", grid);
+
     document.getElementById("no-coupons-msg").style.display = "none";
+
+    if (!grid) {
+        console.error("ERRO: .coupon-grid NÃO EXISTE NO HTML!");
+        return;
+    }
+
     grid.innerHTML = "";
 
     cupons.forEach(cupom => {
-        const img = cupom.imagens?.[0] || "./imgs/bg-hero.png";
+        console.log("Criando card para:", cupom.titulo);
+
+        const img = cupom.imagens?.[0] ?? "./imgs/cupom-default.png";
 
         const cartoes = cupom.cartoesAceitos.slice(0, 2);
         const pills = cartoes.map(c => `<span class="pill">${c.nome}</span>`).join("");
@@ -71,36 +83,15 @@ function renderizarCupons(cupons) {
         <article class="coupon-card" data-cupom="${cupom.codigo}">
             <div class="coupon-media">
                 <img src="${img}" alt="${cupom.titulo}" loading="lazy">
-
-                <span class="coupon-badge">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 6a3 3 0 0 1 3-3h8.5a1 1 0 0 1 .7.29l4.5 4.5a1 1 0 0 1 .3.71V15a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6zM8.5 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
-                    </svg>
-                    <strong>${cupom.valorDesconto}% de Desconto!</strong>
-                </span>
             </div>
-
             <div class="coupon-body">
-                <div class="coupon-meta">
-                    <span class="meta-cat">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
-                        Fitness
-                    </span>
-                    <div class="meta-pills">
-                        ${pills}
-                    </div>
-                </div>
-
                 <h3 class="coupon-title">${cupom.titulo}</h3>
                 <p class="coupon-sub">${cupom.descricao}</p>
-
-                <button class="coupon-cta" type="button" data-modal-target="${cupom.codigo}">
-                    Ver Oferta
-                </button>
             </div>
-        </article>
-        `;
+        </article>`;
     });
+
+    console.log("Finalizado render.");
 }
 
 function criarModais(cupons) {
