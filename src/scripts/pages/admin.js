@@ -159,7 +159,7 @@ function carregarCategorias() {
   });
 }
 
-  async function cadastrarEstabelecimento() {
+ async function cadastrarEstabelecimento() {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado para cadastrar.");
@@ -169,26 +169,36 @@ function carregarCategorias() {
   const nome = document.getElementById("nomeEstab").value;
   const ativo = document.getElementById("ativoEstab").checked;
   const categoriaId = parseInt(document.getElementById("categoriaId").value);
-  const ImagemLogo = document.getElementById("ImagemLogo");
+  const imagemLogo = document.getElementById("ImagemLogo");
   const imagemFachada = document.getElementById("ImagemFachada");
+  const mapaUrl = document.getElementById("mapaurl").value;
+  const grupoId = document.getElementById("grupoid").value;
+
+
+
 
   const data = {
     nome,
     razaoSocial: document.getElementById("razaoSocial").value,
     cnpj: document.getElementById("cnpj").value,
-    endereco: document.getElementById("endereco").value,
     telefone: document.getElementById("telefone").value,
     emailContato: document.getElementById("emailContato").value,
     ativo,
-   
+
+    categoriaId: categoriaId || 0,
     cidadeId: parseInt(document.getElementById("cidadeId").value) || 0,
+
     rua: document.getElementById("rua").value,
     numero: document.getElementById("numero").value,
     bairro: document.getElementById("bairro").value,
     complemento: document.getElementById("complemento").value,
     cep: document.getElementById("cep").value,
+
     latitude: parseFloat(document.getElementById("latitude").value) || 0,
-    longitude: parseFloat(document.getElementById("longitude").value) || 0
+    longitude: parseFloat(document.getElementById("longitude").value) || 0,
+
+    grupoId: 0,
+    mapaUrl: ""
   };
 
   try {
@@ -198,30 +208,39 @@ function carregarCategorias() {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify(data),
-    
+      body: JSON.stringify(data)
     });
 
     if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
+
     const estab = await res.json();
 
-    alert("Estabelecimento cadastrado com sucesso!");
-    //adicionar primeiro a imagem adicional
-   if (imagemFachada.files.length > 0) {
-  await enviarImagemEstabelecimento(estab.id, imagemFachada.files[0], "fachada");
-}
+   
 
-   // imagem logo (sempre leva principal=true)
-if (ImagemLogo.files.length > 0) {
-  await enviarImagemEstabelecimento(estab.id, ImagemLogo.files[0], "logo");
-}
+    // =============================
+    // UPLOAD IMAGENS
+    // =============================
 
-  
+    // Fachada
+    if (imagemFachada.files.length > 0) {
+      await enviarImagemEstabelecimento(estab.id, imagemFachada.files[0], "fachada");
+    }
 
+    // Logo
+    if (imagemLogo.files.length > 0) {
+      await enviarImagemEstabelecimento(estab.id, imagemLogo.files[0], "logo");
+    }
+
+    // =============================
+    // CATEGORIA (se ainda precisar vincular)
+    // =============================
     if (categoriaId) {
       await vincularCategoria(estab.id, categoriaId);
     }
 
+    alert("Estabelecimento cadastrado com sucesso!");
+
+    // Limpa o formulário
     document.getElementById("formCadastro").reset();
 
   } catch (err) {
@@ -229,6 +248,7 @@ if (ImagemLogo.files.length > 0) {
     console.error(err);
   }
 }
+
 
   async function vincularCategoria(estabelecimentoId, categoriaId) {
   const token = localStorage.getItem("token");
@@ -291,7 +311,8 @@ if (ImagemLogo.files.length > 0) {
       card.setAttribute("data-nome", estab.nome.toLowerCase());
 
       const imagem = document.createElement("img");
-      imagem.src = estab.imagemPrincipal || "./imgs/default-image.png";
+      const logoImg = estab.imagens?.find(img => img.logo);
+      imagem.src = estab.imagemPrincipal || logoImg || "./imgs/default-image.png";
       imagem.alt = estab.nome;
 
       const info = document.createElement("div");
