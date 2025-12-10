@@ -611,7 +611,7 @@ async function cadastrarCupom() {
   };
 
   try {
-    const res = await fetch(`${API_BASE}/api/Cupons/Criar`, {
+    const res = await fetch(`${API_BASE}/api/Cupons`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
