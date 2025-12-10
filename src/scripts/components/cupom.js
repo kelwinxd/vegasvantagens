@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     console.log("Cupom.js recebeu a loja:", loja);
 
-    carregarCupons(storeId, loja.categorias?.[0] || "Geral");
+    carregarCupons(storeId, loja.categorias?.[0] || "Geral", loja.mapaUrl || "#");
 });
 
   function esperarLoja() {
@@ -28,7 +28,7 @@ function extrairStoreIdDaURL() {
     return hash.replace("#store-", "");
 }
 
-async function carregarCupons(estabelecimentoId,categoria) {
+async function carregarCupons(estabelecimentoId,categoria, mapaUrl) {
     try {
         const token = await getClientToken();
 
@@ -57,7 +57,7 @@ async function carregarCupons(estabelecimentoId,categoria) {
         }
 
         renderizarCupons(cupons, categoria);
-        criarModais(cupons);
+        criarModais(cupons, mapaUrl);
         ativarAberturaDeModais();
 
     } catch (err) {
@@ -129,7 +129,7 @@ function renderizarCupons(cupons, categoria) {
 }
 
 
-function criarModais(cupons) {
+function criarModais(cupons, mapaUrl) {
     const container = document.body;
     
     cupons.forEach(cupom => {
@@ -167,7 +167,7 @@ function criarModais(cupons) {
                     </p>
                 </div>
 
-                <a href="#" class="cm-cta" role="button">Consultar no mapa</a>
+                <a href="${mapaUrl}" class="cm-cta" role="button">Consultar no mapa</a>
             </div>
         </dialog>
         `);
