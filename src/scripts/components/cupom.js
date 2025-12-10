@@ -1,11 +1,26 @@
 import { getClientToken, API_BASE } from '../auth.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const storeId = extrairStoreIdDaURL();
     if (!storeId) return;
 
-    carregarCupons(storeId);
+    const loja = await esperarLoja(); 
+
+    console.log("Cupom.js recebeu a loja:", loja);
+
+    carregarCupons(storeId, loja.categorias?.[0] || "Geral");
 });
+
+  function esperarLoja() {
+    return new Promise(resolve => {
+        const check = setInterval(() => {
+            if (window.lojaAtual) {
+                clearInterval(check);
+                resolve(window.lojaAtual);
+            }
+        }, 25);
+    });
+}
 
 function extrairStoreIdDaURL() {
     const hash = window.location.hash;
@@ -13,7 +28,7 @@ function extrairStoreIdDaURL() {
     return hash.replace("#store-", "");
 }
 
-async function carregarCupons(estabelecimentoId) {
+async function carregarCupons(estabelecimentoId,categoria) {
     try {
         const token = await getClientToken();
 
@@ -41,7 +56,7 @@ async function carregarCupons(estabelecimentoId) {
             return;
         }
 
-        renderizarCupons(cupons);
+        renderizarCupons(cupons, categoria);
         criarModais(cupons);
         ativarAberturaDeModais();
 
@@ -56,7 +71,21 @@ function mostrarMensagemSemCupons() {
     msg.style.display = "block";
 }
 
-function renderizarCupons(cupons) {
+function formatarDataBrasileira(isoString) {
+    if (!isoString) return "—";
+
+    const data = new Date(isoString);
+    if (isNaN(data)) return "—";
+
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0'); 
+    const ano = data.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+}
+
+
+function renderizarCupons(cupons, categoria) {
     const container = document.querySelector(".coupon-grid");
     container.innerHTML = ""; 
 
@@ -79,7 +108,7 @@ function renderizarCupons(cupons) {
             <div class="coupon-body">
 
                 <div class="coupon-meta">
-                    <span class="meta-cat">Utilidades</span>
+                    <span class="meta-cat">${categoria}</span>
                     <div class="meta-pills">${doisCartoes}</div>
                 </div>
 
@@ -90,7 +119,8 @@ function renderizarCupons(cupons) {
                     Ver Oferta
                 </button>
 
-                <p class="coupon-valid">Válido até ${cupom.validade}</p>
+                <p class="coupon-valid">Válido até ${formatarDataBrasileira(cupom.dataExpiracao)}</p>
+
             </div>
 
         </article>

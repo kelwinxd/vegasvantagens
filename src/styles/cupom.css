@@ -615,7 +615,7 @@ height: 14px;
 .coupon-card {
   background: #fff;
   border-radius: 14px;
-  overflow: hidden;
+
   display: flex;
   flex-direction: column;
   min-height: 320px; /* garante altura */

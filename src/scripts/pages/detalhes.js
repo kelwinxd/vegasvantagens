@@ -105,6 +105,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    window.lojaAtual = loja;
+
     console.log(loja)
 
 
