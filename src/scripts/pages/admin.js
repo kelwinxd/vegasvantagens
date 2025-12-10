@@ -171,8 +171,7 @@ function carregarCategorias() {
   const categoriaId = parseInt(document.getElementById("categoriaId").value);
   const imagemLogo = document.getElementById("ImagemLogo");
   const imagemFachada = document.getElementById("ImagemFachada");
-  const mapaUrl = document.getElementById("mapaurl").value;
-  const grupoId = document.getElementById("grupoid").value;
+  
 
 
 
@@ -197,8 +196,8 @@ function carregarCategorias() {
     latitude: parseFloat(document.getElementById("latitude").value) || 0,
     longitude: parseFloat(document.getElementById("longitude").value) || 0,
 
-    grupoId: 0,
-    mapaUrl: ""
+    grupoId: document.getElementById("grupoid").value,
+    mapaUrl: document.getElementById("mapaurl").value
   };
 
   try {
