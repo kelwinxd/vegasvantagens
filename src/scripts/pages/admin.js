@@ -575,9 +575,69 @@ document.getElementById("filtroEstab").addEventListener("input", function () {
   });
 });
 
+async function cadastrarCupom() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  function toIso(dt) {
+    return dt ? new Date(dt).toISOString() : null;
+  }
+
+  const data = {
+    codigo: document.getElementById("codigo").value,
+    titulo: document.getElementById("titulo").value,
+    descricao: document.getElementById("descricao").value,
+    modalTitulo: document.getElementById("modalTitulo").value,
+    modalDescricao: document.getElementById("modalDescricao").value,
+    tipo: document.getElementById("tipo").value,
+    valorDesconto: parseFloat(document.getElementById("valorDesconto").value),
+    valorMinimoCompra: parseFloat(document.getElementById("valorMinimoCompra").value) || 0,
+
+    dataInicio: toIso(document.getElementById("dataInicio").value),
+    dataExpiracao: toIso(document.getElementById("dataExpiracao").value),
+
+    limiteUso: parseInt(document.getElementById("limiteUso").value) || 0,
+    limiteUsoPorUsuario: parseInt(document.getElementById("limiteUsoPorUsuario").value) || 0,
+
+    ativo: document.getElementById("ativo").checked,
+    estabelecimentoId: parseInt(document.getElementById("estabelecimentoId").value),
+
+    cartoesAceitosIds: document.getElementById("cartoes").value
+      ? document.getElementById("cartoes").value.split(",").map(id => parseInt(id.trim()))
+      : []
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/Criar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Erro ao criar cupom: " + res.status);
+
+    const result = await res.json();
+    alert("Cupom criado com sucesso!");
+
+    document.getElementById("formCupom").reset();
+
+  } catch (err) {
+    alert("Erro: " + err.message);
+    console.error(err);
+  }
+}
+
+
 window.carregarCidades = carregarCidades;
 window.cadastrarEstabelecimento = cadastrarEstabelecimento;
 window.fecharModalEditar = fecharModalEditar;
 window.salvarAlteracoesEstab = salvarAlteracoesEstab;
 window.carregarCidades2 = carregarCidades2;
 window.abrirModalEditar = abrirModalEditar;
+window.cadastrarCupom = cadastrarCupom;

@@ -252,6 +252,60 @@ os nossos clientes!</p>
 
     <div class="promocoes" data-tag="promocoes">
    <p>Gerenciar promocoes</p>
+   <form id="formCupom" style="max-width:600px;margin:20px auto;">
+  <h2>Cadastrar Cupom</h2>
+
+  <label>Código</label>
+  <input type="text" id="codigo" required>
+
+  <label>Título</label>
+  <input type="text" id="titulo" required>
+
+  <label>Descrição</label>
+  <textarea id="descricao" required></textarea>
+
+  <label>Título do Modal</label>
+  <input type="text" id="modalTitulo" required>
+
+  <label>Descrição do Modal</label>
+  <textarea id="modalDescricao" required></textarea>
+
+  <label>Tipo do Cupom</label>
+  <select id="tipo">
+    <option value="Percentual">Percentual</option>
+    <option value="ValorFixo">Valor Fixo</option>
+  </select>
+
+  <label>Valor de Desconto</label>
+  <input type="number" id="valorDesconto" step="0.01" required>
+
+  <label>Valor Mínimo da Compra</label>
+  <input type="number" id="valorMinimoCompra" step="0.01">
+
+  <label>Data Início</label>
+  <input type="datetime-local" id="dataInicio" required>
+
+  <label>Data Expiração</label>
+  <input type="datetime-local" id="dataExpiracao" required>
+
+  <label>Limite de Uso</label>
+  <input type="number" id="limiteUso">
+
+  <label>Limite de Uso por Usuário</label>
+  <input type="number" id="limiteUsoPorUsuario">
+
+  <label>Ativo?</label>
+  <input type="checkbox" id="ativo" checked>
+
+  <label>ID do Estabelecimento</label>
+  <input type="number" id="estabelecimentoId" required>
+
+  <label>Cartões Aceitos (IDs separados por vírgula)</label>
+  <input type="text" id="cartoes">
+
+  <button type="button" onclick="cadastrarCupom()">Cadastrar Cupom</button>
+</form>
+
     </div>
 
     <div class="vencidas" data-tag="vencidas">
