@@ -312,7 +312,7 @@ function carregarCategorias() {
 
       const imagem = document.createElement("img");
       const logoImg = estab.imagens?.find(img => img.logo);
-      imagem.src = estab.imagemPrincipal || logoImg || "./imgs/default-image.png";
+      imagem.src = estab.imagemPrincipal || logoImg.url || "./imgs/default-image.png";
       imagem.alt = estab.nome;
 
       const info = document.createElement("div");
