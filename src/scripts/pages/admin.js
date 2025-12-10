@@ -310,8 +310,9 @@ function carregarCategorias() {
       card.setAttribute("data-nome", estab.nome.toLowerCase());
 
       const imagem = document.createElement("img");
+      const fachadaImg = estab.imagens?.find(img => img.fachada);
       const logoImg = estab.imagens?.find(img => img.logo);
-      imagem.src = estab.imagemPrincipal || logoImg.url || "./imgs/default-image.png";
+      imagem.src = estab.imagemPrincipal || fachadaImg.url || logoImg.url || "./imgs/default-image.png";
       imagem.alt = estab.nome;
 
       const info = document.createElement("div");
