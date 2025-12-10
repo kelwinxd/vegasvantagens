@@ -196,7 +196,8 @@ function carregarCategorias() {
     latitude: parseFloat(document.getElementById("latitude").value) || 0,
     longitude: parseFloat(document.getElementById("longitude").value) || 0,
 
-    grupoId: document.getElementById("grupoid").value,
+    grupoId: parseInt(document.getElementById("grupoid").value) || 0,
+
     mapaUrl: document.getElementById("mapaurl").value
   };
 
