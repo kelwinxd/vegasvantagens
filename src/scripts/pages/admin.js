@@ -745,11 +745,13 @@ function mostrarCuponsGerais(cupons) {
     div.classList.add("cupom-card");
 
     div.innerHTML = `
-      <h3>${c.titulo}</h3>
+      <h2>${c.nomeEstabelecimento}></h2>
+      <p>${c.titulo}</p>
       <p><strong>Código:</strong> ${c.codigo}</p>
-      <p><strong>Estabelecimento:</strong> ${c.nomeEstabelecimento}</p>
       <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
       <p><strong>Expira em:</strong> ${new Date(c.dataExpiracao).toLocaleString()}</p>
+      <br/> 
+      <hr/>
     `;
 
     lista.appendChild(div);
