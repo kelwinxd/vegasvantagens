@@ -55,8 +55,8 @@ document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
 
         // 🔥 CHAMAR CARREGAR CUPONS SOMENTE QUANDO ABRIR A TELA
         if (target === "gerenciarCupons") {
-            carregarTodos();              // Lista geral
-            mostrarCuponsVencidos();      // Lista de vencidos
+            carregarTodosCupons();              // Lista geral
+            mostrarCuponsNaTela();      // Lista de vencidos
         }
 
     });
@@ -665,46 +665,74 @@ async function cadastrarCupom() {
 }
 
 
-async function carregarTodos() {
-  const token = localStorage.getItem("token");
+async function carregarTodosCupons() {
+    const token = localStorage.getItem("token");
 
-  const response = await fetch(`${API_BASE}/Cupons`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
+    try {
+        // 1️⃣ Buscar todos os estabelecimentos
+        const respEstab = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos", {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!respEstab.ok) throw new Error("Falha ao carregar estabelecimentos");
+
+        const estabelecimentos = await respEstab.json();
+
+        let listaFinalCupons = [];
+
+        // 2️⃣ Para cada estabelecimento, buscar seus cupons
+        for (const estab of estabelecimentos) {
+
+            const respCupom = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cupons/por-estabelecimento/${estab.id}`, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (!respCupom.ok) continue; // ignora erros isolados
+
+            const cuponsDoEstab = await respCupom.json();
+
+            // 3️⃣ Adicionar para a lista final, incluindo info do estabelecimento
+            cuponsDoEstab.forEach(c => {
+                listaFinalCupons.push({
+                    ...c,
+                    nomeEstabelecimento: estab.nome
+                });
+            });
+        }
+
+        // 4️⃣ Exibir cupons na tela
+        mostrarCuponsNaTela(listaFinalCupons);
+
+    } catch (error) {
+        console.error("Erro ao carregar todos os cupons:", error);
     }
-  });
-
-  if (!response.ok) {
-    console.error("Erro ao carregar cupons:", await response.text());
-    return;
-  }
-
-  const dados = await response.json();
-  console.log("Cupons:", dados);
 }
 
 
-async function mostrarCuponsVencidos() {
-  const token = localStorage.getItem("token");
+function mostrarCuponsNaTela(cupons) {
+    const container = document.getElementById("listaCupons");
+    container.innerHTML = "";
 
-  const response = await fetch(`${API_BASE}/Cupons`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  });
+    cupons.forEach(c => {
+        const div = document.createElement("div");
+        div.classList.add("cupom-item");
 
-  if (!response.ok) {
-    console.error("Erro ao buscar cupons vencidos:", await response.text());
-    return;
-  }
+        div.innerHTML = `
+            <h3>${c.titulo}</h3>
+            <p><strong>Código:</strong> ${c.codigo}</p>
+            <p><strong>Estabelecimento:</strong> ${c.nomeEstabelecimento}</p>
+            <p><strong>Desconto:</strong> ${c.valorDesconto} | ${c.tipo}</p>
+            <p><strong>Expira em:</strong> ${new Date(c.dataExpiracao).toLocaleString()}</p>
+        `;
 
-  const dados = await response.json();
-  console.log("Cupons vencidos:", dados);
+        container.appendChild(div);
+    });
 }
+
+
+
 
 
 
@@ -715,5 +743,5 @@ window.salvarAlteracoesEstab = salvarAlteracoesEstab;
 window.carregarCidades2 = carregarCidades2;
 window.abrirModalEditar = abrirModalEditar;
 window.cadastrarCupom = cadastrarCupom;
-window.carregarTodos = carregarTodos;
-window.mostrarCuponsVencidos = mostrarCuponsVencidos;
+window.carregarTodosCupons = carregarTodosCupons;
+window.mostrarCuponsNaTela = mostrarCuponsNaTela;
