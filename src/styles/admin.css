@@ -157,6 +157,9 @@ button.active {
     color: #c00;
 }
 
+.promocoes {
+    flex-direction: column;
+}
 .submenu-promocoes {
     display: flex;
     gap: 10px;
