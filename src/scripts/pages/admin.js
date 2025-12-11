@@ -658,7 +658,7 @@ async function cadastrarCupom() {
 async function carregarTodos() {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${urlBase}/Cupons`, {
+  const response = await fetch(`${API_BASE}/Cupons`, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -679,7 +679,7 @@ async function carregarTodos() {
 async function mostrarCuponsVencidos() {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${urlBase}/Cupons/vencidos`, {
+  const response = await fetch(`${API_BASE}/Cupons`, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${token}`,
