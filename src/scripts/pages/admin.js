@@ -666,70 +666,96 @@ async function cadastrarCupom() {
 
 
 async function carregarTodosCupons() {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado para ver os cupons.");
+    return;
+  }
 
-    try {
-        // 1️⃣ Buscar todos os estabelecimentos
-        const respEstab = await fetch("https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos", {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+  const lista = document.getElementById("listaCupons");
+  lista.innerHTML = "Carregando cupons...";
 
-        if (!respEstab.ok) throw new Error("Falha ao carregar estabelecimentos");
-
-        const estabelecimentos = await respEstab.json();
-
-        let listaFinalCupons = [];
-
-        // 2️⃣ Para cada estabelecimento, buscar seus cupons
-        for (const estab of estabelecimentos) {
-
-            const respCupom = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Cupons/por-estabelecimento/${estab.id}`, {
-                method: "GET",
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-
-            if (!respCupom.ok) continue; // ignora erros isolados
-
-            const cuponsDoEstab = await respCupom.json();
-
-            // 3️⃣ Adicionar para a lista final, incluindo info do estabelecimento
-            cuponsDoEstab.forEach(c => {
-                listaFinalCupons.push({
-                    ...c,
-                    nomeEstabelecimento: estab.nome
-                });
-            });
-        }
-
-        // 4️⃣ Exibir cupons na tela
-        mostrarCuponsNaTela(listaFinalCupons);
-
-    } catch (error) {
-        console.error("Erro ao carregar todos os cupons:", error);
-    }
-}
-
-
-function mostrarCuponsNaTela(cupons) {
-    const container = document.getElementById("listaCupons");
-    container.innerHTML = "";
-
-    cupons.forEach(c => {
-        const div = document.createElement("div");
-        div.classList.add("cupom-item");
-
-        div.innerHTML = `
-            <h3>${c.titulo}</h3>
-            <p><strong>Código:</strong> ${c.codigo}</p>
-            <p><strong>Estabelecimento:</strong> ${c.nomeEstabelecimento}</p>
-            <p><strong>Desconto:</strong> ${c.valorDesconto} | ${c.tipo}</p>
-            <p><strong>Expira em:</strong> ${new Date(c.dataExpiracao).toLocaleString()}</p>
-        `;
-
-        container.appendChild(div);
+  try {
+    // 1️⃣ Buscar todos os estabelecimentos
+    const resEstab = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+      headers: { "Authorization": "Bearer " + token }
     });
+
+    if (!resEstab.ok) throw new Error("Erro ao buscar estabelecimentos: " + resEstab.status);
+
+    const estabelecimentos = await resEstab.json();
+
+    if (estabelecimentos.length === 0) {
+      lista.innerHTML = "<p>Nenhum estabelecimento encontrado.</p>";
+      return;
+    }
+
+    // 2️⃣ Buscar cupons de todos os estabelecimentos em paralelo
+    const cuponsPorEstabelecimento = await Promise.all(
+      estabelecimentos.map(estab =>
+        fetch(`${API_BASE}/api/Cupons/por-estabelecimento/${estab.id}`, {
+          headers: { "Authorization": "Bearer " + token }
+        })
+          .then(res => {
+            if (!res.ok) return []; // sem cupons ou erro -> ignora
+            return res.json();
+          })
+          .then(cupons => {
+            // incluir nome do estabeleciemento em cada cupom
+            return cupons.map(c => ({
+              ...c,
+              nomeEstabelecimento: estab.nome
+            }));
+          })
+          .catch(err => {
+            console.warn("Falha ao carregar cupons do estabelecimento:", estab.id, err);
+            return [];
+          })
+      )
+    );
+
+    // 3️⃣ Juntar todos em um único array
+    const todosCupons = cuponsPorEstabelecimento.flat();
+
+    // Guarda em cache global (usado para "cupons vencidos")
+    window._todosCupons = todosCupons;
+
+    // 4️⃣ Exibir
+    mostrarCuponsGerais(todosCupons);
+
+  } catch (error) {
+    console.error("Erro ao carregar todos os cupons:", error);
+    lista.innerHTML = "<p>Erro ao carregar cupons.</p>";
+  }
 }
+
+
+
+function mostrarCuponsGerais(cupons) {
+  const lista = document.getElementById("listaCupons");
+  lista.innerHTML = "";
+
+  if (cupons.length === 0) {
+    lista.innerHTML = "<p>Nenhum cupom encontrado.</p>";
+    return;
+  }
+
+  cupons.forEach(c => {
+    const div = document.createElement("div");
+    div.classList.add("cupom-card");
+
+    div.innerHTML = `
+      <h3>${c.titulo}</h3>
+      <p><strong>Código:</strong> ${c.codigo}</p>
+      <p><strong>Estabelecimento:</strong> ${c.nomeEstabelecimento}</p>
+      <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
+      <p><strong>Expira em:</strong> ${new Date(c.dataExpiracao).toLocaleString()}</p>
+    `;
+
+    lista.appendChild(div);
+  });
+}
+
 
 
 
