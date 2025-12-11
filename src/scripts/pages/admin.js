@@ -202,10 +202,6 @@ function carregarCategorias() {
   const categoriaId = parseInt(document.getElementById("categoriaId").value);
   const imagemLogo = document.getElementById("ImagemLogo");
   const imagemFachada = document.getElementById("ImagemFachada");
-  
-
-
-
 
   const data = {
     nome,
@@ -214,33 +210,32 @@ function carregarCategorias() {
     telefone: document.getElementById("telefone").value,
     emailContato: document.getElementById("emailContato").value,
     ativo,
-
     categoriaId: categoriaId || 0,
     cidadeId: parseInt(document.getElementById("cidadeId").value) || 0,
-
     rua: document.getElementById("rua").value,
     numero: document.getElementById("numero").value,
     bairro: document.getElementById("bairro").value,
     complemento: document.getElementById("complemento").value,
     cep: document.getElementById("cep").value,
-
     latitude: parseFloat(document.getElementById("latitude").value) || 0,
     longitude: parseFloat(document.getElementById("longitude").value) || 0,
-
     grupoId: parseInt(document.getElementById("grupoid").value) || 0,
-
     mapaUrl: document.getElementById("mapaurl").value
   };
 
   try {
-    const res = await fetch(`${API_BASE}/api/Estabelecimentos/Criar`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify(data)
-    });
+     const res = await fetch(`${API_BASE}/api/Estabelecimentos/Criar`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify(data),
+        
+        });
+    
+    const text = await res.text();  // <-- isso mostra o erro do backend
+    console.log("Resposta bruta do backend:", text);
 
     if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
 
