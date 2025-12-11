@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
     btn.addEventListener("click", () => {
-        console.log()
+
         // remover active de todos os botões
         document.querySelectorAll(".submenu-promocoes .sub")
             .forEach(b => b.classList.remove("active"));
@@ -49,10 +49,20 @@ document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
             .forEach(screen => screen.classList.remove("active"));
 
         // mostrar a selecionada
-        document.getElementById(btn.dataset.target)
-            .classList.add("active");
+        const target = btn.dataset.target;
+        const tela = document.getElementById(target);
+        tela.classList.add("active");
+
+        // 🔥 CHAMAR CARREGAR CUPONS SOMENTE QUANDO ABRIR A TELA
+        if (target === "gerenciarCupons") {
+            carregarTodos();              // Lista geral
+            mostrarCuponsVencidos();      // Lista de vencidos
+        }
+
     });
 });
+
+
 });
 
 window.onload = () => {
