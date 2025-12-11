@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
     btn.addEventListener("click", () => {
-
+        console.log()
         // remover active de todos os botões
         document.querySelectorAll(".submenu-promocoes .sub")
             .forEach(b => b.classList.remove("active"));

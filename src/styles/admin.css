@@ -157,6 +157,34 @@ button.active {
     color: #c00;
 }
 
+.submenu-promocoes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.submenu-promocoes .sub {
+    padding: 10px 20px;
+    border: none;
+    background: #e0e0e0;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.submenu-promocoes .sub.active {
+    background: #4B57A3;
+    color: #fff;
+}
+
+.subscreen {
+    display: none;
+}
+
+.subscreen.active {
+    display: block;
+}
+
+
 /* ====== MODAL "Editar Estabelecimento" (escopado) ====== */
 
 /* Container do modal */
