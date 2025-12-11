@@ -32,6 +32,27 @@ document.addEventListener("DOMContentLoaded", () => {
       button.classList.add("active");
     });
   });
+
+  
+document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
+    btn.addEventListener("click", () => {
+
+        // remover active de todos os botões
+        document.querySelectorAll(".submenu-promocoes .sub")
+            .forEach(b => b.classList.remove("active"));
+
+        // ativar botão clicado
+        btn.classList.add("active");
+
+        // esconder todas as telas
+        document.querySelectorAll(".subscreen")
+            .forEach(screen => screen.classList.remove("active"));
+
+        // mostrar a selecionada
+        document.getElementById(btn.dataset.target)
+            .classList.add("active");
+    });
+});
 });
 
 window.onload = () => {
@@ -633,25 +654,6 @@ async function cadastrarCupom() {
   }
 }
 
-document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
-    btn.addEventListener("click", () => {
-
-        // remover active de todos os botões
-        document.querySelectorAll(".submenu-promocoes .sub")
-            .forEach(b => b.classList.remove("active"));
-
-        // ativar botão clicado
-        btn.classList.add("active");
-
-        // esconder todas as telas
-        document.querySelectorAll(".subscreen")
-            .forEach(screen => screen.classList.remove("active"));
-
-        // mostrar a selecionada
-        document.getElementById(btn.dataset.target)
-            .classList.add("active");
-    });
-});
 
 async function carregarTodos() {
   const token = localStorage.getItem("token");
