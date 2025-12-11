@@ -56,7 +56,7 @@ document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
         // 🔥 CHAMAR CARREGAR CUPONS SOMENTE QUANDO ABRIR A TELA
         if (target === "gerenciarCupons") {
             carregarTodosCupons();              // Lista geral
-            mostrarCuponsNaTela();      // Lista de vencidos
+            mostrarCuponsGerais();      // Lista de vencidos
         }
 
     });
@@ -770,4 +770,4 @@ window.carregarCidades2 = carregarCidades2;
 window.abrirModalEditar = abrirModalEditar;
 window.cadastrarCupom = cadastrarCupom;
 window.carregarTodosCupons = carregarTodosCupons;
-window.mostrarCuponsNaTela = mostrarCuponsNaTela;
+window.mostrarCuponsGerais = mostrarCuponsGerais;
