@@ -633,6 +633,68 @@ async function cadastrarCupom() {
   }
 }
 
+document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
+    btn.addEventListener("click", () => {
+
+        // remover active de todos os botões
+        document.querySelectorAll(".submenu-promocoes .sub")
+            .forEach(b => b.classList.remove("active"));
+
+        // ativar botão clicado
+        btn.classList.add("active");
+
+        // esconder todas as telas
+        document.querySelectorAll(".subscreen")
+            .forEach(screen => screen.classList.remove("active"));
+
+        // mostrar a selecionada
+        document.getElementById(btn.dataset.target)
+            .classList.add("active");
+    });
+});
+
+async function carregarTodos() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${urlBase}/Cupons`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    console.error("Erro ao carregar cupons:", await response.text());
+    return;
+  }
+
+  const dados = await response.json();
+  console.log("Cupons:", dados);
+}
+
+
+async function mostrarCuponsVencidos() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${urlBase}/Cupons/vencidos`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    console.error("Erro ao buscar cupons vencidos:", await response.text());
+    return;
+  }
+
+  const dados = await response.json();
+  console.log("Cupons vencidos:", dados);
+}
+
+
 
 window.carregarCidades = carregarCidades;
 window.cadastrarEstabelecimento = cadastrarEstabelecimento;
@@ -641,3 +703,5 @@ window.salvarAlteracoesEstab = salvarAlteracoesEstab;
 window.carregarCidades2 = carregarCidades2;
 window.abrirModalEditar = abrirModalEditar;
 window.cadastrarCupom = cadastrarCupom;
+window.carregarTodos = carregarTodos;
+window.mostrarCuponsVencidos = mostrarCuponsVencidos;
