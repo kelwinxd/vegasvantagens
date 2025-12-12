@@ -806,31 +806,24 @@ async function excluirCupom(id) {
 async function salvarEdicaoCupom() {
   const id = document.getElementById("edit-id").value;
 
-  // Recupera o cupom original salvo na abertura do modal
-  const original = window._cupomEditando;
-  if (!original) {
-    alert("Erro interno: cupom não encontrado.");
+  if (!window._cupomEditando) {
+    alert("Erro interno: cupom não carregado.");
     return;
   }
 
-  // Monta o corpo da requisição com TUDO exigido pelo backend
-  const body = {
-    codigo: document.getElementById("edit-codigo").value,
-    titulo: document.getElementById("edit-titulo").value,
-    descricao: original.descricao || "",
-    modalTitulo: original.modalTitulo || "",
-    modalDescricao: original.modalDescricao || "",
-    tipo: document.getElementById("edit-tipo").value,
-    valorDesconto: Number(document.getElementById("edit-desconto").value),
-    valorMinimoCompra: original.valorMinimoCompra ?? 0,
-    dataInicio: original.dataInicio,
-    dataExpiracao: document.getElementById("edit-expiracao").value,
-    limiteUso: original.limiteUso ?? 0,
-    limiteUsoPorUsuario: original.limiteUsoPorUsuario ?? 0,
-    ativo: original.ativo ?? true,
-    estabelecimentoId: original.estabelecimentoId,
-    cartoesAceitosIds: original.cartoesAceitosIds || []
-  };
+  const original = window._cupomEditando;
+
+  // Atualiza SOMENTE os campos editáveis
+  original.titulo = document.getElementById("edit-titulo").value;
+  original.codigo = document.getElementById("edit-codigo").value;
+  original.valorDesconto = Number(document.getElementById("edit-desconto").value);
+  original.tipo = document.getElementById("edit-tipo").value;
+  original.dataExpiracao = document.getElementById("edit-expiracao").value;
+
+  // Garantir formato ISO (caso input venha só data)
+  if (original.dataExpiracao.length === 10) {
+    original.dataExpiracao += "T00:00:00Z";
+  }
 
   const token = localStorage.getItem("token");
 
@@ -841,7 +834,7 @@ async function salvarEdicaoCupom() {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(original) // envia exatamente o JSON esperado
     });
 
     if (!res.ok) {
@@ -853,13 +846,13 @@ async function salvarEdicaoCupom() {
 
     alert("Cupom atualizado com sucesso!");
     document.getElementById("modalEditarCupom").classList.remove("open");
-
-    carregarTodosCupons(); // recarrega a lista
+    carregarTodosCupons();
 
   } catch (err) {
     console.error("Erro ao editar cupom:", err);
   }
 }
+
 
 
 async function abrirModalEditarCupom(id) {
@@ -879,20 +872,15 @@ async function abrirModalEditarCupom(id) {
 
     const cupom = await res.json();
 
-    // 🔥 Salva o cupom COMPLETO para usar no PUT depois
+    // Salva o cupom original para reenviar todos os campos
     window._cupomEditando = cupom;
 
-    // Preenche os campos do modal
     document.getElementById("edit-id").value = cupom.id;
     document.getElementById("edit-titulo").value = cupom.titulo;
     document.getElementById("edit-desconto").value = cupom.valorDesconto;
     document.getElementById("edit-codigo").value = cupom.codigo;
     document.getElementById("edit-tipo").value = cupom.tipo;
-
-    // Corrige formato de data se necessário
-    if (cupom.dataExpiracao) {
-      document.getElementById("edit-expiracao").value = cupom.dataExpiracao.slice(0, 16);
-    }
+    document.getElementById("edit-expiracao").value = cupom.dataExpiracao.split("T")[0];
 
     document.getElementById("modalEditarCupom").classList.add("open");
 
