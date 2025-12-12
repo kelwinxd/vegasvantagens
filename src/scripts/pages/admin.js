@@ -929,3 +929,4 @@ window.abrirModalEditar = abrirModalEditar;
 window.cadastrarCupom = cadastrarCupom;
 window.carregarTodosCupons = carregarTodosCupons;
 window.mostrarCuponsGerais = mostrarCuponsGerais;
+window.salvarEdicaoCupom = salvarEdicaoCupom;
