@@ -783,7 +783,7 @@ function mostrarCuponsGerais(cupons = []) {
   cupons.forEach(c => {
     const div = document.createElement("div");
     div.classList.add("cupom-card");
-
+    console.log(c)
     div.innerHTML = `
       <h2>${c.nomeEstabelecimento}</h2>
       <p><strong>Título:</strong> ${c.titulo}</p>
@@ -801,6 +801,8 @@ function mostrarCuponsGerais(cupons = []) {
 
     lista.appendChild(div);
   });
+  console.log(cupons)
+  console.log(lista)
 
   // Eventos dos botões
   document.querySelectorAll(".btn-editar").forEach(btn =>
