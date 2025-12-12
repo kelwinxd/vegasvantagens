@@ -803,47 +803,33 @@ async function excluirCupom(id) {
   }
 }
 
-async function abrirModalEditarCupom(id) {
-  const token = localStorage.getItem("token");
-
-  try {
-    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-
-    if (!res.ok) {
-      alert("Erro ao carregar dados do cupom.");
-      return;
-    }
-
-    const cupom = await res.json();
-
-    // preenche os campos do modal
-    document.getElementById("edit-id").value = cupom.id;
-    document.getElementById("edit-titulo").value = cupom.titulo;
-    document.getElementById("edit-desconto").value = cupom.valorDesconto;
-    document.getElementById("edit-codigo").value = cupom.codigo;
-    document.getElementById("edit-tipo").value = cupom.tipo;
-    document.getElementById("edit-expiracao").value = cupom.dataExpiracao;
-
-    document.getElementById("modalEditarCupom").classList.add("open");
-
-  } catch (err) {
-    console.error("Erro ao carregar cupom:", err);
-  }
-}
-
 async function salvarEdicaoCupom() {
   const id = document.getElementById("edit-id").value;
 
+  // Recupera o cupom original salvo na abertura do modal
+  const original = window._cupomEditando;
+  if (!original) {
+    alert("Erro interno: cupom não encontrado.");
+    return;
+  }
+
+  // Monta o corpo da requisição com TUDO exigido pelo backend
   const body = {
-    titulo: document.getElementById("edit-titulo").value,
-    valorDesconto: document.getElementById("edit-desconto").value,
     codigo: document.getElementById("edit-codigo").value,
+    titulo: document.getElementById("edit-titulo").value,
+    descricao: original.descricao || "",
+    modalTitulo: original.modalTitulo || "",
+    modalDescricao: original.modalDescricao || "",
     tipo: document.getElementById("edit-tipo").value,
-    dataExpiracao: document.getElementById("edit-expiracao").value
+    valorDesconto: Number(document.getElementById("edit-desconto").value),
+    valorMinimoCompra: original.valorMinimoCompra ?? 0,
+    dataInicio: original.dataInicio,
+    dataExpiracao: document.getElementById("edit-expiracao").value,
+    limiteUso: original.limiteUso ?? 0,
+    limiteUsoPorUsuario: original.limiteUsoPorUsuario ?? 0,
+    ativo: original.ativo ?? true,
+    estabelecimentoId: original.estabelecimentoId,
+    cartoesAceitosIds: original.cartoesAceitosIds || []
   };
 
   const token = localStorage.getItem("token");
@@ -859,20 +845,81 @@ async function salvarEdicaoCupom() {
     });
 
     if (!res.ok) {
+      const erro = await res.text();
+      console.error("Erro backend:", erro);
       alert("Erro ao salvar alterações.");
       return;
     }
 
     alert("Cupom atualizado com sucesso!");
-
     document.getElementById("modalEditarCupom").classList.remove("open");
 
-    carregarTodosCupons();
+    carregarTodosCupons(); // recarrega a lista
 
   } catch (err) {
     console.error("Erro ao editar cupom:", err);
   }
 }
+
+
+async function salvarEdicaoCupom() {
+  const id = document.getElementById("edit-id").value;
+
+  // Recupera o cupom original salvo na abertura do modal
+  const original = window._cupomEditando;
+  if (!original) {
+    alert("Erro interno: cupom não encontrado.");
+    return;
+  }
+
+  // Monta o corpo da requisição com TUDO exigido pelo backend
+  const body = {
+    codigo: document.getElementById("edit-codigo").value,
+    titulo: document.getElementById("edit-titulo").value,
+    descricao: original.descricao || "",
+    modalTitulo: original.modalTitulo || "",
+    modalDescricao: original.modalDescricao || "",
+    tipo: document.getElementById("edit-tipo").value,
+    valorDesconto: Number(document.getElementById("edit-desconto").value),
+    valorMinimoCompra: original.valorMinimoCompra ?? 0,
+    dataInicio: original.dataInicio,
+    dataExpiracao: document.getElementById("edit-expiracao").value,
+    limiteUso: original.limiteUso ?? 0,
+    limiteUsoPorUsuario: original.limiteUsoPorUsuario ?? 0,
+    ativo: original.ativo ?? true,
+    estabelecimentoId: original.estabelecimentoId,
+    cartoesAceitosIds: original.cartoesAceitosIds || []
+  };
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      const erro = await res.text();
+      console.error("Erro backend:", erro);
+      alert("Erro ao salvar alterações.");
+      return;
+    }
+
+    alert("Cupom atualizado com sucesso!");
+    document.getElementById("modalEditarCupom").classList.remove("open");
+
+    carregarTodosCupons(); // recarrega a lista
+
+  } catch (err) {
+    console.error("Erro ao editar cupom:", err);
+  }
+}
+
 
 
 async function mostrarCuponsVencidos() {
