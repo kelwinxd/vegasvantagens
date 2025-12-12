@@ -343,7 +343,7 @@ os nossos clientes!</p>
 </section>
 
    <script src="./scripts/env.js"></script>
-<script type="module" src="./scripts/pages/admin.js?v=3202508071"></script>
+<script type="module" src="./scripts/pages/admin.js?v=3202508072"></script>
 
 
 <!-- Modal Editar Cupom -->
@@ -354,23 +354,56 @@ os nossos clientes!</p>
     <!-- Campo oculto com o ID -->
     <input type="hidden" id="edit-id">
 
+    <label for="edit-codigo">Código</label>
+    <input type="text" id="edit-codigo" placeholder="Ex: DESCONTO15">
+
     <label for="edit-titulo">Título do cupom</label>
     <input type="text" id="edit-titulo" placeholder="Ex: Desconto especial">
+
+    <label for="edit-descricao">Descrição</label>
+    <textarea id="edit-descricao" placeholder="Descrição detalhada"></textarea>
+
+    <label for="edit-modalTitulo">Título do Modal</label>
+    <input type="text" id="edit-modalTitulo" placeholder="Título exibido no modal">
+
+    <label for="edit-modalDescricao">Descrição do Modal</label>
+    <textarea id="edit-modalDescricao" placeholder="Descrição exibida no modal"></textarea>
+
+    <label for="edit-tipo">Tipo de desconto</label>
+    <select id="edit-tipo">
+      <option value="Percentual">Percentual</option>
+      <option value="ValorFixo">Valor fixo</option>
+    </select>
 
     <label for="edit-desconto">Valor do desconto</label>
     <input type="number" id="edit-desconto" placeholder="Ex: 15">
 
-    <label for="edit-codigo">Código</label>
-    <input type="text" id="edit-codigo" placeholder="Ex: DESCONTO15">
+    <label for="edit-minimo">Valor mínimo de compra</label>
+    <input type="number" id="edit-minimo" placeholder="Ex: 100">
 
-    <label for="edit-tipo">Tipo de desconto</label>
-    <select id="edit-tipo">
-      <option value="porcentagem">Porcentagem</option>
-      <option value="fixo">Valor fixo</option>
-    </select>
+    <label for="edit-inicio">Data de Início</label>
+    <input type="datetime-local" id="edit-inicio">
 
     <label for="edit-expiracao">Data de Expiração</label>
     <input type="datetime-local" id="edit-expiracao">
+
+    <label for="edit-limite">Limite de uso total</label>
+    <input type="number" id="edit-limite">
+
+    <label for="edit-limiteUsuario">Limite por usuário</label>
+    <input type="number" id="edit-limiteUsuario">
+
+    <label for="edit-ativo">Ativo?</label>
+    <select id="edit-ativo">
+      <option value="true">Sim</option>
+      <option value="false">Não</option>
+    </select>
+
+    <label for="edit-estabelecimento">Estabelecimento</label>
+    <input type="number" id="edit-estabelecimento" placeholder="ID do estabelecimento">
+
+    <label for="edit-cartoes">Cartões Aceitos (IDs separados por vírgula)</label>
+    <input type="text" id="edit-cartoes" placeholder="Ex: 1,2,3">
 
     <div class="modal-actions">
       <button class="btn-cancelar" onclick="document.getElementById('modalEditarCupom').classList.remove('open')">
@@ -382,6 +415,7 @@ os nossos clientes!</p>
     </div>
   </div>
 </div>
+
 
 </body>
 </html>

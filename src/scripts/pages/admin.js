@@ -811,19 +811,33 @@ async function salvarEdicaoCupom() {
     return;
   }
 
-  const original = window._cupomEditando;
+  const cupom = window._cupomEditando;
 
-  // Atualiza SOMENTE os campos editáveis
-  original.titulo = document.getElementById("edit-titulo").value;
-  original.codigo = document.getElementById("edit-codigo").value;
-  original.valorDesconto = Number(document.getElementById("edit-desconto").value);
-  original.tipo = document.getElementById("edit-tipo").value;
-  original.dataExpiracao = document.getElementById("edit-expiracao").value;
+  // Atualiza TODOS os campos conforme o modelo esperado pela API
+  cupom.codigo = document.getElementById("edit-codigo").value;
+  cupom.titulo = document.getElementById("edit-titulo").value;
+  cupom.descricao = document.getElementById("edit-descricao").value;
+  cupom.modalTitulo = document.getElementById("edit-modalTitulo").value;
+  cupom.modalDescricao = document.getElementById("edit-modalDescricao").value;
+  cupom.tipo = document.getElementById("edit-tipo").value;
 
-  // Garantir formato ISO (caso input venha só data)
-  if (original.dataExpiracao.length === 10) {
-    original.dataExpiracao += "T00:00:00Z";
-  }
+  cupom.valorDesconto = Number(document.getElementById("edit-desconto").value);
+  cupom.valorMinimoCompra = Number(document.getElementById("edit-minimo").value);
+
+  const inicio = document.getElementById("edit-inicio").value;
+  const expiracao = document.getElementById("edit-expiracao").value;
+
+  cupom.dataInicio = inicio.length === 10 ? `${inicio}T00:00:00Z` : inicio;
+  cupom.dataExpiracao = expiracao.length === 10 ? `${expiracao}T00:00:00Z` : expiracao;
+
+  cupom.limiteUso = Number(document.getElementById("edit-limite").value);
+  cupom.limiteUsoPorUsuario = Number(document.getElementById("edit-limiteUsuario").value);
+
+  cupom.ativo = document.getElementById("edit-ativo").checked;
+  cupom.estabelecimentoId = Number(document.getElementById("edit-estabelecimento").value);
+
+  const selecionados = [...document.getElementById("edit-cartoes").selectedOptions].map(opt => Number(opt.value));
+  cupom.cartoesAceitosIds = selecionados;
 
   const token = localStorage.getItem("token");
 
@@ -834,7 +848,7 @@ async function salvarEdicaoCupom() {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify(original) // envia exatamente o JSON esperado
+      body: JSON.stringify(cupom)
     });
 
     if (!res.ok) {
@@ -855,14 +869,13 @@ async function salvarEdicaoCupom() {
 
 
 
+
 async function abrirModalEditarCupom(id) {
   const token = localStorage.getItem("token");
 
   try {
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
+      headers: { "Authorization": "Bearer " + token }
     });
 
     if (!res.ok) {
@@ -872,15 +885,30 @@ async function abrirModalEditarCupom(id) {
 
     const cupom = await res.json();
 
-    // Salva o cupom original para reenviar todos os campos
+    // Salva o cupom original para reenviar TUDO no PUT
     window._cupomEditando = cupom;
 
     document.getElementById("edit-id").value = cupom.id;
-    document.getElementById("edit-titulo").value = cupom.titulo;
-    document.getElementById("edit-desconto").value = cupom.valorDesconto;
     document.getElementById("edit-codigo").value = cupom.codigo;
+    document.getElementById("edit-titulo").value = cupom.titulo;
+    document.getElementById("edit-descricao").value = cupom.descricao;
+    document.getElementById("edit-modalTitulo").value = cupom.modalTitulo;
+    document.getElementById("edit-modalDescricao").value = cupom.modalDescricao;
     document.getElementById("edit-tipo").value = cupom.tipo;
+    document.getElementById("edit-desconto").value = cupom.valorDesconto;
+    document.getElementById("edit-minimo").value = cupom.valorMinimoCompra;
+
+    document.getElementById("edit-inicio").value = cupom.dataInicio.split("T")[0];
     document.getElementById("edit-expiracao").value = cupom.dataExpiracao.split("T")[0];
+
+    document.getElementById("edit-limite").value = cupom.limiteUso;
+    document.getElementById("edit-limiteUsuario").value = cupom.limiteUsoPorUsuario;
+
+    document.getElementById("edit-ativo").checked = cupom.ativo;
+    document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId;
+
+    // SELECT MULTIPLE
+    document.getElementById("edit-cartoes").value = cupom.cartoesAceitosIds;
 
     document.getElementById("modalEditarCupom").classList.add("open");
 
@@ -888,6 +916,7 @@ async function abrirModalEditarCupom(id) {
     console.error("Erro ao carregar cupom:", err);
   }
 }
+
 
 
 
