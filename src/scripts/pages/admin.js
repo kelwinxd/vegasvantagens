@@ -862,61 +862,42 @@ async function salvarEdicaoCupom() {
 }
 
 
-async function salvarEdicaoCupom() {
-  const id = document.getElementById("edit-id").value;
-
-  // Recupera o cupom original salvo na abertura do modal
-  const original = window._cupomEditando;
-  if (!original) {
-    alert("Erro interno: cupom não encontrado.");
-    return;
-  }
-
-  // Monta o corpo da requisição com TUDO exigido pelo backend
-  const body = {
-    codigo: document.getElementById("edit-codigo").value,
-    titulo: document.getElementById("edit-titulo").value,
-    descricao: original.descricao || "",
-    modalTitulo: original.modalTitulo || "",
-    modalDescricao: original.modalDescricao || "",
-    tipo: document.getElementById("edit-tipo").value,
-    valorDesconto: Number(document.getElementById("edit-desconto").value),
-    valorMinimoCompra: original.valorMinimoCompra ?? 0,
-    dataInicio: original.dataInicio,
-    dataExpiracao: document.getElementById("edit-expiracao").value,
-    limiteUso: original.limiteUso ?? 0,
-    limiteUsoPorUsuario: original.limiteUsoPorUsuario ?? 0,
-    ativo: original.ativo ?? true,
-    estabelecimentoId: original.estabelecimentoId,
-    cartoesAceitosIds: original.cartoesAceitosIds || []
-  };
-
+async function abrirModalEditarCupom(id) {
   const token = localStorage.getItem("token");
 
   try {
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
-      method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify(body)
+      }
     });
 
     if (!res.ok) {
-      const erro = await res.text();
-      console.error("Erro backend:", erro);
-      alert("Erro ao salvar alterações.");
+      alert("Erro ao carregar dados do cupom.");
       return;
     }
 
-    alert("Cupom atualizado com sucesso!");
-    document.getElementById("modalEditarCupom").classList.remove("open");
+    const cupom = await res.json();
 
-    carregarTodosCupons(); // recarrega a lista
+    // 🔥 Salva o cupom COMPLETO para usar no PUT depois
+    window._cupomEditando = cupom;
+
+    // Preenche os campos do modal
+    document.getElementById("edit-id").value = cupom.id;
+    document.getElementById("edit-titulo").value = cupom.titulo;
+    document.getElementById("edit-desconto").value = cupom.valorDesconto;
+    document.getElementById("edit-codigo").value = cupom.codigo;
+    document.getElementById("edit-tipo").value = cupom.tipo;
+
+    // Corrige formato de data se necessário
+    if (cupom.dataExpiracao) {
+      document.getElementById("edit-expiracao").value = cupom.dataExpiracao.slice(0, 16);
+    }
+
+    document.getElementById("modalEditarCupom").classList.add("open");
 
   } catch (err) {
-    console.error("Erro ao editar cupom:", err);
+    console.error("Erro ao carregar cupom:", err);
   }
 }
 
