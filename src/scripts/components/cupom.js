@@ -148,8 +148,11 @@ function criarModais(cupons, mapaUrl) {
                 </div>
 
                 <div class="cm-badge">
-                    <h2 class="cm-title">${cupom.titulo}</h2>
+               <img src="${cupom.imagens[cupom.imagens.length - 1]}" alt="10% de desconto" loading="lazy">
+  
                 </div>
+                
+                <h2 class="cm-title">${cupom.titulo}</h2>
 
                 <p class="cm-sub">${cupom.modalDescricao}</p>
 
