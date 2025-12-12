@@ -56,8 +56,15 @@ document.querySelectorAll(".submenu-promocoes .sub").forEach(btn => {
         // 🔥 CHAMAR CARREGAR CUPONS SOMENTE QUANDO ABRIR A TELA
         if (target === "gerenciarCupons") {
             carregarTodosCupons();              // Lista geral
-            mostrarCuponsGerais();      // Lista de vencidos
+             
         }
+
+        if (target === "cuponsVencidos") {
+        carregarTodosCupons().then(() => {
+        mostrarCuponsVencidos();
+  });
+             
+}
 
     });
 });
@@ -726,7 +733,7 @@ async function carregarTodosCupons() {
 
 
 
-function mostrarCuponsGerais(cupons) {
+function mostrarCuponsGerais(cupons = []) {
   const lista = document.getElementById("listaCupons");
   lista.innerHTML = "";
 
@@ -752,6 +759,43 @@ function mostrarCuponsGerais(cupons) {
     lista.appendChild(div);
   });
 }
+
+async function mostrarCuponsVencidos() {
+  const lista = document.getElementById("listaCupons");
+
+  if (!window._todosCupons) {
+    lista.innerHTML = "<p>Carregando cupons...</p>";
+    return;
+  }
+
+  const hoje = new Date();
+
+  const vencidos = window._todosCupons.filter(cupom => {
+    const expira = new Date(cupom.dataExpiracao);
+    return expira < hoje; // já passou da data
+  });
+
+  if (vencidos.length === 0) {
+    lista.innerHTML = "<p>Nenhum cupom vencido.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  vencidos.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "cupom-item vencido";
+
+    div.innerHTML = `
+      <h3>${c.titulo}</h3>
+      <p><strong>Estabelecimento:</strong> ${c.nomeEstabelecimento}</p>
+      <p><strong>Validade:</strong> ${new Date(c.dataExpiracao).toLocaleDateString("pt-BR")}</p>
+      <p><strong>Descrição:</strong> ${c.descricao}</p>
+    `;
+
+    lista.appendChild(div);
+  });
+}
+
 
 
 
