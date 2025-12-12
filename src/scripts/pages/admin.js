@@ -761,7 +761,7 @@ function mostrarCuponsGerais(cupons = []) {
 }
 
 async function mostrarCuponsVencidos() {
-  const lista = document.getElementById("listaCupons");
+  const lista = document.getElementById("listaCuponsVencidos");
 
   if (!window._todosCupons) {
     lista.innerHTML = "<p>Carregando cupons...</p>";
