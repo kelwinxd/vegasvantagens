@@ -105,9 +105,13 @@ async function enviarImagemEstabelecimento(estabelecimentoId, imagemFile, tipo) 
 
   let query = "";
 
-  if (tipo === "principal") query = "principal";
-  if (tipo === "fachada") query = "fachada";
-  if (tipo === "logo") query = "logo&principal=true"; // regra especial para logo
+  if (tipo === "fachada") {
+    query = "fachada=true";
+  } else if (tipo === "logo") {
+    query = "logo=true&principal=true"; 
+  } else {
+    throw new Error("Tipo inválido. Use apenas 'fachada' ou 'logo'.");
+  }
 
   const resposta = await fetch(
     `${API_BASE}/api/estabelecimentos/${estabelecimentoId}/imagens?${query}`,
@@ -241,10 +245,13 @@ function carregarCategorias() {
         
         });
     
-    const text = await res.text();  // <-- isso mostra o erro do backend
-    console.log("Resposta bruta do backend:", text);
+    
 
-    if (!res.ok) throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
+    if (!res.ok) {
+throw new Error("Erro ao cadastrar estabelecimento: " + res.status);
+      const text = await res.text();  // <-- isso mostra o erro do backend
+    console.log("Resposta bruta do backend:", text);
+    }
 
     const estab = await res.json();
 
