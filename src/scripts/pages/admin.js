@@ -836,8 +836,10 @@ async function salvarEdicaoCupom() {
   cupom.ativo = document.getElementById("edit-ativo").checked;
   cupom.estabelecimentoId = Number(document.getElementById("edit-estabelecimento").value);
 
-  const selecionados = [...document.getElementById("edit-cartoes").selectedOptions].map(opt => Number(opt.value));
-  cupom.cartoesAceitosIds = selecionados;
+  cupom.cartoesAceitosIds = document.getElementById("edit-cartoes").value
+  .split(",")
+  .map(x => Number(x.trim()))
+  .filter(x => !isNaN(x));
 
   const token = localStorage.getItem("token");
 
