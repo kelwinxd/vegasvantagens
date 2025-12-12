@@ -619,6 +619,7 @@ async function cadastrarCupom() {
     return dt ? new Date(dt).toISOString() : null;
   }
 
+  // 1) MONTA O OBJETO DO CUPOM
   const data = {
     codigo: document.getElementById("codigo").value,
     titulo: document.getElementById("titulo").value,
@@ -644,6 +645,7 @@ async function cadastrarCupom() {
   };
 
   try {
+    // 2) CRIA O CUPOM
     const res = await fetch(`${API_BASE}/api/Cupons`, {
       method: "POST",
       headers: {
@@ -655,7 +657,43 @@ async function cadastrarCupom() {
 
     if (!res.ok) throw new Error("Erro ao criar cupom: " + res.status);
 
-    const result = await res.json();
+    const cupomCriado = await res.json();
+    const cupomId = cupomCriado.id;
+
+    console.log("Cupom criado com ID:", cupomId);
+
+    // 3) ENVIO DAS IMAGENS (opcional)
+    const galeriaFile = document.getElementById("imgGaleria").files[0];
+    const modalFile = document.getElementById("imgModal").files[0];
+
+    async function enviarImagem(tipo, file) {
+      const form = new FormData();
+      form.append("imagem", file);
+      form.append("tipo", tipo); // "Galeria" ou "Modal"
+
+      const imgRes = await fetch(`${API_BASE}/api/Cupons/${cupomId}/imagens`, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token
+        },
+        body: form
+      });
+
+      if (!imgRes.ok) throw new Error("Erro ao enviar imagem " + tipo);
+    }
+
+    // GALERIA
+    if (galeriaFile) {
+      await enviarImagem("Galeria", galeriaFile);
+      console.log("Imagem Galeria enviada!");
+    }
+
+    // MODAL
+    if (modalFile) {
+      await enviarImagem("Modal", modalFile);
+      console.log("Imagem Modal enviada!");
+    }
+
     alert("Cupom criado com sucesso!");
 
     document.getElementById("formCupom").reset();
@@ -665,6 +703,7 @@ async function cadastrarCupom() {
     console.error(err);
   }
 }
+
 
 
 async function carregarTodosCupons() {
