@@ -706,7 +706,7 @@ async function cadastrarCupom() {
 
 
 
-async function carregarTodosCupons() {
+async function carregarTodosCupons(options = { ignoreCache: false }) {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado para ver os cupons.");
@@ -715,6 +715,28 @@ async function carregarTodosCupons() {
 
   const lista = document.getElementById("listaCupons");
   lista.innerHTML = "Carregando cupons...";
+
+  const CACHE_KEY = "cache_todos_cupons";
+  const CACHE_TIME = 5 * 60 * 1000; // 5 minutos
+
+  // 📌 Tentar pegar do cache
+  if (!options.ignoreCache) {
+    const cache = localStorage.getItem(CACHE_KEY);
+    if (cache) {
+      const { data, timestamp } = JSON.parse(cache);
+
+      const expirado = (Date.now() - timestamp) > CACHE_TIME;
+
+      if (!expirado) {
+        console.log("✔ Usando cupons do cache");
+        window._todosCupons = data;
+        mostrarCuponsGerais(data);
+        return;
+      }
+    }
+  }
+
+  console.log("🔄 Cache vazio ou expirado — buscando cupons...");
 
   try {
     // 1️⃣ Buscar todos os estabelecimentos
@@ -737,17 +759,8 @@ async function carregarTodosCupons() {
         fetch(`${API_BASE}/api/Cupons/por-estabelecimento/${estab.id}`, {
           headers: { "Authorization": "Bearer " + token }
         })
-          .then(res => {
-            if (!res.ok) return []; // sem cupons ou erro -> ignora
-            return res.json();
-          })
-          .then(cupons => {
-            // incluir nome do estabeleciemento em cada cupom
-            return cupons.map(c => ({
-              ...c,
-              nomeEstabelecimento: estab.nome
-            }));
-          })
+          .then(res => res.ok ? res.json() : [])
+          .then(cupons => cupons.map(c => ({ ...c, nomeEstabelecimento: estab.nome })))
           .catch(err => {
             console.warn("Falha ao carregar cupons do estabelecimento:", estab.id, err);
             return [];
@@ -755,13 +768,22 @@ async function carregarTodosCupons() {
       )
     );
 
-    // 3️⃣ Juntar todos em um único array
+    // 3️⃣ Juntar todos os cupons
     const todosCupons = cuponsPorEstabelecimento.flat();
 
-    // Guarda em cache global (usado para "cupons vencidos")
+    // 4️⃣ Salvar em cache
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        data: todosCupons,
+        timestamp: Date.now()
+      })
+    );
+
+    // 5️⃣ Salvar também global (pra telas internas)
     window._todosCupons = todosCupons;
 
-    // 4️⃣ Exibir
+    // 6️⃣ Exibir
     mostrarCuponsGerais(todosCupons);
 
   } catch (error) {
