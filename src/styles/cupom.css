@@ -384,6 +384,118 @@ height: 14px;
   display: block;
 }
 
+/* 🔹 Fundo escuro atrás do modal */
+.modal-edit-cupom {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 🔹 Quando abrir */
+.modal-edit-cupom.open {
+  display: flex;
+}
+
+/* 🔹 Caixa central */
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  width: 90%;
+  max-width: 420px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.25);
+  animation: fadeInUp .25s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 🔹 Título */
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 22px;
+  color: #333;
+}
+
+/* 🔹 Rótulos */
+.modal-content label {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* 🔹 Inputs */
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color .2s;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  border-color: #007bff;
+}
+
+/* 🔹 Botões */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-cancelar {
+  padding: 10px 16px;
+  font-size: 14px;
+  background: #aaa;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.btn-cancelar:hover {
+  background: #888;
+}
+
+.btn-salvar {
+  padding: 10px 16px;
+  font-size: 14px;
+  background: #28a745;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.btn-salvar:hover {
+  background: #1e8838;
+}
+
+
 /* textos */
 .cm-title {
   text-align: center;

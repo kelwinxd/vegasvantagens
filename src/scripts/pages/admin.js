@@ -732,7 +732,6 @@ async function carregarTodosCupons() {
 }
 
 
-
 function mostrarCuponsGerais(cupons = []) {
   const lista = document.getElementById("listaCupons");
   lista.innerHTML = "";
@@ -747,18 +746,134 @@ function mostrarCuponsGerais(cupons = []) {
     div.classList.add("cupom-card");
 
     div.innerHTML = `
-      <h2>${c.nomeEstabelecimento}></h2>
-      <p>${c.titulo}</p>
+      <h2>${c.nomeEstabelecimento}</h2>
+      <p><strong>Título:</strong> ${c.titulo}</p>
       <p><strong>Código:</strong> ${c.codigo}</p>
       <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
       <p><strong>Expira em:</strong> ${new Date(c.dataExpiracao).toLocaleString()}</p>
-      <br/> 
+
+      <div class="cupom-actions">
+        <button class="btn-editar" data-id="${c.id}">Editar</button>
+        <button class="btn-excluir" data-id="${c.id}">Excluir</button>
+      </div>
+
       <hr/>
     `;
 
     lista.appendChild(div);
   });
+
+  // Eventos dos botões
+  document.querySelectorAll(".btn-editar").forEach(btn =>
+    btn.addEventListener("click", () => abrirModalEditarCupom(btn.dataset.id))
+  );
+
+  document.querySelectorAll(".btn-excluir").forEach(btn =>
+    btn.addEventListener("click", () => excluirCupom(btn.dataset.id))
+  );
 }
+
+async function excluirCupom(id) {
+  const confirmar = confirm("Tem certeza que deseja excluir este cupom?");
+  if (!confirmar) return;
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      alert("Erro ao excluir cupom.");
+      return;
+    }
+
+    alert("Cupom excluído com sucesso!");
+
+    // recarrega os cupons
+    carregarTodosCupons();
+
+  } catch (err) {
+    console.error("Erro ao excluir cupom:", err);
+    alert("Erro ao excluir cupom.");
+  }
+}
+
+async function abrirModalEditarCupom(id) {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      alert("Erro ao carregar dados do cupom.");
+      return;
+    }
+
+    const cupom = await res.json();
+
+    // preenche os campos do modal
+    document.getElementById("edit-id").value = cupom.id;
+    document.getElementById("edit-titulo").value = cupom.titulo;
+    document.getElementById("edit-desconto").value = cupom.valorDesconto;
+    document.getElementById("edit-codigo").value = cupom.codigo;
+    document.getElementById("edit-tipo").value = cupom.tipo;
+    document.getElementById("edit-expiracao").value = cupom.dataExpiracao;
+
+    document.getElementById("modalEditarCupom").classList.add("open");
+
+  } catch (err) {
+    console.error("Erro ao carregar cupom:", err);
+  }
+}
+
+async function salvarEdicaoCupom() {
+  const id = document.getElementById("edit-id").value;
+
+  const body = {
+    titulo: document.getElementById("edit-titulo").value,
+    valorDesconto: document.getElementById("edit-desconto").value,
+    codigo: document.getElementById("edit-codigo").value,
+    tipo: document.getElementById("edit-tipo").value,
+    dataExpiracao: document.getElementById("edit-expiracao").value
+  };
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      alert("Erro ao salvar alterações.");
+      return;
+    }
+
+    alert("Cupom atualizado com sucesso!");
+
+    document.getElementById("modalEditarCupom").classList.remove("open");
+
+    carregarTodosCupons();
+
+  } catch (err) {
+    console.error("Erro ao editar cupom:", err);
+  }
+}
+
 
 async function mostrarCuponsVencidos() {
   const lista = document.getElementById("listaCuponsVencidos");
@@ -786,10 +901,12 @@ async function mostrarCuponsVencidos() {
     div.className = "cupom-item vencido";
 
     div.innerHTML = `
-      <h3>${c.titulo}</h3>
-      <p><strong>Estabelecimento:</strong> ${c.nomeEstabelecimento}</p>
+      <h3>${c.nomeEstabelecimento}</h3>
+      <p><strong>Título:</strong> ${c.titulo}</p>
       <p><strong>Validade:</strong> ${new Date(c.dataExpiracao).toLocaleDateString("pt-BR")}</p>
       <p><strong>Descrição:</strong> ${c.descricao}</p>
+      <br/>
+      <hr>
     `;
 
     lista.appendChild(div);

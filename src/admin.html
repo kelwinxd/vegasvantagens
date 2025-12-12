@@ -345,5 +345,43 @@ os nossos clientes!</p>
    <script src="./scripts/env.js"></script>
 <script type="module" src="./scripts/pages/admin.js?v=3202508069"></script>
 
+
+<!-- Modal Editar Cupom -->
+<div id="modalEditarCupom" class="modal-edit-cupom">
+  <div class="modal-content">
+    <h2>Editar Cupom</h2>
+
+    <!-- Campo oculto com o ID -->
+    <input type="hidden" id="edit-id">
+
+    <label for="edit-titulo">Título do cupom</label>
+    <input type="text" id="edit-titulo" placeholder="Ex: Desconto especial">
+
+    <label for="edit-desconto">Valor do desconto</label>
+    <input type="number" id="edit-desconto" placeholder="Ex: 15">
+
+    <label for="edit-codigo">Código</label>
+    <input type="text" id="edit-codigo" placeholder="Ex: DESCONTO15">
+
+    <label for="edit-tipo">Tipo de desconto</label>
+    <select id="edit-tipo">
+      <option value="porcentagem">Porcentagem</option>
+      <option value="fixo">Valor fixo</option>
+    </select>
+
+    <label for="edit-expiracao">Data de Expiração</label>
+    <input type="datetime-local" id="edit-expiracao">
+
+    <div class="modal-actions">
+      <button class="btn-cancelar" onclick="document.getElementById('modalEditarCupom').classList.remove('open')">
+        Cancelar
+      </button>
+      <button class="btn-salvar" onclick="salvarEdicaoCupom()">
+        Salvar
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
