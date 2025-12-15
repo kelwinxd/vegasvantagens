@@ -34,36 +34,46 @@
         aceite_termos: document.getElementById("aceite_termos").checked
           ? "Sim"
           : "Não"
-      }
-    };
+      }}
+    const token = localStorage.getItem("token");
 
-    try {
-      const response = await fetch(
-        `https://${API}/api/mails/site/vegasvantagens`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+if (!token) {
+  alert("Você precisa estar logado.");
+  return;
+}
 
-      console.log(payload)
-
-      if (!response.ok) {
-        throw new Error("Erro ao enviar formulário");
-      }
-
-      statusDiv.innerHTML = "Formulário enviado com sucesso!";
-      statusDiv.style.color = "green";
-      form.reset();
-
-    } catch (error) {
-      statusDiv.innerHTML =
-        "Erro ao enviar. Tente novamente mais tarde.";
-      statusDiv.style.color = "red";
-      console.error(error);
+try {
+  const response = await fetch(
+    `https://${API}/api/mails/site/vegasvantagens`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
     }
-  });
+  );
+
+  if (!response.ok) {
+    throw new Error("Erro ao enviar formulário");
+  }
+
+  // sucesso
+  statusDiv.innerHTML = "Formulário enviado com sucesso!";
+  statusDiv.style.color = "green";
+  form.reset();
+
+} catch (error) {
+  console.error(error);
+  statusDiv.innerHTML = "Erro ao enviar. Tente novamente.";
+  statusDiv.style.color = "red";
+}
+
+    
+    
+    
+    })
+
+    
 
