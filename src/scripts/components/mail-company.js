@@ -2,7 +2,7 @@
   const form = document.getElementById("form-parceiro");
   const statusDiv = document.getElementById("mensagem-status");
 
-  const API = "https://apivegasvantagens-production.up.railway.app"
+  const API = "apivegasvantagens-production.up.railway.app"
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
