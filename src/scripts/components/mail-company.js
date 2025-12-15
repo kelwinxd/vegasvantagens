@@ -2,8 +2,10 @@ import { getClientToken, API_BASE } from '../auth.js';
   const form = document.getElementById("form-parceiro");
   const statusDiv = document.getElementById("mensagem-status");
 
+  const API = "https://apivegasvantagens-production.up.railway.app"
+
   form.addEventListener("submit", async (e) => {
-    e.preventDefault(); // impede o submit padrão
+    e.preventDefault();
 
     statusDiv.innerHTML = "Enviando...";
     statusDiv.style.color = "#333";
@@ -11,7 +13,7 @@ import { getClientToken, API_BASE } from '../auth.js';
     // monta o objeto data exatamente como a API espera
     const payload = {
       subject: "Novo cadastro de parceiro - Vegas Vantagens",
-      to: ["kelwin.esechiel28@gmail.com"], // ou deixe fixo no backend
+      to: ["kelwin.esechiel28@gmail.com"], // preencher para email destino
       data: {
         razao_social: document.getElementById("razao_social").value,
         nome_fantasia: document.getElementById("nome_fantasia").value,
@@ -37,7 +39,7 @@ import { getClientToken, API_BASE } from '../auth.js';
 
     try {
       const response = await fetch(
-        `https://${API_BASE}/api/mails/site/vegasvantagens`,
+        `https://${API}/api/mails/site/vegasvantagens`,
         {
           method: "POST",
           headers: {
