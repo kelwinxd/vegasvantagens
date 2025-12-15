@@ -1,4 +1,4 @@
-import { getClientToken, API_BASE } from '../auth.js';
+
   const form = document.getElementById("form-parceiro");
   const statusDiv = document.getElementById("mensagem-status");
 
