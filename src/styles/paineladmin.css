@@ -129,6 +129,7 @@ body {
     max-height: 95%;
     overflow-y: scroll;
     width: 100%;
+    max-width: 100%;
     border-radius: 16px;
     padding: 32px;
     
