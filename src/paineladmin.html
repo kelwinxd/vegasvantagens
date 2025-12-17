@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/global.css">
+    <title>Document</title>
+</head>
+<body>
+    
+    <div class="main">
+
+
+    <div class="sidebar-admin">
+        <div class="logo-sidebar">
+            <img src="./imgs/logos/logo-vegas.png" alt="">
+        </div>
+
+        <div class="search-admin">
+        <img src="./imgs/icons/search-iconn.png" alt="">
+        <input type="text" name="text" id="s-text" placeholder="Pesquisar...">
+        </div>
+       
+        <ul class="lista-sidebar">
+             <li data-page="dashboard">Dashboard</li>
+             <li data-page="estabelecimentos">Gerenciar Estabelecimento</li>
+            <li data-page="promocoes">Gerenciar Promoções</li>
+        </ul>
+
+        <div class="user-admin">
+            <div class="info-user">
+             <p class="name-user">User</p>
+            <p class="cargo-user">Cargo</p>
+            </div>
+
+            <div>
+                icon
+            </div>
+         
+        </div>
+
+    </div>
+    <div class="dash">
+        <div class="header-dash">
+            <div class="rotas-dash">
+            <i>Icone</i>
+            <div class="rotas-tela">
+                <span>/Gerenciar /s</span>
+            </div>
+            </div>
+
+            <div class="actions-admin">
+                <div class="ball-ad notif">
+                    <img src="./imgs/icons/bell-icon.png" alt="">
+                </div>
+
+                 <div class="ball-ad profile">
+                    <img src="./imgs/Profile.png" alt="">
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="main-dash">
+             <div class="page" data-page="dashboard">
+     <h1>Dashboard</h1>
+
+    <div class="cards-dashboard">
+      <div class="card-info">
+        <h3 id="totalEstab">0</h3>
+        <p>Estabelecimentos cadastrados</p>
+      </div>
+    </div>
+
+    <h2>Estabelecimentos</h2>
+
+    <div class="tabs">
+      <button class="tab active" data-status="ativos">Ativos</button>
+      <button class="tab" data-status="inativos">Inativos</button>
+    </div>
+
+    <div id="listaCardsDashboard" class="lista-cards"></div>
+  </div>
+
+  <div class="page" data-page="estabelecimentos">
+    <h1>Gerenciar Estabelecimentos</h1>
+    <p>Cadastro, edição e listagem</p>
+  </div>
+
+  <div class="page" data-page="promocoes">
+    <h1>Gerenciar Promoções</h1>
+    <p>Criação e controle de promoções</p>
+  </div>
+        </div>
+    </div>
+    </div>
+
+    <script type="module" src="./scripts/pages/paineladmin.js"></script>
+    <script>
+  const menuItems = document.querySelectorAll(".lista-sidebar li");
+  const pages = document.querySelectorAll(".main-dash .page");
+  const rotaTexto = document.querySelector(".rotas-tela span");
+
+  function showPage(pageName) {
+    pages.forEach(page => {
+      page.style.display =
+        page.dataset.page === pageName ? "block" : "none";
+    });
+
+    rotaTexto.textContent = `/ ${pageName}`;
+  }
+
+  menuItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const pageName = item.dataset.page;
+
+      // menu ativo
+      menuItems.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+
+      showPage(pageName);
+    });
+  });
+
+  // Tela inicial
+  showPage("dashboard");
+  menuItems[0].classList.add("active");
+</script>
+
+</body>
+</html>

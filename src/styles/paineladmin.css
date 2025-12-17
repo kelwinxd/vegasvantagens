@@ -1,0 +1,144 @@
+body {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.main {
+    display: flex;
+}
+
+.logo-sidebar img {
+    display: block;
+    height: 78px;
+    width: 275px;
+}
+
+.logo-sidebar {
+    margin-bottom: 48px;
+}
+
+.sidebar-admin {
+    width: 369px;
+    height: 100vh;
+    background-color: #fff;
+    padding: 32px 24px;
+
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+}
+
+.user-admin {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    
+}
+
+.search-admin {
+    
+    background-color: #fff;
+    height: 40px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #CDCACA;
+}
+#s-text {
+    outline: none;
+    border: none;
+   
+    flex: 1;
+    height: 100%;
+    font-size: 18px;
+    align-self: center;
+}
+
+.lista-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 32px;
+}
+.lista-sidebar li {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    gap: 3px;
+    border-radius: 8px;
+    padding: 8px 16px;
+    background-color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.dash {
+    background-color: #F0F0F0;
+    width: 100%;
+    padding: 32px;
+    padding-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.header-dash {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+    padding-top: 8px;
+    padding-bottom:8px;
+    
+}
+
+.rotas-dash {
+    display: flex;
+}
+
+.actions-admin {
+    display: flex;
+    gap: 16px;
+}
+
+.ball-ad {
+    height: 48px;
+    width: 48px;
+    background-color: #fff;
+    display: flex;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.notif img {
+    width: 16px;
+    height: 18px;
+}
+
+.profile img {
+    width: 100%;
+}
+
+.main-dash {
+    background-color: #fff;
+    height: 95%;
+    width: 100%;
+    border-radius: 16px;
+    padding: 32px;
+    
+    
+}
+
+.page {
+  display: none;
+}
+
+.lista-sidebar li.active {
+  background-color: #434D9C;
+  color: #fff;
+  font-weight: bold;
+}
