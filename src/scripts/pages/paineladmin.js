@@ -52,6 +52,8 @@ function renderizarLista(lista, containerId) {
   }
 
   lista.forEach(estab => {
+
+    console.log(estab)
     const card = document.createElement("div");
     card.className = "card-estab";
 
@@ -70,7 +72,7 @@ function renderizarLista(lista, containerId) {
       <h3>${estab.nome}</h3>
       <p>${estab.cidade}</p>
       <span class="status ${estab.ativo ? "ativo" : "inativo"}">
-        ${estab.ativo ? "Ativo" : "Inativo"}
+        ${estab.ativo === 'true' ? "Ativo" : "Inativo"}
       </span>
     `;
 
