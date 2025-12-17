@@ -43,6 +43,7 @@ async function buscarEstabelecimentos() {
 
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
+   if (!container) return;
   container.innerHTML = "";
 
   if (lista.length === 0) {
