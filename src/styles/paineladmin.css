@@ -171,8 +171,8 @@
 }
 
 .btns-subpage button {
-     width: 150px;
-    height: 80px;
+    width: 100px;
+    height: 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
