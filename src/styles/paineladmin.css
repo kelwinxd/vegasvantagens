@@ -216,7 +216,7 @@
 .field label {
   font-size: 12px;
   margin-bottom: 4px;
-  color: gray;
+  color: rgb(66, 66, 66);
 }
 
 .field input,
