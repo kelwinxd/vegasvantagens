@@ -89,6 +89,17 @@ function atualizarDashboard() {
   filtrarDashboard("ativos");
 }
 
+document.getElementById("btnCriarEstab").addEventListener("click", () => {
+  fecharSubPages();
+
+  const subpage = document.querySelector(
+    '.sub-page[data-subpage="criar-estab"]'
+  );
+
+  subpage.classList.add("active");
+});
+
+
 
 function filtrarDashboard(status) {
   const listaFiltrada = estabelecimentosCache.filter(e =>
@@ -108,11 +119,7 @@ document.querySelectorAll(".tab").forEach(tab => {
     const paginaAtiva = document.querySelector(".page .active");
     console.log('pagina ativa: ', paginaAtiva)
 
-  if (!paginaAtiva) return;
-
-  if (paginaAtiva.dataset.page === "promocoes") {
-    carregarCuponsPromocoes();
-  }
+ 
   });
 });
 
@@ -216,6 +223,13 @@ function renderizarPromocoes(cupons) {
     </div>
   `).join("");
 }
+
+function fecharSubPages() {
+  document.querySelectorAll(".sub-page")
+    .forEach(sp => sp.classList.remove("active"));
+}
+
+
 
 
 

@@ -62,7 +62,7 @@
         </div>
 
         <div class="main-dash">
-             <div class="page" data-page="dashboard">
+    <div class="page" data-page="dashboard">
      <h1>Dashboard</h1>
 
     <div class="cards-dashboard">
@@ -82,11 +82,146 @@
     <div id="listaCardsDashboard" class="lista-cards"></div>
   </div>
 
-  <div class="page" data-page="estabelecimentos">
-    <h1>Gerenciar Estabelecimentos</h1>
-    <p>Cadastro, edição e listagem</p>
-    <div id="listaCards" class="lista-cards"></div>
+ <div class="page" data-page="estabelecimentos">
+  <h1>Gerenciar Estabelecimentos</h1>
+  <p>Cadastro, edição e listagem</p>
+
+  <!-- Botão -->
+  <button class="btn-criar" id="btnCriarEstab">
+    Criar Estabelecimento
+  </button>
+
+  <!-- Lista -->
+  <div id="listaCards" class="lista-cards"></div>
+
+  <!-- Subpage -->
+  <div class="sub-page" data-subpage="criar-estab">
+    <h2>Cadastrar Estabelecimento</h2>
+
+    <form class="form-estab">
+      <h3>Dados Iniciais</h3>
+
+      <div class="row">
+        <div class="field">
+          <label>Nome Fantasia</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>Razão Social</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>CNPJ</label>
+          <input type="text" />
+        </div>
+
+        <div class="field switch">
+          <label>Ativo</label>
+          <input type="checkbox" checked />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Telefone</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>Email de Contato</label>
+          <input type="email" />
+        </div>
+
+        <div class="field">
+          <label>Grupo</label>
+          <select>
+            <option>Selecione</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Categoria</label>
+          <select>
+            <option>Selecione</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>Endereço</h3>
+
+      <div class="row">
+        <div class="field">
+          <label>CEP</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>Estado</label>
+          <select>
+            <option>SP</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Cidade</label>
+          <select>
+            <option>Americana</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Rua</label>
+          <input type="text" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Número</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>Bairro</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>Complemento</label>
+          <input type="text" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Latitude</label>
+          <input type="text" />
+        </div>
+
+        <div class="field">
+          <label>Longitude</label>
+          <input type="text" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field full">
+          <label>Mapa URL</label>
+          <input type="text" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-salvar">
+        Salvar Estabelecimento
+      </button>
+    </form>
   </div>
+</div>
+
+
+  
 
   <div class="page" data-page="promocoes">
     <h1>Gerenciar Promoções</h1>
