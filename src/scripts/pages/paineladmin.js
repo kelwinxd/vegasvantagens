@@ -104,7 +104,124 @@ document.querySelectorAll(".tab").forEach(tab => {
     tab.classList.add("active");
 
     filtrarDashboard(tab.dataset.status);
+
+    verificarPaginaAtiva();
   });
 });
 
+async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  const CACHE_KEY = "cache_cupons_promocoes";
+  const CACHE_TIME = 5 * 60 * 1000; // 5 minutos
+
+  // 📦 Tentar cache
+  if (!options.ignoreCache) {
+    const cache = localStorage.getItem(CACHE_KEY);
+    if (cache) {
+      const { data, timestamp } = JSON.parse(cache);
+
+      if (Date.now() - timestamp < CACHE_TIME) {
+        console.log("✔ Cupons promoções carregados do cache");
+        window._cuponsPromocoes = data;
+        renderizarPromocoes(data);
+        return;
+      }
+    }
+  }
+
+  console.log("🔄 Buscando cupons para promoções...");
+
+  try {
+    // Buscar estabelecimentos
+    const resEstab = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+
+    if (!resEstab.ok) throw new Error("Erro ao buscar estabelecimentos");
+
+    const estabelecimentos = await resEstab.json();
+
+    // Buscar cupons em paralelo
+    const cuponsPorEstabelecimento = await Promise.all(
+      estabelecimentos.map(estab =>
+        fetch(`${API_BASE}/api/Cupons/por-estabelecimento/${estab.id}`, {
+          headers: { Authorization: "Bearer " + token }
+        })
+          .then(res => res.ok ? res.json() : [])
+          .then(cupons => cupons.map(c => ({
+            ...c,
+            nomeEstabelecimento: estab.nome
+          })))
+          .catch(() => [])
+      )
+    );
+
+    const cupons = cuponsPorEstabelecimento.flat();
+
+    // 💾 Salvar cache
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        data: cupons,
+        timestamp: Date.now()
+      })
+    );
+
+    window._cuponsPromocoes = cupons;
+
+    renderizarPromocoes(cupons);
+
+  } catch (err) {
+    console.error("Erro ao carregar promoções:", err);
+  }
+}
+
+function verificarPaginaAtiva() {
+  const paginaAtiva = document.querySelector(".page.active");
+
+  if (!paginaAtiva) return;
+
+  if (paginaAtiva.dataset.page === "promocoes") {
+    carregarCuponsPromocoes();
+  }
+}
+
+function ativarPagina(pageName) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+
+  const page = document.querySelector(`.page[data-page="${pageName}"]`);
+  if (page) {
+    page.classList.add("active");
+    verificarPaginaAtiva();
+  }
+}
+
+function renderizarPromocoes(cupons) {
+  const container = document.getElementById("listaPromocoes");
+
+  if (!container) return;
+
+  if (cupons.length === 0) {
+    container.innerHTML = "<p>Nenhuma promoção encontrada.</p>";
+    return;
+  }
+
+  container.innerHTML = cupons.map(c => `
+    <div class="cupom">
+      <strong>${c.titulo || "Cupom"}</strong>
+      <span>${c.nomeEstabelecimento}</span>
+    </div>
+  `).join("");
+}
+
+
+
 buscarEstabelecimentos();
+
+
+
