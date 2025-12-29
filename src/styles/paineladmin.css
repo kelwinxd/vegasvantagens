@@ -125,8 +125,8 @@
 
 .main-dash {
     background-color: #fff;
-    min-height: 70vh;
-    max-height: 70vh;
+    min-height: 80vh;
+    max-height: 80vh;
     overflow-y: scroll;
     width: 100%;
     max-width: 100%;
