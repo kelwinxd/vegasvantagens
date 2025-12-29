@@ -191,15 +191,6 @@ function verificarPaginaAtiva() {
   }
 }
 
-function ativarPagina(pageName) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-
-  const page = document.querySelector(`.page[data-page="${pageName}"]`);
-  if (page) {
-    page.classList.add("active");
-    verificarPaginaAtiva();
-  }
-}
 
 function renderizarPromocoes(cupons) {
   const container = document.getElementById("listaPromocoes");
