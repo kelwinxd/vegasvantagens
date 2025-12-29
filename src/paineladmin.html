@@ -87,12 +87,19 @@
   <p>Cadastro, edição e listagem</p>
 
   <!-- Botão -->
-  <button class="btn-criar" id="btnCriarEstab">
-    Criar Estabelecimento
-  </button>
+   <div style="display: flex;">
+    <button data-open-subpage="lista-estab">Detalhes</button>
+    <button data-open-subpage="criar-estab">Criar</button>
 
-  <!-- Lista -->
-  <div id="listaCards" class="lista-cards"></div>
+   </div>
+
+
+ <!-- Lista -->
+  <div class="sub-page" data-subpage="lista-estab">
+    <div id="listaCards" class="lista-cards"></div>
+  </div>
+ 
+  
 
   <!-- Subpage -->
   <div class="sub-page" data-subpage="criar-estab">

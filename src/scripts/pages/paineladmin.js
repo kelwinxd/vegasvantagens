@@ -89,15 +89,35 @@ function atualizarDashboard() {
   filtrarDashboard("ativos");
 }
 
-document.getElementById("btnCriarEstab").addEventListener("click", () => {
+function fecharSubPages() {
+  document.querySelectorAll(".sub-page")
+    .forEach(sp => sp.classList.remove("active"));
+}
+
+function abrirSubPage(nome) {
   fecharSubPages();
 
   const subpage = document.querySelector(
-    '.sub-page[data-subpage="criar-estab"]'
+    `.sub-page[data-subpage="${nome}"]`
   );
 
+  if (!subpage) {
+    console.warn("Subpage não encontrada:", nome);
+    return;
+  }
+
   subpage.classList.add("active");
+}
+
+// Listener genérico
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-open-subpage]");
+  if (!btn) return;
+
+  const subpage = btn.dataset.openSubpage;
+  abrirSubPage(subpage);
 });
+
 
 
 
@@ -224,10 +244,6 @@ function renderizarPromocoes(cupons) {
   `).join("");
 }
 
-function fecharSubPages() {
-  document.querySelectorAll(".sub-page")
-    .forEach(sp => sp.classList.remove("active"));
-}
 
 
 
