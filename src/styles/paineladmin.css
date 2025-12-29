@@ -160,10 +160,33 @@
 
 .sub-page {
   display: none;
-  background: #0f172a;
+ 
   padding: 20px;
   border-radius: 8px;
 }
+
+.btns-subpage {
+  display: flex;
+  gap: 10px;
+}
+
+.btns-subpage button {
+     width: 150px;
+    height: 80px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    border: 1px solid #4B57A3;
+    color: #4B57A3;
+    font-weight: 500;
+}
+
+.btns-subpage button.active {
+    background-color: #4B57A3;
+}
+
+
 
 .sub-page.active {
   display: block;
@@ -199,9 +222,9 @@
 .field select {
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #334155;
-  background: #020617;
-  color: #fff;
+  border: 1px solid gray;
+  
+  color: black;
 }
 
 .field.switch {
@@ -213,7 +236,7 @@
   margin-top: 16px;
   padding: 12px;
   width: 100%;
-  background: #16a34a;
+  
   border: none;
   border-radius: 6px;
   color: #fff;

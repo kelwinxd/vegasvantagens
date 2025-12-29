@@ -112,7 +112,14 @@ function abrirSubPage(nome) {
 // Listener genérico
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-open-subpage]");
+
   if (!btn) return;
+
+  document.querySelectorAll("[data-open-subpage]").array.forEach(element => {
+    element.classList.remove('active')
+  });
+
+  btn.classList.add('active')
 
   const subpage = btn.dataset.openSubpage;
   abrirSubPage(subpage);
