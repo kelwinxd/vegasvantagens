@@ -105,7 +105,14 @@ document.querySelectorAll(".tab").forEach(tab => {
 
     filtrarDashboard(tab.dataset.status);
 
-    verificarPaginaAtiva();
+    const paginaAtiva = document.querySelector(".page .active");
+    console.log('pagina ativa: ', paginaAtiva)
+
+  if (!paginaAtiva) return;
+
+  if (paginaAtiva.dataset.page === "promocoes") {
+    carregarCuponsPromocoes();
+  }
   });
 });
 
@@ -182,7 +189,7 @@ async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
 }
 
 function verificarPaginaAtiva() {
-  const paginaAtiva = document.querySelector(".page.active");
+  const paginaAtiva = document.querySelector(".page .active");
 
   if (!paginaAtiva) return;
 
