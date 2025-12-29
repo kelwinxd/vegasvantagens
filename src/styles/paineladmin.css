@@ -209,9 +209,12 @@
   flex-direction: column;
 }
 
+/*
 .field.full {
   flex: 100%;
 }
+
+*/
 
 .field label {
   font-size: 12px;
