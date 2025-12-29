@@ -220,6 +220,7 @@ function renderizarPromocoes(cupons) {
 
 
 buscarEstabelecimentos();
+carregarCuponsPromocoes();
 
 
 
