@@ -80,9 +80,9 @@
     </div>
 
     <div id="listaCardsDashboard" class="lista-cards"></div>
-  </div>
+    </div>
 
- <div class="page" data-page="estabelecimentos">
+    <div class="page" data-page="estabelecimentos">
   <h1>Gerenciar Estabelecimentos</h1>
   <!-- Botão -->
    <div class="btns-subpage">
@@ -101,138 +101,161 @@
 
   <!-- Subpage -->
   <div class="sub-page" data-subpage="criar-estab">
-    <h2>Cadastrar Estabelecimento</h2>
 
-    <form class="form-estab">
-      <h3>Dados Iniciais</h3>
+   <form class="form-estab">
+  <h3 class="title-form">Dados Iniciais</h3>
 
-      <div class="row">
-        <div class="field">
-          <label>Nome Fantasia</label>
-          <input type="text" />
-        </div>
+  <div class="row">
+    <div class="field">
+      <label>Nome Fantasia</label>
+      <input type="text" placeholder="Ex: Mercado Central" />
+    </div>
 
-        <div class="field">
-          <label>Razão Social</label>
-          <input type="text" />
-        </div>
+    <div class="field">
+      <label>Razão Social</label>
+      <input type="text" placeholder="Ex: Mercado Central LTDA" />
+    </div>
 
-        <div class="field">
-          <label>CNPJ</label>
-          <input type="text" />
-        </div>
+    <div class="field">
+      <label>CNPJ</label>
+      <input type="text" placeholder="00.000.000/0001-00" />
+    </div>
 
-        <div class="field switch">
-          <label>Ativo</label>
-          <input type="checkbox" checked />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>Telefone</label>
-          <input type="text" />
-        </div>
-
-        <div class="field">
-          <label>Email de Contato</label>
-          <input type="email" />
-        </div>
-
-        <div class="field">
-          <label>Grupo</label>
-          <select>
-            <option>Selecione</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Categoria</label>
-          <select>
-            <option>Selecione</option>
-          </select>
-        </div>
-      </div>
-
-      <h3>Endereço</h3>
-
-      <div class="row">
-        <div class="field">
-          <label>CEP</label>
-          <input type="text" />
-        </div>
-
-        <div class="field">
-          <label>Estado</label>
-          <select>
-            <option>SP</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Cidade</label>
-          <select>
-            <option>Americana</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Rua</label>
-          <input type="text" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>Número</label>
-          <input type="text" />
-        </div>
-
-        <div class="field">
-          <label>Bairro</label>
-          <input type="text" />
-        </div>
-
-        <div class="field">
-          <label>Complemento</label>
-          <input type="text" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label>Latitude</label>
-          <input type="text" />
-        </div>
-
-        <div class="field">
-          <label>Longitude</label>
-          <input type="text" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field full">
-          <label>Mapa URL</label>
-          <input type="text" />
-        </div>
-      </div>
-
-      <button type="submit" class="btn-salvar">
-        Salvar Estabelecimento
-      </button>
-    </form>
+    <div class="field">
+      <label>Ativo</label>
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
-</div>
 
+  <div class="row">
+    <div class="field">
+      <label>Telefone</label>
+      <input type="text" placeholder="(11) 99999-9999" />
+    </div>
 
-  
+    <div class="field">
+      <label>Email de Contato</label>
+      <input type="email" placeholder="contato@empresa.com" />
+    </div>
 
-  <div class="page" data-page="promocoes">
+    <div class="field">
+      <label>Grupo</label>
+      <select>
+        <option>Selecione</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Categoria</label>
+      <select>
+        <option>Selecione</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="">Sobre</label>
+      <input type="text" placeholder="Breve descrição do estabelecimento" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <h3>Logo</h3>
+      <div>
+        <input type="file" name="" id="">
+      </div>
+    </div>
+
+    <div class="field">
+      <h3>Fachada</h3>
+      <div>
+        <input type="file" name="" id="">
+      </div>
+    </div>
+  </div>
+
+  <h3>Endereço</h3>
+
+  <div class="row">
+    <div class="field">
+      <label>CEP</label>
+      <input type="text" placeholder="00000-000" />
+    </div>
+
+    <div class="field">
+      <label>Estado</label>
+      <select>
+        <option>SP</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Cidade</label>
+      <select>
+        <option>Americana</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Rua</label>
+      <input type="text" placeholder="Ex: Avenida Brasil" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Número</label>
+      <input type="text" placeholder="123" />
+    </div>
+
+    <div class="field">
+      <label>Bairro</label>
+      <input type="text" placeholder="Centro" />
+    </div>
+
+    <div class="field">
+      <label>Complemento</label>
+      <input type="text" placeholder="Apto, sala, bloco (opcional)" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Latitude</label>
+      <input type="text" placeholder="-22.7392" />
+    </div>
+
+    <div class="field">
+      <label>Longitude</label>
+      <input type="text" placeholder="-47.3313" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field full">
+      <label>Mapa URL</label>
+      <input type="text" placeholder="https://maps.google.com/..." />
+    </div>
+  </div>
+
+  <button type="submit" class="btn-salvar">
+    Salvar Estabelecimento
+  </button>
+</form>
+
+  </div>
+    </div>
+
+    <div class="page" data-page="promocoes">
     <h1>Gerenciar Promoções</h1>
     <p>Criação e controle de promoções</p>
     <div id="listaPromocoes"></div>
-  </div>
+    </div>
         </div>
     </div>
     </div>
