@@ -255,6 +255,54 @@ function renderizarPromocoes(cupons) {
   `).join("");
 }
 
+function extrairLatLngGoogleMaps(url) {
+  if (!url || typeof url !== "string") return null;
+
+  // Padrão: @lat,lng
+  const regexAt = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+  const matchAt = url.match(regexAt);
+
+  if (matchAt) {
+    return {
+      latitude: parseFloat(matchAt[1]),
+      longitude: parseFloat(matchAt[2]),
+    };
+  }
+
+  // Fallback: !3dLAT!4dLNG
+  const regexFallback = /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/;
+  const matchFallback = url.match(regexFallback);
+
+  if (matchFallback) {
+    return {
+      latitude: parseFloat(matchFallback[1]),
+      longitude: parseFloat(matchFallback[2]),
+    };
+  }
+
+  return null;
+}
+
+const map = document.getElementById("mapurl");
+const btnMapa = document.querySelector(".btn-map");
+
+btnMapa.addEventListener("click", () => {
+  const url = map.value;
+  const coordenadas = extrairLatLngGoogleMaps(url);
+
+  if (!coordenadas) {
+    console.log("Coordenadas não encontradas");
+    return;
+  }
+  
+  document.querySelector(".lat").value = coordenadas.latitude
+  document.querySelector(".long").value = coordenadas.latitude
+
+  console.log("Latitude:", coordenadas.latitude);
+  console.log("Longitude:", coordenadas.longitude);
+});
+
+
 
 
 

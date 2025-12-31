@@ -233,6 +233,23 @@ padding-bottom: 16px;
 }
 
 
+.btn-map {
+   width: 200px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    border: 1px solid #4B57A3;
+    color: #4B57A3;
+    font-weight: 500;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+}
+
 /*
 .field.full {
   flex: 100%;
