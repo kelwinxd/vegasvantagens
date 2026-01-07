@@ -394,16 +394,92 @@ btnMapa.addEventListener("click", () => {
 
 //ESTAB
 
+function carregarCidades() {
+ 
+
+  const estadoId = document.getElementById("estadoId").value;
+  const token = localStorage.getItem("token");
+
+  if (!estadoId || !token) return;
+
+  fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar cidades.");
+    return res.json();
+  })
+  .then(cidades => {
+    const selectCidade = document.getElementById("cidadeId");
+    selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+    cidades.forEach(cidade => {
+      const option = document.createElement("option");
+      option.value = cidade.id;
+      option.textContent = cidade.nome;
+      selectCidade.appendChild(option);
+    });
+  })
+  .catch(err => {
+    alert("Erro ao carregar cidades: " + err.message);
+    console.error(err);
+  });
+
+  console.log("carregarCidades() chamado com estadoId =", estadoId);
+
+}
+
+function carregarEstados() {
+  const estados = [
+    { id: 1, nome: "São Paulo" },
+    { id: 2, nome: "Rio de Janeiro" },
+    { id: 3, nome: "Minas Gerais" }
+  ];
+
+  const selectEstado = document.getElementById("estadoId");
+  estados.forEach(estado => {
+    const option = document.createElement("option");
+    option.value = estado.id;
+    option.textContent = estado.nome;
+    selectEstado.appendChild(option);
+  });
+
+   console.log("Estados carregados:", Array.from(selectEstado.options).map(o => o.textContent));
+
+ 
+}
+
 window.onload = () => {
   carregarCategorias();
   carregarEstados();
 
-  document
-    .getElementById("formCadastro")
-    .addEventListener("submit", (e) => {
-      e.preventDefault();
-      cadastrarEstabelecimento();
+  const form = document.getElementById("formCadastro");
+
+  if (!form) {
+    console.warn("Formulário #formCadastro não encontrado.");
+    return;
+  }
+
+  form.addEventListener("submit", (e) => {
+    console.log("Submit disparado por:", document.activeElement);
+    console.log("ativado")
+    e.preventDefault();
+    cadastrarEstabelecimento();
+  });
+
+  const btnMapa = document.querySelector(".btn-map");
+  const map = document.getElementById("mapurl");
+
+  if (btnMapa && map) {
+    btnMapa.addEventListener("click", () => {
+      const coordenadas = extrairLatLngGoogleMaps(map.value);
+      if (!coordenadas) return;
+
+      document.querySelector(".lat").value = coordenadas.latitude;
+      document.querySelector(".long").value = coordenadas.longitude;
     });
+  }
 };
 
 async function enviarImagemEstabelecimento(estabelecimentoId, file, principal, fachada) {
@@ -500,7 +576,7 @@ async function cadastrarEstabelecimento() {
     }
 
     alert("Estabelecimento cadastrado com sucesso!");
-    document.getElementById("formCadastro").reset();
+    //document.getElementById("formCadastro").reset();
 
   } catch (err) {
     console.error(err);

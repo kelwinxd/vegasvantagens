@@ -146,29 +146,29 @@
   <!-- Subpage -->
   <div class="sub-page" data-subpage="criar-estab">
 
-<form id="formCadastro" class="form-estab">
+   <form class="form-estab" id="formCadastro">
   <h3 class="title-form">Dados Iniciais</h3>
 
   <div class="row">
     <div class="field">
       <label>Nome Fantasia</label>
-      <input id="nomeEstab" type="text" placeholder="Ex: Mercado Central" />
+      <input type="text" placeholder="Ex: Mercado Central" id="nomeEstab" />
     </div>
 
     <div class="field">
       <label>Razão Social</label>
-      <input id="razaoSocial" type="text" placeholder="Ex: Mercado Central LTDA" />
+      <input type="text" placeholder="Ex: Mercado Central LTDA" id="razaoSocial" />
     </div>
 
     <div class="field">
       <label>CNPJ</label>
-      <input id="cnpj" type="text" placeholder="00.000.000/0001-00" />
+      <input type="text" placeholder="00.000.000/0001-00" id="cnpj" />
     </div>
 
     <div class="field">
       <label>Ativo</label>
       <label class="switch">
-        <input id="ativoEstab" type="checkbox">
+        <input type="checkbox" id="ativoEstab">
         <span class="slider"></span>
       </label>
     </div>
@@ -177,17 +177,17 @@
   <div class="row">
     <div class="field">
       <label>Telefone</label>
-      <input id="telefone" type="text" placeholder="(11) 99999-9999" />
+      <input type="text" placeholder="(11) 99999-9999" id="telefone" />
     </div>
 
     <div class="field">
       <label>Email de Contato</label>
-      <input id="emailContato" type="email" placeholder="contato@empresa.com" />
+      <input type="email" placeholder="contato@empresa.com" id="emailContato" />
     </div>
 
     <div class="field">
       <label>Grupo</label>
-      <select id="grupoId">
+      <select id="grupo">
         <option>Selecione</option>
       </select>
     </div>
@@ -202,8 +202,8 @@
 
   <div class="row">
     <div class="field">
-      <label>Sobre</label>
-      <input id="sobre" type="text" placeholder="Breve descrição do estabelecimento" />
+      <label for="">Sobre</label>
+      <input type="text" placeholder="Breve descrição do estabelecimento" id="sobre" />
     </div>
   </div>
 
@@ -211,14 +211,14 @@
     <div class="field">
       <h3>Logo</h3>
       <div>
-        <input type="file" id="imagemPrincipal">
+        <input type="file" name="" id="logoImagem">
       </div>
     </div>
 
     <div class="field">
       <h3>Fachada</h3>
       <div>
-        <input type="file" id="imagemAdicional">
+        <input type="file" name=""  id="fachadaImagem">
       </div>
     </div>
   </div>
@@ -228,12 +228,12 @@
   <div class="row">
     <div class="field">
       <label>CEP</label>
-      <input id="cep" type="text" placeholder="00000-000" />
+      <input type="text" placeholder="00000-000"  id="cep"/>
     </div>
 
     <div class="field">
       <label>Estado</label>
-      <select id="estadoId" onchange="carregarCidades()">
+      <select id="estadoId">
         <option>SP</option>
       </select>
     </div>
@@ -247,57 +247,119 @@
 
     <div class="field">
       <label>Rua</label>
-      <input id="rua" type="text" placeholder="Ex: Avenida Brasil" />
+      <input type="text" placeholder="Ex: Avenida Brasil" id="rua"/>
     </div>
   </div>
 
   <div class="row">
     <div class="field">
       <label>Número</label>
-      <input id="numero" type="text" placeholder="123" />
+      <input type="text" placeholder="123" id="numero"/>
     </div>
 
     <div class="field">
       <label>Bairro</label>
-      <input id="bairro" type="text" placeholder="Centro" />
+      <input type="text" placeholder="Centro" id="bairro" />
     </div>
 
     <div class="field">
       <label>Complemento</label>
-      <input id="complemento" type="text" placeholder="Apto, sala, bloco (opcional)" />
+      <input type="text" placeholder="Apto, sala, bloco (opcional)"  id="complemento"/>
     </div>
   </div>
 
-  <div class="row">
+   <div class="row">
     <div class="field full">
       <label>Mapa URL</label>
       <input type="text" id="mapurl" placeholder="https://maps.google.com/..." />
     </div>
 
-    <button type="button" class="btn-map">Extrair Lat/Long</button>
+    <button class="btn-map" type="button">Extrair Lat/Long</button>
   </div>
 
-  <div class="row">
+  <div class="row ">
     <div class="field">
       <label>Latitude</label>
-      <input id="latitude" type="text" placeholder="-22.7392" class="lat" />
+      <input type="text" placeholder="-22.7392" class="lat" id="latitude"/>
     </div>
 
     <div class="field">
       <label>Longitude</label>
-      <input id="longitude" type="text" placeholder="-47.3313" class="long"/>
+      <input type="text" placeholder="-47.3313" class="long" id="longitude"/>
     </div>
   </div>
-
   <h3>Cartões Aceitos</h3>
 
-  <!-- cartões permanecem iguais -->
+ <div class="row cards-row">
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-1">
+    <span>Vegas Alimentação</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-2">
+    <span>Vegas Refeição</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-3">
+    <span>Vegas Day</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-4">
+    <span>Vegas Farmácia</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-5">
+    <span>Vegas Plus</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-6">
+    <span>Vegas Pay</span>
+  </label>
+</div>
+
+
+
+<div class="row">
+   
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-7">
+    <span>Vegas Natalino</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-8">
+    <span>Vegas Frota</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-9">
+    <span>Vegas GIF</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-10">
+    <span>Vegas Rastreador</span>
+  </label>
+
+  <label class="field-ratio">
+    <input type="checkbox" id="cartao-11">
+    <span>Vegas Combustível</span>
+  </label>
+</div>
+
+
+ 
 
   <button type="submit" class="btn-salvar">
     Salvar Estabelecimento
   </button>
 </form>
-
 
   </div>
     </div>
