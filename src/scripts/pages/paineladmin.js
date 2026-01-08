@@ -47,12 +47,16 @@ function renderizarLista(lista, containerId) {
 
   container.innerHTML = "";
 
+  
+
   if (lista.length === 0) {
     container.innerHTML = "<p>Nenhum estabelecimento.</p>";
     return;
   }
 
   const token = localStorage.getItem("token");
+
+  console.log(lista)
 
   lista.forEach(estab => {
     const card = document.createElement("div");
@@ -433,7 +437,7 @@ btnMapa.addEventListener("click", () => {
 function carregarCidades() {
  
 
-  const estadoId = document.getElementById("estadoId").value;
+  const estadoId = document.getElementById("estadoId2").value;
   const token = localStorage.getItem("token");
 
   if (!estadoId || !token) return;
@@ -473,7 +477,7 @@ function carregarEstados() {
     { id: 3, nome: "Minas Gerais" }
   ];
 
-  const selectEstado = document.getElementById("estadoId");
+  const selectEstado = document.getElementById("estadoId2");
   estados.forEach(estado => {
     const option = document.createElement("option");
     option.value = estado.id;
