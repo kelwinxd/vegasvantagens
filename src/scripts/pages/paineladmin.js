@@ -412,7 +412,7 @@ function carregarCidades() {
     return res.json();
   })
   .then(cidades => {
-    const selectCidade = document.getElementById("cidadeId");
+    const selectCidade = document.getElementById("cidadeId2");
     selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
     cidades.forEach(cidade => {
       const option = document.createElement("option");
@@ -502,35 +502,35 @@ async function cadastrarEstabelecimento() {
     return;
   }
 
-  const categoriaId = parseInt(document.getElementById("categoriaId").value) || null;
+  const categoriaId = parseInt(document.getElementById("categoriaId2").value) || null;
 
-  const cidadeSelect = document.getElementById("cidadeId");
+  const cidadeSelect = document.getElementById("cidadeId2");
   const cidadeId = cidadeSelect.value ? Number(cidadeSelect.value) : undefined;
 
 const data = {
-  nome: document.getElementById("nomeEstab").value.trim(),
-  razaoSocial: document.getElementById("razaoSocial").value.trim(),
-  cnpj: document.getElementById("cnpj").value.trim(),
-  telefone: document.getElementById("telefone").value.trim(),
-  emailContato: document.getElementById("emailContato").value.trim(),
-  ativo: document.getElementById("ativoEstab").checked,
+  nome: document.getElementById("nomeEstab2").value.trim(),
+  razaoSocial: document.getElementById("razaoSocial2").value.trim(),
+  cnpj: document.getElementById("cnpj2").value.trim(),
+  telefone: document.getElementById("telefone2").value.trim(),
+  emailContato: document.getElementById("emailContato2").value.trim(),
+  ativo: document.getElementById("ativoEstab2").checked,
 
   grupoId: null, // ok se o backend aceitar null
 
   cidadeId: cidadeId, // ✔ número ou undefined (NUNCA null)
 
-  rua: document.getElementById("rua").value.trim(),
-  numero: document.getElementById("numero").value.trim(),
-  bairro: document.getElementById("bairro").value.trim(),
-  complemento: document.getElementById("complemento").value.trim(),
-  cep: document.getElementById("cep").value.trim(),
+  rua: document.getElementById("rua2").value.trim(),
+  numero: document.getElementById("numero2").value.trim(),
+  bairro: document.getElementById("bairro2").value.trim(),
+  complemento: document.getElementById("complemento2").value.trim(),
+  cep: document.getElementById("cep2").value.trim(),
 
-  mapaUrl: document.getElementById("mapurl").value || null,
-  sobre: document.getElementById("sobre").value || "",
+  mapaUrl: document.getElementById("mapurl2").value || null,
+  sobre: document.getElementById("sobre2").value || "",
   status: "Rascunho",
 
-  latitude: Number(document.getElementById("latitude").value) || 0,
-  longitude: Number(document.getElementById("longitude").value) || 0
+  latitude: Number(document.getElementById("latitude2").value) || 0,
+  longitude: Number(document.getElementById("longitude2").value) || 0
 };
 
 
@@ -560,8 +560,8 @@ const data = {
     }
 
     // 🔹 envio das imagens
-    const logo = document.getElementById("logoImagem").files[0];
-    const fachada = document.getElementById("fachadaImagem").files[0];
+    const logo = document.getElementById("logoImagem2").files[0];
+    const fachada = document.getElementById("fachadaImagem2").files[0];
 
     if (logo) {
       await enviarImagemEstabelecimento(estab.id, logo, true, false);
@@ -609,7 +609,7 @@ function carregarCategorias() {
     return res.json();
   })
   .then(data => {
-    const select = document.getElementById("categoriaId");
+    const select = document.getElementById("categoriaId2");
     select.innerHTML = "";
 
     data.forEach(categoria => {
