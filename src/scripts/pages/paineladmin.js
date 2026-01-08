@@ -43,7 +43,8 @@ async function buscarEstabelecimentos() {
 
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
-   if (!container) return;
+  if (!container) return;
+
   container.innerHTML = "";
 
   if (lista.length === 0) {
@@ -51,9 +52,9 @@ function renderizarLista(lista, containerId) {
     return;
   }
 
-  lista.forEach(estab => {
+  const token = localStorage.getItem("token");
 
-    console.log(estab)
+  lista.forEach(estab => {
     const card = document.createElement("div");
     card.className = "card-estab";
 
@@ -68,19 +69,54 @@ function renderizarLista(lista, containerId) {
       "./imgs/default-image.png";
 
     const info = document.createElement("div");
+    info.className = "card-info";
     info.innerHTML = `
       <h3>${estab.nome}</h3>
-      <p>${estab.cidade}</p>
+      <p>${estab.cidade ?? ""}</p>
       <span class="status ${estab.ativo ? "ativo" : "inativo"}">
-        ${estab.ativo === 'true' ? "Ativo" : "Inativo"}
+        ${estab.ativo ? "Ativo" : "Inativo"}
       </span>
     `;
 
+    // 🔴 BOTÃO EXCLUIR
+    const btnExcluir = document.createElement("button");
+    btnExcluir.className = "btn-excluir";
+    btnExcluir.textContent = "Excluir";
+
+    btnExcluir.addEventListener("click", async (e) => {
+      e.stopPropagation(); // evita conflito com clique no card
+
+      if (!confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) return;
+
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/Estabelecimentos/${estab.id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Authorization": "Bearer " + token
+            }
+          }
+        );
+
+        if (!res.ok) throw new Error("Erro ao excluir");
+
+        card.remove();
+        alert("Estabelecimento excluído com sucesso!");
+
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao excluir o estabelecimento.");
+      }
+    });
+
     card.appendChild(img);
     card.appendChild(info);
+    card.appendChild(btnExcluir);
     container.appendChild(card);
   });
 }
+
 
 function atualizarDashboard() {
   document.getElementById("totalEstab").textContent =
