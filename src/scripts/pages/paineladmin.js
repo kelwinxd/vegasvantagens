@@ -504,40 +504,48 @@ async function cadastrarEstabelecimento() {
 
   const categoriaId = parseInt(document.getElementById("categoriaId").value) || null;
 
-  const data = {
-    nome: document.getElementById("nomeEstab").value,
-    razaoSocial: document.getElementById("razaoSocial").value,
-    cnpj: document.getElementById("cnpj").value,
-    telefone: document.getElementById("telefone").value,
-    emailContato: document.getElementById("emailContato").value,
-    ativo: document.getElementById("ativoEstab").checked,
+  const cidadeSelect = document.getElementById("cidadeId");
+  const cidadeId = cidadeSelect.value ? Number(cidadeSelect.value) : undefined;
 
-    grupoId: null,
+const data = {
+  nome: document.getElementById("nomeEstab").value.trim(),
+  razaoSocial: document.getElementById("razaoSocial").value.trim(),
+  cnpj: document.getElementById("cnpj").value.trim(),
+  telefone: document.getElementById("telefone").value.trim(),
+  emailContato: document.getElementById("emailContato").value.trim(),
+  ativo: document.getElementById("ativoEstab").checked,
 
-    cidadeId: parseInt(document.getElementById("cidadeId").value) || null,
-    rua: document.getElementById("rua").value,
-    numero: document.getElementById("numero").value,
-    bairro: document.getElementById("bairro").value,
-    complemento: document.getElementById("complemento").value,
-    cep: document.getElementById("cep").value,
+  grupoId: null, // ok se o backend aceitar null
 
-    mapaUrl: document.getElementById("mapurl").value || null,
-    sobre: document.getElementById("sobre").value || "",
-    status: "Rascunho",
+  cidadeId: cidadeId, // ✔ número ou undefined (NUNCA null)
 
-    latitude: parseFloat(document.getElementById("latitude").value) || 0,
-    longitude: parseFloat(document.getElementById("longitude").value) || 0
-  };
+  rua: document.getElementById("rua").value.trim(),
+  numero: document.getElementById("numero").value.trim(),
+  bairro: document.getElementById("bairro").value.trim(),
+  complemento: document.getElementById("complemento").value.trim(),
+  cep: document.getElementById("cep").value.trim(),
+
+  mapaUrl: document.getElementById("mapurl").value || null,
+  sobre: document.getElementById("sobre").value || "",
+  status: "Rascunho",
+
+  latitude: Number(document.getElementById("latitude").value) || 0,
+  longitude: Number(document.getElementById("longitude").value) || 0
+};
+
 
   try {
     const res = await fetch(`${API_BASE}/api/Estabelecimentos/Criar`, {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer " + token,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    request: data
+  })
+});
+
 
     if (!res.ok) {
       const erro = await res.text();
