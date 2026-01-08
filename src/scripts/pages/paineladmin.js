@@ -454,19 +454,7 @@ window.onload = () => {
   carregarCategorias();
   carregarEstados();
 
-  const form = document.getElementById("formCadastro");
-
-  if (!form) {
-    console.warn("Formulário #formCadastro não encontrado.");
-    return;
-  }
-
-  form.addEventListener("submit", (e) => {
-    console.log("Submit disparado por:", document.activeElement);
-    console.log("ativado")
-    e.preventDefault();
-    cadastrarEstabelecimento();
-  });
+  
 
   const btnMapa = document.querySelector(".btn-map");
   const map = document.getElementById("mapurl");
@@ -576,7 +564,7 @@ async function cadastrarEstabelecimento() {
     }
 
     alert("Estabelecimento cadastrado com sucesso!");
-    //document.getElementById("formCadastro").reset();
+    document.getElementById("formCadastro2").reset();
 
   } catch (err) {
     console.error(err);
@@ -638,6 +626,8 @@ function carregarCategorias() {
 buscarEstabelecimentos();
 carregarCuponsPromocoes();
 window.cadastrarCupom = cadastrarCupom;
+window.cadastrarEstabelecimento = cadastrarEstabelecimento;
+
 
 
 

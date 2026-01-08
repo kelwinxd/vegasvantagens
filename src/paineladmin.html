@@ -131,7 +131,7 @@
   <!-- Botão -->
    <div class="btns-subpage">
     <button data-open-subpage="lista-estab" class="active">Estabelecimentos</button>
-    <button data-open-subpage="criar-estab">+ Criar</button>
+    <button data-open-subpage="criar-estab" type="button">+ Criar</button>
 
    </div>
 
@@ -146,7 +146,7 @@
   <!-- Subpage -->
   <div class="sub-page" data-subpage="criar-estab">
 
-   <form class="form-estab" id="formCadastro">
+   <form class="form-estab" id="formCadastro2">
   <h3 class="title-form">Dados Iniciais</h3>
 
   <div class="row">
@@ -356,9 +356,8 @@
 
  
 
-  <button type="submit" class="btn-salvar">
-    Salvar Estabelecimento
-  </button>
+      <button type="button" onclick="cadastrarEstabelecimento()" class="cadastrar">Cadastrar Estabelecimento</button>
+
 </form>
 
   </div>
