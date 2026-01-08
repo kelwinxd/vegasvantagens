@@ -495,7 +495,7 @@ async function enviarImagemEstabelecimento(estabelecimentoId, file, principal, f
 
 
 
-async function cadastrarEstabelecimento() {
+async function cadastrarEstabelecimento2() {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado.");
@@ -634,7 +634,7 @@ function carregarCategorias() {
 buscarEstabelecimentos();
 carregarCuponsPromocoes();
 window.cadastrarCupom = cadastrarCupom;
-window.cadastrarEstabelecimento = cadastrarEstabelecimento;
+window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 
 
 
