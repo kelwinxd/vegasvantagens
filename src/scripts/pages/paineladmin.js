@@ -507,28 +507,32 @@ async function cadastrarEstabelecimento2() {
   const cidadeSelect = document.getElementById("cidadeId2");
   
 
-const data = 
- {
-  "nome": "Pasteur",
-  "razaoSocial": "Pasteur Social",
-  "cnpj": "51420081000110",
-  "telefone": "19993723677",
-  "emailContato": "pasteur@gmail.com",
-  "ativo": true,
-  "categoriaId": 1,
-  "cidadeId": 1,
-  "rua": "Rua Ósmio",
-  "numero": "54",
-  "bairro": "Vila Pavan",
-  "complemento": "-",
-  "cep": "13456625",
-  "latitude": -22.75430200635345, 
-  "longitude": -47.32805218929138,
+const data = {
+  "nome": document.getElementById("nomeEstab2").value.trim(),
+  "razaoSocial": document.getElementById("razaoSocial2").value.trim(),
+  "cnpj": document.getElementById("cnpj2").value.trim(),
+  "telefone": document.getElementById("telefone2").value.trim(),
+  "emailContato": document.getElementById("emailContato2").value.trim(),
+  "ativo": document.getElementById("ativoEstab2").checked,
+
+  "categoriaId": Number(document.getElementById("categoriaId2").value),
+  "cidadeId": Number(document.getElementById("cidadeId2").value),
+
+  "rua": document.getElementById("rua2").value.trim(),
+  "numero": document.getElementById("numero2").value.trim(),
+  "bairro": document.getElementById("bairro2").value.trim(),
+  "complemento": document.getElementById("complemento2").value.trim(),
+  "cep": document.getElementById("cep2").value.trim(),
+
+  "latitude": Number(document.getElementById("latitude2").value),
+  "longitude": Number(document.getElementById("longitude2").value),
+
   "grupoId": null,
-  "mapaUrl": "https://maps.app.goo.gl/k57BgvjWeXaGtKcb6",
-  "sobre": "Lab PAsteur",
+  "mapaUrl": document.getElementById("mapurl2").value.trim(),
+  "sobre": document.getElementById("sobre2").value.trim(),
   "status": "Rascunho"
-}
+};
+
 
 
 console.log('rodou antes do  try')
