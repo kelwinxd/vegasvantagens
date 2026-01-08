@@ -505,33 +505,35 @@ async function cadastrarEstabelecimento2() {
   const categoriaId = parseInt(document.getElementById("categoriaId2").value) || null;
 
   const cidadeSelect = document.getElementById("cidadeId2");
-  const cidadeId = cidadeSelect.value ? Number(cidadeSelect.value) : undefined;
+  
 
 const data = {
-  nome: document.getElementById("nomeEstab2").value.trim(),
-  razaoSocial: document.getElementById("razaoSocial2").value.trim(),
-  cnpj: document.getElementById("cnpj2").value.trim(),
-  telefone: document.getElementById("telefone2").value.trim(),
-  emailContato: document.getElementById("emailContato2").value.trim(),
-  ativo: document.getElementById("ativoEstab2").checked,
+  Nome: document.getElementById("nomeEstab2")?.value?.trim(),
+  RazaoSocial: document.getElementById("razaoSocial2")?.value?.trim(),
+  CNPJ: document.getElementById("cnpj2")?.value?.trim(),
+  Telefone: document.getElementById("telefone2")?.value?.trim(),
+  EmailContato: document.getElementById("emailContato2")?.value?.trim(),
+  Ativo: document.getElementById("ativoEstab2")?.checked ?? true,
 
-  grupoId: null, // ok se o backend aceitar null
+  GrupoId: null,
 
-  cidadeId: cidadeId, // ✔ número ou undefined (NUNCA null)
+  CidadeId: parseInt(document.getElementById("cidadeId2")?.value) || null,
 
-  rua: document.getElementById("rua2").value.trim(),
-  numero: document.getElementById("numero2").value.trim(),
-  bairro: document.getElementById("bairro2").value.trim(),
-  complemento: document.getElementById("complemento2").value.trim(),
-  cep: document.getElementById("cep2").value.trim(),
+  Rua: document.getElementById("rua2")?.value?.trim(),
+  Numero: document.getElementById("numero2")?.value?.trim(),
+  Bairro: document.getElementById("bairro2")?.value?.trim(),
+  Complemento: document.getElementById("complemento2")?.value?.trim(),
+  CEP: document.getElementById("cep2")?.value?.trim(),
 
-  mapaUrl: document.getElementById("mapurl2").value || null,
-  sobre: document.getElementById("sobre2").value || "",
-  status: "Rascunho",
+  MapaUrl: document.getElementById("mapurl2")?.value?.trim() || null,
+  Sobre: document.getElementById("sobre2")?.value?.trim() || "",
+  Status: "Rascunho",
 
-  latitude: Number(document.getElementById("latitude2").value) || 0,
-  longitude: Number(document.getElementById("longitude2").value) || 0
+  Latitude: parseFloat(document.getElementById("latitude2")?.value) || 0,
+  Longitude: parseFloat(document.getElementById("longitude2")?.value) || 0
 };
+
+console.log('rodou antes do  try')
 
 
   try {
@@ -545,6 +547,9 @@ const data = {
     request: data
   })
 });
+
+console.log('depois do try');
+
 
 
     if (!res.ok) {
