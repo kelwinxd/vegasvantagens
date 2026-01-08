@@ -548,6 +548,8 @@ console.log('rodou antes do  try')
   })
 });
 
+console.log(data)
+
 console.log('depois do try');
 
 
