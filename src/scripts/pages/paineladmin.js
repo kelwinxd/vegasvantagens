@@ -584,6 +584,36 @@ async function enviarImagemEstabelecimento(estabelecimentoId, file, principal, f
   }
 }
 
+//Cartões
+async function vincularCartoes(estabelecimentoId, cartoesIds) {
+  const token = localStorage.getItem("token");
+  if (!token || !cartoesIds.length) return;
+
+  const res = await fetch(
+    `${API_BASE}/api/Cartoes/${estabelecimentoId}/vincular-estabelecimento`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(cartoesIds)
+    }
+  );
+
+  if (!res.ok) {
+    const erro = await res.text();
+    throw new Error("Erro ao vincular cartões: " + erro);
+  }
+}
+
+function obterCartoesSelecionados() {
+  return Array.from(
+    document.querySelectorAll(".cards-row input[type='checkbox']:checked")
+  ).map(input => Number(input.id));
+}
+
+
 
 
 async function cadastrarEstabelecimento2() {
@@ -656,6 +686,12 @@ console.log('depois do try');
     // 🔹 VINCULAR CATEGORIA (AQUI ESTAVA FALTANDO)
     if (categoriaId) {
       await vincularCategoria(estab.id, categoriaId);
+    }
+
+    // 🔹 VINCULAR CARTÕES
+    const cartoesIds = obterCartoesSelecionados();
+    if (cartoesIds.length > 0) {
+  await vincularCartoes(estab.id, cartoesIds);
     }
 
     // 🔹 envio das imagens
