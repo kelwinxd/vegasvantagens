@@ -176,7 +176,8 @@ function atualizarDashboard() {
   document.getElementById("totalEstab").textContent =
     estabelecimentosCache.length;
 
-  filtrarDashboard("ativos");
+  filtrarDashboard("publicados");
+  filtrarDashboard("rascunhos")
 }
 
 function fecharSubPages() {
@@ -222,13 +223,22 @@ document.addEventListener("click", (e) => {
 
 
 
-function filtrarDashboard(status) {
-  const listaFiltrada = estabelecimentosCache.filter(e =>
-    status === "ativos" ? e.ativo : !e.ativo
-  );
+function filtrarDashboard(statusFiltro) {
+  const listaFiltrada = estabelecimentosCache.filter(estab => {
+    if (statusFiltro === "publicados") {
+      return estab.status === "Publicado";
+    }
+
+    if (statusFiltro === "rascunhos") {
+      return estab.status === "Rascunho";
+    }
+
+    return true; // fallback (todos)
+  });
 
   renderizarLista(listaFiltrada, "listaCardsDashboard");
 }
+
 
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
@@ -721,6 +731,8 @@ async function cadastrarEstabelecimento2() {
   const categoriaId = parseInt(document.getElementById("categoriaId2").value) || null;
 
   const cidadeSelect = document.getElementById("cidadeId2");
+
+  const ativo = document.getElementById("ativoEstab2").checked;
   
 
 const data = {
@@ -746,7 +758,7 @@ const data = {
   "grupoId": null,
   "mapaUrl": document.getElementById("mapurl2").value.trim(),
   "sobre": document.getElementById("sobre2").value.trim(),
-  "status": "Rascunho"
+  "status": ativo ? "Publicado" : "Rascunho"
 };
 
 
