@@ -568,45 +568,47 @@ btnMapa.addEventListener("click", () => {
 });
 
 
+
+
+
 //ESTAB
 
-function carregarCidades() {
- 
-
+async function carregarCidades() {
   const estadoId = document.getElementById("estadoId2").value;
   const token = localStorage.getItem("token");
 
   if (!estadoId || !token) return;
 
-  fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId}`, {
-    headers: {
-      "Authorization": "Bearer " + token
-    }
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Erro ao buscar cidades.");
-    return res.json();
-  })
-  .then(cidades => {
+  try {
+    const res = await fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId}`, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) throw new Error("Erro ao buscar cidades");
+
+    const cidades = await res.json();
+
     const selectCidade = document.getElementById("cidadeId2");
     selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+
     cidades.forEach(cidade => {
       const option = document.createElement("option");
       option.value = cidade.id;
       option.textContent = cidade.nome;
       selectCidade.appendChild(option);
     });
-  })
-  .catch(err => {
-    alert("Erro ao carregar cidades: " + err.message);
+
+    console.log("Cidades carregadas para estado:", estadoId);
+
+  } catch (err) {
+    alert("Erro ao carregar cidades");
     console.error(err);
-  });
-
-  console.log("carregarCidades() chamado com estadoId =", estadoId);
-
+  }
 }
 
-function carregarEstados() {
+async function carregarEstados() {
   const estados = [
     { id: 1, nome: "São Paulo" },
     { id: 2, nome: "Rio de Janeiro" },
@@ -614,6 +616,10 @@ function carregarEstados() {
   ];
 
   const selectEstado = document.getElementById("estadoId2");
+
+  // limpa antes
+  selectEstado.innerHTML = '<option value="">Selecione um estado</option>';
+
   estados.forEach(estado => {
     const option = document.createElement("option");
     option.value = estado.id;
@@ -621,16 +627,18 @@ function carregarEstados() {
     selectEstado.appendChild(option);
   });
 
-   console.log("Estados carregados:", Array.from(selectEstado.options).map(o => o.textContent));
+  console.log("Estados carregados");
 
- 
+  // 🔑 só chama cidades quando o estado mudar
+  selectEstado.addEventListener("change", carregarCidades);
 }
 
-window.onload = () => {
+
+window.onload = async () => {
   carregarCategorias();
-  carregarEstados();
+  await carregarEstados();
   carregarCartoes();
-  carregarCidades()
+  
 
   
 
