@@ -1069,6 +1069,7 @@ carregarCuponsPromocoes();
 window.cadastrarCupom = cadastrarCupom;
 window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
+window.fecharModalEditar = fecharModalEditar;
 
 
 
