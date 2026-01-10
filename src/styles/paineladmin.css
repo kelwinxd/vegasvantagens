@@ -457,6 +457,11 @@ line-height: 18px;
   color: white;
 }
 
+.tabs {
+  display: flex;
+  gap:10px;
+}
+
 .tabs button {
    width: 200px;
     height: 20px;
@@ -472,6 +477,12 @@ line-height: 18px;
     align-items: center;
     justify-content: center;
 }
+
+.tab.active {
+  color: #fff;
+}
+
+
 
 
 
