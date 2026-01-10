@@ -937,6 +937,9 @@ const data = {
 }
 
 async function abrirModalEditar(estab) {
+
+    // 🔹 Abre o modal
+  document.getElementById("modalEditarOverlay2").style.display = "flex";
   // 🔹 Carrega selects antes de setar valores
   await carregarCategoriasModal();
   await carregarEstadosModal();
@@ -987,8 +990,7 @@ async function abrirModalEditar(estab) {
     document.getElementById("cidadeId2-edit").value = estab.cidadeId || "";
   }
 
-  // 🔹 Abre o modal
-  document.getElementById("modalEditarOverlay").style.display = "flex";
+
 }
 
 async function carregarCategoriasModal() {

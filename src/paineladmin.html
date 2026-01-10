@@ -483,8 +483,8 @@
 
 
     <!-- MODAL EDITAR ESTABELECIMENTO -->
-<div id="modalEditarOverlay" class="modal-overlay" style="display:none;">
-  <div class="modal">
+<div id="modalEditarOverlay2" class="modal-overlay2" style="display:none;">
+  <div class="modal-edit">
 
     <header class="modal-header">
       <h2>Editar Estabelecimento</h2>
@@ -493,126 +493,127 @@
 
     <form id="formEditarEstabelecimento" onsubmit="salvarEdicaoEstabelecimento(event)">
 
-      <input type="hidden" id="editId">
+  <input type="hidden" id="editId-edit">
 
-      <!-- STATUS -->
-      <div class="row">
-        <label class="switch">
-          <input type="checkbox" id="editAtivoEstab">
-          <span class="slider"></span>
-        </label>
-        <span>Publicar estabelecimento</span>
-      </div>
+  <!-- STATUS -->
+  <div class="row">
+    <label class="switch">
+      <input type="checkbox" id="editAtivoEstab-edit">
+      <span class="slider"></span>
+    </label>
+    <span>Publicar estabelecimento</span>
+  </div>
 
-      <h3>Dados Principais</h3>
+  <h3>Dados Principais</h3>
 
-      <div class="grid">
-        <div class="field">
-          <label>Nome Fantasia</label>
-          <input id="editNomeEstab" required>
-        </div>
+  <div class="grid">
+    <div class="field">
+      <label>Nome Fantasia</label>
+      <input id="editNomeEstab-edit" required>
+    </div>
 
-        <div class="field">
-          <label>Razão Social</label>
-          <input id="editRazaoSocial">
-        </div>
+    <div class="field">
+      <label>Razão Social</label>
+      <input id="editRazaoSocial-edit">
+    </div>
 
-        <div class="field">
-          <label>CNPJ</label>
-          <input id="editCnpj">
-        </div>
+    <div class="field">
+      <label>CNPJ</label>
+      <input id="editCnpj-edit">
+    </div>
 
-        <div class="field">
-          <label>Telefone</label>
-          <input id="editTelefone">
-        </div>
+    <div class="field">
+      <label>Telefone</label>
+      <input id="editTelefone-edit">
+    </div>
 
-        <div class="field">
-          <label>Email</label>
-          <input id="editEmailContato" type="email">
-        </div>
-      </div>
+    <div class="field">
+      <label>Email</label>
+      <input id="editEmailContato-edit" type="email">
+    </div>
+  </div>
 
-      <h3>Localização</h3>
+  <h3>Localização</h3>
 
-      <div class="grid">
-        <div class="field">
-          <label>Estado</label>
-          <select id="editEstadoId" onchange="carregarCidades(true)"></select>
-        </div>
+  <div class="grid">
+    <div class="field">
+      <label>Estado</label>
+      <select id="editEstadoId-edit" onchange="carregarCidades(true)"></select>
+    </div>
 
-        <div class="field">
-          <label>Cidade</label>
-          <select id="editCidadeId" required></select>
-        </div>
+    <div class="field">
+      <label>Cidade</label>
+      <select id="editCidadeId-edit" required></select>
+    </div>
 
-        <div class="field">
-          <label>Rua</label>
-          <input id="editRua">
-        </div>
+    <div class="field">
+      <label>Rua</label>
+      <input id="editRua-edit">
+    </div>
 
-        <div class="field">
-          <label>Número</label>
-          <input id="editNumero">
-        </div>
+    <div class="field">
+      <label>Número</label>
+      <input id="editNumero-edit">
+    </div>
 
-        <div class="field">
-          <label>Bairro</label>
-          <input id="editBairro">
-        </div>
+    <div class="field">
+      <label>Bairro</label>
+      <input id="editBairro-edit">
+    </div>
 
-        <div class="field">
-          <label>Complemento</label>
-          <input id="editComplemento">
-        </div>
+    <div class="field">
+      <label>Complemento</label>
+      <input id="editComplemento-edit">
+    </div>
 
-        <div class="field">
-          <label>CEP</label>
-          <input id="editCep">
-        </div>
-      </div>
+    <div class="field">
+      <label>CEP</label>
+      <input id="editCep-edit">
+    </div>
+  </div>
 
-      <h3>Mapa</h3>
+  <h3>Mapa</h3>
 
-      <div class="grid">
-        <div class="field">
-          <label>Mapa (URL Google Maps)</label>
-          <input id="editMapaUrl">
-        </div>
+  <div class="grid">
+    <div class="field">
+      <label>Mapa (URL Google Maps)</label>
+      <input id="editMapaUrl-edit">
+    </div>
 
-        <div class="field">
-          <label>Latitude</label>
-          <input id="editLatitude">
-        </div>
+    <div class="field">
+      <label>Latitude</label>
+      <input id="editLatitude-edit">
+    </div>
 
-        <div class="field">
-          <label>Longitude</label>
-          <input id="editLongitude">
-        </div>
-      </div>
+    <div class="field">
+      <label>Longitude</label>
+      <input id="editLongitude-edit">
+    </div>
+  </div>
 
-      <h3>Categoria</h3>
+  <h3>Categoria</h3>
 
-      <div class="grid">
-        <div class="field">
-          <label>Categoria</label>
-          <select id="editCategoriaId"></select>
-        </div>
-      </div>
+  <div class="grid">
+    <div class="field">
+      <label>Categoria</label>
+      <select id="editCategoriaId-edit"></select>
+    </div>
+  </div>
 
-      <h3>Sobre</h3>
+  <h3>Sobre</h3>
 
-      <div class="field">
-        <textarea id="editSobre" rows="4"></textarea>
-      </div>
+  <div class="field">
+    <textarea id="editSobre-edit" rows="4"></textarea>
+  </div>
 
-      <!-- AÇÕES -->
-      <footer class="modal-actions">
-        <button type="button" class="btn-cancelar" onclick="fecharModalEditar()">Cancelar</button>
-        <button type="submit" class="btn-salvar" onclick="salvarEdicaoEstabelecimento()">Salvar alterações</button>
-      </footer>
+  <!-- AÇÕES -->
+  <footer class="modal-actions">
+    <button type="button" class="btn-cancelar" onclick="fecharModalEditar()">Cancelar</button>
+    <button type="submit" class="btn-salvar">Salvar alterações</button>
+  </footer>
 
-    </form>
+</form>
+
   </div>
 </div>
         </div>
