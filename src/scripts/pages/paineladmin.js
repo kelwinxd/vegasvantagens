@@ -41,6 +41,54 @@ async function buscarEstabelecimentos() {
   }
 }
 
+async function carregarCartoes() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cartoes`, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao buscar cartões");
+    }
+
+    const cartoes = await res.json();
+    const container = document.getElementById("cardsRow");
+
+    container.innerHTML = "";
+
+    cartoes.forEach(cartao => {
+      const label = document.createElement("label");
+      label.className = "field-ratio";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.id = cartao.id;
+
+      const span = document.createElement("span");
+      span.textContent = cartao.nome;
+
+      label.appendChild(input);
+      label.appendChild(span);
+
+      container.appendChild(label);
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível carregar os cartões.");
+  }
+}
+
+
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -493,6 +541,7 @@ function carregarEstados() {
 window.onload = () => {
   carregarCategorias();
   carregarEstados();
+  carregarCartoes();
 
   
 
