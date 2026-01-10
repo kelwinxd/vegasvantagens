@@ -97,16 +97,12 @@ function renderizarLista(lista, containerId) {
 
   container.innerHTML = "";
 
-  
-
   if (lista.length === 0) {
     container.innerHTML = "<p>Nenhum estabelecimento.</p>";
     return;
   }
 
   const token = localStorage.getItem("token");
-
-  console.log(lista)
 
   lista.forEach(estab => {
     const card = document.createElement("div");
@@ -128,17 +124,27 @@ function renderizarLista(lista, containerId) {
       <h3>${estab.nome}</h3>
       <p>${estab.cidade ?? ""}</p>
       <span class="status ${estab.status === "Publicado" ? "ativo" : "inativo"}">
-        ${estab.status === "Publicado" ? "Ativo" : "Inativo"}
+        ${estab.status}
       </span>
     `;
 
-    // 🔴 BOTÃO EXCLUIR
+    /* 🔵 BOTÃO EDITAR */
+    const btnEditar = document.createElement("button");
+    btnEditar.className = "btn-editar";
+    btnEditar.textContent = "Editar";
+
+    btnEditar.addEventListener("click", (e) => {
+      e.stopPropagation();
+      abrirModalEditar(estab);
+    });
+
+    /* 🔴 BOTÃO EXCLUIR */
     const btnExcluir = document.createElement("button");
     btnExcluir.className = "btn-excluir";
     btnExcluir.textContent = "Excluir";
 
     btnExcluir.addEventListener("click", async (e) => {
-      e.stopPropagation(); // evita conflito com clique no card
+      e.stopPropagation();
 
       if (!confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) return;
 
@@ -164,12 +170,18 @@ function renderizarLista(lista, containerId) {
       }
     });
 
+    const actions = document.createElement("div");
+    actions.className = "card-actions";
+    actions.appendChild(btnEditar);
+    actions.appendChild(btnExcluir);
+
     card.appendChild(img);
     card.appendChild(info);
-    card.appendChild(btnExcluir);
+    card.appendChild(actions);
     container.appendChild(card);
   });
 }
+
 
 
 function atualizarDashboard() {
@@ -868,6 +880,116 @@ function carregarCategorias() {
 }
 
 
+async function salvarEdicaoEstabelecimento(e) {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+  const id = document.getElementById("editId").value;
+
+  const ativo = document.getElementById("ativoEstab2-edit").checked;
+
+const data = {
+  "nome": document.getElementById("nomeEstab2-edit").value.trim(),
+  "razaoSocial": document.getElementById("razaoSocial2-edit").value.trim(),
+  "cnpj": document.getElementById("cnpj2-edit").value.trim(),
+  "telefone": document.getElementById("telefone2-edit").value.trim(),
+  "emailContato": document.getElementById("emailContato2-edit").value.trim(),
+  "ativo": ativo,
+
+  "categoriaId": Number(document.getElementById("categoriaId2-edit").value),
+  "cidadeId": Number(document.getElementById("cidadeId2-edit").value),
+
+  "rua": document.getElementById("rua2-edit").value.trim(),
+  "numero": document.getElementById("numero2-edit").value.trim(),
+  "bairro": document.getElementById("bairro2-edit").value.trim(),
+  "complemento": document.getElementById("complemento2-edit").value.trim(),
+  "cep": document.getElementById("cep2-edit").value.trim(),
+
+  "latitude": Number(document.getElementById("latitude2-edit").value),
+  "longitude": Number(document.getElementById("longitude2-edit").value),
+
+  "grupoId": null,
+  "mapaUrl": document.getElementById("mapurl2-edit").value.trim(),
+  "sobre": document.getElementById("sobre2-edit").value.trim(),
+  "status": ativo ? "Publicado" : "Rascunho"
+};
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Erro ao atualizar estabelecimento");
+
+    alert("Estabelecimento atualizado com sucesso!");
+    fecharModalEditar();
+    carregarDashboard(); // ou recarregar lista
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao salvar alterações");
+  }
+}
+
+async function abrirModalEditar(estab) {
+  // 🔹 Carrega selects antes de setar valores
+  await carregarCategoriasModal();
+  await carregarEstadosModal();
+
+  // 🔹 ID do estabelecimento
+  document.getElementById("editId").value = estab.id;
+
+  // 🔹 Dados principais
+  document.getElementById("nomeEstab2-edit").value = estab.nome || "";
+  document.getElementById("razaoSocial2-edit").value = estab.razaoSocial || "";
+  document.getElementById("cnpj2-edit").value = estab.cnpj || "";
+  document.getElementById("telefone2-edit").value = estab.telefone || "";
+  document.getElementById("emailContato2-edit").value = estab.emailContato || "";
+
+  // 🔹 Publicado / Rascunho
+  document.getElementById("ativoEstab2-edit").checked =
+    estab.status === "Publicado";
+
+  // 🔹 Categoria
+  document.getElementById("categoriaId2-edit").value =
+    estab.categoriaId || "";
+
+  // 🔹 Endereço
+  document.getElementById("rua2-edit").value = estab.rua || "";
+  document.getElementById("numero2-edit").value = estab.numero || "";
+  document.getElementById("bairro2-edit").value = estab.bairro || "";
+  document.getElementById("complemento2-edit").value = estab.complemento || "";
+  document.getElementById("cep2-edit").value = estab.cep || "";
+
+  // 🔹 Coordenadas
+  document.getElementById("latitude2-edit").value = estab.latitude || "";
+  document.getElementById("longitude2-edit").value = estab.longitude || "";
+
+  // 🔹 Extras
+  document.getElementById("mapurl2-edit").value = estab.mapaUrl || "";
+  document.getElementById("sobre2-edit").value = estab.sobre || "";
+
+  /**
+   * 🔹 ESTADO → CIDADE
+   * Só carrega cidades depois que o estado estiver definido
+   */
+  if (estab.estadoId) {
+    document.getElementById("estadoId2-edit").value = estab.estadoId;
+    await carregarCidades(true); // carrega cidades do estado selecionado
+    document.getElementById("cidadeId2-edit").value = estab.cidadeId || "";
+  }
+
+  // 🔹 Abre o modal
+  document.getElementById("modalEditarOverlay").style.display = "flex";
+}
+
+
+
 
 
 
@@ -877,6 +999,7 @@ buscarEstabelecimentos();
 carregarCuponsPromocoes();
 window.cadastrarCupom = cadastrarCupom;
 window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
+window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 
 
 
