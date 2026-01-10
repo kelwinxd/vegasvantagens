@@ -430,8 +430,17 @@ line-height: 18px;
 }
 
 .cards-row {
+  display: flex;
+  flex-wrap: wrap;          /* permite quebrar para a linha de baixo */
+  gap: 12px 24px;           /* espaço vertical e horizontal */
   margin-bottom: 16px;
-  
+}
+
+.cards-row .field-ratio {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;      /* NÃO quebra o texto */
+  max-width: 100%;
 }
 
 .lista-sidebar li {
