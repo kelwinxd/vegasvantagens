@@ -127,8 +127,8 @@ function renderizarLista(lista, containerId) {
     info.innerHTML = `
       <h3>${estab.nome}</h3>
       <p>${estab.cidade ?? ""}</p>
-      <span class="status ${estab.ativo ? "ativo" : "inativo"}">
-        ${estab.ativo ? "Ativo" : "Inativo"}
+      <span class="status ${estab.status === "Publicado" ? "ativo" : "inativo"}">
+        ${estab.status === "Publicado" ? "Ativo" : "Inativo"}
       </span>
     `;
 

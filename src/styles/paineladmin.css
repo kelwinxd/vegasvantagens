@@ -457,5 +457,21 @@ line-height: 18px;
   color: white;
 }
 
+.tabs button {
+   width: 200px;
+    height: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    border: 1px solid #4B57A3;
+    color: #4B57A3;
+    font-weight: 500;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 
