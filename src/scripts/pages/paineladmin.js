@@ -176,8 +176,7 @@ function atualizarDashboard() {
   document.getElementById("totalEstab").textContent =
     estabelecimentosCache.length;
 
-  filtrarDashboard("publicados");
-  filtrarDashboard("rascunhos")
+  
 }
 
 function fecharSubPages() {
