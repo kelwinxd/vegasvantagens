@@ -61,7 +61,7 @@ async function carregarCartoes() {
     }
 
     const cartoes = await res.json();
-    const container = document.getElementById("cardsRow");
+    const container = document.querySelector(".cards-row");
 
     container.innerHTML = "";
 
