@@ -936,6 +936,10 @@ const data = {
   }
 }
 
+function fecharModalEditar() {
+  document.getElementById("modalEditarOverlay2").style.display = "none";
+}
+
 async function abrirModalEditar(estab) {
 
     // 🔹 Abre o modal
