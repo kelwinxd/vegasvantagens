@@ -988,6 +988,68 @@ async function abrirModalEditar(estab) {
   document.getElementById("modalEditarOverlay").style.display = "flex";
 }
 
+async function carregarCategoriasModal() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado para carregar as categorias.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/CategoriasEstabelecimentos`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!res.ok) throw new Error("Erro ao buscar categorias: " + res.status);
+
+    const data = await res.json();
+
+    const select = document.getElementById("categoriaId2-edit");
+    select.innerHTML = `<option value="">Selecione uma categoria</option>`;
+
+    data.forEach(categoria => {
+      const option = document.createElement("option");
+      option.value = categoria.id;
+      option.textContent = categoria.nome;
+      select.appendChild(option);
+    });
+
+  } catch (err) {
+    alert("Erro ao carregar categorias: " + err.message);
+    console.error(err);
+  }
+}
+
+async function carregarEstadosModal() {
+  const estados = [
+    { id: 1, nome: "São Paulo" },
+    { id: 2, nome: "Rio de Janeiro" },
+    { id: 3, nome: "Minas Gerais" }
+  ];
+
+  const selectEstado = document.getElementById("estadoId2-edit");
+  selectEstado.innerHTML = `<option value="">Selecione um estado</option>`;
+
+  estados.forEach(estado => {
+    const option = document.createElement("option");
+    option.value = estado.id;
+    option.textContent = estado.nome;
+    selectEstado.appendChild(option);
+  });
+
+  console.log(
+    "Estados carregados (modal):",
+    Array.from(selectEstado.options).map(o => o.textContent)
+  );
+}
+
+document
+  .getElementById("estadoId2-edit")
+  .addEventListener("change", () => carregarCidades(true));
+
+
 
 
 
