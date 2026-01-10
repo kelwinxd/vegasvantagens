@@ -491,14 +491,14 @@
       <button class="modal-close" onclick="fecharModalEditar()">×</button>
     </header>
 
-    <form id="formEditarEstabelecimento" onsubmit="salvarEdicaoEstabelecimento(event)">
+   <form id="formEditarEstabelecimento" onsubmit="salvarEdicaoEstabelecimento(event)">
 
-  <input type="hidden" id="editId-edit">
+  <input type="hidden" id="idEstab2-edit">
 
   <!-- STATUS -->
   <div class="row">
     <label class="switch">
-      <input type="checkbox" id="editAtivoEstab-edit">
+      <input type="checkbox" id="ativoEstab2-edit">
       <span class="slider"></span>
     </label>
     <span>Publicar estabelecimento</span>
@@ -509,27 +509,27 @@
   <div class="grid">
     <div class="field">
       <label>Nome Fantasia</label>
-      <input id="editNomeEstab-edit" required>
+      <input id="nomeEstab2-edit" required>
     </div>
 
     <div class="field">
       <label>Razão Social</label>
-      <input id="editRazaoSocial-edit">
+      <input id="razaoSocial2-edit">
     </div>
 
     <div class="field">
       <label>CNPJ</label>
-      <input id="editCnpj-edit">
+      <input id="cnpj2-edit">
     </div>
 
     <div class="field">
       <label>Telefone</label>
-      <input id="editTelefone-edit">
+      <input id="telefone2-edit">
     </div>
 
     <div class="field">
       <label>Email</label>
-      <input id="editEmailContato-edit" type="email">
+      <input id="emailContato2-edit" type="email">
     </div>
   </div>
 
@@ -538,37 +538,37 @@
   <div class="grid">
     <div class="field">
       <label>Estado</label>
-      <select id="editEstadoId-edit" onchange="carregarCidades(true)"></select>
+      <select id="estadoId2-edit" onchange="carregarCidades(true)"></select>
     </div>
 
     <div class="field">
       <label>Cidade</label>
-      <select id="editCidadeId-edit" required></select>
+      <select id="cidadeId2-edit" required></select>
     </div>
 
     <div class="field">
       <label>Rua</label>
-      <input id="editRua-edit">
+      <input id="rua2-edit">
     </div>
 
     <div class="field">
       <label>Número</label>
-      <input id="editNumero-edit">
+      <input id="numero2-edit">
     </div>
 
     <div class="field">
       <label>Bairro</label>
-      <input id="editBairro-edit">
+      <input id="bairro2-edit">
     </div>
 
     <div class="field">
       <label>Complemento</label>
-      <input id="editComplemento-edit">
+      <input id="complemento2-edit">
     </div>
 
     <div class="field">
       <label>CEP</label>
-      <input id="editCep-edit">
+      <input id="cep2-edit">
     </div>
   </div>
 
@@ -577,17 +577,17 @@
   <div class="grid">
     <div class="field">
       <label>Mapa (URL Google Maps)</label>
-      <input id="editMapaUrl-edit">
+      <input id="mapurl2-edit">
     </div>
 
     <div class="field">
       <label>Latitude</label>
-      <input id="editLatitude-edit">
+      <input id="latitude2-edit">
     </div>
 
     <div class="field">
       <label>Longitude</label>
-      <input id="editLongitude-edit">
+      <input id="longitude2-edit">
     </div>
   </div>
 
@@ -596,23 +596,24 @@
   <div class="grid">
     <div class="field">
       <label>Categoria</label>
-      <select id="editCategoriaId-edit"></select>
+      <select id="categoriaId2-edit"></select>
     </div>
   </div>
 
   <h3>Sobre</h3>
 
   <div class="field">
-    <textarea id="editSobre-edit" rows="4"></textarea>
+    <textarea id="sobre2-edit" rows="4"></textarea>
   </div>
 
   <!-- AÇÕES -->
-  <footer class="modal-actions">
+  <div class="modal-actions">
     <button type="button" class="btn-cancelar" onclick="fecharModalEditar()">Cancelar</button>
     <button type="submit" class="btn-salvar">Salvar alterações</button>
-  </footer>
+  </div>
 
 </form>
+
 
   </div>
 </div>
