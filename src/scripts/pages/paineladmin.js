@@ -940,6 +940,9 @@ async function abrirModalEditar(estab) {
   // 🔹 Carrega selects antes de setar valores
   await carregarCategoriasModal();
   await carregarEstadosModal();
+  document
+  .getElementById("estadoId2-edit")
+  .addEventListener("change", () => carregarCidades(true));
 
   // 🔹 ID do estabelecimento
   document.getElementById("editId").value = estab.id;
@@ -1045,9 +1048,7 @@ async function carregarEstadosModal() {
   );
 }
 
-document
-  .getElementById("estadoId2-edit")
-  .addEventListener("change", () => carregarCidades(true));
+
 
 
 
