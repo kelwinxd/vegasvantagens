@@ -630,6 +630,7 @@ window.onload = () => {
   carregarCategorias();
   carregarEstados();
   carregarCartoes();
+  carregarCidades()
 
   
 
