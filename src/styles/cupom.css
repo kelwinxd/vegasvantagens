@@ -831,5 +831,65 @@ height: 14px;
 }
 
 
+.cupom-card {
+  display: flex;
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid #222;
+}
+
+.cupom-card img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+}
+
+.cupom-content {
+  padding: 12px 16px;
+  flex: 1;
+  color: #eee;
+}
+
+.cupom-content h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.cupom-content .titulo {
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.cupom-content p {
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+.cupom-content .expira {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.cupom-actions {
+  margin-top: 10px;
+}
+
+.cupom-actions button {
+  background: #b91c1c;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cupom-actions button:hover {
+  background: #dc2626;
+}
+
 
 

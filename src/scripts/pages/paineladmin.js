@@ -318,23 +318,108 @@ async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
   }
 }
 
-function renderizarPromocoes(cupons) {
+async function renderizarPromocoes(cupons) {
   const container = document.getElementById("listaPromocoes");
-
   if (!container) return;
+
+  container.innerHTML = "";
 
   if (cupons.length === 0) {
     container.innerHTML = "<p>Nenhuma promoção encontrada.</p>";
     return;
   }
 
-  container.innerHTML = cupons.map(c => `
-    <div class="cupom">
-      <strong>${c.titulo || "Cupom"}</strong>
-      <span>${c.nomeEstabelecimento}</span>
-    </div>
-  `).join("");
+  for (const c of cupons) {
+    const imagemUrl = await buscarImagemCupom(c.id);
+
+    const div = document.createElement("div");
+    div.classList.add("cupom-card");
+
+    div.innerHTML = `
+      ${imagemUrl ? `<img src="${imagemUrl}" alt="Imagem do cupom" />` : ""}
+
+      <div class="cupom-content">
+        <h2>${c.nomeEstabelecimento}</h2>
+
+        <p class="titulo">${c.titulo || "Cupom"}</p>
+        <p><strong>Código:</strong> ${c.codigo || "-"}</p>
+        <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
+        <p class="expira">
+          Expira em ${new Date(c.dataExpiracao).toLocaleDateString()}
+        </p>
+
+        <div class="cupom-actions">
+          <button class="btn-excluir" data-id="${c.id}">Excluir</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(div);
+  }
+
+  document.querySelectorAll(".btn-excluir").forEach(btn => {
+    btn.addEventListener("click", () =>
+      excluirCupomPromocao(btn.dataset.id)
+    );
+  });
 }
+
+
+async function excluirCupomPromocao(id) {
+  const confirmar = confirm("Tem certeza que deseja excluir este cupom?");
+  if (!confirmar) return;
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      const erro = await res.text();
+      throw new Error(erro);
+    }
+
+    alert("Cupom excluído com sucesso!");
+
+    // 🔄 Força recarregar ignorando cache
+    carregarCuponsPromocoes({ ignoreCache: true });
+
+  } catch (err) {
+    console.error("Erro ao excluir cupom:", err);
+    alert("Erro ao excluir cupom.");
+  }
+}
+
+async function buscarImagemCupom(cupomId) {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons/${cupomId}/imagens`, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) return null;
+
+    const imagens = await res.json();
+
+    if (!imagens || imagens.length === 0) return null;
+
+    // ajuste conforme o backend (url, caminho, base64 etc.)
+    return imagens[0].url || imagens[0].caminho || null;
+
+  } catch (err) {
+    console.error("Erro ao buscar imagem do cupom", err);
+    return null;
+  }
+}
+
 
 async function cadastrarCupom() {
   const token = localStorage.getItem("token");
