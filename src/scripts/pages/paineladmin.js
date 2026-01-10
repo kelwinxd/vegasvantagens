@@ -254,16 +254,14 @@ async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
   }
 
   const CACHE_KEY = "cache_cupons_promocoes";
-  const CACHE_TIME = 5 * 60 * 1000; // 5 minutos
+  const CACHE_TIME = 5 * 60 * 1000;
 
-  // 📦 Tentar cache
+  // 📦 Cache
   if (!options.ignoreCache) {
     const cache = localStorage.getItem(CACHE_KEY);
     if (cache) {
       const { data, timestamp } = JSON.parse(cache);
-
       if (Date.now() - timestamp < CACHE_TIME) {
-        console.log("✔ Cupons promoções carregados do cache");
         window._cuponsPromocoes = data;
         renderizarPromocoes(data);
         return;
@@ -271,10 +269,8 @@ async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
     }
   }
 
-  console.log("🔄 Buscando cupons para promoções...");
-
   try {
-    // Buscar estabelecimentos
+    // 🔹 Buscar estabelecimentos
     const resEstab = await fetch(`${API_BASE}/api/Estabelecimentos`, {
       headers: { Authorization: "Bearer " + token }
     });
@@ -283,34 +279,31 @@ async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
 
     const estabelecimentos = await resEstab.json();
 
-    // Buscar cupons em paralelo
-    const cuponsPorEstabelecimento = await Promise.all(
+    // 🔹 Buscar cupons por estabelecimento
+    const cuponsPorEstab = await Promise.all(
       estabelecimentos.map(estab =>
         fetch(`${API_BASE}/api/Cupons/por-estabelecimento/${estab.id}`, {
           headers: { Authorization: "Bearer " + token }
         })
           .then(res => res.ok ? res.json() : [])
-          .then(cupons => cupons.map(c => ({
-            ...c,
-            nomeEstabelecimento: estab.nome
-          })))
+          .then(cupons =>
+            cupons.map(c => ({
+              ...c,
+              nomeEstabelecimento: estab.nome
+            }))
+          )
           .catch(() => [])
       )
     );
 
-    const cupons = cuponsPorEstabelecimento.flat();
+    const cupons = cuponsPorEstab.flat();
 
-    // 💾 Salvar cache
     localStorage.setItem(
       CACHE_KEY,
-      JSON.stringify({
-        data: cupons,
-        timestamp: Date.now()
-      })
+      JSON.stringify({ data: cupons, timestamp: Date.now() })
     );
 
     window._cuponsPromocoes = cupons;
-
     renderizarPromocoes(cupons);
 
   } catch (err) {
@@ -318,44 +311,51 @@ async function carregarCuponsPromocoes(options = { ignoreCache: false }) {
   }
 }
 
-async function renderizarPromocoes(cupons) {
+
+function renderizarPromocoes(cupons) {
   const container = document.getElementById("listaPromocoes");
   if (!container) return;
 
   container.innerHTML = "";
 
-  if (cupons.length === 0) {
+  if (!cupons.length) {
     container.innerHTML = "<p>Nenhuma promoção encontrada.</p>";
     return;
   }
 
-  for (const c of cupons) {
-    const imagemUrl = await buscarImagemCupom(c.id);
+  cupons.forEach(c => {
+    const imagem =
+      c.imagens && c.imagens.length
+        ? c.imagens[0]
+        : "./imgs/woman-card.png";
 
-    const div = document.createElement("div");
-    div.classList.add("cupom-card");
-
-    div.innerHTML = `
-      ${imagemUrl ? `<img src="${imagemUrl}" alt="Imagem do cupom" />` : ""}
-
-      <div class="cupom-content">
-        <h2>${c.nomeEstabelecimento}</h2>
-
-        <p class="titulo">${c.titulo || "Cupom"}</p>
-        <p><strong>Código:</strong> ${c.codigo || "-"}</p>
-        <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
-        <p class="expira">
-          Expira em ${new Date(c.dataExpiracao).toLocaleDateString()}
-        </p>
-
-        <div class="cupom-actions">
-          <button class="btn-excluir" data-id="${c.id}">Excluir</button>
+    container.insertAdjacentHTML("beforeend", `
+      <article class="cupom-card">
+        <div class="cupom-media">
+          <img src="${imagem}" alt="Imagem do cupom" loading="lazy">
+          <span class="cupom-badge">
+            <strong>${c.titulo}</strong>
+          </span>
         </div>
-      </div>
-    `;
 
-    container.appendChild(div);
-  }
+        <div class="cupom-content">
+          <h3>${c.nomeEstabelecimento}</h3>
+
+          <p><strong>Código:</strong> ${c.codigo || "-"}</p>
+          <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
+          <p class="expira">
+            Expira em ${new Date(c.dataExpiracao).toLocaleDateString()}
+          </p>
+
+          <div class="cupom-actions">
+            <button class="btn-excluir" data-id="${c.id}">
+              Excluir
+            </button>
+          </div>
+        </div>
+      </article>
+    `);
+  });
 
   document.querySelectorAll(".btn-excluir").forEach(btn => {
     btn.addEventListener("click", () =>
@@ -363,6 +363,7 @@ async function renderizarPromocoes(cupons) {
     );
   });
 }
+
 
 
 async function excluirCupomPromocao(id) {
