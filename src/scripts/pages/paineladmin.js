@@ -27,7 +27,12 @@ async function buscarEstabelecimentos() {
       )
     );
 
+    console.log(detalhes)
+
     estabelecimentosCache = detalhes.filter(Boolean);
+
+    
+
 
     // Dashboard
     atualizarDashboard();
