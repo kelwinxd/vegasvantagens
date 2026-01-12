@@ -977,6 +977,7 @@ const data = {
 }
 
 function fecharModalEditar() {
+  document.getElementById("estadoId2-edit").value = " "
   document.getElementById("modalEditarOverlay2").style.display = "none";
 }
 
@@ -987,9 +988,7 @@ async function abrirModalEditar(estab) {
   // 🔹 Carrega selects antes de setar valores
   await carregarCategoriasModal();
   await carregarEstadosModal();
-  document
-  .getElementById("estadoId2-edit")
-  .addEventListener("change", () => carregarCidades(true));
+ 
 
   // 🔹 ID do estabelecimento
   document.getElementById("editId2").value = estab.id;
@@ -1015,6 +1014,8 @@ async function abrirModalEditar(estab) {
   document.getElementById("bairro2-edit").value = estab.bairro || "";
   document.getElementById("complemento2-edit").value = estab.complemento || "";
   document.getElementById("cep2-edit").value = estab.cep || "";
+  
+
 
   // 🔹 Coordenadas
   document.getElementById("latitude2-edit").value = estab.latitude || "";
