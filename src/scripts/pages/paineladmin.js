@@ -989,6 +989,8 @@ async function abrirModalEditar(estab) {
   // 🔹 Carrega selects antes de setar valores
   
   await carregarEstadosModal();
+  await carregarCategoriasModal(estab.categorias?.[0]);
+
  
 
   // 🔹 ID do estabelecimento
@@ -1006,8 +1008,7 @@ async function abrirModalEditar(estab) {
     estab.status === "Publicado";
 
   // 🔹 Categoria
-  document.getElementById("categoriaId2-edit").value =
-    estab.categorias[0] || "";
+ 
     console.log("categoria:", estab.categorias)
 
   // 🔹 Endereço
@@ -1040,7 +1041,7 @@ async function abrirModalEditar(estab) {
 
 }
 
-async function carregarCategoriasModal() {
+async function carregarCategoriasModal(categoriaNomeSelecionada = null) {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado para carregar as categorias.");
@@ -1065,6 +1066,15 @@ async function carregarCategoriasModal() {
       const option = document.createElement("option");
       option.value = categoria.id;
       option.textContent = categoria.nome;
+
+      // ⭐ AQUI ESTÁ A CHAVE
+      if (
+        categoriaNomeSelecionada &&
+        categoria.nome.toLowerCase() === categoriaNomeSelecionada.toLowerCase()
+      ) {
+        option.selected = true;
+      }
+
       select.appendChild(option);
     });
 
@@ -1073,6 +1083,7 @@ async function carregarCategoriasModal() {
     console.error(err);
   }
 }
+
 
 async function carregarEstadosModal() {
   const estados = [
