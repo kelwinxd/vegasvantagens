@@ -19,33 +19,60 @@ function corrigirCoordenada(valor, tipo) {
 // ---------------- API ----------------
 async function fetchAllStores(accessToken) {
   try {
-    const respLista = await fetch('https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos', {
-      headers: { 'Authorization': `Bearer ${accessToken}` }
-    });
-    if (!respLista.ok) throw new Error("Erro ao buscar lista geral");
+    const respLista = await fetch(
+      "https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    );
+
+    if (!respLista.ok) {
+      throw new Error("Erro ao buscar lista geral");
+    }
+
     const lista = await respLista.json();
 
+    // 🔹 FILTRA SOMENTE PUBLICADOS
+    const publicados = lista.filter(
+      loja => loja.status === "Publicado"
+    );
+
     const detalhes = await Promise.all(
-      lista.map(async loja => {
-        const detalheResp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${loja.id}`, {
-          headers: { 'Authorization': `Bearer ${accessToken}` }
-        });
+      publicados.map(async loja => {
+        const detalheResp = await fetch(
+          `https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${loja.id}`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          }
+        );
+
         if (!detalheResp.ok) return null;
         return await detalheResp.json();
       })
     );
 
-    const completos = detalhes.filter(e => e && e.latitude && e.longitude);
+    const completos = detalhes.filter(
+      e => e && e.latitude && e.longitude
+    );
+
     completos.forEach(l => {
       l._lat = corrigirCoordenada(l.latitude, "latitude");
       l._lng = corrigirCoordenada(l.longitude, "longitude");
     });
-    return completos.filter(l => !isNaN(l._lat) && !isNaN(l._lng));
+
+    return completos.filter(
+      l => !isNaN(l._lat) && !isNaN(l._lng)
+    );
+
   } catch (err) {
-    console.error("Erro ao buscar estabelecimentos completos:", err.message);
+    console.error(
+      "Erro ao buscar estabelecimentos completos:",
+      err.message
+    );
     return [];
   }
 }
+
 
 async function fetchStoreDetails(loginToken, storeId) {
   const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${storeId}`, {
