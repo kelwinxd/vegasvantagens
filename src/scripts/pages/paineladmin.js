@@ -952,7 +952,7 @@ async function abrirModalEditar(estab) {
   .addEventListener("change", () => carregarCidades(true));
 
   // 🔹 ID do estabelecimento
-  document.getElementById("editId").value = estab.id;
+  document.getElementById("editId2").value = estab.id;
 
   // 🔹 Dados principais
   document.getElementById("nomeEstab2-edit").value = estab.nome || "";
