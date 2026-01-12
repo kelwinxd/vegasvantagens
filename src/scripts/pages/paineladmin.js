@@ -978,6 +978,7 @@ const data = {
 
 function fecharModalEditar() {
   document.getElementById("estadoId2-edit").value = " "
+  document.getElementById("cidadeId2-edit").value = " "
   document.getElementById("modalEditarOverlay2").style.display = "none";
 }
 
@@ -1006,7 +1007,7 @@ async function abrirModalEditar(estab) {
 
   // 🔹 Categoria
   document.getElementById("categoriaId2-edit").value =
-    estab.categoriaId || "";
+    estab.categorias[0] || "";
 
   // 🔹 Endereço
   document.getElementById("rua2-edit").value = estab.rua || "";
