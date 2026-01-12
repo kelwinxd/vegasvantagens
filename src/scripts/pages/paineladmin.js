@@ -41,12 +41,38 @@ async function buscarEstabelecimentos() {
     // Página de gerenciamento
     renderizarLista(estabelecimentosCache, "listaCards");
     inicializarFiltroDashboard()
+    atualizarContadoresTabs();
 
   } catch (err) {
     console.error(err);
     alert("Erro ao carregar estabelecimentos");
   }
 }
+
+function contarEstabelecimentosPorStatus() {
+  const publicados = estabelecimentosCache.filter(
+    e => e.status === "Publicado"
+  ).length;
+
+  const rascunhos = estabelecimentosCache.filter(
+    e => e.status === "Rascunho"
+  ).length;
+
+  return { publicados, rascunhos };
+}
+
+function atualizarContadoresTabs() {
+  const { publicados, rascunhos } = contarEstabelecimentosPorStatus();
+
+  document
+    .querySelector('.tab[data-status="publicados"]')
+    .textContent = `Publicados (${publicados})`;
+
+  document
+    .querySelector('.tab[data-status="rascunhos"]')
+    .textContent = `Rascunho (${rascunhos})`;
+}
+
 
 async function carregarCartoes() {
   const token = localStorage.getItem("token");
