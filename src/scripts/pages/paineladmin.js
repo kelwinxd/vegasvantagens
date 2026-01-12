@@ -36,9 +36,11 @@ async function buscarEstabelecimentos() {
 
     // Dashboard
     atualizarDashboard();
+    
 
     // Página de gerenciamento
     renderizarLista(estabelecimentosCache, "listaCards");
+    inicializarFiltroDashboard()
 
   } catch (err) {
     console.error(err);
@@ -236,6 +238,13 @@ document.addEventListener("click", (e) => {
 });
 
 
+function inicializarFiltroDashboard() {
+  const tabAtiva = document.querySelector(".tab.active");
+
+  if (!tabAtiva) return;
+
+  filtrarDashboard(tabAtiva.dataset.status);
+}
 
 
 
