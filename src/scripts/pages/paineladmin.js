@@ -987,7 +987,7 @@ async function abrirModalEditar(estab) {
     // 🔹 Abre o modal
   document.getElementById("modalEditarOverlay2").style.display = "flex";
   // 🔹 Carrega selects antes de setar valores
-  await carregarCategoriasModal();
+  
   await carregarEstadosModal();
  
 
@@ -1008,6 +1008,7 @@ async function abrirModalEditar(estab) {
   // 🔹 Categoria
   document.getElementById("categoriaId2-edit").value =
     estab.categorias[0] || "";
+    console.log("categoria:", estab.categorias)
 
   // 🔹 Endereço
   document.getElementById("rua2-edit").value = estab.rua || "";
@@ -1113,6 +1114,7 @@ window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.fecharModalEditar = fecharModalEditar;
 window.carregarCidades2 = carregarCidades2;
+window.carregarCategoriasModal = carregarCategoriasModal();
 
 
 
