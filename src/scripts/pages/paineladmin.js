@@ -924,7 +924,7 @@ async function salvarEdicaoEstabelecimento(e) {
   e.preventDefault();
 
   const token = localStorage.getItem("token");
-  const id = document.getElementById("editId").value;
+  const id = document.getElementById("editId2").value;
 
   const ativo = document.getElementById("ativoEstab2-edit").checked;
 
