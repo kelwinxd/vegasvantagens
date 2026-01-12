@@ -968,7 +968,7 @@ const data = {
 
     alert("Estabelecimento atualizado com sucesso!");
     fecharModalEditar();
-    carregarDashboard(); // ou recarregar lista
+    atualizarDashboard()
 
   } catch (err) {
     console.error(err);
