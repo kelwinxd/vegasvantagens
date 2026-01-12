@@ -655,6 +655,41 @@ async function carregarEstados() {
   selectEstado.addEventListener("change", carregarCidades);
 }
 
+async function carregarCidades2() {
+  const estadoId2 = document.getElementById("estadoId2-edit").value;
+  const token = localStorage.getItem("token");
+
+  if (!estadoId2 || !token) return;
+
+  fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId2}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar cidades.");
+    return res.json();
+  })
+  .then(cidades => {
+    const selectCidade = document.getElementById("cidadeId2-edit");
+    selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+    cidades.forEach(cidade => {
+      const option = document.createElement("option");
+      option.value = cidade.id;
+      option.textContent = cidade.nome;
+      selectCidade.appendChild(option);
+    });
+  })
+  .catch(err => {
+    alert("Erro ao carregar cidades: " + err.message);
+    console.error(err);
+  });
+
+  console.log("carregarCidades() chamado com estadoId =", estadoId2);
+}
+
+
+
 
 window.onload = async () => {
   carregarCategorias();
@@ -1070,6 +1105,7 @@ window.cadastrarCupom = cadastrarCupom;
 window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.fecharModalEditar = fecharModalEditar;
+window.carregarCidades2 = carregarCidades2;
 
 
 
