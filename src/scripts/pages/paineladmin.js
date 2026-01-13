@@ -1023,32 +1023,106 @@ function renderizarImagensEdicao(estab) {
   const container = document.getElementById("imagensEditContainer");
   container.innerHTML = "";
 
-  if (!estab.imagens || estab.imagens.length === 0) {
-    container.innerHTML = "<p>Sem imagens cadastradas</p>";
-    return;
-  }
+  const imagens = estab.imagens || [];
 
-  estab.imagens.forEach(img => {
-    const div = document.createElement("div");
-    div.className = "imagem-edit-item";
+  const logo = imagens.find(img => img.logo === true);
+  const fachada = imagens.find(img => img.fachada === true);
 
+  // 🔹 LOGO
+  container.appendChild(
+    criarBlocoImagem({
+      titulo: "Logo",
+      imagem: logo,
+      estabId: estab.id,
+      isLogo: true,
+      isFachada: false
+    })
+  );
+
+  // 🔹 FACHADA
+  container.appendChild(
+    criarBlocoImagem({
+      titulo: "Fachada",
+      imagem: fachada,
+      estabId: estab.id,
+      isLogo: false,
+      isFachada: true
+    })
+  );
+}
+
+function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
+  const div = document.createElement("div");
+  div.className = "imagem-edit-item";
+
+  if (!imagem) {
+    // 🔹 NÃO existe imagem → input de upload
     div.innerHTML = `
-      <img src="${img.url}" style="width:120px; display:block; margin-bottom:8px;" />
-      
-      <button type="button" onclick="excluirImagem(${img.id}, ${estab.id})">
+      <strong>${titulo}</strong>
+
+      <img
+        src="/imgs/default-image.png"
+        style="width:120px; display:block; margin:8px 0;"
+      />
+
+      <input
+        type="file"
+        accept="image/*"
+        onchange="adicionarImagemNova(event, ${estabId}, ${isLogo}, ${isFachada})"
+      />
+    `;
+  } else {
+    // 🔹 EXISTE imagem → preview + substituir
+    div.innerHTML = `
+      <strong>${titulo}</strong>
+
+      <img
+        src="${imagem.url}"
+        style="width:120px; display:block; margin:8px 0;"
+      />
+
+      <button
+        type="button"
+        onclick="excluirImagem(${imagem.id}, ${estabId})"
+      >
         Excluir
       </button>
 
-      <input 
-        type="file" 
+      <input
+        type="file"
         accept="image/*"
-        onchange="substituirImagem(event, ${estab.id}, ${img.id}, ${img.logo}, ${img.fachada})"
+        onchange="substituirImagem(
+          event,
+          ${estabId},
+          ${imagem.id},
+          ${isLogo},
+          ${isFachada}
+        )"
       />
     `;
+  }
 
-    container.appendChild(div);
-  });
+  return div;
 }
+
+async function adicionarImagemNova(event, estabId, isLogo, isFachada) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  await enviarImagemEstabelecimento(
+    estabId,
+    file,
+    isLogo,
+    isFachada
+  );
+
+  alert("Imagem adicionada com sucesso");
+  recarregarEstabelecimentoEdit();
+}
+
+
+
+
 
 async function excluirImagem(imagemId, estabId) {
   const token = localStorage.getItem("token");
@@ -1285,7 +1359,7 @@ window.carregarCidades2 = carregarCidades2;
 window.carregarCategoriasModal = carregarCategoriasModal();
 window.substituirImagem = substituirImagem;
 window.excluirImagem = excluirImagem;
-
+window.adicionarImagemNova = adicionarImagemNova;
 
 
 
