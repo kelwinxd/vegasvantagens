@@ -622,8 +622,8 @@ btnMapa.addEventListener("click", () => {
     return;
   }
   
-  document.querySelector(".lat").value = coordenadas.latitude
-  document.querySelector(".long").value = coordenadas.latitude
+  document.querySelector(".latitude2").value = coordenadas.latitude
+  document.querySelector(".longitude2").value = coordenadas.latitude
 
   console.log("Latitude:", coordenadas.latitude);
   console.log("Longitude:", coordenadas.longitude);
