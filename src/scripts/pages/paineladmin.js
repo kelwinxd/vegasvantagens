@@ -708,9 +708,11 @@ async function carregarCidades2() {
   })
   .then(res => {
     if (!res.ok) throw new Error("Erro ao buscar cidades.");
+    
     return res.json();
   })
   .then(cidades => {
+    console.log(cidades)
     const selectCidade = document.getElementById("cidadeId2-edit");
     selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
     cidades.forEach(cidade => {
