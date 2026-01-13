@@ -1283,8 +1283,8 @@ window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.fecharModalEditar = fecharModalEditar;
 window.carregarCidades2 = carregarCidades2;
 window.carregarCategoriasModal = carregarCategoriasModal();
-window.substituirImagem = substituirImagem();
-window.excluirImagem = excluirImagem();
+window.substituirImagem = substituirImagem;
+window.excluirImagem = excluirImagem;
 
 
 
