@@ -610,7 +610,7 @@ function extrairLatLngGoogleMaps(url) {
   return null;
 }
 
-const map = document.getElementById("mapurl");
+const map = document.getElementById("mapurl2");
 const btnMapa = document.querySelector(".btn-map");
 
 btnMapa.addEventListener("click", () => {
@@ -889,6 +889,8 @@ console.log('depois do try');
     }
 
     // 🔹 envio das imagens
+
+    
     const logo = document.getElementById("logoImagem2").files[0];
     const fachada = document.getElementById("fachadaImagem2").files[0];
 
@@ -1017,6 +1019,124 @@ function fecharModalEditar() {
   document.getElementById("modalEditarOverlay2").style.display = "none";
 }
 
+function renderizarImagensEdicao(estab) {
+  const container = document.getElementById("imagensEditContainer");
+  container.innerHTML = "";
+
+  if (!estab.imagens || estab.imagens.length === 0) {
+    container.innerHTML = "<p>Sem imagens cadastradas</p>";
+    return;
+  }
+
+  estab.imagens.forEach(img => {
+    const div = document.createElement("div");
+    div.className = "imagem-edit-item";
+
+    div.innerHTML = `
+      <img src="${img.url}" style="width:120px; display:block; margin-bottom:8px;" />
+      
+      <button type="button" onclick="excluirImagem(${img.id}, ${estab.id})">
+        Excluir
+      </button>
+
+      <input 
+        type="file" 
+        accept="image/*"
+        onchange="substituirImagem(event, ${estab.id}, ${img.id}, ${img.logo}, ${img.fachada})"
+      />
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+async function excluirImagem(imagemId, estabId) {
+  const token = localStorage.getItem("token");
+
+  if (!confirm("Deseja realmente excluir esta imagem?")) return;
+
+  const res = await fetch(
+    `${API_BASE}/api/estabelecimentos/${estabId}/imagens/${imagemId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    }
+  );
+
+  if (!res.ok) {
+    alert("Erro ao excluir imagem");
+    return;
+  }
+
+  alert("Imagem excluída com sucesso");
+
+  // 🔄 Reabrir modal atualizado
+  recarregarEstabelecimentoEdit();
+}
+
+async function substituirImagem(
+  event,
+  estabId,
+  imagemId,
+  isLogo,
+  isFachada
+) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const token = localStorage.getItem("token");
+
+  // 1️⃣ Exclui a imagem antiga
+  const delResp = await fetch(
+    `${API_BASE}/api/estabelecimentos/${estabId}/imagens/${imagemId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    }
+  );
+
+  if (!delResp.ok) {
+    alert("Erro ao excluir imagem antiga");
+    return;
+  }
+
+  // 2️⃣ Envia a nova com os MESMOS parâmetros
+  await enviarImagemEstabelecimento(
+    estabId,
+    file,
+    isLogo,
+    isFachada
+  );
+
+  alert("Imagem substituída com sucesso");
+
+  // 🔄 Atualiza visual
+  recarregarEstabelecimentoEdit();
+}
+
+async function recarregarEstabelecimentoEdit() {
+  const id = document.getElementById("editId2").value;
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    `${API_BASE}/api/Estabelecimentos/${id}`,
+    {
+      headers: { Authorization: "Bearer " + token }
+    }
+  );
+
+  const estabAtualizado = await res.json();
+  renderizarImagensEdicao(estabAtualizado);
+}
+
+
+
+
+
 async function abrirModalEditar(estab) {
 
     // 🔹 Abre o modal
@@ -1062,6 +1182,8 @@ async function abrirModalEditar(estab) {
   // 🔹 Extras
   document.getElementById("mapurl2-edit").value = estab.mapaUrl || "";
   document.getElementById("sobre2-edit").value = estab.sobre || "";
+
+  renderizarImagensEdicao(estab);
 
   /**
    * 🔹 ESTADO → CIDADE
@@ -1161,6 +1283,9 @@ window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.fecharModalEditar = fecharModalEditar;
 window.carregarCidades2 = carregarCidades2;
 window.carregarCategoriasModal = carregarCategoriasModal();
+window.substituirImagem = substituirImagem();
+window.excluirImagem = excluirImagem();
+
 
 
 

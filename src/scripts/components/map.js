@@ -74,6 +74,7 @@ async function fetchAllStores(accessToken) {
 }
 
 
+
 async function fetchStoreDetails(loginToken, storeId) {
   const resp = await fetch(`https://apivegasvantagens-production.up.railway.app/api/Estabelecimentos/${storeId}`, {
     headers: { 'Authorization': `Bearer ${loginToken}` }
