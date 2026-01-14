@@ -519,8 +519,11 @@ line-height: 18px;
 }
 
 .ativo-edit {
+  
   display: flex;
   align-items: center;
+  margin: 0;
+
 
 }
 
