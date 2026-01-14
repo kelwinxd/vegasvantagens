@@ -1057,66 +1057,49 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
   const div = document.createElement("div");
   div.className = "imagem-edit-item";
 
-  if (!imagem) {
-    // 🔹 NÃO existe imagem → input de upload
-   div.innerHTML = `
-  <strong>${titulo}</strong>
+  const tipoClasse = isLogo ? "upload-logo" : "upload-fachada";
+  const srcImagem = imagem ? imagem.url : "/imgs/default-image.png";
 
-  <img
-    src="/imgs/default-image.png"
-    class="imagem-edit-preview"
-  />
+  div.innerHTML = `
+    <strong>${titulo}</strong>
 
-  <label class="imagem-edit-btn">
-    Selecionar imagem
-    <input
-      type="file"
-      accept="image/*"
-      class="imagem-edit-input"
-      onchange="adicionarImagemNova(event, ${estabId}, ${isLogo}, ${isFachada})"
-    />
-  </label>
-`;
+    <div class="upload-card ${tipoClasse}">
+      <img src="${srcImagem}" />
 
-  } else {
-    // 🔹 EXISTE imagem → preview + substituir
-    div.innerHTML = `
-  <strong>${titulo}</strong>
+      <div class="upload-overlay">
+        <label class="upload-action">
+          📤
+          <input
+            type="file"
+            accept="image/*"
+            onchange="${
+              imagem
+                ? `substituirImagem(event, ${estabId}, ${imagem.id}, ${isLogo}, ${isFachada})`
+                : `adicionarImagemNova(event, ${estabId}, ${isLogo}, ${isFachada})`
+            }"
+          />
+        </label>
 
-  <img
-    src="${imagem.url}"
-    class="imagem-edit-preview"
-  />
-
-  <button
-    type="button"
-    class="imagem-edit-btn imagem-edit-btn-danger"
-    onclick="excluirImagem(${imagem.id}, ${estabId})"
-  >
-    Excluir imagem
-  </button>
-
-  <label class="imagem-edit-btn imagem-edit-btn-secondary">
-    Substituir imagem
-    <input
-      type="file"
-      accept="image/*"
-      class="imagem-edit-input"
-      onchange="substituirImagem(
-        event,
-        ${estabId},
-        ${imagem.id},
-        ${isLogo},
-        ${isFachada}
-      )"
-    />
-  </label>
-`;
-
-  }
+        ${
+          imagem
+            ? `
+              <button
+                type="button"
+                class="upload-action danger"
+                onclick="excluirImagem(${imagem.id}, ${estabId})"
+              >
+                🗑
+              </button>
+            `
+            : ""
+        }
+      </div>
+    </div>
+  `;
 
   return div;
 }
+
 
 async function adicionarImagemNova(event, estabId, isLogo, isFachada) {
   const file = event.target.files[0];

@@ -533,84 +533,85 @@ line-height: 18px;
 
 /* Imagens Edit */ 
 
-/* Container do item */
-.imagem-edit-item {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 16px;
-  background: #ffffff;
-  max-width: 220px;
+.upload-card {
+  position: relative;
+  overflow: hidden;
+  background: #0f172a;
+  border: 2px dashed #334155;
+  transition: border-color 0.2s ease;
 }
 
-/* Título */
-.imagem-edit-item strong {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #374151;
+/* LOGO – circular */
+.upload-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+/* FACHADA – retangular */
+.upload-fachada {
+  width: 280px;
+  height: 160px;
+  border-radius: 12px;
 }
 
 /* Imagem */
-.imagem-edit-preview {
-  width: 120px;
-  height: 120px;
+.upload-card img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 12px;
-  border: 1px solid #d1d5db;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  display: block;
-  margin: 0 auto 12px auto;
-  background-color: #f9fafb;
 }
 
-/* Input file escondido */
-.imagem-edit-input {
+/* Overlay */
+.upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Hover */
+.upload-card:hover .upload-overlay {
+  opacity: 1;
+}
+
+.upload-card:hover {
+  border-color: #6366f1;
+}
+
+/* Ações */
+.upload-action {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1e293b;
+  color: #e5e7eb;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.upload-action:hover {
+  background: #334155;
+  transform: scale(1.05);
+}
+
+/* Excluir */
+.upload-action.danger:hover {
+  background: #dc2626;
+}
+
+/* Input invisível */
+.upload-action input {
   display: none;
 }
-
-/* Botão customizado */
-.imagem-edit-btn {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
-  background-color: #2563eb;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.imagem-edit-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.imagem-edit-btn:active {
-  transform: scale(0.98);
-}
-
-
-/* Botão secundário */
-.imagem-edit-btn-secondary {
-  margin-top: 8px;
-  background-color: #6b7280;
-}
-
-.imagem-edit-btn-secondary:hover {
-  background-color: #4b5563;
-}
-
-/* Botão de perigo (excluir) */
-.imagem-edit-btn-danger {
-  margin-bottom: 8px;
-  background-color: #dc2626;
-}
-
-.imagem-edit-btn-danger:hover {
-  background-color: #b91c1c;
-}
-
 
