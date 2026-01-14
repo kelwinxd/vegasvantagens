@@ -1068,7 +1068,7 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
 
       <div class="upload-overlay">
         <label class="upload-action">
-          📤
+          <img src="./imgs/image-up.png" class="icon-edit" />
           <input
             type="file"
             accept="image/*"
@@ -1088,7 +1088,7 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
                 class="upload-action danger"
                 onclick="excluirImagem(${imagem.id}, ${estabId})"
               >
-                🗑
+                <img src="./imgs/trash-02.png" class="icon-edit" />
               </button>
             `
             : ""

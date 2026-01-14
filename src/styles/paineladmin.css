@@ -533,6 +533,16 @@ line-height: 18px;
 
 /* Imagens Edit */ 
 
+.imagem-edit-item {
+  display: flex;
+  justify-content: space-around;
+}
+
+.icon-edit {
+  width: 44px;
+  height: 44px;
+}
+
 .upload-card {
   position: relative;
   overflow: hidden;
@@ -586,18 +596,17 @@ line-height: 18px;
 
 /* Ações */
 .upload-action {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #1e293b;
   color: #e5e7eb;
   border: none;
   cursor: pointer;
-  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: all 0.2s ease, transform 0.15s ease;
 }
 
 .upload-action:hover {
