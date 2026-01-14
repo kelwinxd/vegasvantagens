@@ -1347,7 +1347,7 @@ async function carregarGrupos() {
   const token = localStorage.getItem("token"); // ajuste se usar outro nome
 
   try {
-    const response = await fetch("/api/Grupos/grupos-ativos", {
+    const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
