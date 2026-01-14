@@ -1059,49 +1059,60 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
 
   if (!imagem) {
     // 🔹 NÃO existe imagem → input de upload
-    div.innerHTML = `
-      <strong>${titulo}</strong>
+   div.innerHTML = `
+  <strong>${titulo}</strong>
 
-      <img
-        src="/imgs/default-image.png"
-        style="width:120px; display:block; margin:8px 0;"
-      />
+  <img
+    src="/imgs/default-image.png"
+    class="imagem-edit-preview"
+  />
 
-      <input
-        type="file"
-        accept="image/*"
-        onchange="adicionarImagemNova(event, ${estabId}, ${isLogo}, ${isFachada})"
-      />
-    `;
+  <label class="imagem-edit-btn">
+    Selecionar imagem
+    <input
+      type="file"
+      accept="image/*"
+      class="imagem-edit-input"
+      onchange="adicionarImagemNova(event, ${estabId}, ${isLogo}, ${isFachada})"
+    />
+  </label>
+`;
+
   } else {
     // 🔹 EXISTE imagem → preview + substituir
     div.innerHTML = `
-      <strong>${titulo}</strong>
+  <strong>${titulo}</strong>
 
-      <img
-        src="${imagem.url}"
-        style="width:120px; display:block; margin:8px 0;"
-      />
+  <img
+    src="${imagem.url}"
+    class="imagem-edit-preview"
+  />
 
-      <button
-        type="button"
-        onclick="excluirImagem(${imagem.id}, ${estabId})"
-      >
-        Excluir
-      </button>
+  <button
+    type="button"
+    class="imagem-edit-btn imagem-edit-btn-danger"
+    onclick="excluirImagem(${imagem.id}, ${estabId})"
+  >
+    Excluir imagem
+  </button>
 
-      <input
-        type="file"
-        accept="image/*"
-        onchange="substituirImagem(
-          event,
-          ${estabId},
-          ${imagem.id},
-          ${isLogo},
-          ${isFachada}
-        )"
-      />
-    `;
+  <label class="imagem-edit-btn imagem-edit-btn-secondary">
+    Substituir imagem
+    <input
+      type="file"
+      accept="image/*"
+      class="imagem-edit-input"
+      onchange="substituirImagem(
+        event,
+        ${estabId},
+        ${imagem.id},
+        ${isLogo},
+        ${isFachada}
+      )"
+    />
+  </label>
+`;
+
   }
 
   return div;
