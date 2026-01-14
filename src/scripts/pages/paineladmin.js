@@ -744,6 +744,12 @@ window.onload = async () => {
   const btnMapa = document.querySelector(".btn-map");
   const map = document.getElementById("mapurl");
 
+  document.querySelector('[data-open-subpage="lista-grupo"]')
+  .addEventListener("click", () => {
+    carregarGrupos();
+  });
+
+
   if (btnMapa && map) {
     btnMapa.addEventListener("click", () => {
       const coordenadas = extrairLatLngGoogleMaps(map.value);
@@ -1334,6 +1340,57 @@ async function carregarEstadosModal() {
     Array.from(selectEstado.options).map(o => o.textContent)
   );
 }
+
+//GRUPO
+
+async function carregarGrupos() {
+  const token = localStorage.getItem("token"); // ajuste se usar outro nome
+
+  try {
+    const response = await fetch("/api/Grupos/grupos-ativos", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar grupos");
+    }
+
+    const grupos = await response.json();
+    renderizarListaGrupos(grupos);
+
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível carregar os grupos");
+  }
+}
+
+
+function renderizarListaGrupos(grupos) {
+  const container = document.getElementById("listaGrupo");
+  container.innerHTML = "";
+
+  if (!grupos || grupos.length === 0) {
+    container.innerHTML = "<p>Nenhum grupo encontrado.</p>";
+    return;
+  }
+
+  grupos.forEach(grupo => {
+    const div = document.createElement("div");
+    div.className = "card-item";
+
+    div.innerHTML = `
+      <h4>${grupo.nome}</h4>
+      ${grupo.siteURL ? `<a href="${grupo.siteURL}" target="_blank">Site</a>` : ""}
+    `;
+
+    container.appendChild(div);
+  });
+}
+
 
 
 

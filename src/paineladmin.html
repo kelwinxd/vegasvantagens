@@ -131,15 +131,21 @@
   <!-- Botão -->
    <div class="btns-subpage">
     <button data-open-subpage="lista-estab" class="active">Estabelecimentos</button>
-    
+    <button data-open-subpage="lista-grupo" class="">Grupos</button>
+
 
    </div>
 
 
  <!-- Lista -->
   <div class="sub-page active" data-subpage="lista-estab">
-    <button data-open-subpage="criar-estab" type="button">+ Criar Estabelecimento</button>
+    <button data-open-subpage="criar-estab" class="btn-action" type="button">+ Criar Estabelecimento</button>
+
     <div id="listaCards" class="lista-cards"></div>
+  </div>
+
+  <div class="sub-page" data-subpage="lista-grupo">
+    <div id="listaGrupo" class="lista-cards"></div>
   </div>
  
   
