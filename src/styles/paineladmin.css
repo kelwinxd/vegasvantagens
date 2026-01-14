@@ -526,7 +526,8 @@ line-height: 18px;
 
 #imagensEditContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 20px;
   padding-inline: 10px;
   width: 100%;
 }
@@ -627,7 +628,7 @@ line-height: 18px;
 }
 
 .icon-edit {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 }
 
