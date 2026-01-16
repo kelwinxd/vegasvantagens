@@ -1343,6 +1343,8 @@ async function carregarEstadosModal() {
 
 //GRUPO
 
+let grupoSelecionadoId = null;
+
 async function carregarGrupos() {
   const token = localStorage.getItem("token"); // ajuste se usar outro nome
 
@@ -1368,6 +1370,93 @@ async function carregarGrupos() {
   }
 }
 
+async function garantirEstabelecimentosNoCache() {
+  if (estabelecimentosCache.length > 0) {
+    return estabelecimentosCache;
+  }
+
+  await buscarEstabelecimentos();
+  return estabelecimentosCache;
+}
+
+async function abrirModalVincular(grupoId) {
+  grupoSelecionadoId = grupoId;
+
+  const modal = document.getElementById("modalVincularEstab");
+  const lista = document.getElementById("listaEstabModal");
+
+  lista.innerHTML = "<p>Carregando...</p>";
+  modal.classList.remove("hidden");
+
+  const estabelecimentos = await garantirEstabelecimentosNoCache();
+
+  lista.innerHTML = "";
+
+  estabelecimentos.forEach(estab => {
+    const item = document.createElement("div");
+    item.className = "item-checkbox";
+
+    item.innerHTML = `
+      <label>
+        <input type="checkbox" value="${estab.id}">
+        ${estab.nome}
+      </label>
+    `;
+
+    lista.appendChild(item);
+  });
+}
+
+function fecharModalVincular() {
+  document.getElementById("modalVincularEstab").classList.add("hidden");
+  grupoSelecionadoId = null;
+}
+
+async function confirmarVinculo() {
+  if (!grupoSelecionadoId) return;
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  const selecionados = [
+    ...document.querySelectorAll("#listaEstabModal input[type='checkbox']:checked")
+  ].map(cb => cb.value);
+
+  if (selecionados.length === 0) {
+    alert("Selecione ao menos um estabelecimento.");
+    return;
+  }
+
+  try {
+    await Promise.all(
+      selecionados.map(estabId =>
+        fetch(
+          `${API_BASE}/api/Grupos/${grupoSelecionadoId}/vincular-estabelecimentos/${estabId}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token
+            }
+          }
+        ).then(res => {
+          if (!res.ok) {
+            throw new Error("Erro ao vincular estabelecimento " + estabId);
+          }
+        })
+      )
+    );
+
+    alert("Estabelecimentos vinculados com sucesso!");
+    fecharModalVincular();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao vincular um ou mais estabelecimentos.");
+  }
+}
 
 function renderizarListaGrupos(grupos) {
   const container = document.getElementById("listaGrupo");
@@ -1385,11 +1474,15 @@ function renderizarListaGrupos(grupos) {
     div.innerHTML = `
       <h4>${grupo.nome}</h4>
       ${grupo.siteURL ? `<a href="${grupo.siteURL}" target="_blank">Site</a>` : ""}
+      <button onclick="abrirModalVincular(${grupo.id})">
+        Adicionar estabelecimentos
+      </button>
     `;
 
     container.appendChild(div);
   });
 }
+
 
 
 
@@ -1413,6 +1506,8 @@ window.carregarCategoriasModal = carregarCategoriasModal();
 window.substituirImagem = substituirImagem;
 window.excluirImagem = excluirImagem;
 window.adicionarImagemNova = adicionarImagemNova;
+window.confirmarVinculo = confirmarVinculo;
+window.abrirModalVincular = abrirModalVincular;
 
 
 
