@@ -637,3 +637,110 @@ line-height: 18px;
   height: 24px;
 }
 
+/* Overlay */
+.modal-gp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+/* Esconde o modal */
+.modal-gp.hidden {
+  display: none;
+}
+
+/* Conteúdo do modal */
+.modal-gp-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+
+  border-radius: 10px;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Título */
+.modal-gp-content h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Lista de estabelecimentos */
+.lista-modal-gp {
+  flex: 1;
+  overflow-y: auto;
+
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+
+  padding: 10px;
+  margin-bottom: 16px;
+}
+
+/* Item com checkbox */
+.lista-modal-gp .item-checkbox {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.lista-modal-gp .item-checkbox:last-child {
+  border-bottom: none;
+}
+
+.lista-modal-gp .item-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Ações do modal */
+.modal-gp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Botões */
+.modal-gp-actions button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Botão cancelar */
+.modal-gp-actions button:first-child {
+  background: #e0e0e0;
+  color: #333;
+}
+
+/* Botão adicionar */
+.modal-gp-actions button:last-child {
+  background: #1976d2;
+  color: #fff;
+}
+
+.modal-gp-actions button:last-child:hover {
+  background: #155fa0;
+}

@@ -636,13 +636,13 @@
 
 <!---Modal Grupo Vincular -->
 
-<div id="modalVincularEstab" class="modal hidden">
-  <div class="modal-content">
+<div id="modalVincularEstab" class="modal-gp hidden" onclick="fecharModalVincular()">
+  <div class="modal-gp-content" onclick="event.stopPropagation()">
     <h3>Vincular estabelecimentos</h3>
 
-    <div id="listaEstabModal" class="lista-modal"></div>
+    <div id="listaEstabModal" class="lista-modal-gp"></div>
 
-    <div class="modal-actions">
+    <div class="modal-gp-actions">
       <button onclick="fecharModalVincular()">Cancelar</button>
       <button onclick="confirmarVinculo()">Adicionar</button>
     </div>

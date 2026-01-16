@@ -1508,6 +1508,7 @@ window.excluirImagem = excluirImagem;
 window.adicionarImagemNova = adicionarImagemNova;
 window.confirmarVinculo = confirmarVinculo;
 window.abrirModalVincular = abrirModalVincular;
+window.fecharModalVincular = fecharModalVincular;
 
 
 
