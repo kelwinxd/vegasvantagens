@@ -744,3 +744,15 @@ line-height: 18px;
 .modal-gp-actions button:last-child:hover {
   background: #155fa0;
 }
+
+.modal-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
+.empty-text {
+  font-size: 13px;
+  color: #777;
+  font-style: italic;
+}

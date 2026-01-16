@@ -1379,33 +1379,79 @@ async function garantirEstabelecimentosNoCache() {
   return estabelecimentosCache;
 }
 
+
+
 async function abrirModalVincular(grupoId) {
   grupoSelecionadoId = grupoId;
 
-  const modal = document.getElementById("modalVincularEstab");
-  const lista = document.getElementById("listaEstabModal");
+  document.getElementById("modalVincularEstab").classList.remove("hidden");
 
-  lista.innerHTML = "<p>Carregando...</p>";
-  modal.classList.remove("hidden");
+  const listaVinculados = document.getElementById("listaEstabVinculados");
+  const listaDisponiveis = document.getElementById("listaEstabModal");
 
-  const estabelecimentos = await garantirEstabelecimentosNoCache();
+  listaVinculados.innerHTML = "Carregando...";
+  listaDisponiveis.innerHTML = "Carregando...";
 
-  lista.innerHTML = "";
+  try {
+    // garante cache
+    const todos = await garantirEstabelecimentosNoCache();
 
-  estabelecimentos.forEach(estab => {
-    const item = document.createElement("div");
-    item.className = "item-checkbox";
+    // busca os já vinculados
+    const vinculados = await buscarEstabelecimentosDoGrupo(grupoId);
 
-    item.innerHTML = `
-      <label>
-        <input type="checkbox" value="${estab.id}">
-        ${estab.nome}
-      </label>
-    `;
+    const idsVinculados = vinculados.map(e => e.id);
 
-    lista.appendChild(item);
-  });
+    /* =========================
+       LISTA DE JÁ VINCULADOS
+    ========================== */
+
+    if (!vinculados || vinculados.length === 0) {
+      listaVinculados.innerHTML =
+        "<p class='empty-text'>Nenhum estabelecimento cadastrado nesse grupo.</p>";
+    } else {
+      listaVinculados.innerHTML = "";
+      vinculados.forEach(estab => {
+        const div = document.createElement("div");
+        div.className = "item-checkbox";
+        div.innerHTML = `<span>${estab.nome}</span>`;
+        listaVinculados.appendChild(div);
+      });
+    }
+
+    /* =========================
+       LISTA DE DISPONÍVEIS
+    ========================== */
+
+    const disponiveis = todos.filter(
+      e => !idsVinculados.includes(e.id)
+    );
+
+    if (disponiveis.length === 0) {
+      listaDisponiveis.innerHTML =
+        "<p class='empty-text'>Nenhum estabelecimento disponível.</p>";
+      return;
+    }
+
+    listaDisponiveis.innerHTML = "";
+    disponiveis.forEach(estab => {
+      const div = document.createElement("div");
+      div.className = "item-checkbox";
+      div.innerHTML = `
+        <label>
+          <input type="checkbox" value="${estab.id}">
+          ${estab.nome}
+        </label>
+      `;
+      listaDisponiveis.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error(err);
+    listaVinculados.innerHTML = "Erro ao carregar dados.";
+    listaDisponiveis.innerHTML = "";
+  }
 }
+
 
 function fecharModalVincular() {
   document.getElementById("modalVincularEstab").classList.add("hidden");
@@ -1482,6 +1528,22 @@ function renderizarListaGrupos(grupos) {
     container.appendChild(div);
   });
 }
+
+async function buscarEstabelecimentosDoGrupo(grupoId) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    `${API_BASE}/api/Grupos/${grupoId}/estabelecimentos-por-grupo`,
+    {
+      headers: { Authorization: "Bearer " + token }
+    }
+  );
+
+  if (!res.ok) throw new Error("Erro ao buscar estabelecimentos do grupo");
+
+  return await res.json();
+}
+
 
 
 
