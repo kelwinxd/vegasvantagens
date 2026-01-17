@@ -255,6 +255,10 @@ function inicializarBuscaEstabelecimentos() {
   });
 }
 
+document.querySelector(".search-estab").addEventListener("input", e => {
+    filtrarEstabelecimentos(e.target.value);
+  });
+
 
 function atualizarDashboard() {
   document.getElementById("totalEstab").textContent =
