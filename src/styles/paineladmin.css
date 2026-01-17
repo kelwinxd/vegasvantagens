@@ -287,6 +287,7 @@ border: 1.103px solid #CDCACA;
 .field.switch {
   justify-content: center;
   align-items: center;
+  
 }
 
 .btn-salvar {
@@ -311,6 +312,9 @@ border: 1.103px solid #CDCACA;
   padding: 4px;
 
 }
+.sw-edit {
+  align-self: center;
+}
 
 .switch input {
   opacity: 0;
@@ -330,7 +334,7 @@ border: 1.103px solid #CDCACA;
 }
 
 /* bolinha */
-.slider::before {
+.slider-edit::before {
   content: "";
   position: absolute;
   height: 18px;
@@ -531,7 +535,7 @@ line-height: 18px;
   align-items: center;
   margin: 0;
   padding: 0;
-  background-color: blue;
+  
 
 
 }

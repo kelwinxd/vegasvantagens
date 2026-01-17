@@ -1353,8 +1353,8 @@ async function abrirModalEditar(estab) {
    */
   if (estab.unidadeFederativaId) {
     document.getElementById("estadoId2-edit").value = estab.unidadeFederativaId;
-    await carregarCidades(true); // carrega cidades do estado selecionado
-    document.getElementById("cidadeId2-edit").value = estab.cidadeId || "";
+    await carregarCidades2(); // carrega cidades do estado selecionado
+    document.getElementById("cidadeId2-edit").value = estab.cidade || "";
   }
 
 
