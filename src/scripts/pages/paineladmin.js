@@ -215,6 +215,33 @@ function renderizarLista(lista, containerId) {
   });
 }
 
+function filtrarEstabelecimentos(texto) {
+  const containerId = "listaCards";
+
+  if (!texto || texto.trim() === "") {
+    renderizarLista(estabelecimentosCache, containerId);
+    return;
+  }
+
+  const termo = texto.toLowerCase();
+
+  const filtrados = estabelecimentosCache.filter(estab =>
+    estab.nome?.toLowerCase().includes(termo) ||
+    estab.cidade?.toLowerCase().includes(termo) ||
+    estab.status?.toLowerCase().includes(termo)
+  );
+
+  renderizarLista(filtrados, containerId);
+}
+
+function inicializarBuscaEstabelecimentos() {
+  const input = document.querySelector(".search-estab");
+  if (!input) return;
+
+  input.addEventListener("input", e => {
+    filtrarEstabelecimentos(e.target.value);
+  });
+}
 
 
 function atualizarDashboard() {
@@ -1513,21 +1540,45 @@ function renderizarListaGrupos(grupos) {
     return;
   }
 
-  grupos.forEach(grupo => {
-    const div = document.createElement("div");
-    div.className = "card-item";
+  container.classList.add("grupo-wrapper");
 
-    div.innerHTML = `
-      <h4>${grupo.nome}</h4>
-      ${grupo.siteURL ? `<a href="${grupo.siteURL}" target="_blank">Site</a>` : ""}
-      <button onclick="abrirModalVincular(${grupo.id})">
-        Adicionar estabelecimentos
-      </button>
+  grupos.forEach(grupo => {
+    const logo = grupo.logoCaminho
+      ? `${API_BASE}${grupo.logoCaminho}`
+      : "default.png";
+
+    const card = document.createElement("div");
+    card.className = "grupo-card";
+
+    card.innerHTML = `
+      <div class="grupo-logo">
+        <img src="${logo}" alt="Logo ${grupo.nome}"
+             onerror="this.src='default.png'">
+      </div>
+
+      <div class="grupo-info">
+        <h4>${grupo.nome}</h4>
+
+        ${grupo.siteURL
+          ? `<a href="${grupo.siteURL}" target="_blank">Site</a>`
+          : `<span class="site-placeholder">Sem site</span>`}
+
+        <span class="grupo-count">
+          ${grupo.estabelecimentosCount || 0} estabelecimentos
+        </span>
+      </div>
+
+      <div class="grupo-actions">
+        <button onclick="abrirModalVincular(${grupo.id})">
+          Adicionar estabelecimentos
+        </button>
+      </div>
     `;
 
-    container.appendChild(div);
+    container.appendChild(card);
   });
 }
+
 
 async function buscarEstabelecimentosDoGrupo(grupoId) {
   const token = localStorage.getItem("token");
