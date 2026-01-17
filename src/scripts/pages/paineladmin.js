@@ -48,9 +48,7 @@ async function buscarEstabelecimentos() {
     alert("Erro ao carregar estabelecimentos");
   }
 
-  renderizarLista(estabelecimentosCache, "listaCards");
-inicializarBuscaEstabelecimentos();
-
+  
 }
 
 function contarEstabelecimentosPorStatus() {
@@ -1194,36 +1192,49 @@ async function substituirImagem(
   if (!file) return;
 
   const token = localStorage.getItem("token");
+  if (!token) return;
 
-  // 1️⃣ Exclui a imagem antiga
-  const delResp = await fetch(
-    `${API_BASE}/api/estabelecimentos/${estabId}/imagens/${imagemId}`,
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token
+  try {
+    // 1️⃣ Tenta excluir a imagem antiga (se existir)
+    if (imagemId) {
+      const delResp = await fetch(
+        `${API_BASE}/api/estabelecimentos/${estabId}/imagens/${imagemId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }
+      );
+
+      // ✔️ 404 = imagem já não existe → segue o fluxo
+      if (!delResp.ok && delResp.status !== 404) {
+        throw new Error("Erro ao excluir imagem antiga");
       }
     }
-  );
 
-  if (!delResp.ok) {
-    alert("Erro ao excluir imagem antiga");
-    return;
+    // 2️⃣ Sempre tenta enviar a nova imagem
+    await enviarImagemEstabelecimento(
+      estabId,
+      file,
+      isLogo,
+      isFachada
+    );
+
+    alert("Imagem atualizada com sucesso");
+
+    // 🔄 Atualiza visual
+    recarregarEstabelecimentoEdit();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao substituir a imagem.");
+  } finally {
+    // limpa o input para permitir reenviar o mesmo arquivo se necessário
+    event.target.value = "";
   }
-
-  // 2️⃣ Envia a nova com os MESMOS parâmetros
-  await enviarImagemEstabelecimento(
-    estabId,
-    file,
-    isLogo,
-    isFachada
-  );
-
-  alert("Imagem substituída com sucesso");
-
-  // 🔄 Atualiza visual
-  recarregarEstabelecimentoEdit();
 }
+
 
 async function recarregarEstabelecimentoEdit() {
   const id = document.getElementById("editId2").value;
