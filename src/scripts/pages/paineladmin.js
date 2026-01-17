@@ -47,6 +47,10 @@ async function buscarEstabelecimentos() {
     console.error(err);
     alert("Erro ao carregar estabelecimentos");
   }
+
+  renderizarLista(estabelecimentosCache, "listaCards");
+inicializarBuscaEstabelecimentos();
+
 }
 
 function contarEstabelecimentosPorStatus() {
