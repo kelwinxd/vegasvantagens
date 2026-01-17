@@ -147,11 +147,21 @@ function renderizarLista(lista, containerId) {
     const logo = estab.imagens?.find(i => i.logo);
 
     const img = document.createElement("img");
-    img.src =
-      estab.imagemPrincipal ||
-      fachada?.url ||
-      logo?.url ||
-      "./imgs/default-image.png";
+
+const imagemSrc =
+  estab.imagemPrincipal ||
+  fachada?.url ||
+  logo?.url ||
+  "./imgs/default-image.png";
+
+img.src = imagemSrc;
+
+// 🔥 fallback automático se a imagem não existir
+img.onerror = () => {
+  img.onerror = null; // evita loop infinito
+  img.src = "./imgs/default-image.png";
+};
+
 
     const info = document.createElement("div");
     info.className = "card-info";
@@ -1093,13 +1103,13 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
   div.className = "imagem-edit-item";
 
   const tipoClasse = isLogo ? "upload-logo" : "upload-fachada";
-  const srcImagem = imagem ? imagem.url : "/imgs/default-image.png";
+  const srcImagem = imagem?.url || "/imgs/default-image.png";
 
   div.innerHTML = `
     <strong>${titulo}</strong>
 
     <div class="upload-card ${tipoClasse}">
-      <img src="${srcImagem}" />
+      <img />
 
       <div class="upload-overlay">
         <label class="upload-action">
@@ -1132,8 +1142,17 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
     </div>
   `;
 
+  // 🔥 fallback de imagem
+  const img = div.querySelector("img");
+  img.src = srcImagem;
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = "/imgs/default-image.png";
+  };
+
   return div;
 }
+
 
 
 async function adicionarImagemNova(event, estabId, isLogo, isFachada) {
