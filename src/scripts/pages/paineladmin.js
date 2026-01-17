@@ -284,20 +284,39 @@ function abrirSubPage(nome) {
   subpage.classList.add("active");
 }
 
+// Mapeamento de hierarquia: subpages filhas -> página pai
+const hierarquia = {
+  "criar-estab": "lista-estab",
+
+};
+
 // Listener genérico para botões principais
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-open-subpage]");
   if (!btn) return;
   
+  const subpage = btn.dataset.openSubpage;
+  
   // Apenas atualiza botões do menu principal (não os de voltar)
   if (!btn.classList.contains("btn-voltar")) {
+    // Remove active de todos os botões principais
     document
       .querySelectorAll(".btns-subpage [data-open-subpage]")
       .forEach(el => el.classList.remove("active"));
-    btn.classList.add("active");
+    
+    // Verifica se é uma subpage filha
+    const paginaPai = hierarquia[subpage];
+    
+    if (paginaPai) {
+      // Se é filha, ativa o botão pai
+      document.querySelector(`[data-open-subpage="${paginaPai}"]`)
+        ?.classList.add("active");
+    } else {
+      // Se não é filha, ativa o próprio botão
+      btn.classList.add("active");
+    }
   }
   
-  const subpage = btn.dataset.openSubpage;
   abrirSubPage(subpage);
 });
 

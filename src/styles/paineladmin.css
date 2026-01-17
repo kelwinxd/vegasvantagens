@@ -904,3 +904,23 @@ line-height: 18px;
 .btn-editar-estab:hover {
   background: #844bdf;
 }
+
+.btn-voltar {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-voltar:hover {
+  color: #333;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
