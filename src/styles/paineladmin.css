@@ -312,9 +312,7 @@ border: 1.103px solid #CDCACA;
   padding: 4px;
 
 }
-.sw-edit {
-  align-self: center;
-}
+
 
 .switch input {
   opacity: 0;
@@ -327,7 +325,7 @@ border: 1.103px solid #CDCACA;
   position: absolute;
   cursor: pointer;
   inset: 0;
-  padding: 4px;
+  /*padding: 4px;*/
   background-color: #909090;
   border-radius: 999px;
   transition: background-color 0.3s;
@@ -354,6 +352,11 @@ border: 1.103px solid #CDCACA;
 
 .switch input:checked + .slider::before {
   transform: translate(22px, -50%);
+}
+
+.sw-edit {
+  align-self: center;
+  padding: 0;
 }
 
 .info-user {
