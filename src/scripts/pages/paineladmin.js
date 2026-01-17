@@ -175,7 +175,7 @@ img.onerror = () => {
 
     /* 🔵 BOTÃO EDITAR */
     const btnEditar = document.createElement("button");
-    btnEditar.className = "btn-editar";
+    btnEditar.className = "btn-editar-estab";
     btnEditar.textContent = "Editar";
 
     btnEditar.addEventListener("click", (e) => {
@@ -274,38 +274,40 @@ function fecharSubPages() {
 
 function abrirSubPage(nome) {
   fecharSubPages();
-
   const subpage = document.querySelector(
     `.sub-page[data-subpage="${nome}"]`
   );
-
   if (!subpage) {
     console.warn("Subpage não encontrada:", nome);
     return;
   }
-
   subpage.classList.add("active");
 }
 
-// Listener genérico
-
+// Listener genérico para botões principais
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-open-subpage]");
   if (!btn) return;
-
-  // Remove active de todos os botões
-  document
-    .querySelectorAll("[data-open-subpage]")
-    .forEach(el => el.classList.remove("active"));
-
-  // Ativa o botão clicado
-  btn.classList.add("active");
-
-  // Abre a subpage correspondente
+  
+  // Apenas atualiza botões do menu principal (não os de voltar)
+  if (!btn.classList.contains("btn-voltar")) {
+    document
+      .querySelectorAll(".btns-subpage [data-open-subpage]")
+      .forEach(el => el.classList.remove("active"));
+    btn.classList.add("active");
+  }
+  
   const subpage = btn.dataset.openSubpage;
   abrirSubPage(subpage);
 });
 
+// Função específica para voltar ao estabelecimentos
+function voltarEstabelecimentos() {
+  abrirSubPage("lista-estab");
+  // Reativa o botão Estabelecimentos
+  document.querySelector('[data-open-subpage="lista-estab"]')
+    ?.classList.add("active");
+}
 
 function inicializarFiltroDashboard() {
   const tabAtiva = document.querySelector(".tab.active");
@@ -1330,8 +1332,8 @@ async function abrirModalEditar(estab) {
    * 🔹 ESTADO → CIDADE
    * Só carrega cidades depois que o estado estiver definido
    */
-  if (estab.estadoId) {
-    document.getElementById("estadoId2-edit").value = estab.estadoId;
+  if (estab.unidadeFederativaId) {
+    document.getElementById("estadoId2-edit").value = estab.unidadeFederativaId;
     await carregarCidades(true); // carrega cidades do estado selecionado
     document.getElementById("cidadeId2-edit").value = estab.cidadeId || "";
   }

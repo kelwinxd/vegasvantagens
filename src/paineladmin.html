@@ -106,6 +106,8 @@
         </div>
 
         <div class="main-dash">
+
+    <!-- HOME DASH  -->     
     <div class="page" data-page="dashboard">
      <h1>Dashboard</h1>
 
@@ -126,37 +128,38 @@
     <div id="listaCardsDashboard" class="lista-cards"></div>
     </div>
 
+    <!-- ESTABELECIMENTOS -->
+
     <div class="page" data-page="estabelecimentos">
   <h1>Gerenciar Estabelecimentos</h1>
   <!-- Botão -->
-   <div class="btns-subpage">
-    <button data-open-subpage="lista-estab" class="active">Estabelecimentos</button>
-    <button data-open-subpage="lista-grupo" class="">Grupos</button>
+  <div class="btns-subpage">
+  <button data-open-subpage="lista-estab" class="active">Estabelecimentos</button>
+  <button data-open-subpage="lista-grupo">Grupos</button>
+</div>
 
-
-   </div>
-
-
- <!-- Lista -->
-  <div class="sub-page active" data-subpage="lista-estab">
-    <div class="actions-page-estab">
-     <input type="text" name="" class="search-estab" id="">
-    <button data-open-subpage="criar-estab" class="btn-action" type="button">+ Criar</button>
-
-    </div>
-
-    <div id="listaCards" class="lista-cards"></div>
+<!-- Lista de Estabelecimentos -->
+<div class="sub-page active" data-subpage="lista-estab">
+  <div class="actions-page-estab">
+    <input type="text" class="search-estab" placeholder="Buscar...">
+    <button data-open-subpage="criar-estab" class="btn-action" type="button">
+      + Criar
+    </button>
   </div>
+  <div id="listaCards" class="lista-cards"></div>
+</div>
 
-  <div class="sub-page" data-subpage="lista-grupo">
-    <div id="listaGrupo" class="lista-cards"></div>
-  </div>
- 
-  
+<!-- Lista de Grupos -->
+<div class="sub-page" data-subpage="lista-grupo">
+  <div id="listaGrupo" class="lista-cards"></div>
+</div>
 
-  <!-- Subpage -->
-  <div class="sub-page" data-subpage="criar-estab">
-
+<!-- Subpage: Criar Estabelecimento (filho de lista-estab) -->
+<div class="sub-page" data-subpage="criar-estab">
+  <!-- Botão Voltar -->
+  <button class="btn-voltar" data-open-subpage="lista-estab" type="button">
+    ← Voltar para Estabelecimentos
+  </button>
    <form class="form-estab" id="formCadastro2">
   <h3 class="title-form">Dados Iniciais</h3>
 
@@ -180,7 +183,7 @@
       <label>Ativo</label>
       <label class="switch">
         <input type="checkbox" id="ativoEstab2">
-        <span class="slider"></span>
+        <span class="slider-edit"></span>
       </label>
     </div>
   </div>
@@ -368,6 +371,8 @@
   </div>
     </div>
 
+    <!-- CUPONS -->
+
     <div class="page" data-page="promocoes">
         <h1>Gerenciar Promoções</h1>
       <div class="btns-subpage">
@@ -457,7 +462,7 @@
       <label>Ativo</label>
       <label class="switch">
         <input type="checkbox" id="ativo">
-        <span class="slider"></span>
+        <span class="slider-edit"></span>
       </label>
     </div>
 
@@ -494,8 +499,8 @@
 
 
     <!-- MODAL EDITAR ESTABELECIMENTO -->
-<div id="modalEditarOverlay2" class="modal-overlay2" style="display:none;">
-  <div class="modal-edit">
+    <div id="modalEditarOverlay2" class="modal-overlay2" style="display:none;">
+    <div class="modal-edit">
 
     <header class="modal-header">
       <h2>Editar Estabelecimento</h2>
@@ -512,7 +517,7 @@
   <div class="row ativo-edit">
     <label class="switch">
       <input type="checkbox" id="ativoEstab2-edit">
-      <span class="slider"></span>
+      <span class="slider-edit"></span>
     </label>
     <span>Publicar estabelecimento</span>
   </div>
