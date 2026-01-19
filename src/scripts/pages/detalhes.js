@@ -132,9 +132,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (cardsEl) cardsEl.textContent = (loja.cartoes || []).join(", ");
 
     // descrição específica por NOME
-const avaliacaoEl = document.querySelector(".avaliacao");
+const avaliacaoEl = document.querySelector(".descricao");
 if (avaliacaoEl) {
-  const desc = pickDescricaoPorNome(loja.nome);
+  const desc = loja.sobre;
   if (desc) {
     avaliacaoEl.textContent = desc;   // seguro (sem HTML)
     avaliacaoEl.style.display = "flex";  

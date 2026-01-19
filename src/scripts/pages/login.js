@@ -14,7 +14,7 @@ function fazerLogin() {
       if (data.token) {
         localStorage.setItem("token", data.token);
         alert("Login feito com sucesso!");
-        window.location.href = "admin.html";
+        window.location.href = "paineladmin.html";
       } else {
         alert("Falha no login. Verifique os dados.");
         console.error(data);

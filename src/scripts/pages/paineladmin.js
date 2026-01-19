@@ -759,39 +759,52 @@ async function carregarEstados() {
   selectEstado.addEventListener("change", carregarCidades);
 }
 
-async function carregarCidades2() {
+async function carregarCidades2(nomeCidadeSelecionada = null) {
   const estadoId2 = document.getElementById("estadoId2-edit").value;
   const token = localStorage.getItem("token");
 
   if (!estadoId2 || !token) return;
 
-  fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId2}`, {
-    headers: {
-      "Authorization": "Bearer " + token
-    }
-  })
-  .then(res => {
+  console.log("carregarCidades() chamado com estadoId =", estadoId2);
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId2}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
     if (!res.ok) throw new Error("Erro ao buscar cidades.");
-    
-    return res.json();
-  })
-  .then(cidades => {
-    console.log(cidades)
+
+    const cidades = await res.json();
+    console.log("Cidades carregadas:", cidades);
+
     const selectCidade = document.getElementById("cidadeId2-edit");
     selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+
     cidades.forEach(cidade => {
       const option = document.createElement("option");
       option.value = cidade.id;
       option.textContent = cidade.nome;
       selectCidade.appendChild(option);
     });
-  })
-  .catch(err => {
+
+    // 🔹 Se foi passado o nome da cidade, seleciona ela automaticamente
+    if (nomeCidadeSelecionada) {
+      const cidadeEncontrada = cidades.find(c => c.nome === nomeCidadeSelecionada);
+      
+      if (cidadeEncontrada) {
+        selectCidade.value = cidadeEncontrada.id;
+        console.log(`Cidade "${nomeCidadeSelecionada}" selecionada (ID: ${cidadeEncontrada.id})`);
+      } else {
+        console.warn(`Cidade "${nomeCidadeSelecionada}" não encontrada na lista.`);
+      }
+    }
+
+  } catch (err) {
     alert("Erro ao carregar cidades: " + err.message);
     console.error(err);
-  });
-
-  console.log("carregarCidades() chamado com estadoId =", estadoId2);
+  }
 }
 
 
@@ -1353,8 +1366,9 @@ async function abrirModalEditar(estab) {
    */
   if (estab.unidadeFederativaId) {
     document.getElementById("estadoId2-edit").value = estab.unidadeFederativaId;
-    await carregarCidades2(); // carrega cidades do estado selecionado
-    document.getElementById("cidadeId2-edit").value = estab.cidade || "";
+    
+    // Carrega cidades do estado e depois seleciona a cidade correta
+    await carregarCidades2(estab.cidade);
   }
 
 
