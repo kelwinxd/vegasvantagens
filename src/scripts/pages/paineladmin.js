@@ -249,7 +249,7 @@ function renderizarLista(lista, containerId) {
     // Botão Editar
     const btnEditar = document.createElement("button");
     btnEditar.className = "btn-acao btn-editar";
-    btnEditar.innerHTML = '<img src="./imgs/icon-edit.svg" alt="Editar">';
+    btnEditar.innerHTML = '<img src="./imgs/edit-e.svg" alt="Editar">';
     btnEditar.addEventListener("click", (e) => {
       e.stopPropagation();
       abrirModalEditar(estab);
@@ -258,7 +258,7 @@ function renderizarLista(lista, containerId) {
     // Botão Excluir
     const btnExcluir = document.createElement("button");
     btnExcluir.className = "btn-acao btn-excluir";
-    btnExcluir.innerHTML = '<img src="./imgs/icon-delete.svg" alt="Excluir">';
+    btnExcluir.innerHTML = '<img src="./imgs/trash-02.svg" alt="Excluir">';
     btnExcluir.addEventListener("click", async (e) => {
       e.stopPropagation();
 
