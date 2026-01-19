@@ -141,53 +141,124 @@ function renderizarLista(lista, containerId) {
 
   lista.forEach(estab => {
     const card = document.createElement("div");
-    card.className = "card-estab";
+    card.className = "card-estab-novo";
 
-    const fachada = estab.imagens?.find(i => i.fachada);
-    const logo = estab.imagens?.find(i => i.logo);
+    // 🖼️ Container da imagem
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "card-img-container";
 
     const img = document.createElement("img");
+    const imagemSrc =
+      estab.imagemPrincipal ||
+      estab.imagens?.find(i => i.fachada)?.url ||
+      estab.imagens?.find(i => i.logo)?.url ||
+      "./imgs/default-image.png";
 
-const imagemSrc =
-  estab.imagemPrincipal ||
-  fachada?.url ||
-  logo?.url ||
-  "./imgs/default-image.png";
+    img.src = imagemSrc;
+    img.onerror = () => {
+      img.onerror = null;
+      img.src = "./imgs/default-image.png";
+    };
 
-img.src = imagemSrc;
+    imgContainer.appendChild(img);
 
-// 🔥 fallback automático se a imagem não existir
-img.onerror = () => {
-  img.onerror = null; // evita loop infinito
-  img.src = "./imgs/default-image.png";
-};
+    // 📄 Container de informações
+    const infoContainer = document.createElement("div");
+    infoContainer.className = "card-info-container";
 
+    // Título
+    const titulo = document.createElement("h3");
+    titulo.className = "card-titulo";
+    titulo.textContent = estab.nome;
 
-    const info = document.createElement("div");
-    info.className = "card-info";
-    info.innerHTML = `
-      <h3>${estab.nome}</h3>
-      <p>${estab.cidade ?? ""}</p>
-      <span class="status ${estab.status === "Publicado" ? "ativo" : "inativo"}">
-        ${estab.status}
-      </span>
-    `;
+    // Localização
+    const localizacao = document.createElement("p");
+    localizacao.className = "card-localizacao";
+    localizacao.textContent = `${estab.cidade || ""} - ${estab.unidadeFederativa || "SP"}`;
 
-    /* 🔵 BOTÃO EDITAR */
+    // Container de categorias
+    const categoriasContainer = document.createElement("div");
+    categoriasContainer.className = "card-categorias";
+
+    if (estab.categorias && estab.categorias.length > 0) {
+      estab.categorias.forEach(cat => {
+        const badge = document.createElement("span");
+        badge.className = "categoria-badge";
+        badge.textContent = cat;
+        categoriasContainer.appendChild(badge);
+      });
+    }
+
+    infoContainer.appendChild(titulo);
+    infoContainer.appendChild(localizacao);
+    infoContainer.appendChild(categoriasContainer);
+
+    // 🎛️ Container de ações (direita)
+    const acoesContainer = document.createElement("div");
+    acoesContainer.className = "card-acoes-container";
+
+    // Toggle de status
+    const toggleContainer = document.createElement("div");
+    toggleContainer.className = "toggle-container";
+
+    const toggleInput = document.createElement("input");
+    toggleInput.type = "checkbox";
+    toggleInput.className = "toggle-status";
+    toggleInput.id = `toggle-${estab.id}`;
+    toggleInput.checked = estab.status === "Publicado";
+
+    const toggleLabel = document.createElement("label");
+    toggleLabel.htmlFor = `toggle-${estab.id}`;
+    toggleLabel.className = "toggle-label";
+
+    toggleInput.addEventListener("change", async (e) => {
+      const novoStatus = e.target.checked ? "Publicado" : "Rascunho";
+      
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/Estabelecimentos/${estab.id}/status`,
+          {
+            method: "PATCH",
+            headers: {
+              "Authorization": "Bearer " + token,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status: novoStatus })
+          }
+        );
+
+        if (!res.ok) throw new Error("Erro ao alterar status");
+        
+        estab.status = novoStatus;
+        console.log(`Status alterado para: ${novoStatus}`);
+
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao alterar status.");
+        e.target.checked = !e.target.checked; // reverte
+      }
+    });
+
+    toggleContainer.appendChild(toggleInput);
+    toggleContainer.appendChild(toggleLabel);
+
+    // Botões de ação
+    const botoesContainer = document.createElement("div");
+    botoesContainer.className = "botoes-acoes";
+
+    // Botão Editar
     const btnEditar = document.createElement("button");
-    btnEditar.className = "btn-editar-estab";
-    btnEditar.textContent = "Editar";
-
+    btnEditar.className = "btn-acao btn-editar";
+    btnEditar.innerHTML = '<img src="./imgs/icon-edit.svg" alt="Editar">';
     btnEditar.addEventListener("click", (e) => {
       e.stopPropagation();
       abrirModalEditar(estab);
     });
 
-    /* 🔴 BOTÃO EXCLUIR */
+    // Botão Excluir
     const btnExcluir = document.createElement("button");
-    btnExcluir.className = "btn-excluir";
-    btnExcluir.textContent = "Excluir";
-
+    btnExcluir.className = "btn-acao btn-excluir";
+    btnExcluir.innerHTML = '<img src="./imgs/icon-delete.svg" alt="Excluir">';
     btnExcluir.addEventListener("click", async (e) => {
       e.stopPropagation();
 
@@ -215,14 +286,16 @@ img.onerror = () => {
       }
     });
 
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
-    actions.appendChild(btnEditar);
-    actions.appendChild(btnExcluir);
+    botoesContainer.appendChild(btnEditar);
+    botoesContainer.appendChild(btnExcluir);
 
-    card.appendChild(img);
-    card.appendChild(info);
-    card.appendChild(actions);
+    acoesContainer.appendChild(toggleContainer);
+    acoesContainer.appendChild(botoesContainer);
+
+    // Monta o card
+    card.appendChild(imgContainer);
+    card.appendChild(infoContainer);
+    card.appendChild(acoesContainer);
     container.appendChild(card);
   });
 }

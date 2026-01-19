@@ -935,3 +935,188 @@ line-height: 18px;
   background: #f5f5f5;
   border-radius: 6px;
 }
+
+
+.card-estab-novo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.2s;
+}
+
+.card-estab-novo:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Imagem */
+.card-img-container {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.card-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Informações */
+.card-info-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-titulo {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.card-localizacao {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.card-categorias {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.categoria-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.categoria-badge:nth-child(2) {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+/* Ações */
+.card-acoes-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Toggle Switch */
+.toggle-container {
+  position: relative;
+}
+
+.toggle-status {
+  display: none;
+}
+
+.toggle-label {
+  display: block;
+  width: 48px;
+  height: 24px;
+  background: #ccc;
+  border-radius: 24px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.toggle-label::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+
+.toggle-status:checked + .toggle-label {
+  background: #4CAF50;
+}
+
+.toggle-status:checked + .toggle-label::after {
+  transform: translateX(24px);
+}
+
+/* Botões de Ação */
+.botoes-acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-acao {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.btn-acao img {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-editar {
+  background: #f5f5f5;
+}
+
+.btn-editar:hover {
+  background: #e0e0e0;
+}
+
+.btn-excluir {
+  background: #ffebee;
+}
+
+.btn-excluir:hover {
+  background: #ffcdd2;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .card-estab-novo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .card-img-container {
+    width: 100%;
+    height: 180px;
+  }
+  
+  .card-acoes-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.lista-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 colunas iguais */
+  gap: 16px;
+}
