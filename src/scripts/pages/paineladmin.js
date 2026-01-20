@@ -766,67 +766,7 @@ async function excluirCupomPromocao(id) {
   }
 }
 
-async function excluirCupomPromocao(id) {
-  const confirmar = confirm("Tem certeza que deseja excluir este cupom?");
-  if (!confirmar) return;
 
-  const token = localStorage.getItem("token");
-
-  try {
-    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-
-    if (!res.ok) {
-      const erro = await res.text();
-      throw new Error(erro);
-    }
-
-    alert("Cupom excluído com sucesso!");
-
-    // 🔄 Força recarregar ignorando cache
-    carregarCuponsPromocoes({ ignoreCache: true });
-
-  } catch (err) {
-    console.error("Erro ao excluir cupom:", err);
-    alert("Erro ao excluir cupom.");
-  }
-}
-
-
-
-async function excluirCupomPromocao(id) {
-  const confirmar = confirm("Tem certeza que deseja excluir este cupom?");
-  if (!confirmar) return;
-
-  const token = localStorage.getItem("token");
-
-  try {
-    const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token
-      }
-    });
-
-    if (!res.ok) {
-      const erro = await res.text();
-      throw new Error(erro);
-    }
-
-    alert("Cupom excluído com sucesso!");
-
-    // 🔄 Força recarregar ignorando cache
-    carregarCuponsPromocoes({ ignoreCache: true });
-
-  } catch (err) {
-    console.error("Erro ao excluir cupom:", err);
-    alert("Erro ao excluir cupom.");
-  }
-}
 
 async function buscarImagemCupom(cupomId) {
   const token = localStorage.getItem("token");
