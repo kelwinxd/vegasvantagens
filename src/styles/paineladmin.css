@@ -947,10 +947,16 @@ line-height: 18px;
   transition: box-shadow 0.2s;
   border-radius: 8px;
   border: 1px solid #D2D2D2;
+  height: 90px;
 }
 
 .card-estab-novo:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.header-info-container {
+  display: flex;
+  justify-content: space-between;
 }
 
 /* Imagem */

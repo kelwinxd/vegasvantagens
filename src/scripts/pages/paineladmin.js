@@ -163,8 +163,11 @@ function renderizarLista(lista, containerId) {
     imgContainer.appendChild(img);
 
     // 📄 Container de informações
+    const headerInfo = document.createElement("div");
+    headerInfo.className = "header-info-container";
     const infoContainer = document.createElement("div");
     infoContainer.className = "card-info-container";
+
 
     // Título
     const titulo = document.createElement("h3");
@@ -188,8 +191,9 @@ function renderizarLista(lista, containerId) {
         categoriasContainer.appendChild(badge);
       });
     }
-
-    infoContainer.appendChild(titulo);
+    infoContainer.appendChild(headerInfo)
+    headerInfo.appendChild(titulo)
+    
     infoContainer.appendChild(localizacao);
     infoContainer.appendChild(categoriasContainer);
 
@@ -211,6 +215,8 @@ function renderizarLista(lista, containerId) {
 
     const slider = document.createElement("span");
     slider.className = "slider-card";
+    headerInfo.appendChild(toggleContainer)
+
 
     toggleInput.addEventListener("change", async (e) => {
       const novoStatus = e.target.checked ? "Publicado" : "Rascunho";
@@ -219,27 +225,26 @@ function renderizarLista(lista, containerId) {
       try {
         // 🔹 Monta o body com TODOS os dados do estabelecimento
         const body = {
-          nome: estab.nome,
-          razaoSocial: estab.razaoSocial,
-          cnpj: estab.cnpj,
-          telefone: estab.telefone,
-          emailContato: estab.emailContato,
-          ativo: e.target.checked,
-          categoriaId: estab.categoriaId || 0,
-          cidadeId: estab.cidadeId || 0,
-          rua: estab.rua || "",
-          numero: estab.numero || "",
-          bairro: estab.bairro || "",
-          complemento: estab.complemento || "",
-          cep: estab.cep || "",
-          latitude: estab.latitude || 0,
-          longitude: estab.longitude || 0,
-          grupoId: estab.grupoId || 0,
-          mapaUrl: estab.mapaUrl || "",
-          sobre: estab.sobre || "",
-          status: novoStatus
+          "nome": estab.nome,
+          "razaoSocial": estab.razaoSocial,
+          "cnpj": estab.cnpj,
+          "telefone": estab.telefone,
+          "emailContato": estab.emailContato,
+          "ativo": e.target.checked,
+          "categoriaId": estab.categoriaId || 0,
+          "cidadeId": estab.cidadeId || 0,
+          "rua": estab.rua || "",
+          "numero": estab.numero || "",
+          "bairro": estab.bairro || "",
+          "complemento": estab.complemento || "",
+          "cep": estab.cep || "",
+          "latitude": estab.latitude || 0,
+          "longitude": estab.longitude || 0,
+          "grupoId": estab.grupoId || 0,
+          "mapaUrl": estab.mapaUrl || "",
+          "sobre": estab.sobre || "",
+          "status": novoStatus
         };
-
         const res = await fetch(
           `${API_BASE}/api/Estabelecimentos/${estab.id}`,
           {
@@ -279,7 +284,7 @@ function renderizarLista(lista, containerId) {
     // Botão Editar
     const btnEditar = document.createElement("button");
     btnEditar.className = "btn-acao btn-editar";
-    btnEditar.innerHTML = '<img src="./imgs/edit-e.svg" alt="Editar">';
+    btnEditar.innerHTML = '<img src="./imgs/icons/edit-e.svg" alt="Editar">';
     btnEditar.addEventListener("click", (e) => {
       e.stopPropagation();
       abrirModalEditar(estab);
@@ -288,7 +293,7 @@ function renderizarLista(lista, containerId) {
     // Botão Excluir
     const btnExcluir = document.createElement("button");
     btnExcluir.className = "btn-acao btn-excluir";
-    btnExcluir.innerHTML = '<img src="./imgs/trash-02.svg" alt="Excluir">';
+    btnExcluir.innerHTML = '<img src="./imgs/icons/trash-02.svg" alt="Excluir">';
     btnExcluir.addEventListener("click", async (e) => {
       e.stopPropagation();
 
