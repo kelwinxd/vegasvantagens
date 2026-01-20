@@ -584,68 +584,6 @@ function renderizarPromocoes(cupons) {
   });
 }
 
-function renderizarPromocoes(cupons) {
-  const container = document.getElementById("listaPromocoes");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  if (!cupons.length) {
-    container.innerHTML = "<p>Nenhuma promoção encontrada.</p>";
-    return;
-  }
-
-  cupons.forEach(c => {
-    const imagem =
-      c.imagens && c.imagens.length
-        ? c.imagens[0]
-        : "./imgs/woman-card.png";
-
-    container.insertAdjacentHTML("beforeend", `
-      <article class="cupom-card">
-        <div class="cupom-media">
-          <img src="${imagem}" alt="Imagem do cupom" loading="lazy">
-          <span class="cupom-badge">
-            <strong>${c.titulo}</strong>
-          </span>
-        </div>
-
-        <div class="cupom-content">
-          <h3>${c.nomeEstabelecimento}</h3>
-
-          <p><strong>Código:</strong> ${c.codigo || "-"}</p>
-          <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
-          <p class="expira">
-            Expira em ${new Date(c.dataExpiracao).toLocaleDateString()}
-          </p>
-
-          <div class="cupom-actions">
-            <button class="btn-editar-cupom" data-id="${c.id}">
-              Editar
-            </button>
-            <button class="btn-excluir-cupom" data-id="${c.id}">
-              Excluir
-            </button>
-          </div>
-        </div>
-      </article>
-    `);
-  });
-
-  // Event listeners para editar
-  document.querySelectorAll(".btn-editar-cupom").forEach(btn => {
-    btn.addEventListener("click", () =>
-      abrirModalEditarCupom(btn.dataset.id)
-    );
-  });
-
-  // Event listeners para excluir
-  document.querySelectorAll(".btn-excluir-cupom").forEach(btn => {
-    btn.addEventListener("click", () =>
-      excluirCupomPromocao(btn.dataset.id)
-    );
-  });
-}
 
 async function abrirModalEditarCupom(id) {
   const token = localStorage.getItem("token");
