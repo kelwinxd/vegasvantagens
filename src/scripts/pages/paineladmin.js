@@ -75,6 +75,7 @@ function atualizarContadoresTabs() {
     .textContent = `Rascunho (${rascunhos})`;
 }
 
+//CARTOES ACEITOS
 
 async function carregarCartoes() {
   const token = localStorage.getItem("token");
@@ -583,10 +584,77 @@ function renderizarPromocoes(cupons) {
   });
 }
 
+function renderizarPromocoes(cupons) {
+  const container = document.getElementById("listaPromocoes");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (!cupons.length) {
+    container.innerHTML = "<p>Nenhuma promoção encontrada.</p>";
+    return;
+  }
+
+  cupons.forEach(c => {
+    const imagem =
+      c.imagens && c.imagens.length
+        ? c.imagens[0]
+        : "./imgs/woman-card.png";
+
+    container.insertAdjacentHTML("beforeend", `
+      <article class="cupom-card">
+        <div class="cupom-media">
+          <img src="${imagem}" alt="Imagem do cupom" loading="lazy">
+          <span class="cupom-badge">
+            <strong>${c.titulo}</strong>
+          </span>
+        </div>
+
+        <div class="cupom-content">
+          <h3>${c.nomeEstabelecimento}</h3>
+
+          <p><strong>Código:</strong> ${c.codigo || "-"}</p>
+          <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
+          <p class="expira">
+            Expira em ${new Date(c.dataExpiracao).toLocaleDateString()}
+          </p>
+
+          <div class="cupom-actions">
+            <button class="btn-editar-cupom" data-id="${c.id}">
+              Editar
+            </button>
+            <button class="btn-excluir-cupom" data-id="${c.id}">
+              Excluir
+            </button>
+          </div>
+        </div>
+      </article>
+    `);
+  });
+
+  // Event listeners para editar
+  document.querySelectorAll(".btn-editar-cupom").forEach(btn => {
+    btn.addEventListener("click", () =>
+      abrirModalEditarCupom(btn.dataset.id)
+    );
+  });
+
+  // Event listeners para excluir
+  document.querySelectorAll(".btn-excluir-cupom").forEach(btn => {
+    btn.addEventListener("click", () =>
+      excluirCupomPromocao(btn.dataset.id)
+    );
+  });
+}
+
 async function abrirModalEditarCupom(id) {
   const token = localStorage.getItem("token");
 
   try {
+    // 🔹 Carrega estabelecimentos e cartões ANTES de buscar o cupom
+    await carregarEstabelecimentosModal();
+    await carregarCartoesModal();
+
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
       headers: { "Authorization": "Bearer " + token }
     });
@@ -636,6 +704,82 @@ async function abrirModalEditarCupom(id) {
   } catch (err) {
     console.error("Erro ao carregar cupom:", err);
     alert("Erro ao carregar dados do cupom.");
+  }
+}
+
+// 🔹 Função para carregar estabelecimentos no select
+async function carregarEstabelecimentosModal() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+
+    const estabelecimentos = await res.json();
+    const selectEstab = document.getElementById("edit-estabelecimento");
+
+    // Limpa opções existentes (exceto a primeira)
+    selectEstab.innerHTML = '<option value="">Selecione um estabelecimento</option>';
+
+    // Adiciona os estabelecimentos
+    estabelecimentos.forEach(estab => {
+      const option = document.createElement("option");
+      option.value = estab.id;
+      option.textContent = estab.nome;
+      selectEstab.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error("Erro ao carregar estabelecimentos:", error);
+    alert("Não foi possível carregar os estabelecimentos.");
+  }
+}
+
+// 🔹 Função para carregar cartões no select multiple
+async function carregarCartoesModal() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cartoes`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao buscar cartões");
+    }
+
+    const cartoes = await res.json();
+    const selectCartoes = document.getElementById("edit-cartoes");
+
+    // Limpa opções existentes
+    selectCartoes.innerHTML = "";
+
+    // Adiciona os cartões
+    cartoes.forEach(cartao => {
+      const option = document.createElement("option");
+      option.value = cartao.id;
+      option.textContent = cartao.nome;
+      selectCartoes.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error("Erro ao carregar cartões:", error);
+    alert("Não foi possível carregar os cartões.");
   }
 }
 
@@ -725,17 +869,6 @@ async function salvarEdicaoCupom() {
   }
 }
 
- function fecharModalEditarCupom() {
-    document.getElementById("modalEditarCupom").classList.remove("open");
-  }
-
-  // Fechar ao clicar fora do modal
-  document.getElementById("modalEditarCupom").addEventListener("click", (e) => {
-    if (e.target.id === "modalEditarCupom") {
-      fecharModalEditarCupom();
-    }
-  });
-
 async function excluirCupomPromocao(id) {
   const confirmar = confirm("Tem certeza que deseja excluir este cupom?");
   if (!confirmar) return;
@@ -765,6 +898,18 @@ async function excluirCupomPromocao(id) {
     alert("Erro ao excluir cupom.");
   }
 }
+
+ function fecharModalEditarCupom() {
+    document.getElementById("modalEditarCupom").classList.remove("open");
+  }
+
+  // Fechar ao clicar fora do modal
+  document.getElementById("modalEditarCupom").addEventListener("click", (e) => {
+    if (e.target.id === "modalEditarCupom") {
+      fecharModalEditarCupom();
+    }
+  });
+
 
 
 
@@ -1943,6 +2088,7 @@ window.adicionarImagemNova = adicionarImagemNova;
 window.confirmarVinculo = confirmarVinculo;
 window.abrirModalVincular = abrirModalVincular;
 window.fecharModalVincular = fecharModalVincular;
+window.salvarEdicaoCupom = salvarEdicaoCupom;
 
 
 
