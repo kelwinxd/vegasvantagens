@@ -947,7 +947,8 @@ line-height: 18px;
   transition: box-shadow 0.2s;
   border-radius: 8px;
   border: 1px solid #D2D2D2;
-  height: 90px;
+  min-height: 90px;
+  width: 500px;
 }
 
 .card-estab-novo:hover {
@@ -957,6 +958,14 @@ line-height: 18px;
 .header-info-container {
   display: flex;
   justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #C4C4C4;
+}
+
+.info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* Imagem */
@@ -984,16 +993,21 @@ line-height: 18px;
 }
 
 .card-titulo {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
+ color: #6F6F6F;
+font-family: Rubik;
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
 }
 
 .card-localizacao {
-  margin: 0;
-  font-size: 14px;
-  color: #666;
+ color: #A4A4A4;
+font-family: Rubik;
+font-size: 12px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
 }
 
 .card-categorias {
@@ -1125,6 +1139,7 @@ line-height: 18px;
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 colunas iguais */
   gap: 16px;
+  margin-top: 32px;
 }
 
 .toggle-container {
@@ -1180,3 +1195,233 @@ line-height: 18px;
 .switch-card input:checked + .slider-card::before {
   transform: translate(22px, -50%);
 }
+
+
+.modal-overlay-edit-cupom {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay-edit-cupom.open {
+      display: flex;
+    }
+
+    /* MODAL CONTAINER - EDIT CUPOM */
+    .modal-container-edit-cupom {
+      background: #fff;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      position: relative;
+    }
+
+    /* BOTÃO FECHAR - EDIT CUPOM */
+    .modal-close-edit-cupom {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .modal-close-edit-cupom:hover {
+      background: #f5f5f5;
+    }
+
+    /* TÍTULO DO MODAL - EDIT CUPOM */
+    .modal-container-edit-cupom h3 {
+      color: #000;
+      font-family: Rubik, sans-serif;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #A4A4A4;
+      margin-bottom: 32px;
+    }
+
+    /* FORM EDIT CUPOM - ROWS E FIELDS */
+    .form-edit-cupom .row-edit-cupom {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .form-edit-cupom .field-edit-cupom {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .form-edit-cupom .field-edit-cupom label {
+      font-family: Rubik, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-edit-cupom .field-edit-cupom input,
+    .form-edit-cupom .field-edit-cupom select,
+    .form-edit-cupom .field-edit-cupom textarea {
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: Rubik, sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-edit-cupom .field-edit-cupom input:focus,
+    .form-edit-cupom .field-edit-cupom select:focus,
+    .form-edit-cupom .field-edit-cupom textarea:focus {
+      border-color: #4B57A3;
+    }
+
+    .form-edit-cupom .field-edit-cupom textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* SELECT MULTIPLE - EDIT CUPOM */
+    .form-edit-cupom .field-edit-cupom select[multiple] {
+      min-height: 120px;
+    }
+
+    /* CHECKBOX SWITCH - EDIT CUPOM */
+    .row-edit-cupom.ativo-edit-cupom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .switch-edit-cupom {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+
+    .switch-edit-cupom input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-edit-cupom {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #909090;
+      border-radius: 999px;
+      transition: background-color 0.3s;
+    }
+
+    .slider-edit-cupom::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .switch-edit-cupom input:checked + .slider-edit-cupom {
+      background-color: #6d28d9;
+    }
+
+    .switch-edit-cupom input:checked + .slider-edit-cupom::before {
+      transform: translate(22px, -50%);
+    }
+
+    .row-edit-cupom.ativo-edit-cupom span {
+      font-family: Rubik, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* BOTÕES DE AÇÃO - EDIT CUPOM */
+    .modal-actions-edit-cupom {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .btn-cancelar-edit-cupom,
+    .btn-salvar-edit-cupom {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-family: Rubik, sans-serif;
+      transition: all 0.2s;
+    }
+
+    .btn-cancelar-edit-cupom {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .btn-cancelar-edit-cupom:hover {
+      background: #e5e5e5;
+    }
+
+    .btn-salvar-edit-cupom {
+      background: #4B57A3;
+      color: #fff;
+    }
+
+    .btn-salvar-edit-cupom:hover {
+      background: #3d4682;
+    }
+
+    /* CAMPO OCULTO - EDIT CUPOM */
+    .field-edit-cupom.hidden {
+      display: none;
+    }
+
+    /* RESPONSIVO - EDIT CUPOM */
+    @media (max-width: 768px) {
+      .form-edit-cupom .row-edit-cupom {
+        flex-direction: column;
+      }
+
+      .modal-container-edit-cupom {
+        padding: 24px 16px;
+      }
+    }

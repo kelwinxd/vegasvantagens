@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./styles/global.css?v=34">
+
+    <title>Document</title>
+</head>
+<body>
+    
+     <div class="card-estab-novo" data-id="${estab.id}">
+        <!-- Imagem -->
+        <div class="card-img-container">
+          <img src="${imagemSrc}" alt="${estab.nome}" onerror="this.onerror=null; this.src='./imgs/default-image.png';">
+        </div>
+        
+        <div class="info-wrapper">
+
+        
+        <!-- Informações -->
+        <div class="card-info-container">
+          <div class="header-info-container">
+           <div class="header-info-names">
+            <h3 class="card-titulo">${estab.nome}</h3>
+             <p class="card-localizacao">${estab.cidade || ""} - ${estab.unidadeFederativa || "SP"}</p>
+           </div>
+            
+            <!-- Toggle -->
+            <div class="toggle-container">
+              <label class="switch-card">
+                <input type="checkbox" id="toggle-${estab.id}" ${estab.status === "Publicado" ? "checked" : ""}>
+                <span class="slider-card"></span>
+              </label>
+            </div>
+
+
+          </div>
+
+         
+          
+          
+        </div>
+
+        <!-- Ações -->
+        <div class="card-acoes-container">
+
+        <div class="card-categorias">
+            ${categoriasHTML}
+        </div>
+
+          <div class="botoes-acoes">
+            <button class="btn-acao btn-editar" data-action="editar">
+              <img src="./imgs/icons/edit-e.svg" alt="Editar">
+            </button>
+            <button class="btn-acao btn-excluir" data-action="excluir">
+              <img src="./imgs/icons/trash-02.svg" alt="Excluir">
+            </button>
+          </div>
+        </div>
+        </div>
+      </div>
+</body>
+</html>

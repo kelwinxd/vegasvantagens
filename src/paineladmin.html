@@ -388,7 +388,7 @@
     <div class="sub-page" data-subpage="criar-cupom" >
     <form id="formCupom">
   <h2>Cadastrar Cupom</h2>
-<div class="row">
+  <div class="row">
  <div class="field">
     <label>Código</label>
     <input type="text" id="codigo" required>
@@ -400,38 +400,8 @@
   </div>
 
   
-</div>
-<div class="row">
- <div class="field">
-    <label>Descrição</label>
-    <textarea id="descricao" required></textarea>
-  </div>
-</div>
-
-
-
-  <div class="field">
-    <label>Título do Modal</label>
-    <input type="text" id="modalTitulo" required>
   </div>
 
-  <div class="field">
-    <label>Descrição do Modal</label>
-    <textarea id="modalDescricao" required></textarea>
-  </div>
-
-  <div class="field">
-    <label>Tipo do Cupom</label>
-    <select id="tipo">
-      <option value="Percentual">Percentual</option>
-      <option value="ValorFixo">Valor Fixo</option>
-    </select>
-  </div>
-
-  <div class="field">
-    <label>Valor de Desconto</label>
-    <input type="number" id="valorDesconto" step="0.01" required>
-  </div>
 
   <div class="field">
     <label>Valor Mínimo da Compra</label>
@@ -477,7 +447,7 @@
   </div>
 
   <div class="row">
- <div class="field">
+  <div class="field">
     <label for="imgGaleria">Imagem Cupom:</label>
     <input type="file" id="imgGaleria" accept="image/*">
   </div>
@@ -490,12 +460,156 @@
   </div>
  
   <button type="button" onclick="cadastrarCupom()">Cadastrar Cupom</button>
-</form>
+  </form>
 
 
     </div>
 
     </div>
+
+
+    <!-- MODAL EDITAR CUPOM -->
+    <div id="modalEditarCupom" class="modal-overlay-edit-cupom">
+  <div class="modal-container-edit-cupom">
+    <button class="modal-close-edit-cupom" onclick="fecharModalEditarCupom()">×</button>
+    
+    <h3>Editar Cupom/Promoção</h3>
+
+    <form class="form-edit-cupom" onsubmit="event.preventDefault(); salvarEdicaoCupom();">
+      
+      <!-- ID (oculto) -->
+      <div class="field-edit-cupom hidden">
+        <input type="hidden" id="edit-id">
+      </div>
+
+      <!-- Código e Título -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Código</label>
+          <input type="text" id="edit-codigo" required>
+        </div>
+
+        <div class="field-edit-cupom">
+          <label>Título</label>
+          <input type="text" id="edit-titulo" required>
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Descrição</label>
+          <textarea id="edit-descricao"></textarea>
+        </div>
+      </div>
+
+      <!-- Modal Título e Modal Descrição -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Título do Modal</label>
+          <input type="text" id="edit-modalTitulo">
+        </div>
+
+        <div class="field-edit-cupom">
+          <label>Descrição do Modal</label>
+          <input type="text" id="edit-modalDescricao">
+        </div>
+      </div>
+
+      <!-- Tipo e Valor Desconto -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Tipo de Desconto</label>
+          <select id="edit-tipo" required>
+            <option value="">Selecione</option>
+            <option value="Percentual">Percentual (%)</option>
+            <option value="Fixo">Valor Fixo (R$)</option>
+          </select>
+        </div>
+
+        <div class="field-edit-cupom">
+          <label>Valor do Desconto</label>
+          <input type="number" id="edit-desconto" step="0.01" required>
+        </div>
+      </div>
+
+      <!-- Valor Mínimo -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Valor Mínimo da Compra</label>
+          <input type="number" id="edit-minimo" step="0.01">
+        </div>
+      </div>
+
+      <!-- Datas -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Data Início</label>
+          <input type="date" id="edit-inicio" required>
+        </div>
+
+        <div class="field-edit-cupom">
+          <label>Data Expiração</label>
+          <input type="date" id="edit-expiracao" required>
+        </div>
+      </div>
+
+      <!-- Limites -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Limite de Uso Total</label>
+          <input type="number" id="edit-limite">
+        </div>
+
+        <div class="field-edit-cupom">
+          <label>Limite de Uso por Usuário</label>
+          <input type="number" id="edit-limiteUsuario">
+        </div>
+      </div>
+
+      <!-- Estabelecimento -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Estabelecimento</label>
+          <select id="edit-estabelecimento" required>
+            <option value="">Selecione um estabelecimento</option>
+            <!-- Opções carregadas via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Cartões Aceitos -->
+      <div class="row-edit-cupom">
+        <div class="field-edit-cupom">
+          <label>Cartões Aceitos (Ctrl + Clique para múltiplos)</label>
+          <select id="edit-cartoes" multiple>
+            <!-- Opções carregadas via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Ativo/Inativo -->
+      <div class="row-edit-cupom ativo-edit-cupom">
+        <label class="switch-edit-cupom">
+          <input type="checkbox" id="edit-ativo">
+          <span class="slider-edit-cupom"></span>
+        </label>
+        <span>Cupom ativo</span>
+      </div>
+
+      <!-- Botões -->
+      <div class="modal-actions-edit-cupom">
+        <button type="button" class="btn-cancelar-edit-cupom" onclick="fecharModalEditarCupom()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-salvar-edit-cupom">
+          Salvar Alterações
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
 
 
     <!-- MODAL EDITAR ESTABELECIMENTO -->
@@ -640,12 +754,12 @@
 
 
   </div>
-</div>
+    </div>
 
 
 <!---Modal Grupo Vincular -->
 
-<div id="modalVincularEstab" class="modal-gp hidden" onclick="fecharModalVincular()">
+    <div id="modalVincularEstab" class="modal-gp hidden" onclick="fecharModalVincular()">
   <div class="modal-gp-content" onclick="event.stopPropagation()">
     <h3>Vincular estabelecimentos</h3>
 
@@ -664,9 +778,9 @@
       <button onclick="confirmarVinculo()">Adicionar</button>
     </div>
   </div>
-</div>
+    </div>
 
-        </div>
+    </div>
     </div>
     </div>
 
