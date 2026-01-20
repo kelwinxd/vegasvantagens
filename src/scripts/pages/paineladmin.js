@@ -198,49 +198,79 @@ function renderizarLista(lista, containerId) {
     acoesContainer.className = "card-acoes-container";
 
     // Toggle de status
+ // Toggle de status (usando mesma estrutura do modal)
     const toggleContainer = document.createElement("div");
     toggleContainer.className = "toggle-container";
 
+    const switchLabel = document.createElement("label");
+    switchLabel.className = "switch sw-card";
+
     const toggleInput = document.createElement("input");
     toggleInput.type = "checkbox";
-    toggleInput.className = "toggle-status";
     toggleInput.id = `toggle-${estab.id}`;
     toggleInput.checked = estab.status === "Publicado";
 
-    const toggleLabel = document.createElement("label");
-    toggleLabel.htmlFor = `toggle-${estab.id}`;
-    toggleLabel.className = "toggle-label";
+    const slider = document.createElement("span");
+    slider.className = "slider-card";
 
     toggleInput.addEventListener("change", async (e) => {
       const novoStatus = e.target.checked ? "Publicado" : "Rascunho";
       
       try {
+        // 🔹 Monta o body com TODOS os dados do estabelecimento
+        const body = {
+          nome: estab.nome,
+          razaoSocial: estab.razaoSocial,
+          cnpj: estab.cnpj,
+          telefone: estab.telefone,
+          emailContato: estab.emailContato,
+          ativo: e.target.checked,
+          categoriaId: estab.categoriaId || 0,
+          cidadeId: estab.cidadeId || 0,
+          rua: estab.rua || "",
+          numero: estab.numero || "",
+          bairro: estab.bairro || "",
+          complemento: estab.complemento || "",
+          cep: estab.cep || "",
+          latitude: estab.latitude || 0,
+          longitude: estab.longitude || 0,
+          grupoId: estab.grupoId || 0,
+          mapaUrl: estab.mapaUrl || "",
+          sobre: estab.sobre || "",
+          status: novoStatus
+        };
+
         const res = await fetch(
-          `${API_BASE}/api/Estabelecimentos/${estab.id}/status`,
+          `${API_BASE}/api/Estabelecimentos/${estab.id}`,
           {
-            method: "PATCH",
+            method: "PUT",
             headers: {
               "Authorization": "Bearer " + token,
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ status: novoStatus })
+            body: JSON.stringify(body)
           }
         );
 
-        if (!res.ok) throw new Error("Erro ao alterar status");
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Erro ao alterar status: ${errorText}`);
+        }
         
         estab.status = novoStatus;
+        estab.ativo = e.target.checked;
         console.log(`Status alterado para: ${novoStatus}`);
 
       } catch (err) {
         console.error(err);
-        alert("Erro ao alterar status.");
+        alert("Erro ao alterar status: " + err.message);
         e.target.checked = !e.target.checked; // reverte
       }
     });
 
-    toggleContainer.appendChild(toggleInput);
-    toggleContainer.appendChild(toggleLabel);
+    switchLabel.appendChild(toggleInput);
+    switchLabel.appendChild(slider);
+    toggleContainer.appendChild(switchLabel);
 
     // Botões de ação
     const botoesContainer = document.createElement("div");
