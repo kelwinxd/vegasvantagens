@@ -198,8 +198,7 @@ function renderizarLista(lista, containerId) {
     acoesContainer.className = "card-acoes-container";
 
     // Toggle de status
- // Toggle de status (usando mesma estrutura do modal)
-    const toggleContainer = document.createElement("div");
+ const toggleContainer = document.createElement("div");
     toggleContainer.className = "toggle-container";
 
     const switchLabel = document.createElement("label");
@@ -215,6 +214,7 @@ function renderizarLista(lista, containerId) {
 
     toggleInput.addEventListener("change", async (e) => {
       const novoStatus = e.target.checked ? "Publicado" : "Rascunho";
+      
       
       try {
         // 🔹 Monta o body com TODOS os dados do estabelecimento

@@ -942,11 +942,11 @@ line-height: 18px;
   align-items: center;
   gap: 20px;
   background: white;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 8px;
+  margin-bottom: 16px;
   transition: box-shadow 0.2s;
+  border-radius: 8px;
+  border: 1px solid #D2D2D2;
 }
 
 .card-estab-novo:hover {
@@ -955,8 +955,8 @@ line-height: 18px;
 
 /* Imagem */
 .card-img-container {
-  width: 120px;
-  height: 120px;
+  width: 73px;
+  height: 100%;
   flex-shrink: 0;
   border-radius: 8px;
   overflow: hidden;
@@ -1119,4 +1119,58 @@ line-height: 18px;
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 colunas iguais */
   gap: 16px;
+}
+
+.toggle-container {
+  position: relative;
+}
+
+.switch-card {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  line-height: unset;
+  font-size: unset;
+  justify-self: center;
+  padding: 4px;
+}
+
+.switch-card input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* trilho */
+.slider-card {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #909090;
+  border-radius: 999px;
+  transition: background-color 0.3s;
+}
+
+/* bolinha */
+.slider-card::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+/* ativo */
+.switch-card input:checked + .slider-card {
+  background-color: #002DB3; 
+}
+
+.switch-card input:checked + .slider-card::before {
+  transform: translate(22px, -50%);
 }
