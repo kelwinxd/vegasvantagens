@@ -948,6 +948,7 @@ line-height: 18px;
   border-radius: 8px;
   border: 1px solid #D2D2D2;
   min-height: 90px;
+  width: 100%;
   
 }
 
@@ -966,6 +967,8 @@ line-height: 18px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
+  width: 100%;
 }
 
 /* Imagem */
