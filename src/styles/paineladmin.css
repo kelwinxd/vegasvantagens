@@ -1199,6 +1199,8 @@ line-height: normal;
   transform: translate(22px, -50%);
 }
 
+/* CUPOM MODAL */
+
 
 .modal-overlay-edit-cupom {
       display: none;
@@ -1427,4 +1429,203 @@ line-height: normal;
       .modal-container-edit-cupom {
         padding: 24px 16px;
       }
+    }
+
+
+.cupom-card-admin {
+      display: flex;
+      width: 255px;
+      height: 385px;
+      padding: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+      border-radius: 8px;
+      border: 1px solid #D2D2D2;
+      background: #FFF;
+      position: relative;
+    }
+
+    .cupom-media-admin {
+      width: 100%;
+      height: 180px;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .cupom-media-admin img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Badges de cartões */
+    .cartoes-cp {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .badge-cartao {
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 500;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .badge-cartao:nth-child(2) {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .badge-cartao:nth-child(3) {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    /* Header com título e toggle */
+    .header-cp-admin {
+      margin-top: 10px;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #D2D2D2;
+    }
+
+    .cupom-title-admin {
+      color: #6F6F6F;
+      font-family: Rubik, sans-serif;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+      margin: 0;
+      flex: 1;
+    }
+
+    /* Toggle Switch */
+    .switch-cupom-admin {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+    }
+
+    .switch-cupom-admin input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-cupom-admin {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #909090;
+      border-radius: 999px;
+      transition: background-color 0.3s;
+    }
+
+    .slider-cupom-admin::before {
+      content: "";
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .switch-cupom-admin input:checked + .slider-cupom-admin {
+      background-color: #4CAF50;
+    }
+
+    .switch-cupom-admin input:checked + .slider-cupom-admin::before {
+      transform: translate(20px, -50%);
+    }
+
+    /* Conteúdo */
+    .cupom-content-admin {
+      width: 100%;
+      padding: 8px 0;
+    }
+
+    .cupom-content-admin h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .cupom-content-admin p {
+      margin: 4px 0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .cupom-content-admin p strong {
+      color: #333;
+    }
+
+    .expira-admin {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e5e5;
+      color: #999 !important;
+      font-size: 12px !important;
+    }
+
+    /* Botões de ação */
+    .cupom-actions-admin {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    .btn-action-admin {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-editar-cupom-admin {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .btn-editar-cupom-admin:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-excluir-cupom-admin {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .btn-excluir-cupom-admin:hover {
+      background: #ffcdd2;
+    }
+
+    .btn-action-admin img {
+      width: 16px;
+      height: 16px;
     }

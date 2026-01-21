@@ -2,54 +2,54 @@ import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '
 
  let estabelecimentosCache = [];
 
-async function buscarEstabelecimentos() {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Você precisa estar logado.");
-    return;
-  }
+  async function buscarEstabelecimentos() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Você precisa estar logado.");
+      return;
+    }
 
-  try {
-    const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
-      headers: { Authorization: "Bearer " + token }
-    });
+    try {
+      const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+        headers: { Authorization: "Bearer " + token }
+      });
 
-    if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
-    const data = await res.json();
+      if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+      const data = await res.json();
 
-    const detalhes = await Promise.all(
-      data.map(e =>
-        fetch(`${API_BASE}/api/Estabelecimentos/${e.id}`, {
-          headers: { Authorization: "Bearer " + token }
-        })
-          .then(r => r.ok ? r.json() : null)
-          .catch(() => null)
-      )
-    );
+      const detalhes = await Promise.all(
+        data.map(e =>
+          fetch(`${API_BASE}/api/Estabelecimentos/${e.id}`, {
+            headers: { Authorization: "Bearer " + token }
+          })
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null)
+        )
+      );
 
-    console.log(detalhes)
+      console.log(detalhes)
 
-    estabelecimentosCache = detalhes.filter(Boolean);
+      estabelecimentosCache = detalhes.filter(Boolean);
+
+      
+
+
+      // Dashboard
+      atualizarDashboard();
+      
+
+      // Página de gerenciamento
+      renderizarLista(estabelecimentosCache, "listaCards");
+      inicializarFiltroDashboard()
+      atualizarContadoresTabs();
+
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao carregar estabelecimentos");
+    }
 
     
-
-
-    // Dashboard
-    atualizarDashboard();
-    
-
-    // Página de gerenciamento
-    renderizarLista(estabelecimentosCache, "listaCards");
-    inicializarFiltroDashboard()
-    atualizarContadoresTabs();
-
-  } catch (err) {
-    console.error(err);
-    alert("Erro ao carregar estabelecimentos");
   }
-
-  
-}
 
 function contarEstabelecimentosPorStatus() {
   const publicados = estabelecimentosCache.filter(
@@ -536,32 +536,52 @@ function renderizarPromocoes(cupons) {
     const imagem =
       c.imagens && c.imagens.length
         ? c.imagens[0]
-        : "./imgs/woman-card.png";
+        : "./imgs/default-image.png";
+
+    // Renderiza badges de cartões
+    const cartoesHTML = c.cartoesAceitos && c.cartoesAceitos.length > 0
+      ? c.cartoesAceitos.map(cartao => 
+          `<span class="badge-cartao">${cartao}</span>`
+        ).join('')
+      : '';
 
     container.insertAdjacentHTML("beforeend", `
-      <article class="cupom-card">
-        <div class="cupom-media">
-          <img src="${imagem}" alt="Imagem do cupom" loading="lazy">
-          <span class="cupom-badge">
-            <strong>${c.titulo}</strong>
-          </span>
+      <article class="cupom-card-admin">
+        <!-- Imagem -->
+        <div class="cupom-media-admin">
+          <img src="${imagem}" alt="Imagem do cupom" loading="lazy" onerror="this.src='./imgs/default-image.png'">
         </div>
 
-        <div class="cupom-content">
+        <!-- Badges de Cartões -->
+        <div class="cartoes-cp">
+          ${cartoesHTML}
+        </div>
+
+        <!-- Header com Título e Toggle -->
+        <div class="header-cp-admin">
+          <h2 class="cupom-title-admin">${c.titulo}</h2>
+          
+          <label class="switch-cupom-admin">
+            <input type="checkbox" ${c.ativo ? 'checked' : ''} data-cupom-id="${c.id}">
+            <span class="slider-cupom-admin"></span>
+          </label>
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="cupom-content-admin">
           <h3>${c.nomeEstabelecimento}</h3>
 
-          <p><strong>Código:</strong> ${c.codigo || "-"}</p>
-          <p><strong>Desconto:</strong> ${c.valorDesconto} (${c.tipo})</p>
-          <p class="expira">
-            Expira em ${new Date(c.dataExpiracao).toLocaleDateString()}
+          <p class="expira-admin">
+            <strong>Validade:</strong> ${new Date(c.dataExpiracao).toLocaleDateString()}
           </p>
 
-          <div class="cupom-actions">
-            <button class="btn-editar-cupom" data-id="${c.id}">
-              Editar
+          <!-- Botões de Ação -->
+          <div class="cupom-actions-admin">
+            <button class="btn-action-admin btn-editar-cupom-admin" data-id="${c.id}">
+              <img src="./imgs/icons/edit-e.svg" alt="Editar">
             </button>
-            <button class="btn-excluir-cupom" data-id="${c.id}">
-              Excluir
+            <button class="btn-action-admin btn-excluir-cupom-admin" data-id="${c.id}">
+              <img src="./imgs/icons/trash-02.svg" alt="Excluir">
             </button>
           </div>
         </div>
@@ -570,18 +590,92 @@ function renderizarPromocoes(cupons) {
   });
 
   // Event listeners para editar
-  document.querySelectorAll(".btn-editar-cupom").forEach(btn => {
+  document.querySelectorAll(".btn-editar-cupom-admin").forEach(btn => {
     btn.addEventListener("click", () =>
       abrirModalEditarCupom(btn.dataset.id)
     );
   });
 
   // Event listeners para excluir
-  document.querySelectorAll(".btn-excluir-cupom").forEach(btn => {
+  document.querySelectorAll(".btn-excluir-cupom-admin").forEach(btn => {
     btn.addEventListener("click", () =>
       excluirCupomPromocao(btn.dataset.id)
     );
   });
+
+  // Event listeners para os toggles
+  document.querySelectorAll(".switch-cupom-admin input").forEach(toggle => {
+    toggle.addEventListener("change", async (e) => {
+      const cupomId = e.target.dataset.cupomId;
+      const novoStatus = e.target.checked;
+      
+      try {
+        await atualizarStatusCupom(cupomId, novoStatus);
+      } catch (err) {
+        console.error("Erro ao atualizar status:", err);
+        // Reverte o toggle em caso de erro
+        e.target.checked = !novoStatus;
+      }
+    });
+  });
+}
+
+// Função para atualizar status do cupom
+async function atualizarStatusCupom(cupomId, ativo) {
+  const token = localStorage.getItem("token");
+
+  try {
+    // Busca os dados completos do cupom
+    const resGet = await fetch(`${API_BASE}/api/Cupons/${cupomId}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    if (!resGet.ok) throw new Error("Erro ao buscar cupom");
+
+    const cupom = await resGet.json();
+
+    // Monta o body com TODOS os dados
+    const body = {
+      "codigo": cupom.codigo,
+      "titulo": cupom.titulo,
+      "descricao": cupom.descricao,
+      "modalTitulo": cupom.modalTitulo,
+      "modalDescricao": cupom.modalDescricao,
+      "tipo": cupom.tipo,
+      "valorDesconto": cupom.valorDesconto,
+      "valorMinimoCompra": cupom.valorMinimoCompra,
+      "dataInicio": cupom.dataInicio,
+      "dataExpiracao": cupom.dataExpiracao,
+      "limiteUso": cupom.limiteUso,
+      "limiteUsoPorUsuario": cupom.limiteUsoPorUsuario,
+      "ativo": ativo,
+      "estabelecimentoId": cupom.estabelecimentoId,
+      "cartoesAceitosIds": cupom.cartoesAceitosIds || [],
+      "status": ativo ? "Publicado" : "Rascunho"
+    };
+
+    // Atualiza o cupom
+    const resPut = await fetch(`${API_BASE}/api/Cupons/${cupomId}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!resPut.ok) {
+      const erro = await resPut.text();
+      throw new Error(erro);
+    }
+
+    console.log(`Status do cupom ${cupomId} atualizado para: ${ativo ? 'Ativo' : 'Inativo'}`);
+
+  } catch (err) {
+    console.error("Erro ao atualizar status do cupom:", err);
+    alert("Erro ao atualizar status do cupom.");
+    throw err;
+  }
 }
 
 // Cache para armazenar dados
@@ -636,10 +730,10 @@ async function abrirModalEditarCupom(id) {
     exibirEstabelecimentoVinculado(cupom.estabelecimentoId);
 
     // 🔹 Exibe os cartões vinculados
-    exibirCartoesVinculados(cupom.cartoesAceitosIds || []);
+    exibirCartoesVinculados(cupom.cartoesAceitos || []);
 
     // SELECT MULTIPLE para cartões aceitos
-    if (cupom.cartoesAceitosIds && cupom.cartoesAceitosIds.length > 0) {
+    if (cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0) {
       const selectCartoes = document.getElementById("edit-cartoes");
       Array.from(selectCartoes.options).forEach(option => {
         option.selected = cupom.cartoesAceitosIds.includes(parseInt(option.value));
@@ -2112,6 +2206,7 @@ window.confirmarVinculo = confirmarVinculo;
 window.abrirModalVincular = abrirModalVincular;
 window.fecharModalVincular = fecharModalVincular;
 window.salvarEdicaoCupom = salvarEdicaoCupom;
+window.fecharModalEditarCupom = fecharModalEditarCupom;
 
 
 
