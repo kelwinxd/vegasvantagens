@@ -584,6 +584,9 @@ function renderizarPromocoes(cupons) {
   });
 }
 
+// Cache para armazenar dados
+let estabelecimentosModalCache = [];
+let cartoesModalCache = [];
 
 async function abrirModalEditarCupom(id) {
   const token = localStorage.getItem("token");
@@ -603,6 +606,7 @@ async function abrirModalEditarCupom(id) {
     }
 
     const cupom = await res.json();
+    console.log("Cupom carregado:", cupom);
 
     // Salva o cupom original para reenviar TUDO no PUT
     window._cupomEditando = cupom;
@@ -627,6 +631,12 @@ async function abrirModalEditarCupom(id) {
 
     document.getElementById("edit-ativo").checked = cupom.ativo || false;
     document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId || "";
+
+    // 🔹 Exibe o estabelecimento vinculado
+    exibirEstabelecimentoVinculado(cupom.estabelecimentoId);
+
+    // 🔹 Exibe os cartões vinculados
+    exibirCartoesVinculados(cupom.cartoesAceitosIds || []);
 
     // SELECT MULTIPLE para cartões aceitos
     if (cupom.cartoesAceitosIds && cupom.cartoesAceitosIds.length > 0) {
@@ -662,6 +672,10 @@ async function carregarEstabelecimentosModal() {
     if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
 
     const estabelecimentos = await res.json();
+    
+    // 🔹 Salva no cache
+    estabelecimentosModalCache = estabelecimentos;
+
     const selectEstab = document.getElementById("edit-estabelecimento");
 
     // Limpa opções existentes (exceto a primeira)
@@ -702,6 +716,10 @@ async function carregarCartoesModal() {
     }
 
     const cartoes = await res.json();
+    
+    // 🔹 Salva no cache
+    cartoesModalCache = cartoes;
+
     const selectCartoes = document.getElementById("edit-cartoes");
 
     // Limpa opções existentes
@@ -718,6 +736,72 @@ async function carregarCartoesModal() {
   } catch (error) {
     console.error("Erro ao carregar cartões:", error);
     alert("Não foi possível carregar os cartões.");
+  }
+}
+
+// 🔹 Exibe o estabelecimento vinculado ao cupom
+function exibirEstabelecimentoVinculado(estabelecimentoId) {
+  const container = document.getElementById("estabelecimento-vinculado");
+  
+  if (!container) return;
+
+  if (!estabelecimentoId) {
+    container.innerHTML = '<p style="color: #999; font-size: 14px;">Nenhum estabelecimento vinculado</p>';
+    return;
+  }
+
+  const estab = estabelecimentosModalCache.find(e => e.id === estabelecimentoId);
+
+  if (estab) {
+    container.innerHTML = `
+      <div style="padding: 12px; background: #f5f5f5; border-radius: 6px; border-left: 3px solid #4B57A3;">
+        <strong style="color: #4B57A3;">📍 Estabelecimento Atual:</strong>
+        <p style="margin: 4px 0 0 0; font-size: 14px;">${estab.nome}</p>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `<p style="color: #999; font-size: 14px;">Estabelecimento ID: ${estabelecimentoId}</p>`;
+  }
+}
+
+// 🔹 Exibe os cartões vinculados ao cupom
+function exibirCartoesVinculados(cartoesIds) {
+  const container = document.getElementById("cartoes-vinculados");
+  
+  if (!container) return;
+
+  if (!cartoesIds || cartoesIds.length === 0) {
+    container.innerHTML = '<p style="color: #999; font-size: 14px;">Nenhum cartão vinculado</p>';
+    return;
+  }
+
+  const cartoesVinculados = cartoesModalCache.filter(c => cartoesIds.includes(c.id));
+
+  if (cartoesVinculados.length > 0) {
+    const cartoesHTML = cartoesVinculados.map(cartao => `
+      <span style="
+        display: inline-block;
+        padding: 6px 12px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-right: 8px;
+        margin-bottom: 8px;
+      ">
+        💳 ${cartao.nome}
+      </span>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="padding: 12px; background: #f5f5f5; border-radius: 6px; border-left: 3px solid #4B57A3;">
+        <strong style="color: #4B57A3; display: block; margin-bottom: 8px;">💳 Cartões Aceitos Atuais:</strong>
+        <div>${cartoesHTML}</div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = '<p style="color: #999; font-size: 14px;">Nenhum cartão encontrado</p>';
   }
 }
 
@@ -836,6 +920,7 @@ async function excluirCupomPromocao(id) {
     alert("Erro ao excluir cupom.");
   }
 }
+
 
  function fecharModalEditarCupom() {
     document.getElementById("modalEditarCupom").classList.remove("open");
