@@ -650,7 +650,7 @@ async function atualizarStatusCupom(cupomId, ativo) {
       "limiteUsoPorUsuario": cupom.limiteUsoPorUsuario,
       "ativo": ativo,
       "estabelecimentoId": cupom.estabelecimentoId,
-      "cartoesAceitosIds": cupom.cartoesAceitosIds || [],
+      "cartoesAceitosIds": cupom.cartoesAceitos || [],
       "status": ativo ? "Publicado" : "Rascunho"
     };
 
@@ -736,7 +736,7 @@ async function abrirModalEditarCupom(id) {
     if (cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0) {
       const selectCartoes = document.getElementById("edit-cartoes");
       Array.from(selectCartoes.options).forEach(option => {
-        option.selected = cupom.cartoesAceitosIds.includes(parseInt(option.value));
+        option.selected = cupom.cartoesAceitos.includes(parseInt(option.value));
       });
     }
 
