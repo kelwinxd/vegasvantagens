@@ -735,7 +735,7 @@ async function abrirModalEditarCupom(id, nomeEstab) {
 
     // 🔹 Exibe os cartões vinculados
     const cartoesHTML = cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0
-      ? c.cartoesAceitos.map(cartao => 
+      ? cupom.cartoesAceitos.map(cartao => 
           `<span class="badge-cartao">${cartao.nome}</span>`
         ).join('')
       : '';
