@@ -738,9 +738,8 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
 
     document.getElementById("edit-ativo").checked = cupom.ativo || false;
     
-    // 🔹 ESTE CAMPO JÁ FOI SETADO PELA FUNÇÃO carregarEstabelecimentosModal
-    // Mas podemos garantir novamente:
-    document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId || "";
+    // ❌ REMOVER ESTA LINHA - ela está sobrescrevendo a seleção feita em carregarEstabelecimentosModal
+    // document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId || "";
 
     // 🔹 Exibe o estabelecimento vinculado
     const container = document.getElementById("estabelecimento-vinculado");
