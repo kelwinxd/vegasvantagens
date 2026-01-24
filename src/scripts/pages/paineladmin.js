@@ -541,7 +541,7 @@ function renderizarPromocoes(cupons) {
     // Renderiza badges de cartões
     const cartoesHTML = c.cartoesAceitos && c.cartoesAceitos.length > 0
       ? c.cartoesAceitos.map(cartao => 
-          `<span class="badge-cartao">${cartao}</span>`
+          `<span class="badge-cartao">${cartao.nome}</span>`
         ).join('')
       : '';
 
@@ -861,6 +861,7 @@ function exibirEstabelecimentoVinculado(estabelecimentoId) {
 // 🔹 Exibe os cartões vinculados ao cupom
 function exibirCartoesVinculados(cartoesIds) {
   const container = document.getElementById("cartoes-vinculados");
+  
   
   if (!container) return;
 
