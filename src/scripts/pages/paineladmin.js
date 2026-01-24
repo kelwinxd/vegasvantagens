@@ -569,7 +569,7 @@ function renderizarPromocoes(cupons) {
 
         <!-- Conteúdo -->
         <div class="cupom-content-admin">
-          <h3>${c.nomeEstabelecimento}</h3>
+          <h3 class="nome-estab">${c.nomeEstabelecimento}</h3>
 
           <p class="expira-admin">
             <strong>Validade:</strong> ${new Date(c.dataExpiracao).toLocaleDateString()}
@@ -587,12 +587,15 @@ function renderizarPromocoes(cupons) {
         </div>
       </article>
     `);
-  });
+  });   
+
+
 
   // Event listeners para editar
   document.querySelectorAll(".btn-editar-cupom-admin").forEach(btn => {
+    const nomeEstab = document.querySelector(".nome-estab").textContent
     btn.addEventListener("click", () =>
-      abrirModalEditarCupom(btn.dataset.id)
+      abrirModalEditarCupom(btn.dataset.id, nomeEstab)
     );
   });
 
@@ -682,7 +685,7 @@ async function atualizarStatusCupom(cupomId, ativo) {
 let estabelecimentosModalCache = [];
 let cartoesModalCache = [];
 
-async function abrirModalEditarCupom(id) {
+async function abrirModalEditarCupom(id, nomeEstab) {
   const token = localStorage.getItem("token");
 
   try {
@@ -727,10 +730,16 @@ async function abrirModalEditarCupom(id) {
     document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId || "";
 
     // 🔹 Exibe o estabelecimento vinculado
-    exibirEstabelecimentoVinculado(cupom.estabelecimentoId);
+    const container = document.getElementById("estabelecimento-vinculado");
+    container.appendChild(nomeEstab)
 
     // 🔹 Exibe os cartões vinculados
-    exibirCartoesVinculados(cupom.cartoesAceitos || []);
+    const cartoesHTML = cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0
+      ? c.cartoesAceitos.map(cartao => 
+          `<span class="badge-cartao">${cartao.nome}</span>`
+        ).join('')
+      : '';
+    document.getElementById("cartoes-vinculados").appendChild(cartoesHTML)
 
     // SELECT MULTIPLE para cartões aceitos
     if (cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0) {
