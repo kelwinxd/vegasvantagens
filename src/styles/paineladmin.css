@@ -1320,7 +1320,7 @@ line-height: normal;
     .form-edit-vinc {
       display: flex;
       align-items: center;
-      
+
     }
 
     /* CHECKBOX SWITCH - EDIT CUPOM */
@@ -1491,6 +1491,12 @@ line-height: normal;
     .badge-cartao:nth-child(3) {
       background: #fff3e0;
       color: #e65100;
+    }
+
+    #cartoes-vinculados {
+      display: flex;
+      height: 100%;
+      align-self: center;
     }
 
     /* Header com título e toggle */
