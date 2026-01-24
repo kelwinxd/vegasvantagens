@@ -699,8 +699,8 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
   const token = localStorage.getItem("token");
 
   try {
-    // 🔹 Carrega estabelecimentos PASSANDO O ID para setar no select
-    await carregarEstabelecimentosModal(estabelecimentoId);
+    // 🔹 Carrega estabelecimentos PASSANDO O NOME (não o ID)
+    await carregarEstabelecimentosModal(nomeEstab); // ← MUDANÇA AQUI
     await carregarCartoesModal();
 
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
@@ -737,9 +737,6 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     document.getElementById("edit-limiteUsuario").value = cupom.limiteUsoPorUsuario || "";
 
     document.getElementById("edit-ativo").checked = cupom.ativo || false;
-    
-    // ❌ REMOVER ESTA LINHA - ela está sobrescrevendo a seleção feita em carregarEstabelecimentosModal
-    // document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId || "";
 
     // 🔹 Exibe o estabelecimento vinculado
     const container = document.getElementById("estabelecimento-vinculado");
@@ -771,7 +768,7 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
 }
 
 // 🔹 Função para carregar estabelecimentos no select
-async function carregarEstabelecimentosModal(estabelecimentoIdSelecionado = null) {
+async function carregarEstabelecimentosModal(nomeEstabelecimentoSelecionado = null) {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -787,16 +784,14 @@ async function carregarEstabelecimentosModal(estabelecimentoIdSelecionado = null
     if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
 
     const estabelecimentos = await res.json();
-    
-    console.log("🔍 Estabelecimento a selecionar:", estabelecimentoIdSelecionado);
-    console.log("🔍 Estabelecimentos carregados:", estabelecimentos);
+    console.log("Estabelecimentos carregados:", estabelecimentos);
     
     // 🔹 Salva no cache
     estabelecimentosModalCache = estabelecimentos;
 
     const selectEstab = document.getElementById("edit-estabelecimento");
 
-    // Limpa opções existentes (exceto a primeira)
+    // Limpa opções existentes
     selectEstab.innerHTML = '<option value="">Selecione um estabelecimento</option>';
 
     // Adiciona os estabelecimentos
@@ -804,18 +799,20 @@ async function carregarEstabelecimentosModal(estabelecimentoIdSelecionado = null
       const option = document.createElement("option");
       option.value = estab.id;
       option.textContent = estab.nome;
-      
-      // 🔹 Marca como selecionado se for o estabelecimento do cupom
-      // ⚠️ IMPORTANTE: Comparar tipos corretos (ambos number ou ambos string)
-      if (estabelecimentoIdSelecionado && estab.id == estabelecimentoIdSelecionado) {
-        option.selected = true;
-        console.log("✅ Estabelecimento selecionado:", estab.nome, "ID:", estab.id);
-      }
-      
       selectEstab.appendChild(option);
     });
-    
-    console.log("🔍 Valor final do select:", selectEstab.value);
+
+    // 🔹 Se foi passado o nome do estabelecimento, seleciona ele automaticamente
+    if (nomeEstabelecimentoSelecionado) {
+      const estabEncontrado = estabelecimentos.find(e => e.nome === nomeEstabelecimentoSelecionado);
+      
+      if (estabEncontrado) {
+        selectEstab.value = estabEncontrado.id;
+        console.log(`✅ Estabelecimento "${nomeEstabelecimentoSelecionado}" selecionado (ID: ${estabEncontrado.id})`);
+      } else {
+        console.warn(`⚠️ Estabelecimento "${nomeEstabelecimentoSelecionado}" não encontrado na lista.`);
+      }
+    }
 
   } catch (error) {
     console.error("Erro ao carregar estabelecimentos:", error);
