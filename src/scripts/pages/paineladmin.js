@@ -788,6 +788,9 @@ async function carregarEstabelecimentosModal(estabelecimentoIdSelecionado = null
 
     const estabelecimentos = await res.json();
     
+    console.log("🔍 Estabelecimento a selecionar:", estabelecimentoIdSelecionado);
+    console.log("🔍 Estabelecimentos carregados:", estabelecimentos);
+    
     // 🔹 Salva no cache
     estabelecimentosModalCache = estabelecimentos;
 
@@ -803,19 +806,22 @@ async function carregarEstabelecimentosModal(estabelecimentoIdSelecionado = null
       option.textContent = estab.nome;
       
       // 🔹 Marca como selecionado se for o estabelecimento do cupom
-      if (estabelecimentoIdSelecionado && estab.id === estabelecimentoIdSelecionado) {
+      // ⚠️ IMPORTANTE: Comparar tipos corretos (ambos number ou ambos string)
+      if (estabelecimentoIdSelecionado && estab.id == estabelecimentoIdSelecionado) {
         option.selected = true;
+        console.log("✅ Estabelecimento selecionado:", estab.nome, "ID:", estab.id);
       }
       
       selectEstab.appendChild(option);
     });
+    
+    console.log("🔍 Valor final do select:", selectEstab.value);
 
   } catch (error) {
     console.error("Erro ao carregar estabelecimentos:", error);
     alert("Não foi possível carregar os estabelecimentos.");
   }
 }
-
 // 🔹 Função para carregar cartões no select multiple
 async function carregarCartoesModal() {
   const token = localStorage.getItem("token");
