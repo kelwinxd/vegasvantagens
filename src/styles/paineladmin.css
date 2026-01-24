@@ -1317,6 +1317,12 @@ line-height: normal;
       min-height: 120px;
     }
 
+    .form-edit-vinc {
+      display: flex;
+      align-items: center;
+      
+    }
+
     /* CHECKBOX SWITCH - EDIT CUPOM */
     .row-edit-cupom.ativo-edit-cupom {
       display: flex;

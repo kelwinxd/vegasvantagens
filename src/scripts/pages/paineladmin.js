@@ -532,7 +532,13 @@ function renderizarPromocoes(cupons) {
     return;
   }
 
+  // 🔹 CRIAR CACHE DOS CUPONS
+  const cuponsCacheMap = new Map();
+
   cupons.forEach(c => {
+    // 🔹 GUARDAR NO CACHE
+    cuponsCacheMap.set(c.id.toString(), c);
+    
     const imagem =
       c.imagens && c.imagens.length
         ? c.imagens[0]
@@ -589,14 +595,18 @@ function renderizarPromocoes(cupons) {
     `);
   });   
 
-
+  // 🔹 SALVAR O CACHE GLOBALMENTE
+  window._cuponsCacheMap = cuponsCacheMap;
 
   // Event listeners para editar
   document.querySelectorAll(".btn-editar-cupom-admin").forEach(btn => {
-    const nomeEstab = document.querySelector(".nome-estab").textContent
-    btn.addEventListener("click", () =>
-      abrirModalEditarCupom(btn.dataset.id, nomeEstab)
-    );
+    btn.addEventListener("click", () => {
+      // 🔹 BUSCAR DO CACHE
+      const cupom = cuponsCacheMap.get(btn.dataset.id);
+      if (cupom) {
+        abrirModalEditarCupom(cupom.id, cupom.nomeEstabelecimento, cupom.estabelecimentoId);
+      }
+    });
   });
 
   // Event listeners para excluir
@@ -685,12 +695,12 @@ async function atualizarStatusCupom(cupomId, ativo) {
 let estabelecimentosModalCache = [];
 let cartoesModalCache = [];
 
-async function abrirModalEditarCupom(id, nomeEstab) {
+async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
   const token = localStorage.getItem("token");
 
   try {
-    // 🔹 Carrega estabelecimentos e cartões ANTES de buscar o cupom
-    await carregarEstabelecimentosModal();
+    // 🔹 Carrega estabelecimentos PASSANDO O ID para setar no select
+    await carregarEstabelecimentosModal(estabelecimentoId);
     await carregarCartoesModal();
 
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
@@ -727,25 +737,28 @@ async function abrirModalEditarCupom(id, nomeEstab) {
     document.getElementById("edit-limiteUsuario").value = cupom.limiteUsoPorUsuario || "";
 
     document.getElementById("edit-ativo").checked = cupom.ativo || false;
+    
+    // 🔹 ESTE CAMPO JÁ FOI SETADO PELA FUNÇÃO carregarEstabelecimentosModal
+    // Mas podemos garantir novamente:
     document.getElementById("edit-estabelecimento").value = cupom.estabelecimentoId || "";
 
     // 🔹 Exibe o estabelecimento vinculado
     const container = document.getElementById("estabelecimento-vinculado");
-    container.querySelector(".nome-estab-edit").textContent = nomeEstab
+    container.querySelector(".nome-estab-edit").textContent = nomeEstab;
 
     // 🔹 Exibe os cartões vinculados
     const cartoesHTML = cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0
       ? cupom.cartoesAceitos.map(cartao => 
           `<span class="badge-cartao">${cartao.nome}</span>`
         ).join('')
-      : '';
-    document.getElementById("cartoes-vinculados").innerHTML = cartoesHTML
+      : '<p class="text-muted">Nenhum cartão vinculado</p>';
+    document.getElementById("cartoes-vinculados").innerHTML = cartoesHTML;
 
     // SELECT MULTIPLE para cartões aceitos
     if (cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0) {
       const selectCartoes = document.getElementById("edit-cartoes");
       Array.from(selectCartoes.options).forEach(option => {
-        option.selected = cupom.cartoesAceitos.includes(parseInt(option.value));
+        option.selected = cupom.cartoesAceitos.some(cartao => cartao.id === parseInt(option.value));
       });
     }
 
@@ -759,7 +772,7 @@ async function abrirModalEditarCupom(id, nomeEstab) {
 }
 
 // 🔹 Função para carregar estabelecimentos no select
-async function carregarEstabelecimentosModal() {
+async function carregarEstabelecimentosModal(estabelecimentoIdSelecionado = null) {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -789,6 +802,12 @@ async function carregarEstabelecimentosModal() {
       const option = document.createElement("option");
       option.value = estab.id;
       option.textContent = estab.nome;
+      
+      // 🔹 Marca como selecionado se for o estabelecimento do cupom
+      if (estabelecimentoIdSelecionado && estab.id === estabelecimentoIdSelecionado) {
+        option.selected = true;
+      }
+      
       selectEstab.appendChild(option);
     });
 
