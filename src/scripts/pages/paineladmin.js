@@ -739,7 +739,7 @@ async function abrirModalEditarCupom(id, nomeEstab) {
           `<span class="badge-cartao">${cartao.nome}</span>`
         ).join('')
       : '';
-    document.getElementById("cartoes-vinculados").appendChild(cartoesHTML)
+    document.getElementById("cartoes-vinculados").innerHTML = cartoesHTML
 
     // SELECT MULTIPLE para cartões aceitos
     if (cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0) {
