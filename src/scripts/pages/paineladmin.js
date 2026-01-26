@@ -739,8 +739,7 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     document.getElementById("edit-ativo").checked = cupom.ativo || false;
 
     // 🔹 Exibe o estabelecimento vinculado
-    const container = document.getElementById("estabelecimento-vinculado");
-    container.querySelector(".nome-estab-edit").textContent = nomeEstab;
+   
 
     // 🔹 Exibe os cartões vinculados
     const cartoesHTML = cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0
