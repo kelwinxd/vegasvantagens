@@ -1642,3 +1642,34 @@ line-height: normal;
       width: 16px;
       height: 16px;
     }
+
+    .checkbox-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.checkbox-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.checkbox-item:last-child {
+  border-bottom: none;
+}
+
+.checkbox-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

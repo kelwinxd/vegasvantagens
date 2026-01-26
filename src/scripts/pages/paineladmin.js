@@ -2040,8 +2040,18 @@ async function carregarEstadosModal() {
 
 let grupoSelecionadoId = null;
 
-async function carregarGrupos() {
-  const token = localStorage.getItem("token"); // ajuste se usar outro nome
+let gruposCache = [];
+
+// ========== CARREGAR GRUPOS COM CACHE ==========
+async function carregarGrupos(forcarRecarregar = false) {
+  const token = localStorage.getItem("token");
+
+  // Se já tem cache e não está forçando recarregar, usa o cache
+  if (gruposCache.length > 0 && !forcarRecarregar) {
+    console.log("Usando grupos do cache");
+    renderizarListaGrupos(gruposCache);
+    return gruposCache;
+  }
 
   try {
     const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
@@ -2057,11 +2067,18 @@ async function carregarGrupos() {
     }
 
     const grupos = await response.json();
+    
+    // Atualiza o cache
+    gruposCache = grupos;
+    
     renderizarListaGrupos(grupos);
+    
+    return grupos;
 
   } catch (error) {
     console.error(error);
     alert("Não foi possível carregar os grupos");
+    return [];
   }
 }
 
@@ -2153,6 +2170,7 @@ function fecharModalVincular() {
   grupoSelecionadoId = null;
 }
 
+// ========== VINCULAR ESTABELECIMENTOS (com atualização de cache) ==========
 async function confirmarVinculo() {
   if (!grupoSelecionadoId) return;
 
@@ -2192,6 +2210,10 @@ async function confirmarVinculo() {
 
     alert("Estabelecimentos vinculados com sucesso!");
     fecharModalVincular();
+    
+    // 🔹 LIMPA O CACHE E RECARREGA
+    limparCacheGrupos();
+    await carregarGrupos(true);
 
   } catch (err) {
     console.error(err);
@@ -2199,8 +2221,11 @@ async function confirmarVinculo() {
   }
 }
 
+// ========== RENDERIZAR LISTA DE GRUPOS ==========
 function renderizarListaGrupos(grupos) {
   const container = document.getElementById("listaGrupo");
+  if (!container) return;
+
   container.innerHTML = "";
 
   if (!grupos || grupos.length === 0) {
@@ -2247,6 +2272,96 @@ function renderizarListaGrupos(grupos) {
   });
 }
 
+// ========== LIMPAR CACHE DE GRUPOS ==========
+function limparCacheGrupos() {
+  gruposCache = [];
+  console.log("Cache de grupos limpo");
+}
+
+// ========== POPULAR SELECT DE GRUPOS (usando cache) ==========
+async function popularSelectGrupos(selectId = "grupo2") {
+  // Se não tem cache, carrega
+  if (gruposCache.length === 0) {
+    await carregarGrupos();
+  }
+
+  const select = document.getElementById(selectId);
+  if (!select) {
+    console.warn(`Select #${selectId} não encontrado`);
+    return;
+  }
+
+  select.innerHTML = '<option value="">Selecione</option>';
+
+  gruposCache.forEach(grupo => {
+    const option = document.createElement("option");
+    option.value = grupo.id;
+    option.textContent = grupo.nome;
+    select.appendChild(option);
+  });
+}
+
+// ========== CADASTRAR GRUPO (com atualização de cache) ==========
+async function cadastrarGrupo() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  const nome = document.getElementById("nomeGrupo").value.trim();
+  if (!nome) {
+    alert("O nome do grupo é obrigatório.");
+    return;
+  }
+
+  const formData = new FormData();
+  
+  formData.append("Nome", nome);
+  formData.append("SiteURL", document.getElementById("siteUrlGrupo").value.trim());
+  formData.append("Ativo", document.getElementById("ativoGrupo").checked);
+
+  const logoFile = document.getElementById("logoGrupo").files[0];
+  if (logoFile) {
+    formData.append("LogoCaminho", logoFile);
+  }
+
+  const estabelecimentosIds = obterEstabelecimentosSelecionados();
+  estabelecimentosIds.forEach(id => {
+    formData.append("EstabelecimentosIds", id);
+  });
+
+  try {
+    const response = await fetch(`${API_BASE}/api/Grupos/criar`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const erro = await response.text();
+      throw new Error(erro);
+    }
+
+    const grupo = await response.json();
+    
+    alert("Grupo cadastrado com sucesso!");
+    document.getElementById("formCadastroGrupo").reset();
+    
+    // 🔹 LIMPA O CACHE E RECARREGA
+    limparCacheGrupos();
+    await carregarGrupos(true); // força recarregar
+    
+    // Volta para a lista de grupos
+    abrirSubPage("lista-grupo");
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao cadastrar grupo: " + error.message);
+  }
+}
 
 async function buscarEstabelecimentosDoGrupo(grupoId) {
   const token = localStorage.getItem("token");
@@ -2261,6 +2376,60 @@ async function buscarEstabelecimentosDoGrupo(grupoId) {
   if (!res.ok) throw new Error("Erro ao buscar estabelecimentos do grupo");
 
   return await res.json();
+}
+
+// ========== POPULAR ESTABELECIMENTOS PARA GRUPO ==========
+async function popularEstabelecimentosParaGrupo() {
+  const token = localStorage.getItem("token");
+  const container = document.getElementById("listaEstabelecimentosGrupo");
+  
+  container.innerHTML = '<p>Carregando...</p>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar estabelecimentos");
+    }
+
+    const estabelecimentos = await response.json();
+    container.innerHTML = "";
+
+    if (!estabelecimentos || estabelecimentos.length === 0) {
+      container.innerHTML = "<p>Nenhum estabelecimento disponível.</p>";
+      return;
+    }
+
+    estabelecimentos.forEach(estab => {
+      const checkboxWrapper = document.createElement("div");
+      checkboxWrapper.className = "checkbox-item";
+      
+      checkboxWrapper.innerHTML = `
+        <label>
+          <input type="checkbox" value="${estab.id}" class="estab-checkbox">
+          ${estab.nome}
+        </label>
+      `;
+      
+      container.appendChild(checkboxWrapper);
+    });
+
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = "<p>Erro ao carregar estabelecimentos.</p>";
+  }
+}
+
+// ========== OBTER IDS DOS ESTABELECIMENTOS SELECIONADOS ==========
+function obterEstabelecimentosSelecionados() {
+  return [...document.querySelectorAll("#listaEstabelecimentosGrupo input[type='checkbox']:checked")]
+    .map(cb => parseInt(cb.value));
 }
 
 
@@ -2292,6 +2461,7 @@ window.abrirModalVincular = abrirModalVincular;
 window.fecharModalVincular = fecharModalVincular;
 window.salvarEdicaoCupom = salvarEdicaoCupom;
 window.fecharModalEditarCupom = fecharModalEditarCupom;
+window.cadastrarGrupo = cadastrarGrupo;
 
 
 

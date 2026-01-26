@@ -151,7 +151,71 @@
 
 <!-- Lista de Grupos -->
 <div class="sub-page" data-subpage="lista-grupo">
+  <div class="actions-page-estab">
+    <input type="text" class="search-grupo" placeholder="Buscar grupos...">
+    <button data-open-subpage="criar-grupo" class="btn-action" type="button">
+      + Criar Grupo
+    </button>
+  </div>
   <div id="listaGrupo" class="lista-cards"></div>
+</div>
+
+<!-- Subpage: Criar Grupo (filho de lista-grupo) -->
+<div class="sub-page" data-subpage="criar-grupo">
+  <!-- Botão Voltar -->
+  <button class="btn-voltar" data-open-subpage="lista-grupo" type="button">
+    ← Voltar para Grupos
+  </button>
+  
+  <form class="form-estab" id="formCadastroGrupo">
+    <h3 class="title-form">Dados do Grupo</h3>
+
+    <div class="row">
+      <div class="field">
+        <label>Nome do Grupo *</label>
+        <input type="text" placeholder="Ex: Rede de Supermercados" id="nomeGrupo" required />
+      </div>
+      
+      <div class="field">
+        <label>Site URL</label>
+        <input type="url" placeholder="https://www.exemplo.com.br" id="siteUrlGrupo" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Logo do Grupo</label>
+        <input type="file" id="logoGrupo" accept="image/*" />
+        <small>Formatos aceitos: JPG, PNG, GIF</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field checkbox-field">
+        <label>
+          <input type="checkbox" id="ativoGrupo" checked />
+          Grupo Ativo
+        </label>
+      </div>
+    </div>
+
+    <h3 class="title-form">Estabelecimentos (opcional)</h3>
+    <div class="field">
+      <label>Vincular Estabelecimentos</label>
+      <div id="listaEstabelecimentosGrupo" class="checkbox-list">
+        <!-- Será populado via JavaScript -->
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" data-open-subpage="lista-grupo">
+        Cancelar
+      </button>
+      <button type="button" class="btn-primary" onclick="cadastrarGrupo()">
+        Salvar Grupo
+      </button>
+    </div>
+  </form>
 </div>
 
 <!-- Subpage: Criar Estabelecimento (filho de lista-estab) -->
