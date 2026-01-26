@@ -1354,6 +1354,7 @@ window.onload = async () => {
   carregarCategorias();
   await carregarEstados();
   carregarCartoes();
+  popularSelectGrupos()
   
 
   
@@ -1467,7 +1468,7 @@ const data = {
   "latitude": Number(document.getElementById("latitude2").value),
   "longitude": Number(document.getElementById("longitude2").value),
 
-  "grupoId": null,
+  "grupoId": Number(document.getElementById("grupo2").value) || null,
   "mapaUrl": document.getElementById("mapurl2").value.trim(),
   "sobre": document.getElementById("sobre2").value.trim(),
   "status": ativo ? "Publicado" : "Rascunho"
@@ -1507,6 +1508,24 @@ console.log('depois do try');
       await vincularCategoria(estab.id, categoriaId);
     }
 
+    // 🔹 VINCULAR GRUPO (se selecionado)
+    const grupoId = Number(document.getElementById("grupo2").value);
+    if (grupoId) {
+      await fetch(
+    `${API_BASE}/api/Grupos/${grupoId}/vincular-estabelecimentos/${estab.id}`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }
+  ).then(res => {
+    if (!res.ok) {
+      throw new Error("Erro ao vincular grupo");
+    }
+  });
+  }
+
     // 🔹 VINCULAR CARTÕES
     const cartoesIds = obterCartoesSelecionados();
     if (cartoesIds.length > 0) {
@@ -1533,6 +1552,42 @@ console.log('depois do try');
   } catch (err) {
     console.error(err);
     alert("Erro ao cadastrar: " + err.message);
+  }
+}
+
+async function popularSelectGrupos() {
+  const token = localStorage.getItem("token");
+  const selectGrupo = document.getElementById("grupo2");
+  
+  // Limpa o select mantendo apenas a opção padrão
+  selectGrupo.innerHTML = '<option value="">Selecione</option>';
+
+  try {
+    const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar grupos");
+    }
+
+    const grupos = await response.json();
+    
+    // Popula o select com os grupos
+    grupos.forEach(grupo => {
+      const option = document.createElement("option");
+      option.value = grupo.id;
+      option.textContent = grupo.nome;
+      selectGrupo.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível carregar os grupos");
   }
 }
 
