@@ -1555,41 +1555,7 @@ console.log('depois do try');
   }
 }
 
-async function popularSelectGrupos() {
-  const token = localStorage.getItem("token");
-  const selectGrupo = document.getElementById("grupo2");
-  
-  // Limpa o select mantendo apenas a opção padrão
-  selectGrupo.innerHTML = '<option value="">Selecione</option>';
 
-  try {
-    const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error("Erro ao buscar grupos");
-    }
-
-    const grupos = await response.json();
-    
-    // Popula o select com os grupos
-    grupos.forEach(grupo => {
-      const option = document.createElement("option");
-      option.value = grupo.id;
-      option.textContent = grupo.nome;
-      selectGrupo.appendChild(option);
-    });
-
-  } catch (error) {
-    console.error(error);
-    alert("Não foi possível carregar os grupos");
-  }
-}
 
   async function vincularCategoria(estabelecimentoId, categoriaId) {
   const token = localStorage.getItem("token");
