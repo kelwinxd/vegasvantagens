@@ -305,106 +305,13 @@ function renderizarLista(lista, containerId) {
 // ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
 
 
-function popularFiltroCidades() {
-  const selectCidade = document.getElementById("filtroCidade");
-  if (!selectCidade) return;
 
-  selectCidade.innerHTML = '<option value="">Todas</option>';
 
-  // 🔹 Extrai cidades únicas do cache de estabelecimentos
-  const cidadesSet = new Set();
-  
-  estabelecimentosCache.forEach(estab => {
-    if (estab.cidade && estab.cidade.trim() !== "") {
-      cidadesSet.add(estab.cidade.trim());
-    }
-  });
 
-  const cidades = [...cidadesSet].sort();
 
-  cidades.forEach(cidade => {
-    const option = document.createElement("option");
-    option.value = cidade;
-    option.textContent = cidade;
-    selectCidade.appendChild(option);
-  });
-}
 
-function popularFiltroCategorias() {
-  const selectCategoria = document.getElementById("filtroCategoria");
-  if (!selectCategoria) return;
-
-  selectCategoria.innerHTML = '<option value="">Todas</option>';
-
-  // 🔹 Extrai todas as categorias únicas dos estabelecimentos
-  const categoriasSet = new Set();
-  
-  estabelecimentosCache.forEach(estab => {
-    if (estab.categorias && Array.isArray(estab.categorias)) {
-      estab.categorias.forEach(cat => {
-        if (cat && cat.trim() !== "") {
-          categoriasSet.add(cat.trim());
-        }
-      });
-    }
-  });
-
-  const categorias = [...categoriasSet].sort();
-
-  categorias.forEach(categoria => {
-    const option = document.createElement("option");
-    option.value = categoria;
-    option.textContent = categoria;
-    selectCategoria.appendChild(option);
-  });
-}
-
-function popularFiltroGrupos() {
-  const selectGrupo = document.getElementById("filtroGrupo");
-  if (!selectGrupo) return;
-
-  selectGrupo.innerHTML = '<option value="">Todos</option>';
-
-  // 🔹 Extrai grupos únicos dos estabelecimentos que possuem grupoId
-  const gruposMap = new Map();
-
-  estabelecimentosCache.forEach(estab => {
-    if (estab.grupoId && estab.grupoNome) {
-      gruposMap.set(estab.grupoId, estab.grupoNome);
-    }
-  });
-
-  // Se não encontrou grupos nos estabelecimentos, tenta do cache de grupos
-  if (gruposMap.size === 0 && gruposCache.length > 0) {
-    gruposCache.forEach(grupo => {
-      gruposMap.set(grupo.id, grupo.nome);
-    });
-  }
-
-  // Ordena por nome
-  const grupos = [...gruposMap.entries()].sort((a, b) => 
-    a[1].localeCompare(b[1])
-  );
-
-  grupos.forEach(([id, nome]) => {
-    const option = document.createElement("option");
-    option.value = id;
-    option.textContent = nome;
-    selectGrupo.appendChild(option);
-  });
-}
 
 // ========== INICIALIZAÇÃO ==========
-async function inicializarPaginaEstabelecimentos() {
-  // Só carrega se o cache estiver vazio
-  if (estabelecimentosCache.length === 0) {
-    await buscarEstabelecimentos();
-  }
-  
-  popularFiltros();
-  inicializarFiltrosEstabelecimentos();
-  aplicarFiltros();
-}
 
 // 🔹 IMPORTANTE: Chamar apenas UMA VEZ quando abrir a subpage
 document.addEventListener('DOMContentLoaded', () => {
