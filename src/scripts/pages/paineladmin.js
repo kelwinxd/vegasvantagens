@@ -303,11 +303,7 @@ function renderizarLista(lista, containerId) {
 }
 
 // ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
-function popularFiltros() {
-  popularFiltroCidades();
-  popularFiltroCategorias();
-  popularFiltroGrupos();
-}
+
 
 function popularFiltroCidades() {
   const selectCidade = document.getElementById("filtroCidade");
@@ -402,7 +398,7 @@ function popularFiltroGrupos() {
 async function inicializarPaginaEstabelecimentos() {
   // Só carrega se o cache estiver vazio
   if (estabelecimentosCache.length === 0) {
-    await carregarEstabelecimentos();
+    await buscarEstabelecimentos();
   }
   
   popularFiltros();
