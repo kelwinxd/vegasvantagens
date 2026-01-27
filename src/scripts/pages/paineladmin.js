@@ -118,12 +118,21 @@ function renderizarLista(lista, containerId) {
   const token = localStorage.getItem("token");
 
   lista.forEach(estab => {
-    // Determina a imagem
-    const imagemSrc =
-      estab.imagemPrincipal ||
-      estab.imagens?.find(i => i.fachada)?.url ||
-      estab.imagens?.find(i => i.logo)?.url ||
-      "./imgs/default-image.png";
+    // 🔹 CORRIGIDO: Determina a imagem com fallback apropriado
+    let imagemSrc = "./imgs/default-image.png"; // padrão primeiro
+    
+    if (estab.imagemPrincipal) {
+      imagemSrc = estab.imagemPrincipal;
+    } else if (estab.imagens && estab.imagens.length > 0) {
+      const fachada = estab.imagens.find(i => i.fachada);
+      const logo = estab.imagens.find(i => i.logo);
+      
+      if (fachada && fachada.url) {
+        imagemSrc = fachada.url;
+      } else if (logo && logo.url) {
+        imagemSrc = logo.url;
+      }
+    }
 
     // Renderiza categorias
     let categoriasHTML = '';
@@ -138,11 +147,10 @@ function renderizarLista(lista, containerId) {
      <div class="card-estab-novo" data-id="${estab.id}">
         <!-- Imagem -->
         <div class="card-img-container">
-          <img src="${imagemSrc}" alt="${estab.nome}" onerror="this.onerror=null; this.src='./imgs/default-image.png';">
+          <img src="${imagemSrc}" alt="${estab.nome}">
         </div>
         
         <div class="info-wrapper">
-
         
         <!-- Informações -->
         <div class="card-info-container">
@@ -159,18 +167,11 @@ function renderizarLista(lista, containerId) {
                 <span class="slider-card"></span>
               </label>
             </div>
-
-
           </div>
-
-         
-          
-          
         </div>
 
         <!-- Ações -->
         <div class="card-acoes-container">
-
         <div class="card-categorias">
             ${categoriasHTML}
         </div>
@@ -243,6 +244,9 @@ function renderizarLista(lista, containerId) {
         estab.ativo = e.target.checked;
         console.log(`Status alterado para: ${novoStatus}`);
 
+        // 🔹 Atualiza os contadores após mudar o status
+        atualizarContadores();
+
       } catch (err) {
         console.error(err);
         alert("Erro ao alterar status: " + err.message);
@@ -277,8 +281,18 @@ function renderizarLista(lista, containerId) {
 
         if (!res.ok) throw new Error("Erro ao excluir");
 
+        // 🔹 Remove do cache
+        const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
+        if (index > -1) {
+          estabelecimentosCache.splice(index, 1);
+        }
+
         card.remove();
         alert("Estabelecimento excluído com sucesso!");
+        
+        // 🔹 Atualiza contadores e filtros
+        atualizarContadores();
+        popularFiltros();
 
       } catch (err) {
         console.error(err);
@@ -287,6 +301,128 @@ function renderizarLista(lista, containerId) {
     });
   });
 }
+
+// ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
+function popularFiltros() {
+  popularFiltroCidades();
+  popularFiltroCategorias();
+  popularFiltroGrupos();
+}
+
+function popularFiltroCidades() {
+  const selectCidade = document.getElementById("filtroCidade");
+  if (!selectCidade) return;
+
+  selectCidade.innerHTML = '<option value="">Todas</option>';
+
+  // 🔹 Extrai cidades únicas do cache de estabelecimentos
+  const cidadesSet = new Set();
+  
+  estabelecimentosCache.forEach(estab => {
+    if (estab.cidade && estab.cidade.trim() !== "") {
+      cidadesSet.add(estab.cidade.trim());
+    }
+  });
+
+  const cidades = [...cidadesSet].sort();
+
+  cidades.forEach(cidade => {
+    const option = document.createElement("option");
+    option.value = cidade;
+    option.textContent = cidade;
+    selectCidade.appendChild(option);
+  });
+}
+
+function popularFiltroCategorias() {
+  const selectCategoria = document.getElementById("filtroCategoria");
+  if (!selectCategoria) return;
+
+  selectCategoria.innerHTML = '<option value="">Todas</option>';
+
+  // 🔹 Extrai todas as categorias únicas dos estabelecimentos
+  const categoriasSet = new Set();
+  
+  estabelecimentosCache.forEach(estab => {
+    if (estab.categorias && Array.isArray(estab.categorias)) {
+      estab.categorias.forEach(cat => {
+        if (cat && cat.trim() !== "") {
+          categoriasSet.add(cat.trim());
+        }
+      });
+    }
+  });
+
+  const categorias = [...categoriasSet].sort();
+
+  categorias.forEach(categoria => {
+    const option = document.createElement("option");
+    option.value = categoria;
+    option.textContent = categoria;
+    selectCategoria.appendChild(option);
+  });
+}
+
+function popularFiltroGrupos() {
+  const selectGrupo = document.getElementById("filtroGrupo");
+  if (!selectGrupo) return;
+
+  selectGrupo.innerHTML = '<option value="">Todos</option>';
+
+  // 🔹 Extrai grupos únicos dos estabelecimentos que possuem grupoId
+  const gruposMap = new Map();
+
+  estabelecimentosCache.forEach(estab => {
+    if (estab.grupoId && estab.grupoNome) {
+      gruposMap.set(estab.grupoId, estab.grupoNome);
+    }
+  });
+
+  // Se não encontrou grupos nos estabelecimentos, tenta do cache de grupos
+  if (gruposMap.size === 0 && gruposCache.length > 0) {
+    gruposCache.forEach(grupo => {
+      gruposMap.set(grupo.id, grupo.nome);
+    });
+  }
+
+  // Ordena por nome
+  const grupos = [...gruposMap.entries()].sort((a, b) => 
+    a[1].localeCompare(b[1])
+  );
+
+  grupos.forEach(([id, nome]) => {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = nome;
+    selectGrupo.appendChild(option);
+  });
+}
+
+// ========== INICIALIZAÇÃO ==========
+async function inicializarPaginaEstabelecimentos() {
+  // Só carrega se o cache estiver vazio
+  if (estabelecimentosCache.length === 0) {
+    await carregarEstabelecimentos();
+  }
+  
+  popularFiltros();
+  inicializarFiltrosEstabelecimentos();
+  aplicarFiltros();
+}
+
+// 🔹 IMPORTANTE: Chamar apenas UMA VEZ quando abrir a subpage
+document.addEventListener('DOMContentLoaded', () => {
+  const btnListaEstab = document.querySelector('[data-open-subpage="lista-estab"]');
+  
+  if (btnListaEstab) {
+    btnListaEstab.addEventListener('click', () => {
+      // Pequeno delay para garantir que o DOM está pronto
+      setTimeout(() => {
+        inicializarPaginaEstabelecimentos();
+      }, 100);
+    });
+  }
+});
 
   function filtrarEstabelecimentos(texto) {
     const containerId = "listaCards";
