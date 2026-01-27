@@ -41,7 +41,7 @@ import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '
       // Página de gerenciamento
       renderizarLista(estabelecimentosCache, "listaCards");
       inicializarFiltroDashboard()
-      atualizarContadoresTabs();
+     
 
     } catch (err) {
       console.error(err);
@@ -321,12 +321,7 @@ document.querySelector(".search-estab").addEventListener("input", e => {
   });
 
 
-function atualizarDashboard() {
-  document.getElementById("totalEstab").textContent =
-    estabelecimentosCache.length;
 
-  
-}
 
 function fecharSubPages() {
   document.querySelectorAll(".sub-page")
