@@ -130,43 +130,89 @@
 
     <!-- ESTABELECIMENTOS -->
 
-    <div class="page" data-page="estabelecimentos">
+   <!-- ESTABELECIMENTOS -->
+<div class="page" data-page="estabelecimentos">
   <h1>Gerenciar Estabelecimentos</h1>
-  <!-- Botão -->
-  <div class="btns-subpage">
-  <button data-open-subpage="lista-estab" class="active">Estabelecimentos</button>
-  <button data-open-subpage="lista-grupo">Grupos</button>
-</div>
-
-<!-- Lista de Estabelecimentos -->
-<div class="sub-page active" data-subpage="lista-estab">
-  <div class="actions-page-estab">
-    <input type="text" class="search-estab" placeholder="Buscar...">
-    <button data-open-subpage="criar-estab" class="btn-action" type="button">
-      + Criar
-    </button>
-  </div>
-  <div id="listaCards" class="lista-cards"></div>
-</div>
-
-<!-- Lista de Grupos -->
-<div class="sub-page" data-subpage="lista-grupo">
-  <div class="actions-page-estab">
-    <input type="text" class="search-grupo" placeholder="Buscar grupos...">
-    <button data-open-subpage="criar-grupo" class="btn-action" type="button">
-      + Criar Grupo
-    </button>
-  </div>
-  <div id="listaGrupo" class="lista-cards"></div>
-</div>
-
-<!-- Subpage: Criar Grupo (filho de lista-grupo) -->
-<div class="sub-page" data-subpage="criar-grupo">
-  <!-- Botão Voltar -->
-  <button class="btn-voltar" data-open-subpage="lista-grupo" type="button">
-    ← Voltar para Grupos
-  </button>
   
+  <!-- Botões de navegação entre subpages -->
+  <div class="btns-subpage">
+    <button data-open-subpage="lista-estab" class="active">Estabelecimentos</button>
+    <button data-open-subpage="lista-grupo">Grupos</button>
+  </div>
+
+  <!-- Lista de Estabelecimentos -->
+  <div class="sub-page active" data-subpage="lista-estab">
+    <div class="actions-page-estab">
+      <!-- Barra de busca -->
+      <input type="text" class="search-estab" placeholder="Buscar por nome ou cidade...">
+      
+      <!-- Botão criar -->
+      <button data-open-subpage="criar-estab" class="btn-action" type="button">
+        + Criar
+      </button>
+    </div>
+
+    <!-- Filtros de Status (Todos, Publicados, Rascunhos) -->
+    <div class="filtros-status">
+      <button class="tab-filtro active" data-status="todos">
+        Todos (<span id="count-todos">0</span>)
+      </button>
+      <button class="tab-filtro" data-status="publicados">
+        Publicados (<span id="count-publicados">0</span>)
+      </button>
+      <button class="tab-filtro" data-status="rascunhos">
+        Rascunhos (<span id="count-rascunhos">0</span>)
+      </button>
+    </div>
+
+    <!-- Filtros Avançados -->
+    <div class="filtros-avancados">
+      <div class="filtro-item">
+        <label>Cidade</label>
+        <select id="filtroCidade" class="filtro-select">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="filtro-item">
+        <label>Categoria</label>
+        <select id="filtroCategoria" class="filtro-select">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="filtro-item">
+        <label>Grupo</label>
+        <select id="filtroGrupo" class="filtro-select">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <button class="btn-limpar-filtros" onclick="limparFiltros()">
+        Limpar Filtros
+      </button>
+    </div>
+
+    <!-- Lista de Cards -->
+    <div id="listaCards" class="lista-cards"></div>
+  </div>
+
+  <!-- Lista de Grupos -->
+  <div class="sub-page" data-subpage="lista-grupo">
+    <div class="actions-page-estab">
+      <input type="text" class="search-grupo" placeholder="Buscar grupos...">
+      <button data-open-subpage="criar-grupo" class="btn-action" type="button">
+        + Criar Grupo
+      </button>
+    </div>
+    <div id="listaGrupo" class="lista-cards"></div>
+  </div>
+
+  <!-- Subpage: Criar Grupo (filho de lista-grupo) -->
+  <div class="sub-page" data-subpage="criar-grupo">
+    <button class="btn-voltar" data-open-subpage="lista-grupo" type="button">
+      ← Voltar para Grupos
+    </button>  
   <form class="form-estab" id="formCadastroGrupo">
     <h3 class="title-form">Dados do Grupo</h3>
 

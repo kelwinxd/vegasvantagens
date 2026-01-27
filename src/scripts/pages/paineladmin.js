@@ -51,29 +51,6 @@ import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '
     
   }
 
-function contarEstabelecimentosPorStatus() {
-  const publicados = estabelecimentosCache.filter(
-    e => e.status === "Publicado"
-  ).length;
-
-  const rascunhos = estabelecimentosCache.filter(
-    e => e.status === "Rascunho"
-  ).length;
-
-  return { publicados, rascunhos };
-}
-
-function atualizarContadoresTabs() {
-  const { publicados, rascunhos } = contarEstabelecimentosPorStatus();
-
-  document
-    .querySelector('.tab[data-status="publicados"]')
-    .textContent = `Publicados (${publicados})`;
-
-  document
-    .querySelector('.tab[data-status="rascunhos"]')
-    .textContent = `Rascunho (${rascunhos})`;
-}
 
 //CARTOES ACEITOS
 
@@ -311,24 +288,24 @@ function renderizarLista(lista, containerId) {
   });
 }
 
-function filtrarEstabelecimentos(texto) {
-  const containerId = "listaCards";
+  function filtrarEstabelecimentos(texto) {
+    const containerId = "listaCards";
 
-  if (!texto || texto.trim() === "") {
-    renderizarLista(estabelecimentosCache, containerId);
-    return;
+    if (!texto || texto.trim() === "") {
+      renderizarLista(estabelecimentosCache, containerId);
+      return;
+    }
+
+    const termo = texto.toLowerCase();
+
+    const filtrados = estabelecimentosCache.filter(estab =>
+      estab.nome?.toLowerCase().includes(termo) ||
+      estab.cidade?.toLowerCase().includes(termo) ||
+      estab.status?.toLowerCase().includes(termo)
+    );
+
+    renderizarLista(filtrados, containerId);
   }
-
-  const termo = texto.toLowerCase();
-
-  const filtrados = estabelecimentosCache.filter(estab =>
-    estab.nome?.toLowerCase().includes(termo) ||
-    estab.cidade?.toLowerCase().includes(termo) ||
-    estab.status?.toLowerCase().includes(termo)
-  );
-
-  renderizarLista(filtrados, containerId);
-}
 
 function inicializarBuscaEstabelecimentos() {
   const input = document.querySelector(".search-estab");
@@ -367,6 +344,226 @@ function abrirSubPage(nome) {
   }
   subpage.classList.add("active");
 }
+
+// ========== ESTADO DOS FILTROS ==========
+let filtrosAtivos = {
+  busca: "",
+  status: "todos",
+  cidade: "",
+  categoria: "",
+  grupo: ""
+};
+
+// ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
+async function popularFiltros() {
+  popularFiltroCidades();
+  popularFiltroCategorias();
+  await popularFiltroGrupos();
+}
+
+function popularFiltroCidades() {
+  const selectCidade = document.getElementById("filtroCidade");
+  if (!selectCidade) return;
+
+  selectCidade.innerHTML = '<option value="">Todas</option>';
+
+  // Extrai cidades únicas do cache
+  const cidades = [...new Set(estabelecimentosCache
+    .map(e => e.cidade)
+    .filter(c => c && c.trim() !== "")
+  )].sort();
+
+  cidades.forEach(cidade => {
+    const option = document.createElement("option");
+    option.value = cidade;
+    option.textContent = cidade;
+    selectCidade.appendChild(option);
+  });
+}
+
+function popularFiltroCategorias() {
+  const selectCategoria = document.getElementById("filtroCategoria");
+  if (!selectCategoria) return;
+
+  selectCategoria.innerHTML = '<option value="">Todas</option>';
+
+  // Extrai todas as categorias únicas
+  const categoriasSet = new Set();
+  estabelecimentosCache.forEach(estab => {
+    if (estab.categorias && Array.isArray(estab.categorias)) {
+      estab.categorias.forEach(cat => categoriasSet.add(cat));
+    }
+  });
+
+  const categorias = [...categoriasSet].sort();
+
+  categorias.forEach(categoria => {
+    const option = document.createElement("option");
+    option.value = categoria;
+    option.textContent = categoria;
+    selectCategoria.appendChild(option);
+  });
+}
+
+async function popularFiltroGrupos() {
+  const selectGrupo = document.getElementById("filtroGrupo");
+  if (!selectGrupo) return;
+
+  selectGrupo.innerHTML = '<option value="">Todos</option>';
+
+  // Se não tem grupos no cache, carrega
+  if (gruposCache.length === 0) {
+    await carregarGrupos();
+  }
+
+  gruposCache.forEach(grupo => {
+    const option = document.createElement("option");
+    option.value = grupo.id;
+    option.textContent = grupo.nome;
+    selectGrupo.appendChild(option);
+  });
+}
+
+// ========== APLICAR FILTROS ==========
+function aplicarFiltros() {
+  let resultado = [...estabelecimentosCache];
+
+  // Filtro por busca (nome ou cidade)
+  if (filtrosAtivos.busca) {
+    const termo = filtrosAtivos.busca.toLowerCase();
+    resultado = resultado.filter(estab =>
+      estab.nome?.toLowerCase().includes(termo) ||
+      estab.cidade?.toLowerCase().includes(termo)
+    );
+  }
+
+  // Filtro por status
+  if (filtrosAtivos.status !== "todos") {
+    const statusBusca = filtrosAtivos.status === "publicados" ? "Publicado" : "Rascunho";
+    resultado = resultado.filter(estab => estab.status === statusBusca);
+  }
+
+  // Filtro por cidade
+  if (filtrosAtivos.cidade) {
+    resultado = resultado.filter(estab => estab.cidade === filtrosAtivos.cidade);
+  }
+
+  // Filtro por categoria
+  if (filtrosAtivos.categoria) {
+    resultado = resultado.filter(estab =>
+      estab.categorias && estab.categorias.includes(filtrosAtivos.categoria)
+    );
+  }
+
+  // Filtro por grupo
+  if (filtrosAtivos.grupo) {
+    const grupoId = parseInt(filtrosAtivos.grupo);
+    resultado = resultado.filter(estab => estab.grupoId === grupoId);
+  }
+
+  // Renderiza os resultados
+  renderizarLista(resultado, "listaCards");
+  atualizarContadores();
+}
+
+// ========== ATUALIZAR CONTADORES ==========
+function atualizarContadores() {
+  const total = estabelecimentosCache.length;
+  const publicados = estabelecimentosCache.filter(e => e.status === "Publicado").length;
+  const rascunhos = estabelecimentosCache.filter(e => e.status === "Rascunho").length;
+
+  document.getElementById("count-todos").textContent = total;
+  document.getElementById("count-publicados").textContent = publicados;
+  document.getElementById("count-rascunhos").textContent = rascunhos;
+}
+
+// ========== LIMPAR FILTROS ==========
+function limparFiltros() {
+  // Reseta o estado dos filtros
+  filtrosAtivos = {
+    busca: "",
+    status: "todos",
+    cidade: "",
+    categoria: "",
+    grupo: ""
+  };
+
+  // Limpa os campos
+  document.querySelector(".search-estab").value = "";
+  document.getElementById("filtroCidade").value = "";
+  document.getElementById("filtroCategoria").value = "";
+  document.getElementById("filtroGrupo").value = "";
+
+  // Ativa a tab "Todos"
+  document.querySelectorAll(".tab-filtro").forEach(tab => {
+    tab.classList.remove("active");
+  });
+  document.querySelector('[data-status="todos"]').classList.add("active");
+
+  // Reaplica os filtros (que agora estão vazios)
+  aplicarFiltros();
+}
+
+// ========== EVENT LISTENERS ==========
+function inicializarFiltrosEstabelecimentos() {
+  // Busca por texto
+  document.querySelector(".search-estab")?.addEventListener("input", e => {
+    filtrosAtivos.busca = e.target.value;
+    aplicarFiltros();
+  });
+
+  // Filtro de status (Todos, Publicados, Rascunhos)
+  document.querySelectorAll(".tab-filtro").forEach(tab => {
+    tab.addEventListener("click", () => {
+      // Remove active de todos
+      document.querySelectorAll(".tab-filtro").forEach(t => t.classList.remove("active"));
+      // Adiciona active no clicado
+      tab.classList.add("active");
+      
+      // Atualiza o filtro
+      filtrosAtivos.status = tab.dataset.status;
+      aplicarFiltros();
+    });
+  });
+
+  // Filtro por cidade
+  document.getElementById("filtroCidade")?.addEventListener("change", e => {
+    filtrosAtivos.cidade = e.target.value;
+    aplicarFiltros();
+  });
+
+  // Filtro por categoria
+  document.getElementById("filtroCategoria")?.addEventListener("change", e => {
+    filtrosAtivos.categoria = e.target.value;
+    aplicarFiltros();
+  });
+
+  // Filtro por grupo
+  document.getElementById("filtroGrupo")?.addEventListener("change", e => {
+    filtrosAtivos.grupo = e.target.value;
+    aplicarFiltros();
+  });
+}
+
+// ========== ATUALIZAR DASHBOARD (remover tabs antigas) ==========
+function atualizarDashboard() {
+  document.getElementById("totalEstab").textContent = estabelecimentosCache.length;
+  // Removido: atualizarContadoresTabs() - agora usa atualizarContadores()
+}
+
+// ========== INICIALIZAÇÃO ==========
+// Chame isso quando carregar a página de estabelecimentos
+async function inicializarPaginaEstabelecimentos() {
+  await carregarEstabelecimentos(); // sua função existente
+  await popularFiltros();
+  inicializarFiltrosEstabelecimentos();
+  aplicarFiltros();
+}
+
+// Event listener para quando abrir a subpage de lista de estabelecimentos
+document.querySelector('[data-open-subpage="lista-estab"]')?.addEventListener('click', () => {
+  inicializarPaginaEstabelecimentos();
+});
 
 // Mapeamento de hierarquia: subpages filhas -> página pai
 const hierarquia = {
