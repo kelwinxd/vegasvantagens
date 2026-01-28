@@ -118,8 +118,13 @@ function renderizarLista(lista, containerId) {
   const token = localStorage.getItem("token");
 
   lista.forEach(estab => {
-    // 🔹 CORRIGIDO: Determina a imagem com fallback apropriado
-    let imagemSrc = "./imgs/default-image.png"; // padrão primeiro
+    // 🔹 CORRIGIDO: Determina a imag
+    // em com fallback apropriado
+
+    const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+    
+    let imagemSrc = PLACEHOLDER; // padrão primeiro
     
     if (estab.imagemPrincipal) {
       imagemSrc = estab.imagemPrincipal;
@@ -985,11 +990,14 @@ function renderizarPromocoes(cupons) {
   cupons.forEach(c => {
     // 🔹 GUARDAR NO CACHE
     cuponsCacheMap.set(c.id.toString(), c);
+    const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+
     
     const imagem =
       c.imagens && c.imagens.length
         ? c.imagens[0]
-        : "./imgs/default-image.png";
+        : PLACEHOLDER;
 
     // Renderiza badges de cartões
     const cartoesHTML = c.cartoesAceitos && c.cartoesAceitos.length > 0
@@ -998,11 +1006,13 @@ function renderizarPromocoes(cupons) {
         ).join('')
       : '';
 
+      
+
     container.insertAdjacentHTML("beforeend", `
       <article class="cupom-card-admin">
         <!-- Imagem -->
         <div class="cupom-media-admin">
-          <img src="${imagem}" alt="Imagem do cupom" loading="lazy" onerror="this.src='./imgs/default-image.png'">
+          <img src="${imagem}" alt="Imagem do cupom" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
         </div>
 
         <!-- Badges de Cartões -->
@@ -2148,8 +2158,12 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
   const div = document.createElement("div");
   div.className = "imagem-edit-item";
 
+  const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+
+
   const tipoClasse = isLogo ? "upload-logo" : "upload-fachada";
-  const srcImagem = imagem?.url || "/imgs/default-image.png";
+  const srcImagem = imagem?.url || PLACEHOLDER;
 
   div.innerHTML = `
     <strong>${titulo}</strong>
@@ -2191,9 +2205,10 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
   // 🔥 fallback de imagem
   const img = div.querySelector("img");
   img.src = srcImagem;
+
   img.onerror = () => {
     img.onerror = null;
-    img.src = "/imgs/default-image.png";
+    img.src = PLACEHOLDER;
   };
 
   return div;
@@ -2647,11 +2662,14 @@ function renderizarListaGrupos(grupos) {
   }
 
   container.classList.add("grupo-wrapper");
+  const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+
 
   grupos.forEach(grupo => {
     const logo = grupo.logoCaminho
       ? `${API_BASE}${grupo.logoCaminho}`
-      : "default-image.png";
+      : PLACEHOLDER;
 
     const card = document.createElement("div");
     card.className = "grupo-card";
@@ -2659,7 +2677,7 @@ function renderizarListaGrupos(grupos) {
     card.innerHTML = `
       <div class="grupo-logo">
         <img src="${logo}" alt="Logo ${grupo.nome}"
-             onerror="this.src='default-image.png'">
+             onerror="this.src='${PLACEHOLDER}'">
       </div>
 
       <div class="grupo-info">
