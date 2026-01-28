@@ -2651,7 +2651,7 @@ function renderizarListaGrupos(grupos) {
   grupos.forEach(grupo => {
     const logo = grupo.logoCaminho
       ? `${API_BASE}${grupo.logoCaminho}`
-      : "default.png";
+      : "default-image.png";
 
     const card = document.createElement("div");
     card.className = "grupo-card";
@@ -2659,7 +2659,7 @@ function renderizarListaGrupos(grupos) {
     card.innerHTML = `
       <div class="grupo-logo">
         <img src="${logo}" alt="Logo ${grupo.nome}"
-             onerror="this.src='default.png'">
+             onerror="this.src='default-image.png'">
       </div>
 
       <div class="grupo-info">
