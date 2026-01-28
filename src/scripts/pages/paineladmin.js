@@ -103,7 +103,7 @@ async function carregarCartoes() {
   }
 }
 
-
+ inicializarPaginaEstabelecimentos();
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -804,6 +804,15 @@ function inicializarFiltrosEstabelecimentos() {
 function atualizarDashboard() {
   document.getElementById("totalEstab").textContent = estabelecimentosCache.length;
   // Removido: atualizarContadoresTabs() - agora usa atualizarContadores()
+}
+
+function popularFiltros() {
+  console.log("📋 Populando filtros...");
+  
+  // Popula cada filtro individualmente
+  _popularFiltroCidades();
+  _popularFiltroCategorias();
+  _popularFiltroGrupos();
 }
 
 // ========== INICIALIZAÇÃO ==========
