@@ -1617,7 +1617,7 @@ async function popularSelectEstabelecimentos() {
 // Adicione esta linha quando o formulário de cupom for aberto
 
 // Exemplo: Se você tem um botão que abre o formulário
-document.querySelector('[data-open-form="cupom"]').addEventListener('click', () => {
+document.querySelector('[data-open-subpage="criar-cupom"]').addEventListener('click', () => {
   // Mostra o formulário
   document.getElementById('formCupom').classList.add('active');
   
