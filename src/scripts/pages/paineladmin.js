@@ -235,6 +235,8 @@ function renderizarLista(lista, containerId) {
           }
         );
 
+        inicializarFiltros()
+
         if (!res.ok) {
           const errorText = await res.text();
           throw new Error(`Erro ao alterar status: ${errorText}`);
@@ -301,13 +303,6 @@ function renderizarLista(lista, containerId) {
     });
   });
 }
-
-// ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
-
-
-
-
-
 
 
 
@@ -388,8 +383,30 @@ let filtrosAtivos = {
   grupo: ""
 };
 
+// ========== INICIALIZAÇÃO ==========
+// Chame esta função quando os estabelecimentos forem carregados
+async function inicializarFiltros() {
+  console.log("Inicializando filtros...");
+  console.log("Total de estabelecimentos no cache:", estabelecimentosCache.length);
+  
+  // Popula os filtros
+  await popularFiltros();
+  
+  // Configura os event listeners
+  configurarEventListeners();
+  
+  // Atualiza contadores iniciais
+  atualizarContadores();
+  
+  // Aplica filtros iniciais
+  aplicarFiltros();
+  
+  console.log("Filtros inicializados com sucesso!");
+}
+
 // ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
 async function popularFiltros() {
+  console.log("Populando filtros...");
   popularFiltroCidades();
   popularFiltroCategorias();
   await popularFiltroGrupos();
@@ -397,7 +414,10 @@ async function popularFiltros() {
 
 function popularFiltroCidades() {
   const selectCidade = document.getElementById("filtroCidade");
-  if (!selectCidade) return;
+  if (!selectCidade) {
+    console.warn("Elemento filtroCidade não encontrado");
+    return;
+  }
 
   selectCidade.innerHTML = '<option value="">Todas</option>';
 
@@ -406,6 +426,8 @@ function popularFiltroCidades() {
     .map(e => e.cidade)
     .filter(c => c && c.trim() !== "")
   )].sort();
+
+  console.log("Cidades encontradas:", cidades);
 
   cidades.forEach(cidade => {
     const option = document.createElement("option");
@@ -417,7 +439,10 @@ function popularFiltroCidades() {
 
 function popularFiltroCategorias() {
   const selectCategoria = document.getElementById("filtroCategoria");
-  if (!selectCategoria) return;
+  if (!selectCategoria) {
+    console.warn("Elemento filtroCategoria não encontrado");
+    return;
+  }
 
   selectCategoria.innerHTML = '<option value="">Todas</option>';
 
@@ -425,11 +450,16 @@ function popularFiltroCategorias() {
   const categoriasSet = new Set();
   estabelecimentosCache.forEach(estab => {
     if (estab.categorias && Array.isArray(estab.categorias)) {
-      estab.categorias.forEach(cat => categoriasSet.add(cat));
+      estab.categorias.forEach(cat => {
+        if (cat && cat.trim() !== "") {
+          categoriasSet.add(cat);
+        }
+      });
     }
   });
 
   const categorias = [...categoriasSet].sort();
+  console.log("Categorias encontradas:", categorias);
 
   categorias.forEach(categoria => {
     const option = document.createElement("option");
@@ -441,7 +471,10 @@ function popularFiltroCategorias() {
 
 async function popularFiltroGrupos() {
   const selectGrupo = document.getElementById("filtroGrupo");
-  if (!selectGrupo) return;
+  if (!selectGrupo) {
+    console.warn("Elemento filtroGrupo não encontrado");
+    return;
+  }
 
   selectGrupo.innerHTML = '<option value="">Todos</option>';
 
@@ -449,6 +482,8 @@ async function popularFiltroGrupos() {
   if (gruposCache.length === 0) {
     await carregarGrupos();
   }
+
+  console.log("Grupos encontrados:", gruposCache);
 
   gruposCache.forEach(grupo => {
     const option = document.createElement("option");
@@ -458,8 +493,72 @@ async function popularFiltroGrupos() {
   });
 }
 
+// ========== CONFIGURAR EVENT LISTENERS ==========
+function configurarEventListeners() {
+  console.log("Configurando event listeners...");
+  
+  // Busca
+  const inputBusca = document.querySelector(".search-estab");
+  if (inputBusca) {
+    inputBusca.addEventListener("input", (e) => {
+      filtrosAtivos.busca = e.target.value;
+      aplicarFiltros();
+    });
+  }
+
+  // Tabs de status (Todos, Publicados, Rascunhos)
+  document.querySelectorAll(".tab-filtro").forEach(tab => {
+    tab.addEventListener("click", (e) => {
+      // Remove active de todas
+      document.querySelectorAll(".tab-filtro").forEach(t => t.classList.remove("active"));
+      
+      // Adiciona active na clicada
+      e.currentTarget.classList.add("active");
+      
+      // Atualiza filtro
+      filtrosAtivos.status = e.currentTarget.dataset.status;
+      aplicarFiltros();
+    });
+  });
+
+  // Filtro de Cidade
+  const selectCidade = document.getElementById("filtroCidade");
+  if (selectCidade) {
+    selectCidade.addEventListener("change", (e) => {
+      filtrosAtivos.cidade = e.target.value;
+      aplicarFiltros();
+    });
+  }
+
+  // Filtro de Categoria
+  const selectCategoria = document.getElementById("filtroCategoria");
+  if (selectCategoria) {
+    selectCategoria.addEventListener("change", (e) => {
+      filtrosAtivos.categoria = e.target.value;
+      aplicarFiltros();
+    });
+  }
+
+  // Filtro de Grupo
+  const selectGrupo = document.getElementById("filtroGrupo");
+  if (selectGrupo) {
+    selectGrupo.addEventListener("change", (e) => {
+      filtrosAtivos.grupo = e.target.value;
+      aplicarFiltros();
+    });
+  }
+
+  // Botão Limpar Filtros
+  const btnLimpar = document.getElementById("btnLimparFiltros");
+  if (btnLimpar) {
+    btnLimpar.addEventListener("click", limparFiltros);
+  }
+}
+
 // ========== APLICAR FILTROS ==========
 function aplicarFiltros() {
+  console.log("Aplicando filtros:", filtrosAtivos);
+  
   let resultado = [...estabelecimentosCache];
 
   // Filtro por busca (nome ou cidade)
@@ -495,6 +594,8 @@ function aplicarFiltros() {
     resultado = resultado.filter(estab => estab.grupoId === grupoId);
   }
 
+  console.log(`Filtros aplicados: ${resultado.length} de ${estabelecimentosCache.length} estabelecimentos`);
+
   // Renderiza os resultados
   renderizarLista(resultado, "listaCards");
   atualizarContadores();
@@ -506,13 +607,21 @@ function atualizarContadores() {
   const publicados = estabelecimentosCache.filter(e => e.status === "Publicado").length;
   const rascunhos = estabelecimentosCache.filter(e => e.status === "Rascunho").length;
 
-  document.getElementById("count-todos").textContent = total;
-  document.getElementById("count-publicados").textContent = publicados;
-  document.getElementById("count-rascunhos").textContent = rascunhos;
+  const countTodos = document.getElementById("count-todos");
+  const countPublicados = document.getElementById("count-publicados");
+  const countRascunhos = document.getElementById("count-rascunhos");
+
+  if (countTodos) countTodos.textContent = total;
+  if (countPublicados) countPublicados.textContent = publicados;
+  if (countRascunhos) countRascunhos.textContent = rascunhos;
+  
+  console.log(`Contadores atualizados - Total: ${total}, Publicados: ${publicados}, Rascunhos: ${rascunhos}`);
 }
 
 // ========== LIMPAR FILTROS ==========
 function limparFiltros() {
+  console.log("Limpando filtros...");
+  
   // Reseta o estado dos filtros
   filtrosAtivos = {
     busca: "",
@@ -523,21 +632,38 @@ function limparFiltros() {
   };
 
   // Limpa os campos
-  document.querySelector(".search-estab").value = "";
-  document.getElementById("filtroCidade").value = "";
-  document.getElementById("filtroCategoria").value = "";
-  document.getElementById("filtroGrupo").value = "";
+  const inputBusca = document.querySelector(".search-estab");
+  if (inputBusca) inputBusca.value = "";
+  
+  const selectCidade = document.getElementById("filtroCidade");
+  if (selectCidade) selectCidade.value = "";
+  
+  const selectCategoria = document.getElementById("filtroCategoria");
+  if (selectCategoria) selectCategoria.value = "";
+  
+  const selectGrupo = document.getElementById("filtroGrupo");
+  if (selectGrupo) selectGrupo.value = "";
 
   // Ativa a tab "Todos"
   document.querySelectorAll(".tab-filtro").forEach(tab => {
     tab.classList.remove("active");
   });
-  document.querySelector('[data-status="todos"]').classList.add("active");
+  
+  const tabTodos = document.querySelector('[data-status="todos"]');
+  if (tabTodos) tabTodos.classList.add("active");
 
   // Reaplica os filtros (que agora estão vazios)
   aplicarFiltros();
 }
 
+// ========== FORÇAR ATUALIZAÇÃO DOS FILTROS ==========
+// Use esta função se precisar recarregar os filtros manualmente
+function recarregarFiltros() {
+  console.log("Recarregando filtros...");
+  popularFiltros();
+  atualizarContadores();
+  aplicarFiltros();
+}
 // ========== EVENT LISTENERS ==========
 function inicializarFiltrosEstabelecimentos() {
   // Busca por texto
