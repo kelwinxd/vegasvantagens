@@ -809,7 +809,7 @@ function atualizarDashboard() {
 // ========== INICIALIZAÇÃO ==========
 // Chame isso quando carregar a página de estabelecimentos
 async function inicializarPaginaEstabelecimentos() {
-  await carregarEstabelecimentos(); // sua função existente
+  await buscarEstabelecimentos(); // sua função existente
   await popularFiltros();
   inicializarFiltrosEstabelecimentos();
   aplicarFiltros();
