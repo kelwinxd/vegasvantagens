@@ -1554,10 +1554,171 @@ async function buscarImagemCupom(cupomId) {
 
 
 
+// ========== FUNÇÃO PARA POPULAR O SELECT ==========
+// Cole esta função no seu paineladmin.js
+
+async function popularSelectEstabelecimentos() {
+  console.log("📋 Populando select de estabelecimentos...");
+  
+  const select = document.getElementById("estabelecimentoId");
+  if (!select) {
+    console.error("❌ Select estabelecimentoId não encontrado!");
+    return;
+  }
+
+  // Limpa o select mantendo apenas a opção padrão
+  select.innerHTML = '<option value="">Selecione um estabelecimento...</option>';
+
+  // Verifica se tem estabelecimentos no cache
+  if (!window.estabelecimentosCache || estabelecimentosCache.length === 0) {
+    console.warn("⚠️ Nenhum estabelecimento no cache, buscando...");
+    
+    // Se não tem no cache, busca
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("❌ Token não encontrado");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+        headers: { Authorization: "Bearer " + token }
+      });
+
+      if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+      
+      const data = await res.json();
+      estabelecimentosCache = data;
+      
+    } catch (err) {
+      console.error("❌ Erro ao buscar estabelecimentos:", err);
+      alert("Erro ao carregar estabelecimentos: " + err.message);
+      return;
+    }
+  }
+
+  // Ordena por nome
+  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) => 
+    a.nome.localeCompare(b.nome)
+  );
+
+  // Adiciona as opções
+  estabelecimentosOrdenados.forEach(estab => {
+    const option = document.createElement("option");
+    option.value = estab.id;
+    option.textContent = `${estab.nome} - ${estab.cidade || ''}`;
+    select.appendChild(option);
+  });
+
+  console.log(`✅ ${estabelecimentosOrdenados.length} estabelecimentos adicionados ao select`);
+}
+
+// ========== CHAMAR QUANDO ABRIR O FORMULÁRIO ==========
+// Adicione esta linha quando o formulário de cupom for aberto
+
+// Exemplo: Se você tem um botão que abre o formulário
+document.querySelector('[data-open-form="cupom"]').addEventListener('click', () => {
+  // Mostra o formulário
+  document.getElementById('formCupom').classList.add('active');
+  
+  // Popula o select
+  popularSelectEstabelecimentos();
+});
+
+// Ou se abre ao clicar em uma aba/menu:
+function abrirPaginaCupons() {
+  // Sua lógica de mostrar a página
+  mostrarPagina('cupons');
+  
+  // Popula o select
+  popularSelectEstabelecimentos();
+}
+
+// Ou se é um modal:
+function abrirModalCriarCupom() {
+  // Abre o modal
+  document.getElementById('modalCupom').style.display = 'block';
+  
+  // Popula o select
+  popularSelectEstabelecimentos();
+}
+
+// ========== VERSÃO COM BUSCA (OPCIONAL - MAIS AVANÇADO) ==========
+// Se quiser um select com busca, use esta versão com filtro:
+
+function popularSelectEstabelecimentosComBusca() {
+  const select = document.getElementById("estabelecimentoId");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Selecione um estabelecimento...</option>';
+
+  if (!window.estabelecimentosCache || estabelecimentosCache.length === 0) {
+    return;
+  }
+
+  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) => 
+    a.nome.localeCompare(b.nome)
+  );
+
+  estabelecimentosOrdenados.forEach(estab => {
+    const option = document.createElement("option");
+    option.value = estab.id;
+    
+    // Adiciona mais informações na exibição
+    let texto = estab.nome;
+    if (estab.cidade) texto += ` - ${estab.cidade}`;
+    if (estab.status) texto += ` (${estab.status})`;
+    
+    option.textContent = texto;
+    
+    // Adiciona atributos de dados para filtro futuro
+    option.dataset.nome = estab.nome.toLowerCase();
+    option.dataset.cidade = (estab.cidade || '').toLowerCase();
+    
+    select.appendChild(option);
+  });
+}
+
+// ========== MOSTRAR INFORMAÇÕES DO ESTABELECIMENTO SELECIONADO ==========
+// Adicione este código se quiser mostrar detalhes ao selecionar
+
+const selectEstab = document.getElementById("estabelecimentoId");
+selectEstab.addEventListener('change', (e) => {
+  const estabId = parseInt(e.target.value);
+  
+  if (!estabId) {
+    console.log("Nenhum estabelecimento selecionado");
+    return;
+  }
+  
+  // Encontra o estabelecimento selecionado
+  const estabelecimento = estabelecimentosCache.find(est => est.id === estabId);
+  
+  if (estabelecimento) {
+    console.log("✅ Estabelecimento selecionado:", estabelecimento);
+    console.log("ID:", estabelecimento.id);
+    console.log("Nome:", estabelecimento.nome);
+    console.log("Cidade:", estabelecimento.cidade);
+    
+    // Se quiser mostrar informações na tela:
+    // document.getElementById('infoEstab').textContent = 
+    //   `${estabelecimento.nome} - ${estabelecimento.cidade}`;
+  }
+});
+
+// ========== FUNÇÃO COMPLETA DE CADASTRAR CUPOM (ATUALIZADA) ==========
+
 async function cadastrarCupom() {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado.");
+    return;
+  }
+
+  // Valida se um estabelecimento foi selecionado
+  const estabId = document.getElementById("estabelecimentoId").value;
+  if (!estabId || estabId === "") {
+    alert("Por favor, selecione um estabelecimento!");
     return;
   }
 
@@ -1583,7 +1744,7 @@ async function cadastrarCupom() {
     limiteUsoPorUsuario: parseInt(document.getElementById("limiteUsoPorUsuario").value) || 0,
 
     ativo: document.getElementById("ativo").checked,
-    estabelecimentoId: parseInt(document.getElementById("estabelecimentoId").value),
+    estabelecimentoId: parseInt(estabId), // ✅ Agora pega do select
 
     cartoesAceitosIds: document.getElementById("cartoes").value
       ? document.getElementById("cartoes").value.split(",").map(id => parseInt(id.trim()))
@@ -1615,7 +1776,7 @@ async function cadastrarCupom() {
     async function enviarImagem(tipo, file) {
       const form = new FormData();
       form.append("imagem", file);
-      form.append("tipo", tipo); // "Galeria" ou "Modal"
+      form.append("tipo", tipo);
 
       const imgRes = await fetch(`${API_BASE}/api/Cupons/${cupomId}/imagens`, {
         method: "POST",
@@ -1642,14 +1803,17 @@ async function cadastrarCupom() {
 
     alert("Cupom criado com sucesso!");
 
+    // Reset do formulário
     document.getElementById("formCupom").reset();
+    
+    // Recarrega o select
+    popularSelectEstabelecimentos();
 
   } catch (err) {
     alert("Erro: " + err.message);
     console.error(err);
   }
 }
-
 //MAPA URL
 
 function extrairLatLngGoogleMaps(url) {
