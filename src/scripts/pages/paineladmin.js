@@ -374,7 +374,10 @@ function abrirSubPage(nome) {
   subpage.classList.add("active");
 }
 
-// ========== ESTADO DOS FILTROS ==========
+// ========== FILTROS - VERSÃO ROBUSTA ==========
+// Esta versão tem mais verificações e logs para garantir que funcione
+
+// Estado dos filtros
 let filtrosAtivos = {
   busca: "",
   status: "todos",
@@ -383,246 +386,308 @@ let filtrosAtivos = {
   grupo: ""
 };
 
-// ========== INICIALIZAÇÃO ==========
-// Chame esta função quando os estabelecimentos forem carregados
-async function inicializarFiltros() {
-  console.log("Inicializando filtros...");
-  console.log("Total de estabelecimentos no cache:", estabelecimentosCache.length);
+// ========== FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ==========
+function inicializarFiltros() {
+  console.log("🚀 INICIANDO FILTROS...");
+  
+  // Verifica se os dados existem
+  if (!window.estabelecimentosCache) {
+    console.error("❌ estabelecimentosCache não existe!");
+    return;
+  }
+  
+  if (!Array.isArray(estabelecimentosCache)) {
+    console.error("❌ estabelecimentosCache não é um array!");
+    return;
+  }
+  
+  if (estabelecimentosCache.length === 0) {
+    console.warn("⚠️ estabelecimentosCache está vazio!");
+    return;
+  }
+  
+  console.log(`✅ ${estabelecimentosCache.length} estabelecimentos encontrados`);
   
   // Popula os filtros
-  await popularFiltros();
+  _popularFiltroCidades();
+  _popularFiltroCategorias();
+  _popularFiltroGrupos();
   
-  // Configura os event listeners
-  configurarEventListeners();
+  // Configura event listeners
+  _configurarEventListeners();
   
-  // Atualiza contadores iniciais
-  atualizarContadores();
+  // Atualiza contadores
+  _atualizarContadores();
   
   // Aplica filtros iniciais
   aplicarFiltros();
   
-  console.log("Filtros inicializados com sucesso!");
+  console.log("✅ FILTROS INICIALIZADOS COM SUCESSO!");
 }
 
-// ========== POPULAR FILTROS (Cidades, Categorias, Grupos) ==========
-async function popularFiltros() {
-  console.log("Populando filtros...");
-  popularFiltroCidades();
-  popularFiltroCategorias();
-  await popularFiltroGrupos();
-}
-
-function popularFiltroCidades() {
-  const selectCidade = document.getElementById("filtroCidade");
-  if (!selectCidade) {
-    console.warn("Elemento filtroCidade não encontrado");
+// ========== POPULAR CIDADES ==========
+function _popularFiltroCidades() {
+  console.log("📍 Populando cidades...");
+  
+  const select = document.getElementById("filtroCidade");
+  if (!select) {
+    console.error("❌ Select filtroCidade não encontrado!");
     return;
   }
-
-  selectCidade.innerHTML = '<option value="">Todas</option>';
-
-  // Extrai cidades únicas do cache
-  const cidades = [...new Set(estabelecimentosCache
-    .map(e => e.cidade)
-    .filter(c => c && c.trim() !== "")
-  )].sort();
-
-  console.log("Cidades encontradas:", cidades);
-
+  
+  // Limpa o select
+  select.innerHTML = '<option value="">Todas</option>';
+  
+  // Extrai cidades únicas
+  const cidadesSet = new Set();
+  estabelecimentosCache.forEach(estab => {
+    if (estab.cidade && typeof estab.cidade === 'string' && estab.cidade.trim() !== '') {
+      cidadesSet.add(estab.cidade.trim());
+    }
+  });
+  
+  const cidades = Array.from(cidadesSet).sort();
+  console.log(`  Encontradas ${cidades.length} cidades:`, cidades);
+  
+  // Adiciona as opções
   cidades.forEach(cidade => {
     const option = document.createElement("option");
     option.value = cidade;
     option.textContent = cidade;
-    selectCidade.appendChild(option);
+    select.appendChild(option);
   });
+  
+  console.log(`✅ ${cidades.length} cidades adicionadas ao select`);
 }
 
-function popularFiltroCategorias() {
-  const selectCategoria = document.getElementById("filtroCategoria");
-  if (!selectCategoria) {
-    console.warn("Elemento filtroCategoria não encontrado");
+// ========== POPULAR CATEGORIAS ==========
+function _popularFiltroCategorias() {
+  console.log("🏷️ Populando categorias...");
+  
+  const select = document.getElementById("filtroCategoria");
+  if (!select) {
+    console.error("❌ Select filtroCategoria não encontrado!");
     return;
   }
-
-  selectCategoria.innerHTML = '<option value="">Todas</option>';
-
-  // Extrai todas as categorias únicas
+  
+  // Limpa o select
+  select.innerHTML = '<option value="">Todas</option>';
+  
+  // Extrai categorias únicas
   const categoriasSet = new Set();
   estabelecimentosCache.forEach(estab => {
     if (estab.categorias && Array.isArray(estab.categorias)) {
       estab.categorias.forEach(cat => {
-        if (cat && cat.trim() !== "") {
-          categoriasSet.add(cat);
+        if (cat && typeof cat === 'string' && cat.trim() !== '') {
+          categoriasSet.add(cat.trim());
         }
       });
     }
   });
-
-  const categorias = [...categoriasSet].sort();
-  console.log("Categorias encontradas:", categorias);
-
+  
+  const categorias = Array.from(categoriasSet).sort();
+  console.log(`  Encontradas ${categorias.length} categorias:`, categorias);
+  
+  // Adiciona as opções
   categorias.forEach(categoria => {
     const option = document.createElement("option");
     option.value = categoria;
     option.textContent = categoria;
-    selectCategoria.appendChild(option);
+    select.appendChild(option);
   });
+  
+  console.log(`✅ ${categorias.length} categorias adicionadas ao select`);
 }
 
-async function popularFiltroGrupos() {
-  const selectGrupo = document.getElementById("filtroGrupo");
-  if (!selectGrupo) {
-    console.warn("Elemento filtroGrupo não encontrado");
+// ========== POPULAR GRUPOS ==========
+function _popularFiltroGrupos() {
+  console.log("👥 Populando grupos...");
+  
+  const select = document.getElementById("filtroGrupo");
+  if (!select) {
+    console.error("❌ Select filtroGrupo não encontrado!");
     return;
   }
-
-  selectGrupo.innerHTML = '<option value="">Todos</option>';
-
-  // Se não tem grupos no cache, carrega
-  if (gruposCache.length === 0) {
-    await carregarGrupos();
+  
+  // Limpa o select
+  select.innerHTML = '<option value="">Todos</option>';
+  
+  // Verifica se gruposCache existe
+  if (!window.gruposCache || !Array.isArray(gruposCache)) {
+    console.warn("⚠️ gruposCache não existe ou não é um array");
+    return;
   }
-
-  console.log("Grupos encontrados:", gruposCache);
-
+  
+  if (gruposCache.length === 0) {
+    console.warn("⚠️ gruposCache está vazio");
+    return;
+  }
+  
+  console.log(`  Encontrados ${gruposCache.length} grupos:`, gruposCache);
+  
+  // Adiciona as opções
   gruposCache.forEach(grupo => {
-    const option = document.createElement("option");
-    option.value = grupo.id;
-    option.textContent = grupo.nome;
-    selectGrupo.appendChild(option);
+    if (grupo && grupo.id && grupo.nome) {
+      const option = document.createElement("option");
+      option.value = grupo.id;
+      option.textContent = grupo.nome;
+      select.appendChild(option);
+    }
   });
+  
+  console.log(`✅ ${gruposCache.length} grupos adicionados ao select`);
 }
 
 // ========== CONFIGURAR EVENT LISTENERS ==========
-function configurarEventListeners() {
-  console.log("Configurando event listeners...");
+function _configurarEventListeners() {
+  console.log("🎧 Configurando event listeners...");
   
   // Busca
   const inputBusca = document.querySelector(".search-estab");
   if (inputBusca) {
-    inputBusca.addEventListener("input", (e) => {
+    inputBusca.addEventListener("input", function(e) {
       filtrosAtivos.busca = e.target.value;
       aplicarFiltros();
     });
+    console.log("  ✅ Input de busca configurado");
+  } else {
+    console.warn("  ⚠️ Input de busca não encontrado");
   }
-
-  // Tabs de status (Todos, Publicados, Rascunhos)
-  document.querySelectorAll(".tab-filtro").forEach(tab => {
-    tab.addEventListener("click", (e) => {
-      // Remove active de todas
-      document.querySelectorAll(".tab-filtro").forEach(t => t.classList.remove("active"));
-      
-      // Adiciona active na clicada
-      e.currentTarget.classList.add("active");
-      
-      // Atualiza filtro
-      filtrosAtivos.status = e.currentTarget.dataset.status;
-      aplicarFiltros();
+  
+  // Tabs de status
+  const tabs = document.querySelectorAll(".tab-filtro");
+  if (tabs.length > 0) {
+    tabs.forEach(tab => {
+      tab.addEventListener("click", function(e) {
+        // Remove active de todas
+        tabs.forEach(t => t.classList.remove("active"));
+        // Adiciona active na clicada
+        this.classList.add("active");
+        // Atualiza filtro
+        filtrosAtivos.status = this.getAttribute("data-status");
+        aplicarFiltros();
+      });
     });
-  });
-
-  // Filtro de Cidade
+    console.log(`  ✅ ${tabs.length} tabs configuradas`);
+  } else {
+    console.warn("  ⚠️ Tabs de status não encontradas");
+  }
+  
+  // Select Cidade
   const selectCidade = document.getElementById("filtroCidade");
   if (selectCidade) {
-    selectCidade.addEventListener("change", (e) => {
+    selectCidade.addEventListener("change", function(e) {
       filtrosAtivos.cidade = e.target.value;
       aplicarFiltros();
     });
+    console.log("  ✅ Select de cidade configurado");
   }
-
-  // Filtro de Categoria
+  
+  // Select Categoria
   const selectCategoria = document.getElementById("filtroCategoria");
   if (selectCategoria) {
-    selectCategoria.addEventListener("change", (e) => {
+    selectCategoria.addEventListener("change", function(e) {
       filtrosAtivos.categoria = e.target.value;
       aplicarFiltros();
     });
+    console.log("  ✅ Select de categoria configurado");
   }
-
-  // Filtro de Grupo
+  
+  // Select Grupo
   const selectGrupo = document.getElementById("filtroGrupo");
   if (selectGrupo) {
-    selectGrupo.addEventListener("change", (e) => {
+    selectGrupo.addEventListener("change", function(e) {
       filtrosAtivos.grupo = e.target.value;
       aplicarFiltros();
     });
+    console.log("  ✅ Select de grupo configurado");
   }
-
-  // Botão Limpar Filtros
-  const btnLimpar = document.getElementById("btnLimparFiltros");
-  if (btnLimpar) {
-    btnLimpar.addEventListener("click", limparFiltros);
-  }
+  
+  console.log("✅ Event listeners configurados");
 }
 
 // ========== APLICAR FILTROS ==========
 function aplicarFiltros() {
-  console.log("Aplicando filtros:", filtrosAtivos);
+  console.log("🔍 Aplicando filtros...", filtrosAtivos);
   
   let resultado = [...estabelecimentosCache];
-
-  // Filtro por busca (nome ou cidade)
-  if (filtrosAtivos.busca) {
-    const termo = filtrosAtivos.busca.toLowerCase();
-    resultado = resultado.filter(estab =>
-      estab.nome?.toLowerCase().includes(termo) ||
-      estab.cidade?.toLowerCase().includes(termo)
-    );
+  
+  // Filtro por busca
+  if (filtrosAtivos.busca && filtrosAtivos.busca.trim() !== '') {
+    const termo = filtrosAtivos.busca.toLowerCase().trim();
+    resultado = resultado.filter(estab => {
+      const nome = (estab.nome || '').toLowerCase();
+      const cidade = (estab.cidade || '').toLowerCase();
+      return nome.includes(termo) || cidade.includes(termo);
+    });
+    console.log(`  Após busca: ${resultado.length} resultados`);
   }
-
+  
   // Filtro por status
   if (filtrosAtivos.status !== "todos") {
     const statusBusca = filtrosAtivos.status === "publicados" ? "Publicado" : "Rascunho";
     resultado = resultado.filter(estab => estab.status === statusBusca);
+    console.log(`  Após status (${statusBusca}): ${resultado.length} resultados`);
   }
-
+  
   // Filtro por cidade
-  if (filtrosAtivos.cidade) {
+  if (filtrosAtivos.cidade && filtrosAtivos.cidade !== '') {
     resultado = resultado.filter(estab => estab.cidade === filtrosAtivos.cidade);
+    console.log(`  Após cidade (${filtrosAtivos.cidade}): ${resultado.length} resultados`);
   }
-
+  
   // Filtro por categoria
-  if (filtrosAtivos.categoria) {
-    resultado = resultado.filter(estab =>
-      estab.categorias && estab.categorias.includes(filtrosAtivos.categoria)
-    );
+  if (filtrosAtivos.categoria && filtrosAtivos.categoria !== '') {
+    resultado = resultado.filter(estab => {
+      return estab.categorias && 
+             Array.isArray(estab.categorias) && 
+             estab.categorias.includes(filtrosAtivos.categoria);
+    });
+    console.log(`  Após categoria (${filtrosAtivos.categoria}): ${resultado.length} resultados`);
   }
-
+  
   // Filtro por grupo
-  if (filtrosAtivos.grupo) {
+  if (filtrosAtivos.grupo && filtrosAtivos.grupo !== '') {
     const grupoId = parseInt(filtrosAtivos.grupo);
     resultado = resultado.filter(estab => estab.grupoId === grupoId);
+    console.log(`  Após grupo (${grupoId}): ${resultado.length} resultados`);
   }
-
-  console.log(`Filtros aplicados: ${resultado.length} de ${estabelecimentosCache.length} estabelecimentos`);
-
+  
+  console.log(`✅ ${resultado.length} de ${estabelecimentosCache.length} estabelecimentos`);
+  
   // Renderiza os resultados
-  renderizarLista(resultado, "listaCards");
-  atualizarContadores();
+  if (typeof renderizarLista === 'function') {
+    renderizarLista(resultado, "listaCards");
+  } else {
+    console.error("❌ Função renderizarLista não encontrada!");
+  }
+  
+  // Atualiza contadores
+  _atualizarContadores();
 }
 
 // ========== ATUALIZAR CONTADORES ==========
-function atualizarContadores() {
+function _atualizarContadores() {
   const total = estabelecimentosCache.length;
   const publicados = estabelecimentosCache.filter(e => e.status === "Publicado").length;
   const rascunhos = estabelecimentosCache.filter(e => e.status === "Rascunho").length;
-
+  
   const countTodos = document.getElementById("count-todos");
   const countPublicados = document.getElementById("count-publicados");
   const countRascunhos = document.getElementById("count-rascunhos");
-
+  
   if (countTodos) countTodos.textContent = total;
   if (countPublicados) countPublicados.textContent = publicados;
   if (countRascunhos) countRascunhos.textContent = rascunhos;
   
-  console.log(`Contadores atualizados - Total: ${total}, Publicados: ${publicados}, Rascunhos: ${rascunhos}`);
+  console.log(`📊 Contadores: Total=${total}, Publicados=${publicados}, Rascunhos=${rascunhos}`);
 }
 
 // ========== LIMPAR FILTROS ==========
 function limparFiltros() {
-  console.log("Limpando filtros...");
+  console.log("🧹 Limpando filtros...");
   
-  // Reseta o estado dos filtros
+  // Reseta o estado
   filtrosAtivos = {
     busca: "",
     status: "todos",
@@ -630,7 +695,7 @@ function limparFiltros() {
     categoria: "",
     grupo: ""
   };
-
+  
   // Limpa os campos
   const inputBusca = document.querySelector(".search-estab");
   if (inputBusca) inputBusca.value = "";
@@ -643,27 +708,52 @@ function limparFiltros() {
   
   const selectGrupo = document.getElementById("filtroGrupo");
   if (selectGrupo) selectGrupo.value = "";
-
+  
   // Ativa a tab "Todos"
-  document.querySelectorAll(".tab-filtro").forEach(tab => {
-    tab.classList.remove("active");
-  });
+  const tabs = document.querySelectorAll(".tab-filtro");
+  tabs.forEach(tab => tab.classList.remove("active"));
   
   const tabTodos = document.querySelector('[data-status="todos"]');
   if (tabTodos) tabTodos.classList.add("active");
-
-  // Reaplica os filtros (que agora estão vazios)
+  
+  // Reaplica os filtros
   aplicarFiltros();
+  
+  console.log("✅ Filtros limpos");
 }
 
-// ========== FORÇAR ATUALIZAÇÃO DOS FILTROS ==========
-// Use esta função se precisar recarregar os filtros manualmente
+// ========== RECARREGAR FILTROS ==========
 function recarregarFiltros() {
-  console.log("Recarregando filtros...");
-  popularFiltros();
-  atualizarContadores();
+  console.log("🔄 Recarregando filtros...");
+  _popularFiltroCidades();
+  _popularFiltroCategorias();
+  _popularFiltroGrupos();
+  _atualizarContadores();
   aplicarFiltros();
 }
+
+// ========== TESTE RÁPIDO ==========
+function testarFiltros() {
+  console.log("🧪 TESTE DOS FILTROS");
+  console.log("=".repeat(50));
+  
+  console.log("\n1. Dados:");
+  console.log("estabelecimentosCache:", window.estabelecimentosCache ? `${estabelecimentosCache.length} itens` : "NÃO EXISTE");
+  console.log("gruposCache:", window.gruposCache ? `${gruposCache.length} itens` : "NÃO EXISTE");
+  
+  console.log("\n2. Elementos HTML:");
+  console.log("filtroCidade:", document.getElementById("filtroCidade") ? "✅" : "❌");
+  console.log("filtroCategoria:", document.getElementById("filtroCategoria") ? "✅" : "❌");
+  console.log("filtroGrupo:", document.getElementById("filtroGrupo") ? "✅" : "❌");
+  
+  console.log("\n3. Tentando inicializar...");
+  inicializarFiltros();
+  
+  console.log("\n=".repeat(50));
+}
+
+console.log("✅ Filtros carregados! Execute testarFiltros() para verificar.");
+
 // ========== EVENT LISTENERS ==========
 function inicializarFiltrosEstabelecimentos() {
   // Busca por texto
