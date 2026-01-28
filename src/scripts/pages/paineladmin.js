@@ -252,7 +252,7 @@ function renderizarLista(lista, containerId) {
         console.log(`Status alterado para: ${novoStatus}`);
 
         // 🔹 Atualiza os contadores após mudar o status
-        atualizarContadores();
+        _atualizarContadores();
 
       } catch (err) {
         console.error(err);
@@ -298,7 +298,7 @@ function renderizarLista(lista, containerId) {
         alert("Estabelecimento excluído com sucesso!");
         
         // 🔹 Atualiza contadores e filtros
-        atualizarContadores();
+        _atualizarContadores();
         popularFiltros();
 
       } catch (err) {
