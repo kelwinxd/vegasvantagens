@@ -1734,7 +1734,7 @@ async function cadastrarCupom() {
     descricao: document.getElementById("descricao").value,
     modalTitulo: document.getElementById("modalTitulo").value,
     modalDescricao: document.getElementById("modalDescricao").value,
-    tipo: document.getElementById("ativo-cupom").value,
+    tipo: "Percentual",
     valorDesconto: parseFloat(document.getElementById("valorDesconto").value),
     valorMinimoCompra: parseFloat(document.getElementById("valorMinimoCompra").value) || 0,
 

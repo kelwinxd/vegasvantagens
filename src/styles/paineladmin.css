@@ -208,6 +208,11 @@
   gap:10px;
 }
 
+.filtros-avancados {
+  display: flex;
+  gap: 10px;
+}
+
 
 
 .btns-subpage button.active {
