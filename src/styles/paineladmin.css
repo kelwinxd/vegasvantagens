@@ -195,13 +195,13 @@
 }
 
 .filtro-select {
-   height: 20px;
+   height: 16px;
     
     border-radius: 8px;
     cursor: pointer;
     padding: 20px;
     width: 150px;
-    
+
 
 }
 
@@ -213,6 +213,7 @@
 .filtros-avancados {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 
