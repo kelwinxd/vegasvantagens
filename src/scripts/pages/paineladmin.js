@@ -1733,6 +1733,7 @@ async function cadastrarCupom() {
     descricao: document.getElementById("descricao").value,
     modalTitulo: document.getElementById("modalTitulo").value,
     modalDescricao: document.getElementById("modalDescricao").value,
+    tipo: document.getElementById("ativo-cupom").value,
     valorDesconto: parseFloat(document.getElementById("valorDesconto").value),
     valorMinimoCompra: parseFloat(document.getElementById("valorMinimoCompra").value) || 0,
 
@@ -1744,6 +1745,7 @@ async function cadastrarCupom() {
 
     ativo: document.getElementById("ativo-cupom").checked,
     estabelecimentoId: parseInt(estabId), // ✅ Agora pega do select
+    status: ativo ? "Publicado" : "Rascunho",
 
     cartoesAceitosIds: document.getElementById("cartoes").value
       ? document.getElementById("cartoes").value.split(",").map(id => parseInt(id.trim()))
