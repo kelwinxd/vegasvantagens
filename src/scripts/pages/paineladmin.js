@@ -1733,7 +1733,6 @@ async function cadastrarCupom() {
     descricao: document.getElementById("descricao").value,
     modalTitulo: document.getElementById("modalTitulo").value,
     modalDescricao: document.getElementById("modalDescricao").value,
-    tipo: document.getElementById("tipo").value,
     valorDesconto: parseFloat(document.getElementById("valorDesconto").value),
     valorMinimoCompra: parseFloat(document.getElementById("valorMinimoCompra").value) || 0,
 
@@ -1743,7 +1742,7 @@ async function cadastrarCupom() {
     limiteUso: parseInt(document.getElementById("limiteUso").value) || 0,
     limiteUsoPorUsuario: parseInt(document.getElementById("limiteUsoPorUsuario").value) || 0,
 
-    ativo: document.getElementById("ativo").checked,
+    ativo: document.getElementById("ativo-cupom").checked,
     estabelecimentoId: parseInt(estabId), // ✅ Agora pega do select
 
     cartoesAceitosIds: document.getElementById("cartoes").value
