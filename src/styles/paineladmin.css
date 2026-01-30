@@ -191,7 +191,7 @@
 }
 
 .tab-filtro {
-  width:100px;
+  width:250px;
 }
 
 .filtro-select {
@@ -201,6 +201,11 @@
     cursor: pointer;
     padding: 20px;
 
+}
+
+.filtros-status {
+  display: flex;
+  gap:10px;
 }
 
 

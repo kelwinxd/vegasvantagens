@@ -1725,6 +1725,7 @@ async function cadastrarCupom() {
   function toIso(dt) {
     return dt ? new Date(dt).toISOString() : null;
   }
+  const ativo = document.getElementById("ativo-cupom").checked
 
   // 1) MONTA O OBJETO DO CUPOM
   const data = {
