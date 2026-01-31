@@ -191,16 +191,16 @@
 }
 
 .tab-filtro {
-  width:120px;
+  width:180px;
 }
 
 .filtro-select {
    height: 16px;
     
-    border-radius: 8px;
-    cursor: pointer;
-    padding: 10px 20px;
-    width: 200px;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 16px 20px;
+  width: 200px;
 
 
 }
