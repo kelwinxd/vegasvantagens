@@ -380,6 +380,14 @@ function abrirSubPage(nome) {
   subpage.classList.add("active");
 }
 
+var filtrosAtivos = {
+  busca: "",
+  status: "todos",
+  cidade: "Todos",
+  categoria: "Todos",
+  grupo: "Todos"
+};
+
 // ========== FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ==========
 function inicializarFiltros() {
   console.log("🚀 INICIANDO FILTROS...");

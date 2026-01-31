@@ -1036,6 +1036,8 @@ line-height: 18px;
 .cards-dashboard {
   display: flex;
   justify-content: space-between;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .card-info h3 {
