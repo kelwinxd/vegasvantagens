@@ -240,7 +240,7 @@ function renderizarLista(lista, containerId) {
           }
         );
 
-        inicializarFiltros()
+        
 
         if (!res.ok) {
           const errorText = await res.text();
@@ -299,6 +299,7 @@ function renderizarLista(lista, containerId) {
         
         // 🔹 Atualiza contadores e filtros
         _atualizarContadores();
+        inicializarFiltros()
         popularFiltros();
 
       } catch (err) {
@@ -2517,8 +2518,6 @@ async function recarregarEstabelecimentoEdit() {
 
 
 
-
-
 async function abrirModalEditar(estab) {
 
     // 🔹 Abre o modal
@@ -3077,6 +3076,7 @@ window.fecharModalVincular = fecharModalVincular;
 window.salvarEdicaoCupom = salvarEdicaoCupom;
 window.fecharModalEditarCupom = fecharModalEditarCupom;
 window.cadastrarGrupo = cadastrarGrupo;
+window.estabelecimentosCache = estabelecimentosCache;
 
 
 
