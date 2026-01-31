@@ -3076,6 +3076,7 @@ window.fecharModalVincular = fecharModalVincular;
 window.salvarEdicaoCupom = salvarEdicaoCupom;
 window.fecharModalEditarCupom = fecharModalEditarCupom;
 window.cadastrarGrupo = cadastrarGrupo;
+window.limparFiltros = limparFiltros;
 window.estabelecimentosCache = estabelecimentosCache;
 
 

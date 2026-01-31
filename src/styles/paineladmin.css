@@ -223,6 +223,9 @@
   align-items: center;
 }
 
+#totalEstab {
+  font-size: 40px;
+}
 
 
 .btns-subpage button.active {
