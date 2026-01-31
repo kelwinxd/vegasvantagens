@@ -1053,25 +1053,73 @@ line-height: 18px;
   gap: 8px;
 }
 
-.cards-dashboard {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin: 0 auto;
-  border-bottom: 1px solid gray;
-  padding-bottom: 16px;
-  align-self: center;
-}
-
-.card-info {
-  flex: 1;
-}
-
 .cards-container-dash {
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cards-dashboard {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 60px; /* Espaço igual entre os cards */
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 24px;
+        }
+
+        .card-info {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            min-width: 180px;
+        }
+
+        .card-info h3 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 8px 0;
+            line-height: 1;
+        }
+
+        .card-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+
+ .cards-dashboard.with-icons {
+            gap: 30px;
+        }
+        
+        .cards-dashboard.with-icons .card-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px 20px;
+            border: 2px solid #e8ecf1;
+            transition: all 0.3s;
+        }
+        
+        .cards-dashboard.with-icons .card-info:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+        
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
 
 .card-info h3 {
   font-size: 40px;
