@@ -441,7 +441,7 @@ function _popularFiltroCidades() {
   }
   
   // Limpa o select
-  select.innerHTML = '<option value="">Todas</option>';
+  select.innerHTML = '<option value="Todos">Todas</option>';
   
   // Extrai cidades únicas
   const cidadesSet = new Set();
