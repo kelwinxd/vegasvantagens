@@ -116,6 +116,16 @@
         <h3 id="totalEstab">0</h3>
         <p>Estabelecimentos cadastrados</p>
       </div>
+
+      <div class="card-info">
+        <h3>7</h3>
+        <p>Cupons Ativos</p>
+      </div>
+
+       <div class="card-info">
+        <h3 id="totalEstab">2</h3>
+        <p>Grupos</p>
+      </div>
     </div>
     
     </div>
@@ -158,32 +168,32 @@
     </div>
 
     <!-- Filtros Avançados -->
-    <div class="filtros-avancados">
-      <div class="filtro-item">
-        <label>Cidade</label>
-        <select id="filtroCidade" class="filtro-select">
-     
-        </select>
-      </div>
+<div class="filtros-avancados">
+  <div class="filtro-item">
+    <label>Cidade</label>
+    <select id="filtroCidade" class="filtro-select">
+      <option value="Todos">Todas</option>
+    </select>
+  </div>
 
-      <div class="filtro-item">
-        <label>Categoria</label>
-        <select id="filtroCategoria" class="filtro-select">
-         
-        </select>
-      </div>
+  <div class="filtro-item">
+    <label>Categoria</label>
+    <select id="filtroCategoria" class="filtro-select">
+      <option value="Todos">Todas</option>
+    </select>
+  </div>
 
-      <div class="filtro-item">
-        <label>Grupo</label>
-        <select id="filtroGrupo" class="filtro-select">
-          
-        </select>
-      </div>
+  <div class="filtro-item">
+    <label>Grupo</label>
+    <select id="filtroGrupo" class="filtro-select">
+      <option value="Todos">Todos</option>
+    </select>
+  </div>
 
-      <button class="btn-limpar-filtros" onclick="limparFiltros()">
-        Limpar Filtros
-      </button>
-    </div>
+  <button class="btn-limpar-filtros" onclick="limparFiltros()">
+    Limpar Filtros
+  </button>
+</div>
 
     <!-- Lista de Cards -->
     <div id="listaCards" class="lista-cards"></div>

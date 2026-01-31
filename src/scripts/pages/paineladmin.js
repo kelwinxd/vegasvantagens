@@ -380,18 +380,6 @@ function abrirSubPage(nome) {
   subpage.classList.add("active");
 }
 
-// ========== FILTROS - VERSÃO ROBUSTA ==========
-// Esta versão tem mais verificações e logs para garantir que funcione
-
-// Estado dos filtros
-let filtrosAtivos = {
-  busca: "",
-  status: "todos",
-  cidade: "",
-  categoria: "",
-  grupo: ""
-};
-
 // ========== FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ==========
 function inicializarFiltros() {
   console.log("🚀 INICIANDO FILTROS...");
@@ -476,8 +464,8 @@ function _popularFiltroCategorias() {
     return;
   }
   
-  // Limpa o select
-  select.innerHTML = '<option value="">Todas</option>';
+  // Limpa o select - CORRIGIDO: value="Todos"
+  select.innerHTML = '<option value="Todos">Todas</option>';
   
   // Extrai categorias únicas
   const categoriasSet = new Set();
@@ -515,8 +503,8 @@ function _popularFiltroGrupos() {
     return;
   }
   
-  // Limpa o select
-  select.innerHTML = '<option value="">Todos</option>';
+  // Limpa o select - CORRIGIDO: value="Todos"
+  select.innerHTML = '<option value="Todos">Todos</option>';
   
   // Verifica se gruposCache existe
   if (!window.gruposCache || !Array.isArray(gruposCache)) {
@@ -584,6 +572,7 @@ function _configurarEventListeners() {
   if (selectCidade) {
     selectCidade.addEventListener("change", function(e) {
       filtrosAtivos.cidade = e.target.value;
+      console.log("🏙️ Cidade selecionada:", e.target.value);
       aplicarFiltros();
     });
     console.log("  ✅ Select de cidade configurado");
@@ -594,6 +583,7 @@ function _configurarEventListeners() {
   if (selectCategoria) {
     selectCategoria.addEventListener("change", function(e) {
       filtrosAtivos.categoria = e.target.value;
+      console.log("🏷️ Categoria selecionada:", e.target.value);
       aplicarFiltros();
     });
     console.log("  ✅ Select de categoria configurado");
@@ -604,6 +594,7 @@ function _configurarEventListeners() {
   if (selectGrupo) {
     selectGrupo.addEventListener("change", function(e) {
       filtrosAtivos.grupo = e.target.value;
+      console.log("👥 Grupo selecionado:", e.target.value);
       aplicarFiltros();
     });
     console.log("  ✅ Select de grupo configurado");
@@ -636,14 +627,14 @@ function aplicarFiltros() {
     console.log(`  Após status (${statusBusca}): ${resultado.length} resultados`);
   }
   
-  // Filtro por cidade
-  if (filtrosAtivos.cidade && filtrosAtivos.cidade !== '') {
+  // Filtro por cidade - CORRIGIDO
+  if (filtrosAtivos.cidade && filtrosAtivos.cidade !== 'Todos') {
     resultado = resultado.filter(estab => estab.cidade === filtrosAtivos.cidade);
     console.log(`  Após cidade (${filtrosAtivos.cidade}): ${resultado.length} resultados`);
   }
   
-  // Filtro por categoria
-  if (filtrosAtivos.categoria && filtrosAtivos.categoria !== '') {
+  // Filtro por categoria - CORRIGIDO
+  if (filtrosAtivos.categoria && filtrosAtivos.categoria !== 'Todos') {
     resultado = resultado.filter(estab => {
       return estab.categorias && 
              Array.isArray(estab.categorias) && 
@@ -652,8 +643,8 @@ function aplicarFiltros() {
     console.log(`  Após categoria (${filtrosAtivos.categoria}): ${resultado.length} resultados`);
   }
   
-  // Filtro por grupo
-  if (filtrosAtivos.grupo && filtrosAtivos.grupo !== '') {
+  // Filtro por grupo - CORRIGIDO
+  if (filtrosAtivos.grupo && filtrosAtivos.grupo !== 'Todos') {
     const grupoId = parseInt(filtrosAtivos.grupo);
     resultado = resultado.filter(estab => estab.grupoId === grupoId);
     console.log(`  Após grupo (${grupoId}): ${resultado.length} resultados`);
@@ -672,6 +663,7 @@ function aplicarFiltros() {
   _atualizarContadores();
 }
 
+
 // ========== ATUALIZAR CONTADORES ==========
 function _atualizarContadores() {
   const total = estabelecimentosCache.length;
@@ -689,6 +681,14 @@ function _atualizarContadores() {
   console.log(`📊 Contadores: Total=${total}, Publicados=${publicados}, Rascunhos=${rascunhos}`);
 }
 
+// ========== INICIALIZAÇÃO AUTOMÁTICA ==========
+// Garante que os filtros sejam inicializados quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', inicializarFiltros);
+} else {
+  // DOM já está pronto, inicializa imediatamente
+  inicializarFiltros();
+}
 // ========== LIMPAR FILTROS ==========
 function limparFiltros() {
   console.log("🧹 Limpando filtros...");
@@ -738,25 +738,7 @@ function recarregarFiltros() {
   aplicarFiltros();
 }
 
-// ========== TESTE RÁPIDO ==========
-function testarFiltros() {
-  console.log("🧪 TESTE DOS FILTROS");
-  console.log("=".repeat(50));
-  
-  console.log("\n1. Dados:");
-  console.log("estabelecimentosCache:", window.estabelecimentosCache ? `${estabelecimentosCache.length} itens` : "NÃO EXISTE");
-  console.log("gruposCache:", window.gruposCache ? `${gruposCache.length} itens` : "NÃO EXISTE");
-  
-  console.log("\n2. Elementos HTML:");
-  console.log("filtroCidade:", document.getElementById("filtroCidade") ? "✅" : "❌");
-  console.log("filtroCategoria:", document.getElementById("filtroCategoria") ? "✅" : "❌");
-  console.log("filtroGrupo:", document.getElementById("filtroGrupo") ? "✅" : "❌");
-  
-  console.log("\n3. Tentando inicializar...");
-  inicializarFiltros();
-  
-  console.log("\n=".repeat(50));
-}
+
 
 console.log("✅ Filtros carregados! Execute testarFiltros() para verificar.");
 
