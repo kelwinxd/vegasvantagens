@@ -195,14 +195,34 @@
 }
 
 .filtro-select {
-   height: 16px;
+     width: 100%;
+    padding: 10px 35px 10px 12px; /* padding-right maior para a seta */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
     
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 16px 20px;
-  width: 200px;
-  font-size: 14px;
-  color: #000;
+    /* 🔥 IMPORTANTE: Garante que o texto seja visível */
+    color: #333 !important;
+    background-color: #fff !important;
+    
+    /* Remove aparência padrão do navegador */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    /* Adiciona seta customizada */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23333' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+    
+    /* Garante altura adequada */
+    min-height: 38px;
+    line-height: 1.5;
+    
+    cursor: pointer;
+    transition: all 0.2s ease;
 
 
 }
@@ -1038,6 +1058,8 @@ line-height: 18px;
   justify-content: space-between;
   width: 100%;
   margin: 0 auto;
+  border-bottom: 1px solid gray;
+  padding-bottom: 16px;
 }
 
 .card-info h3 {
