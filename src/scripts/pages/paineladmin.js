@@ -1192,6 +1192,23 @@ var filtrosCuponsAtivos = {
   grupo: "Todos"
 };
 
+// ========== ENUM DE STATUS DO CUPOM ==========
+const CupomStatus = {
+  Rascunho: 0,
+  Revisao: 1,
+  Aprovado: 2,
+  Publicado: 3,
+  Pausado: 4,
+  Expirado: 5
+};
+
+// Função helper para verificar se cupom está expirado
+function cupomEstaExpirado(cupom) {
+  const hoje = new Date();
+  const dataExpiracao = new Date(cupom.dataExpiracao);
+  return dataExpiracao < hoje;
+}
+
 // ========== INICIALIZAR FILTROS DE CUPONS ==========
 function inicializarFiltrosCupons() {
   console.log("🎟️ INICIANDO FILTROS DE CUPONS...");
@@ -1209,7 +1226,7 @@ function inicializarFiltrosCupons() {
   
   console.log(`✅ ${window._cuponsPromocoes.length} cupons encontrados`);
   
-  // Popula os filtros
+  // Popula os filtros (usando caches existentes)
   _popularFiltroEstabelecimentosCupom();
   _popularFiltroGruposCupom();
   
@@ -1225,7 +1242,7 @@ function inicializarFiltrosCupons() {
   console.log("✅ FILTROS DE CUPONS INICIALIZADOS!");
 }
 
-// ========== POPULAR ESTABELECIMENTOS ==========
+// ========== POPULAR ESTABELECIMENTOS (USA CACHE EXISTENTE) ==========
 function _popularFiltroEstabelecimentosCupom() {
   console.log("🏢 Populando estabelecimentos nos filtros de cupom...");
   
@@ -1238,35 +1255,38 @@ function _popularFiltroEstabelecimentosCupom() {
   // Limpa o select
   select.innerHTML = '<option value="Todos">Todos</option>';
   
-  // Extrai estabelecimentos únicos dos cupons
-  const estabelecimentosSet = new Set();
-  window._cuponsPromocoes.forEach(cupom => {
-    if (cupom.nomeEstabelecimento && cupom.estabelecimentoId) {
-      estabelecimentosSet.add(JSON.stringify({
-        id: cupom.estabelecimentoId,
-        nome: cupom.nomeEstabelecimento
-      }));
+  // Verifica se estabelecimentosCache existe e está populado
+  if (!window.estabelecimentosCache || !Array.isArray(estabelecimentosCache)) {
+    console.warn("⚠️ estabelecimentosCache não existe ou não é um array");
+    return;
+  }
+  
+  if (estabelecimentosCache.length === 0) {
+    console.warn("⚠️ estabelecimentosCache está vazio");
+    return;
+  }
+  
+  // Ordena estabelecimentos por nome
+  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) => 
+    (a.nome || '').localeCompare(b.nome || '')
+  );
+  
+  console.log(`  Encontrados ${estabelecimentosOrdenados.length} estabelecimentos no cache`);
+  
+  // Adiciona as opções
+  estabelecimentosOrdenados.forEach(estab => {
+    if (estab && estab.id && estab.nome) {
+      const option = document.createElement("option");
+      option.value = estab.id;
+      option.textContent = estab.nome;
+      select.appendChild(option);
     }
   });
   
-  const estabelecimentos = Array.from(estabelecimentosSet)
-    .map(str => JSON.parse(str))
-    .sort((a, b) => a.nome.localeCompare(b.nome));
-  
-  console.log(`  Encontrados ${estabelecimentos.length} estabelecimentos`);
-  
-  // Adiciona as opções
-  estabelecimentos.forEach(estab => {
-    const option = document.createElement("option");
-    option.value = estab.id;
-    option.textContent = estab.nome;
-    select.appendChild(option);
-  });
-  
-  console.log(`✅ ${estabelecimentos.length} estabelecimentos adicionados ao select`);
+  console.log(`✅ ${estabelecimentosOrdenados.length} estabelecimentos adicionados ao select`);
 }
 
-// ========== POPULAR GRUPOS ==========
+// ========== POPULAR GRUPOS (USA CACHE EXISTENTE) ==========
 function _popularFiltroGruposCupom() {
   console.log("👥 Populando grupos nos filtros de cupom...");
   
@@ -1279,7 +1299,7 @@ function _popularFiltroGruposCupom() {
   // Limpa o select
   select.innerHTML = '<option value="Todos">Todos</option>';
   
-  // Verifica se gruposCache existe
+  // Verifica se gruposCache existe e está populado
   if (!window.gruposCache || !Array.isArray(gruposCache)) {
     console.warn("⚠️ gruposCache não existe ou não é um array");
     return;
@@ -1290,9 +1310,9 @@ function _popularFiltroGruposCupom() {
     return;
   }
   
-  console.log(`  Encontrados ${gruposCache.length} grupos`);
+  console.log(`  Encontrados ${gruposCache.length} grupos no cache`);
   
-  // Adiciona as opções
+  // Adiciona as opções (grupos já vêm ordenados da API)
   gruposCache.forEach(grupo => {
     if (grupo && grupo.id && grupo.nome) {
       const option = document.createElement("option");
@@ -1371,7 +1391,6 @@ function aplicarFiltrosCupons() {
   }
   
   let resultado = [...window._cuponsPromocoes];
-  const hoje = new Date();
   
   // Filtro por busca
   if (filtrosCuponsAtivos.busca && filtrosCuponsAtivos.busca.trim() !== '') {
@@ -1385,20 +1404,31 @@ function aplicarFiltrosCupons() {
     console.log(`  Após busca: ${resultado.length} resultados`);
   }
   
-  // Filtro por status
+  // Filtro por status (seguindo o ENUM)
   if (filtrosCuponsAtivos.status === "publicados") {
+    // Publicados: status = "Publicado" E não expirado E ativo
     resultado = resultado.filter(cupom => {
-      const dataExpiracao = new Date(cupom.dataExpiracao);
-      return cupom.ativo && dataExpiracao >= hoje;
+      return cupom.status === "Publicado" && 
+             cupom.ativo === true && 
+             !cupomEstaExpirado(cupom);
     });
     console.log(`  Após status (publicados): ${resultado.length} resultados`);
+    
   } else if (filtrosCuponsAtivos.status === "expirados") {
+    // Expirados: dataExpiracao < hoje OU status = "Expirado"
     resultado = resultado.filter(cupom => {
-      const dataExpiracao = new Date(cupom.dataExpiracao);
-      return dataExpiracao < hoje;
+      return cupomEstaExpirado(cupom) || cupom.status === "Expirado";
     });
     console.log(`  Após status (expirados): ${resultado.length} resultados`);
+    
+  } else if (filtrosCuponsAtivos.status === "rascunhos") {
+    // Rascunhos: status = "Rascunho"
+    resultado = resultado.filter(cupom => {
+      return cupom.status === "Rascunho";
+    });
+    console.log(`  Após status (rascunhos): ${resultado.length} resultados`);
   }
+  // Se for "todos", não filtra por status
   
   // Filtro por estabelecimento
   if (filtrosCuponsAtivos.estabelecimento && filtrosCuponsAtivos.estabelecimento !== 'Todos') {
@@ -1410,13 +1440,19 @@ function aplicarFiltrosCupons() {
   // Filtro por grupo
   if (filtrosCuponsAtivos.grupo && filtrosCuponsAtivos.grupo !== 'Todos') {
     const grupoId = parseInt(filtrosCuponsAtivos.grupo);
-    // Precisa buscar os estabelecimentos que pertencem ao grupo
-    const estabsDoGrupo = estabelecimentosCache
-      .filter(e => e.grupoId === grupoId)
-      .map(e => e.id);
     
-    resultado = resultado.filter(cupom => estabsDoGrupo.includes(cupom.estabelecimentoId));
-    console.log(`  Após grupo: ${resultado.length} resultados`);
+    // Verifica se estabelecimentosCache existe
+    if (window.estabelecimentosCache && Array.isArray(estabelecimentosCache)) {
+      // Busca os estabelecimentos que pertencem ao grupo
+      const estabsDoGrupo = estabelecimentosCache
+        .filter(e => e.grupoId === grupoId)
+        .map(e => e.id);
+      
+      resultado = resultado.filter(cupom => estabsDoGrupo.includes(cupom.estabelecimentoId));
+      console.log(`  Após grupo (${grupoId}): ${resultado.length} resultados`);
+    } else {
+      console.warn("⚠️ estabelecimentosCache não disponível para filtrar por grupo");
+    }
   }
   
   console.log(`✅ ${resultado.length} de ${window._cuponsPromocoes.length} cupons`);
@@ -1434,28 +1470,36 @@ function _atualizarContadoresCupons() {
     return;
   }
   
-  const hoje = new Date();
   const total = window._cuponsPromocoes.length;
   
+  // Publicados: status = "Publicado" E não expirado E ativo
   const publicados = window._cuponsPromocoes.filter(cupom => {
-    const dataExpiracao = new Date(cupom.dataExpiracao);
-    return cupom.ativo && dataExpiracao >= hoje;
+    return cupom.status === "Publicado" && 
+           cupom.ativo === true && 
+           !cupomEstaExpirado(cupom);
   }).length;
   
+  // Expirados: dataExpiracao < hoje OU status = "Expirado"
   const expirados = window._cuponsPromocoes.filter(cupom => {
-    const dataExpiracao = new Date(cupom.dataExpiracao);
-    return dataExpiracao < hoje;
+    return cupomEstaExpirado(cupom) || cupom.status === "Expirado";
+  }).length;
+  
+  // Rascunhos: status = "Rascunho"
+  const rascunhos = window._cuponsPromocoes.filter(cupom => {
+    return cupom.status === "Rascunho";
   }).length;
   
   const countTodos = document.getElementById("count-cupons-todos");
   const countPublicados = document.getElementById("count-cupons-publicados");
   const countExpirados = document.getElementById("count-cupons-expirados");
+  const countRascunhos = document.getElementById("count-cupons-rascunhos");
   
   if (countTodos) countTodos.textContent = total;
   if (countPublicados) countPublicados.textContent = publicados;
   if (countExpirados) countExpirados.textContent = expirados;
+  if (countRascunhos) countRascunhos.textContent = rascunhos;
   
-  console.log(`📊 Contadores Cupons: Total=${total}, Publicados=${publicados}, Expirados=${expirados}`);
+  console.log(`📊 Contadores Cupons: Total=${total}, Publicados=${publicados}, Expirados=${expirados}, Rascunhos=${rascunhos}`);
 }
 
 // ========== LIMPAR FILTROS ==========
@@ -2403,8 +2447,6 @@ function obterCartoesSelecionados() {
 }
 
 
-
-
 async function cadastrarEstabelecimento2() {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -2525,8 +2567,6 @@ console.log('depois do try');
     alert("Erro ao cadastrar: " + err.message);
   }
 }
-
-
 
   async function vincularCategoria(estabelecimentoId, categoriaId) {
   const token = localStorage.getItem("token");
@@ -3407,6 +3447,7 @@ window.fecharModalEditarCupom = fecharModalEditarCupom;
 window.cadastrarGrupo = cadastrarGrupo;
 window.limparFiltros = limparFiltros;
 window.estabelecimentosCache = estabelecimentosCache;
+window.limparFiltrosCupons = limparFiltrosCupons;
 
 
 
