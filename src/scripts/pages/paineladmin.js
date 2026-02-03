@@ -1028,8 +1028,6 @@ function renderizarPromocoes(cupons) {
     cuponsCacheMap.set(c.id.toString(), c);
     const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
-
-    
     const imagem =
       c.imagens && c.imagens.length
         ? c.imagens[0]
@@ -1042,7 +1040,8 @@ function renderizarPromocoes(cupons) {
         ).join('')
       : '';
 
-      
+    // Verifica se está publicado (status === "Publicado")
+    const isPublicado = c.status === "Publicado";
 
     container.insertAdjacentHTML("beforeend", `
       <article class="cupom-card-admin">
@@ -1061,7 +1060,7 @@ function renderizarPromocoes(cupons) {
           <h2 class="cupom-title-admin">${c.titulo}</h2>
           
           <label class="switch-cupom-admin">
-            <input type="checkbox" ${c.ativo ? 'checked' : ''} data-cupom-id="${c.id}">
+            <input type="checkbox" ${isPublicado ? 'checked' : ''} data-cupom-id="${c.id}">
             <span class="slider-cupom-admin"></span>
           </label>
         </div>
@@ -1109,77 +1108,88 @@ function renderizarPromocoes(cupons) {
     );
   });
 
-  // Event listeners para os toggles
+  // Event listeners para os toggles - USA PATCH
   document.querySelectorAll(".switch-cupom-admin input").forEach(toggle => {
     toggle.addEventListener("change", async (e) => {
       const cupomId = e.target.dataset.cupomId;
-      const novoStatus = e.target.checked;
+      const isChecked = e.target.checked;
+      
+      // Se marcado = "Publicado", se desmarcado = "Rascunho"
+      const novoStatus = isChecked ? "Publicado" : "Rascunho";
       
       try {
-        await atualizarStatusCupom(cupomId, novoStatus);
+        await atualizarStatusCupomPatch(cupomId, novoStatus);
+        
+        // Atualiza o cache local
+        const cupom = cuponsCacheMap.get(cupomId);
+        if (cupom) {
+          cupom.status = novoStatus;
+        }
+        
+        // Atualiza o cache global
+        if (window._cuponsPromocoes) {
+          const index = window._cuponsPromocoes.findIndex(c => c.id.toString() === cupomId);
+          if (index !== -1) {
+            window._cuponsPromocoes[index].status = novoStatus;
+          }
+        }
+        
+        // Atualiza contadores
+        if (typeof _atualizarContadoresCupons === 'function') {
+          _atualizarContadoresCupons();
+        }
+        
+        console.log(`✅ Status do cupom ${cupomId} atualizado para: ${novoStatus}`);
+        
       } catch (err) {
-        console.error("Erro ao atualizar status:", err);
+        console.error("❌ Erro ao atualizar status:", err);
+        alert("Erro ao atualizar status do cupom.");
         // Reverte o toggle em caso de erro
-        e.target.checked = !novoStatus;
+        e.target.checked = !isChecked;
       }
     });
   });
 }
 
-// Função para atualizar status do cupom
-async function atualizarStatusCupom(cupomId, ativo) {
+// ========== FUNÇÃO PATCH PARA ATUALIZAR STATUS DO CUPOM ==========
+async function atualizarStatusCupomPatch(cupomId, novoStatus) {
   const token = localStorage.getItem("token");
+  
+  if (!token) {
+    throw new Error("Token não encontrado");
+  }
 
   try {
-    // Busca os dados completos do cupom
-    const resGet = await fetch(`${API_BASE}/api/Cupons/${cupomId}`, {
-      headers: { "Authorization": "Bearer " + token }
-    });
-
-    if (!resGet.ok) throw new Error("Erro ao buscar cupom");
-
-    const cupom = await resGet.json();
-
-    // Monta o body com TODOS os dados
-    const body = {
-      "codigo": cupom.codigo,
-      "titulo": cupom.titulo,
-      "descricao": cupom.descricao,
-      "modalTitulo": cupom.modalTitulo,
-      "modalDescricao": cupom.modalDescricao,
-      "tipo": cupom.tipo,
-      "valorDesconto": cupom.valorDesconto,
-      "valorMinimoCompra": cupom.valorMinimoCompra,
-      "dataInicio": cupom.dataInicio,
-      "dataExpiracao": cupom.dataExpiracao,
-      "limiteUso": cupom.limiteUso,
-      "limiteUsoPorUsuario": cupom.limiteUsoPorUsuario,
-      "ativo": ativo,
-      "estabelecimentoId": cupom.estabelecimentoId,
-      "cartoesAceitosIds": cupom.cartoesAceitos || [],
-      "status": ativo ? "Publicado" : "Rascunho"
-    };
-
-    // Atualiza o cupom
-    const resPut = await fetch(`${API_BASE}/api/Cupons/${cupomId}`, {
-      method: "PUT",
+    console.log(`🔄 Atualizando status do cupom ${cupomId} para: ${novoStatus}`);
+    
+    const response = await fetch(`${API_BASE}/api/Cupons/${cupomId}/status`, {
+      method: "PATCH",
       headers: {
         "Authorization": "Bearer " + token,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(novoStatus) // Envia apenas a string: "Publicado" ou "Rascunho"
     });
 
-    if (!resPut.ok) {
-      const erro = await resPut.text();
-      throw new Error(erro);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Erro na resposta:", errorText);
+      throw new Error(`Erro ao atualizar status: ${response.status} - ${errorText}`);
     }
 
-    console.log(`Status do cupom ${cupomId} atualizado para: ${ativo ? 'Ativo' : 'Inativo'}`);
+    // Verifica se há conteúdo na resposta
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      console.log("✅ Resposta do servidor:", data);
+      return data;
+    }
+    
+    console.log("✅ Status atualizado com sucesso");
+    return null;
 
   } catch (err) {
-    console.error("Erro ao atualizar status do cupom:", err);
-    alert("Erro ao atualizar status do cupom.");
+    console.error("❌ Erro ao fazer PATCH:", err);
     throw err;
   }
 }
