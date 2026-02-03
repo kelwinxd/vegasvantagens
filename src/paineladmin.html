@@ -115,19 +115,19 @@
             <div class="cards-dashboard with-icons">
                 <div class="card-info">
                     <div class="card-icon">🏢</div>
-                    <h3>3</h3>
+                    <h3 id="totalEstab"></h3>
                     <p>Estabelecimentos cadastrados</p>
                 </div>
 
                 <div class="card-info">
                     <div class="card-icon">🎫</div>
-                    <h3>7</h3>
-                    <p>Cupons Ativos</p>
+                    <h3 id="totalCupons">7</h3>
+                    <p>Cupons</p>
                 </div>
 
                 <div class="card-info">
                     <div class="card-icon">👥</div>
-                    <h3>2</h3>
+                    <h3 class="">2</h3>
                     <p>Grupos</p>
                 </div>
             </div>
@@ -491,16 +491,57 @@
     <!-- CUPONS -->
 
     <div class="page" data-page="promocoes">
-        <h1>Gerenciar Promoções</h1>
-      <div class="btns-subpage">
+  <h1>Gerenciar Promoções</h1>
+  
+  <div class="btns-subpage">
     <button data-open-subpage="lista-cupom" class="active">Cupons</button>
     <button data-open-subpage="criar-cupom">+ Criar</button>
+  </div>
 
-   </div>
-
-    <div class="sub-page active" data-subpage="lista-cupom">
-    <div id="listaPromocoes"></div>
+  <div class="sub-page active" data-subpage="lista-cupom">
+    
+    <!-- Barra de Busca -->
+    <div class="actions-page-estab">
+      <input type="text" class="search-cupom" placeholder="Buscar cupons...">
     </div>
+
+    <!-- Filtros de Status (Todos, Publicados, Expirados) -->
+    <div class="filtros-status">
+      <button class="tab-filtro-cupom active" data-status="todos">
+        Todos (<span id="count-cupons-todos">0</span>)
+      </button>
+      <button class="tab-filtro-cupom" data-status="publicados">
+        Publicados (<span id="count-cupons-publicados">0</span>)
+      </button>
+      <button class="tab-filtro-cupom" data-status="expirados">
+        Expirados (<span id="count-cupons-expirados">0</span>)
+      </button>
+    </div>
+
+    <!-- Filtros Avançados -->
+    <div class="filtros-avancados">
+      <div class="filtro-item">
+        <label>Estabelecimento</label>
+        <select id="filtroCupomEstabelecimento" class="filtro-select">
+          <option value="Todos">Todos</option>
+        </select>
+      </div>
+
+      <div class="filtro-item">
+        <label>Grupo</label>
+        <select id="filtroCupomGrupo" class="filtro-select">
+          <option value="Todos">Todos</option>
+        </select>
+      </div>
+
+      <button class="btn-limpar-filtros" onclick="limparFiltrosCupons()">
+        Limpar Filtros
+      </button>
+    </div>
+
+    <!-- Lista de Cupons -->
+    <div id="listaPromocoes"></div>
+  </div>
 
     <div class="sub-page" data-subpage="criar-cupom" >
     <form id="formCupom">

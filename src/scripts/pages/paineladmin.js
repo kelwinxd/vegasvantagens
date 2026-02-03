@@ -34,13 +34,15 @@ import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '
       
 
 
-      // Dashboard
-      atualizarDashboard();
+   
       
 
       // Página de gerenciamento
       renderizarLista(estabelecimentosCache, "listaCards");
       inicializarFiltroDashboard()
+         
+      // Dashboard
+      atualizarDashboard();
      
 
     } catch (err) {
@@ -104,6 +106,7 @@ async function carregarCartoes() {
 }
 
  inicializarPaginaEstabelecimentos();
+
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -794,7 +797,23 @@ function inicializarFiltrosEstabelecimentos() {
 // ========== ATUALIZAR DASHBOARD (remover tabs antigas) ==========
 function atualizarDashboard() {
   document.getElementById("totalEstab").textContent = estabelecimentosCache.length;
-  // Removido: atualizarContadoresTabs() - agora usa atualizarContadores()
+
+  const cuponsCache = localStorage.getItem("cache_cupons_promocoes");
+  let totalCupons = 0;
+  
+  if (cuponsCache) {
+    try {
+      const cupons = JSON.parse(cuponsCache);
+      totalCupons = Array.isArray(cupons) ? cupons.length : 0;
+    } catch (e) {
+      console.error("Erro ao parsear cache de cupons:", e);
+      totalCupons = 0;
+    }
+  }
+  
+  document.getElementById("totalCupons").textContent = totalCupons;
+
+
 }
 
 function popularFiltros() {
@@ -948,6 +967,9 @@ async function carregarCuponsPromocoes() {
 
     if (!cuponsBasicos.length) {
       renderizarPromocoes([]);
+      window._cuponsPromocoes = [];
+      localStorage.setItem("cache_cupons_promocoes", JSON.stringify([]));
+      inicializarFiltrosCupons(); // ✅ Inicializa mesmo vazio
       return;
     }
 
@@ -972,15 +994,20 @@ async function carregarCuponsPromocoes() {
 
     const cuponsFiltrados = cuponsCompletos.filter(Boolean);
 
-    // 4️⃣ Renderizar
+    // 4️⃣ Atualizar cache global e localStorage
     window._cuponsPromocoes = cuponsFiltrados;
+    localStorage.setItem("cache_cupons_promocoes", JSON.stringify(cuponsFiltrados));
+    
+    // 5️⃣ Renderizar
     renderizarPromocoes(cuponsFiltrados);
+    
+    // 6️⃣ Inicializar filtros
+    inicializarFiltrosCupons();
 
   } catch (err) {
     console.error("Erro ao carregar cupons:", err);
   }
 }
-
 
 function renderizarPromocoes(cupons) {
   const container = document.getElementById("listaPromocoes");
@@ -1155,6 +1182,318 @@ async function atualizarStatusCupom(cupomId, ativo) {
     alert("Erro ao atualizar status do cupom.");
     throw err;
   }
+}
+
+//FILTROS CUPOM
+var filtrosCuponsAtivos = {
+  busca: "",
+  status: "todos",
+  estabelecimento: "Todos",
+  grupo: "Todos"
+};
+
+// ========== INICIALIZAR FILTROS DE CUPONS ==========
+function inicializarFiltrosCupons() {
+  console.log("🎟️ INICIANDO FILTROS DE CUPONS...");
+  
+  // Verifica se os cupons existem
+  if (!window._cuponsPromocoes) {
+    console.warn("⚠️ _cuponsPromocoes não existe ainda!");
+    return;
+  }
+  
+  if (!Array.isArray(window._cuponsPromocoes)) {
+    console.error("❌ _cuponsPromocoes não é um array!");
+    return;
+  }
+  
+  console.log(`✅ ${window._cuponsPromocoes.length} cupons encontrados`);
+  
+  // Popula os filtros
+  _popularFiltroEstabelecimentosCupom();
+  _popularFiltroGruposCupom();
+  
+  // Configura event listeners
+  _configurarEventListenersCupons();
+  
+  // Atualiza contadores
+  _atualizarContadoresCupons();
+  
+  // Aplica filtros iniciais
+  aplicarFiltrosCupons();
+  
+  console.log("✅ FILTROS DE CUPONS INICIALIZADOS!");
+}
+
+// ========== POPULAR ESTABELECIMENTOS ==========
+function _popularFiltroEstabelecimentosCupom() {
+  console.log("🏢 Populando estabelecimentos nos filtros de cupom...");
+  
+  const select = document.getElementById("filtroCupomEstabelecimento");
+  if (!select) {
+    console.error("❌ Select filtroCupomEstabelecimento não encontrado!");
+    return;
+  }
+  
+  // Limpa o select
+  select.innerHTML = '<option value="Todos">Todos</option>';
+  
+  // Extrai estabelecimentos únicos dos cupons
+  const estabelecimentosSet = new Set();
+  window._cuponsPromocoes.forEach(cupom => {
+    if (cupom.nomeEstabelecimento && cupom.estabelecimentoId) {
+      estabelecimentosSet.add(JSON.stringify({
+        id: cupom.estabelecimentoId,
+        nome: cupom.nomeEstabelecimento
+      }));
+    }
+  });
+  
+  const estabelecimentos = Array.from(estabelecimentosSet)
+    .map(str => JSON.parse(str))
+    .sort((a, b) => a.nome.localeCompare(b.nome));
+  
+  console.log(`  Encontrados ${estabelecimentos.length} estabelecimentos`);
+  
+  // Adiciona as opções
+  estabelecimentos.forEach(estab => {
+    const option = document.createElement("option");
+    option.value = estab.id;
+    option.textContent = estab.nome;
+    select.appendChild(option);
+  });
+  
+  console.log(`✅ ${estabelecimentos.length} estabelecimentos adicionados ao select`);
+}
+
+// ========== POPULAR GRUPOS ==========
+function _popularFiltroGruposCupom() {
+  console.log("👥 Populando grupos nos filtros de cupom...");
+  
+  const select = document.getElementById("filtroCupomGrupo");
+  if (!select) {
+    console.error("❌ Select filtroCupomGrupo não encontrado!");
+    return;
+  }
+  
+  // Limpa o select
+  select.innerHTML = '<option value="Todos">Todos</option>';
+  
+  // Verifica se gruposCache existe
+  if (!window.gruposCache || !Array.isArray(gruposCache)) {
+    console.warn("⚠️ gruposCache não existe ou não é um array");
+    return;
+  }
+  
+  if (gruposCache.length === 0) {
+    console.warn("⚠️ gruposCache está vazio");
+    return;
+  }
+  
+  console.log(`  Encontrados ${gruposCache.length} grupos`);
+  
+  // Adiciona as opções
+  gruposCache.forEach(grupo => {
+    if (grupo && grupo.id && grupo.nome) {
+      const option = document.createElement("option");
+      option.value = grupo.id;
+      option.textContent = grupo.nome;
+      select.appendChild(option);
+    }
+  });
+  
+  console.log(`✅ ${gruposCache.length} grupos adicionados ao select`);
+}
+
+// ========== CONFIGURAR EVENT LISTENERS ==========
+function _configurarEventListenersCupons() {
+  console.log("🎧 Configurando event listeners de cupons...");
+  
+  // Busca
+  const inputBusca = document.querySelector(".search-cupom");
+  if (inputBusca) {
+    inputBusca.addEventListener("input", function(e) {
+      filtrosCuponsAtivos.busca = e.target.value;
+      aplicarFiltrosCupons();
+    });
+    console.log("  ✅ Input de busca configurado");
+  }
+  
+  // Tabs de status
+  const tabs = document.querySelectorAll(".tab-filtro-cupom");
+  if (tabs.length > 0) {
+    tabs.forEach(tab => {
+      tab.addEventListener("click", function(e) {
+        // Remove active de todas
+        tabs.forEach(t => t.classList.remove("active"));
+        // Adiciona active na clicada
+        this.classList.add("active");
+        // Atualiza filtro
+        filtrosCuponsAtivos.status = this.getAttribute("data-status");
+        aplicarFiltrosCupons();
+      });
+    });
+    console.log(`  ✅ ${tabs.length} tabs configuradas`);
+  }
+  
+  // Select Estabelecimento
+  const selectEstab = document.getElementById("filtroCupomEstabelecimento");
+  if (selectEstab) {
+    selectEstab.addEventListener("change", function(e) {
+      filtrosCuponsAtivos.estabelecimento = e.target.value;
+      console.log("🏢 Estabelecimento selecionado:", e.target.value);
+      aplicarFiltrosCupons();
+    });
+    console.log("  ✅ Select de estabelecimento configurado");
+  }
+  
+  // Select Grupo
+  const selectGrupo = document.getElementById("filtroCupomGrupo");
+  if (selectGrupo) {
+    selectGrupo.addEventListener("change", function(e) {
+      filtrosCuponsAtivos.grupo = e.target.value;
+      console.log("👥 Grupo selecionado:", e.target.value);
+      aplicarFiltrosCupons();
+    });
+    console.log("  ✅ Select de grupo configurado");
+  }
+  
+  console.log("✅ Event listeners de cupons configurados");
+}
+
+// ========== APLICAR FILTROS ==========
+function aplicarFiltrosCupons() {
+  console.log("🔍 Aplicando filtros de cupons...", filtrosCuponsAtivos);
+  
+  if (!window._cuponsPromocoes || !Array.isArray(window._cuponsPromocoes)) {
+    console.error("❌ _cuponsPromocoes não disponível");
+    return;
+  }
+  
+  let resultado = [...window._cuponsPromocoes];
+  const hoje = new Date();
+  
+  // Filtro por busca
+  if (filtrosCuponsAtivos.busca && filtrosCuponsAtivos.busca.trim() !== '') {
+    const termo = filtrosCuponsAtivos.busca.toLowerCase().trim();
+    resultado = resultado.filter(cupom => {
+      const titulo = (cupom.titulo || '').toLowerCase();
+      const codigo = (cupom.codigo || '').toLowerCase();
+      const estabelecimento = (cupom.nomeEstabelecimento || '').toLowerCase();
+      return titulo.includes(termo) || codigo.includes(termo) || estabelecimento.includes(termo);
+    });
+    console.log(`  Após busca: ${resultado.length} resultados`);
+  }
+  
+  // Filtro por status
+  if (filtrosCuponsAtivos.status === "publicados") {
+    resultado = resultado.filter(cupom => {
+      const dataExpiracao = new Date(cupom.dataExpiracao);
+      return cupom.ativo && dataExpiracao >= hoje;
+    });
+    console.log(`  Após status (publicados): ${resultado.length} resultados`);
+  } else if (filtrosCuponsAtivos.status === "expirados") {
+    resultado = resultado.filter(cupom => {
+      const dataExpiracao = new Date(cupom.dataExpiracao);
+      return dataExpiracao < hoje;
+    });
+    console.log(`  Após status (expirados): ${resultado.length} resultados`);
+  }
+  
+  // Filtro por estabelecimento
+  if (filtrosCuponsAtivos.estabelecimento && filtrosCuponsAtivos.estabelecimento !== 'Todos') {
+    const estabelecimentoId = parseInt(filtrosCuponsAtivos.estabelecimento);
+    resultado = resultado.filter(cupom => cupom.estabelecimentoId === estabelecimentoId);
+    console.log(`  Após estabelecimento: ${resultado.length} resultados`);
+  }
+  
+  // Filtro por grupo
+  if (filtrosCuponsAtivos.grupo && filtrosCuponsAtivos.grupo !== 'Todos') {
+    const grupoId = parseInt(filtrosCuponsAtivos.grupo);
+    // Precisa buscar os estabelecimentos que pertencem ao grupo
+    const estabsDoGrupo = estabelecimentosCache
+      .filter(e => e.grupoId === grupoId)
+      .map(e => e.id);
+    
+    resultado = resultado.filter(cupom => estabsDoGrupo.includes(cupom.estabelecimentoId));
+    console.log(`  Após grupo: ${resultado.length} resultados`);
+  }
+  
+  console.log(`✅ ${resultado.length} de ${window._cuponsPromocoes.length} cupons`);
+  
+  // Renderiza os resultados
+  renderizarPromocoes(resultado);
+  
+  // Atualiza contadores
+  _atualizarContadoresCupons();
+}
+
+// ========== ATUALIZAR CONTADORES ==========
+function _atualizarContadoresCupons() {
+  if (!window._cuponsPromocoes || !Array.isArray(window._cuponsPromocoes)) {
+    return;
+  }
+  
+  const hoje = new Date();
+  const total = window._cuponsPromocoes.length;
+  
+  const publicados = window._cuponsPromocoes.filter(cupom => {
+    const dataExpiracao = new Date(cupom.dataExpiracao);
+    return cupom.ativo && dataExpiracao >= hoje;
+  }).length;
+  
+  const expirados = window._cuponsPromocoes.filter(cupom => {
+    const dataExpiracao = new Date(cupom.dataExpiracao);
+    return dataExpiracao < hoje;
+  }).length;
+  
+  const countTodos = document.getElementById("count-cupons-todos");
+  const countPublicados = document.getElementById("count-cupons-publicados");
+  const countExpirados = document.getElementById("count-cupons-expirados");
+  
+  if (countTodos) countTodos.textContent = total;
+  if (countPublicados) countPublicados.textContent = publicados;
+  if (countExpirados) countExpirados.textContent = expirados;
+  
+  console.log(`📊 Contadores Cupons: Total=${total}, Publicados=${publicados}, Expirados=${expirados}`);
+}
+
+// ========== LIMPAR FILTROS ==========
+function limparFiltrosCupons() {
+  console.log("🧹 Limpando filtros de cupons...");
+  
+  // Reseta os filtros
+  filtrosCuponsAtivos = {
+    busca: "",
+    status: "todos",
+    estabelecimento: "Todos",
+    grupo: "Todos"
+  };
+  
+  // Limpa os campos
+  const inputBusca = document.querySelector(".search-cupom");
+  if (inputBusca) inputBusca.value = "";
+  
+  const selectEstab = document.getElementById("filtroCupomEstabelecimento");
+  if (selectEstab) selectEstab.value = "Todos";
+  
+  const selectGrupo = document.getElementById("filtroCupomGrupo");
+  if (selectGrupo) selectGrupo.value = "Todos";
+  
+  // Ativa tab "Todos"
+  const tabs = document.querySelectorAll(".tab-filtro-cupom");
+  tabs.forEach(tab => {
+    if (tab.getAttribute("data-status") === "todos") {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  });
+  
+  // Reaplica filtros
+  aplicarFiltrosCupons();
+  
+  console.log("✅ Filtros limpos!");
 }
 
 // Cache para armazenar dados
