@@ -1427,8 +1427,15 @@ async function buscarCuponsPorEstabelecimento(estabelecimentoId) {
     return;
   }
 
+  const container = document.getElementById("listaPromocoes");
+  
   try {
     console.log(`🔍 Buscando cupons do estabelecimento ${estabelecimentoId}...`);
+    
+    // Mostra loading
+    if (container) {
+      container.innerHTML = "<p>Carregando...</p>";
+    }
     
     // 1️⃣ Busca IDs dos cupons do estabelecimento
     const resCupons = await fetch(
@@ -1439,7 +1446,11 @@ async function buscarCuponsPorEstabelecimento(estabelecimentoId) {
     );
 
     if (!resCupons.ok) {
-      throw new Error("Erro ao buscar cupons do estabelecimento");
+      // Não mostra erro, apenas renderiza vazio
+      console.log(`⚠️ Nenhum cupom encontrado para o estabelecimento ${estabelecimentoId}`);
+      renderizarPromocoes([]);
+      _atualizarContadoresCuponsComLista([]);
+      return;
     }
 
     const cuponsBasicos = await resCupons.json();
@@ -1449,7 +1460,7 @@ async function buscarCuponsPorEstabelecimento(estabelecimentoId) {
     // Se não houver cupons, renderiza vazio
     if (!cuponsBasicos.length) {
       renderizarPromocoes([]);
-      _atualizarContadoresCupons();
+      _atualizarContadoresCuponsComLista([]);
       return;
     }
 
@@ -1516,8 +1527,9 @@ async function buscarCuponsPorEstabelecimento(estabelecimentoId) {
 
   } catch (err) {
     console.error("❌ Erro ao buscar cupons do estabelecimento:", err);
-    alert("Erro ao buscar cupons do estabelecimento.");
+    // Não mostra alert, apenas renderiza vazio
     renderizarPromocoes([]);
+    _atualizarContadoresCuponsComLista([]);
   }
 }
 
