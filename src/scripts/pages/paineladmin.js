@@ -118,16 +118,10 @@ function renderizarLista(lista, containerId) {
     return;
   }
 
-  const token = localStorage.getItem("token");
-
   lista.forEach(estab => {
-    // 🔹 CORRIGIDO: Determina a imag
-    // em com fallback apropriado
-
     const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
-    
-    let imagemSrc = PLACEHOLDER; // padrão primeiro
+    let imagemSrc = PLACEHOLDER;
     
     if (estab.imagemPrincipal) {
       imagemSrc = estab.imagemPrincipal;
@@ -171,7 +165,7 @@ function renderizarLista(lista, containerId) {
             <!-- Toggle -->
             <div class="toggle-container">
               <label class="switch-card">
-                <input type="checkbox" id="toggle-${estab.id}" ${estab.status === "Publicado" ? "checked" : ""}>
+                <input type="checkbox" id="toggle-${estab.id}" ${estab.status === "Publicado" ? "checked" : ""} data-estab-id="${estab.id}">
                 <span class="slider-card"></span>
               </label>
             </div>
@@ -203,64 +197,41 @@ function renderizarLista(lista, containerId) {
     // Pega o card recém-criado
     const card = container.lastElementChild;
 
-    // Event listener para o toggle
+    // Event listener para o toggle - USA PATCH
     const toggleInput = card.querySelector(`#toggle-${estab.id}`);
     toggleInput.addEventListener("change", async (e) => {
-      const novoStatus = e.target.checked ? "Publicado" : "Rascunho";
+      const isChecked = e.target.checked;
+      const estabelecimentoId = e.target.dataset.estabId;
+      
+      // Se marcado = "Publicado", se desmarcado = "Rascunho"
+      const novoStatus = isChecked ? "Publicado" : "Rascunho";
       
       try {
-        const body = {
-          "nome": estab.nome,
-          "razaoSocial": estab.razaoSocial,
-          "cnpj": estab.cnpj,
-          "telefone": estab.telefone,
-          "emailContato": estab.emailContato,
-          "ativo": e.target.checked,
-          "categoriaId": estab.categoriaId || 0,
-          "cidadeId": estab.cidadeId || 0,
-          "rua": estab.rua || "",
-          "numero": estab.numero || "",
-          "bairro": estab.bairro || "",
-          "complemento": estab.complemento || "",
-          "cep": estab.cep || "",
-          "latitude": estab.latitude || 0,
-          "longitude": estab.longitude || 0,
-          "grupoId": estab.grupoId || 0,
-          "mapaUrl": estab.mapaUrl || "",
-          "sobre": estab.sobre || "",
-          "status": novoStatus
-        };
-
-        const res = await fetch(
-          `${API_BASE}/api/Estabelecimentos/${estab.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Authorization": "Bearer " + token,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-          }
-        );
-
+        await atualizarStatusEstabelecimentoPatch(estabelecimentoId, novoStatus);
         
-
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Erro ao alterar status: ${errorText}`);
+        // Atualiza o cache local
+        estab.status = novoStatus;
+        estab.ativo = isChecked;
+        
+        // Atualiza o cache global
+        const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
+        if (index !== -1) {
+          estabelecimentosCache[index].status = novoStatus;
+          estabelecimentosCache[index].ativo = isChecked;
         }
         
-        estab.status = novoStatus;
-        estab.ativo = e.target.checked;
-        console.log(`Status alterado para: ${novoStatus}`);
-
-        // 🔹 Atualiza os contadores após mudar o status
-        _atualizarContadores();
+        console.log(`✅ Status do estabelecimento ${estabelecimentoId} atualizado para: ${novoStatus}`);
+        
+        // Atualiza os contadores
+        if (typeof _atualizarContadores === 'function') {
+          _atualizarContadores();
+        }
 
       } catch (err) {
-        console.error(err);
+        console.error("❌ Erro ao alterar status:", err);
         alert("Erro ao alterar status: " + err.message);
-        e.target.checked = !e.target.checked;
+        // Reverte o toggle em caso de erro
+        e.target.checked = !isChecked;
       }
     });
 
@@ -278,6 +249,8 @@ function renderizarLista(lista, containerId) {
 
       if (!confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) return;
 
+      const token = localStorage.getItem("token");
+
       try {
         const res = await fetch(
           `${API_BASE}/api/Estabelecimentos/${estab.id}`,
@@ -291,7 +264,7 @@ function renderizarLista(lista, containerId) {
 
         if (!res.ok) throw new Error("Erro ao excluir");
 
-        // 🔹 Remove do cache
+        // Remove do cache
         const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
         if (index > -1) {
           estabelecimentosCache.splice(index, 1);
@@ -300,10 +273,13 @@ function renderizarLista(lista, containerId) {
         card.remove();
         alert("Estabelecimento excluído com sucesso!");
         
-        // 🔹 Atualiza contadores e filtros
-        _atualizarContadores();
-        inicializarFiltros()
-        popularFiltros();
+        // Atualiza contadores e filtros
+        if (typeof _atualizarContadores === 'function') {
+          _atualizarContadores();
+        }
+        if (typeof inicializarFiltros === 'function') {
+          inicializarFiltros();
+        }
 
       } catch (err) {
         console.error(err);
@@ -311,6 +287,49 @@ function renderizarLista(lista, containerId) {
       }
     });
   });
+}
+
+// ========== FUNÇÃO PATCH PARA ATUALIZAR STATUS DO ESTABELECIMENTO ==========
+async function atualizarStatusEstabelecimentoPatch(estabelecimentoId, novoStatus) {
+  const token = localStorage.getItem("token");
+  
+  if (!token) {
+    throw new Error("Token não encontrado");
+  }
+
+  try {
+    console.log(`🔄 Atualizando status do estabelecimento ${estabelecimentoId} para: ${novoStatus}`);
+    
+    const response = await fetch(`${API_BASE}/api/Estabelecimentos/${estabelecimentoId}/status`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(novoStatus) // Envia apenas a string: "Publicado" ou "Rascunho"
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Erro na resposta:", errorText);
+      throw new Error(`Erro ao atualizar status: ${response.status} - ${errorText}`);
+    }
+
+    // Verifica se há conteúdo na resposta
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      console.log("✅ Resposta do servidor:", data);
+      return data;
+    }
+    
+    console.log("✅ Status do estabelecimento atualizado com sucesso");
+    return null;
+
+  } catch (err) {
+    console.error("❌ Erro ao fazer PATCH:", err);
+    throw err;
+  }
 }
 
 
@@ -1335,7 +1354,6 @@ function _popularFiltroGruposCupom() {
   console.log(`✅ ${gruposCache.length} grupos adicionados ao select`);
 }
 
-// ========== CONFIGURAR EVENT LISTENERS ==========
 function _configurarEventListenersCupons() {
   console.log("🎧 Configurando event listeners de cupons...");
   
@@ -1366,13 +1384,22 @@ function _configurarEventListenersCupons() {
     console.log(`  ✅ ${tabs.length} tabs configuradas`);
   }
   
-  // Select Estabelecimento
+  // Select Estabelecimento - ATUALIZADO COM BUSCA NA API
   const selectEstab = document.getElementById("filtroCupomEstabelecimento");
   if (selectEstab) {
-    selectEstab.addEventListener("change", function(e) {
-      filtrosCuponsAtivos.estabelecimento = e.target.value;
-      console.log("🏢 Estabelecimento selecionado:", e.target.value);
-      aplicarFiltrosCupons();
+    selectEstab.addEventListener("change", async function(e) {
+      const valorSelecionado = e.target.value;
+      filtrosCuponsAtivos.estabelecimento = valorSelecionado;
+      
+      console.log("🏢 Estabelecimento selecionado:", valorSelecionado);
+      
+      // Se selecionou "Todos", usa o filtro normal
+      if (valorSelecionado === 'Todos') {
+        aplicarFiltrosCupons();
+      } else {
+        // Se selecionou um estabelecimento específico, busca da API
+        await buscarCuponsPorEstabelecimento(parseInt(valorSelecionado));
+      }
     });
     console.log("  ✅ Select de estabelecimento configurado");
   }
@@ -1391,7 +1418,110 @@ function _configurarEventListenersCupons() {
   console.log("✅ Event listeners de cupons configurados");
 }
 
-// ========== APLICAR FILTROS ==========
+// ========== BUSCAR CUPONS POR ESTABELECIMENTO ==========
+async function buscarCuponsPorEstabelecimento(estabelecimentoId) {
+  const token = localStorage.getItem("token");
+  
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    console.log(`🔍 Buscando cupons do estabelecimento ${estabelecimentoId}...`);
+    
+    // 1️⃣ Busca IDs dos cupons do estabelecimento
+    const resCupons = await fetch(
+      `${API_BASE}/api/Cupons/por-estabelecimento/${estabelecimentoId}`,
+      {
+        headers: { Authorization: "Bearer " + token }
+      }
+    );
+
+    if (!resCupons.ok) {
+      throw new Error("Erro ao buscar cupons do estabelecimento");
+    }
+
+    const cuponsBasicos = await resCupons.json();
+    
+    console.log(`  Encontrados ${cuponsBasicos.length} cupons básicos`);
+
+    // Se não houver cupons, renderiza vazio
+    if (!cuponsBasicos.length) {
+      renderizarPromocoes([]);
+      _atualizarContadoresCupons();
+      return;
+    }
+
+    // 2️⃣ Busca dados completos de cada cupom
+    const cuponsCompletos = await Promise.all(
+      cuponsBasicos.map(cupomBase =>
+        fetch(`${API_BASE}/api/Cupons/${cupomBase.id}`, {
+          headers: { Authorization: "Bearer " + token }
+        })
+          .then(res => res.ok ? res.json() : null)
+          .then(cupomCompleto => {
+            if (!cupomCompleto) return null;
+            
+            // Adiciona o nome do estabelecimento
+            const estab = estabelecimentosCache.find(e => e.id === estabelecimentoId);
+            return {
+              ...cupomCompleto,
+              nomeEstabelecimento: estab ? estab.nome : 'Estabelecimento'
+            };
+          })
+          .catch(() => null)
+      )
+    );
+
+    const cuponsFiltrados = cuponsCompletos.filter(Boolean);
+    
+    console.log(`✅ ${cuponsFiltrados.length} cupons completos carregados`);
+
+    // 3️⃣ Aplica filtros adicionais (busca, status, grupo) se houver
+    let resultado = cuponsFiltrados;
+    
+    // Filtro por busca
+    if (filtrosCuponsAtivos.busca && filtrosCuponsAtivos.busca.trim() !== '') {
+      const termo = filtrosCuponsAtivos.busca.toLowerCase().trim();
+      resultado = resultado.filter(cupom => {
+        const titulo = (cupom.titulo || '').toLowerCase();
+        const codigo = (cupom.codigo || '').toLowerCase();
+        return titulo.includes(termo) || codigo.includes(termo);
+      });
+    }
+    
+    // Filtro por status
+    if (filtrosCuponsAtivos.status === "publicados") {
+      resultado = resultado.filter(cupom => {
+        return cupom.status === "Publicado" && 
+               cupom.ativo === true && 
+               !cupomEstaExpirado(cupom);
+      });
+    } else if (filtrosCuponsAtivos.status === "expirados") {
+      resultado = resultado.filter(cupom => {
+        return cupomEstaExpirado(cupom) || cupom.status === "Expirado";
+      });
+    } else if (filtrosCuponsAtivos.status === "rascunhos") {
+      resultado = resultado.filter(cupom => {
+        return cupom.status === "Rascunho";
+      });
+    }
+
+    // 4️⃣ Renderiza os resultados
+    renderizarPromocoes(resultado);
+    
+    // Atualiza contadores baseado nos cupons filtrados
+    _atualizarContadoresCuponsComLista(cuponsFiltrados);
+
+  } catch (err) {
+    console.error("❌ Erro ao buscar cupons do estabelecimento:", err);
+    alert("Erro ao buscar cupons do estabelecimento.");
+    renderizarPromocoes([]);
+  }
+}
+
+// ========== APLICAR FILTROS (VERSÃO ATUALIZADA) ==========
 function aplicarFiltrosCupons() {
   console.log("🔍 Aplicando filtros de cupons...", filtrosCuponsAtivos);
   
@@ -1440,7 +1570,7 @@ function aplicarFiltrosCupons() {
   }
   // Se for "todos", não filtra por status
   
-  // Filtro por estabelecimento
+  // Filtro por estabelecimento (somente filtra no cache, a busca na API é feita no listener)
   if (filtrosCuponsAtivos.estabelecimento && filtrosCuponsAtivos.estabelecimento !== 'Todos') {
     const estabelecimentoId = parseInt(filtrosCuponsAtivos.estabelecimento);
     resultado = resultado.filter(cupom => cupom.estabelecimentoId === estabelecimentoId);
@@ -1510,6 +1640,44 @@ function _atualizarContadoresCupons() {
   if (countRascunhos) countRascunhos.textContent = rascunhos;
   
   console.log(`📊 Contadores Cupons: Total=${total}, Publicados=${publicados}, Expirados=${expirados}, Rascunhos=${rascunhos}`);
+}
+
+// ========== ATUALIZAR CONTADORES COM LISTA CUSTOMIZADA ==========
+function _atualizarContadoresCuponsComLista(listaCupons) {
+  if (!listaCupons || !Array.isArray(listaCupons)) {
+    return;
+  }
+  
+  const total = listaCupons.length;
+  
+  // Publicados: status = "Publicado" E não expirado E ativo
+  const publicados = listaCupons.filter(cupom => {
+    return cupom.status === "Publicado" && 
+           cupom.ativo === true && 
+           !cupomEstaExpirado(cupom);
+  }).length;
+  
+  // Expirados: dataExpiracao < hoje OU status = "Expirado"
+  const expirados = listaCupons.filter(cupom => {
+    return cupomEstaExpirado(cupom) || cupom.status === "Expirado";
+  }).length;
+  
+  // Rascunhos: status = "Rascunho"
+  const rascunhos = listaCupons.filter(cupom => {
+    return cupom.status === "Rascunho";
+  }).length;
+  
+  const countTodos = document.getElementById("count-cupons-todos");
+  const countPublicados = document.getElementById("count-cupons-publicados");
+  const countExpirados = document.getElementById("count-cupons-expirados");
+  const countRascunhos = document.getElementById("count-cupons-rascunhos");
+  
+  if (countTodos) countTodos.textContent = total;
+  if (countPublicados) countPublicados.textContent = publicados;
+  if (countExpirados) countExpirados.textContent = expirados;
+  if (countRascunhos) countRascunhos.textContent = rascunhos;
+  
+  console.log(`📊 Contadores Cupons (filtrado): Total=${total}, Publicados=${publicados}, Expirados=${expirados}, Rascunhos=${rascunhos}`);
 }
 
 // ========== LIMPAR FILTROS ==========
