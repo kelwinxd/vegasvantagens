@@ -3735,6 +3735,7 @@ window.cadastrarGrupo = cadastrarGrupo;
 window.limparFiltros = limparFiltros;
 window.estabelecimentosCache = estabelecimentosCache;
 window.limparFiltrosCupons = limparFiltrosCupons;
+window.voltarEstabelecimentos = voltarEstabelecimentos;
 
 
 

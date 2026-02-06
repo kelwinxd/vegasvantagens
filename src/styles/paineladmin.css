@@ -174,7 +174,7 @@
   gap: 10px;
 }
 
-.btns-subpage button, .btn-action, .tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom {
+.btns-subpage button, .btn-action, .tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom, .btn-voltar {
     width: 200px;
     height: 20px;
     border: none;
@@ -190,7 +190,7 @@
     justify-content: center;
 }
 
-.tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom {
+.tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom{
   width:180px;
 }
 
@@ -1804,6 +1804,7 @@ line-height: normal;
   align-items: center;
   gap: 8px;
 }
+
 
 /* CUPOM LISTA */
 
