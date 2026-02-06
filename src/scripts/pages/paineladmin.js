@@ -3712,6 +3712,226 @@ function obterEstabelecimentosSelecionados() {
 
 
 
+//GRAFICO
+
+// ==========================================
+// DASHBOARD - GRÁFICOS E ESTATÍSTICAS
+// ==========================================
+
+let graficoPizzaEstab = null;
+
+// Processar dados dos estabelecimentos por tipo
+function processarDadosGrafico(tipo) {
+  const dados = {};
+
+  estabelecimentosCache.forEach(estab => {
+    let chave;
+
+    switch(tipo) {
+      case 'cidade':
+        chave = estab.cidade || 'Sem Cidade';
+        break;
+      case 'categoria':
+        chave = estab.categoria || 'Sem Categoria';
+        break;
+      case 'cupons':
+        const qtdCupons = estab.cupons?.filter(c => c.ativo).length || 0;
+        if (qtdCupons === 0) chave = 'Sem cupons';
+        else if (qtdCupons <= 5) chave = '1-5 cupons';
+        else if (qtdCupons <= 10) chave = '6-10 cupons';
+        else if (qtdCupons <= 20) chave = '11-20 cupons';
+        else chave = '20+ cupons';
+        break;
+    }
+
+    dados[chave] = (dados[chave] || 0) + 1;
+  });
+
+  return dados;
+}
+
+// Gerar paleta de cores para o gráfico
+function gerarPaletaCores(quantidade) {
+  const cores = [
+    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+    '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
+    '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+  ];
+  return cores.slice(0, quantidade);
+}
+
+// Renderizar gráfico de pizza
+function renderizarGraficoPizza() {
+  const tipo = document.getElementById('filtroTipo').value;
+  const ordem = document.getElementById('filtroOrdem').value;
+  const limite = parseInt(document.getElementById('filtroLimite').value);
+
+  const dadosProcessados = processarDadosGrafico(tipo);
+  
+  // Converter para array e ordenar
+  let dadosArray = Object.entries(dadosProcessados).map(([label, value]) => ({
+    label,
+    value
+  }));
+
+  // Aplicar ordenação
+  dadosArray.sort((a, b) => {
+    return ordem === 'desc' ? b.value - a.value : a.value - b.value;
+  });
+
+  // Aplicar limite e agrupar "Outros"
+  if (limite > 0 && dadosArray.length > limite) {
+    const outros = dadosArray.slice(limite);
+    const somaOutros = outros.reduce((sum, item) => sum + item.value, 0);
+    dadosArray = dadosArray.slice(0, limite);
+    if (somaOutros > 0) {
+      dadosArray.push({ label: 'Outros', value: somaOutros });
+    }
+  }
+
+  const labels = dadosArray.map(d => d.label);
+  const valores = dadosArray.map(d => d.value);
+  const cores = gerarPaletaCores(labels.length);
+
+  // Destruir gráfico anterior se existir
+  if (graficoPizzaEstab) {
+    graficoPizzaEstab.destroy();
+  }
+
+  // Criar novo gráfico
+  const ctx = document.getElementById('graficoEstabelecimentos');
+  
+  if (!ctx) {
+    console.error('Canvas do gráfico não encontrado');
+    return;
+  }
+
+  graficoPizzaEstab = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: valores,
+        backgroundColor: cores,
+        borderWidth: 2,
+        borderColor: '#fff',
+        hoverOffset: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            padding: 15,
+            font: {
+              size: 13
+            },
+            usePointStyle: true
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          padding: 12,
+          titleFont: {
+            size: 14
+          },
+          bodyFont: {
+            size: 13
+          },
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.parsed || 0;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
+        }
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: true
+      }
+    }
+  });
+}
+
+// Atualizar cards de estatísticas gerais
+function renderizarCardsEstatisticas() {
+  const totalEstab = estabelecimentosCache.length;
+  const totalCupons = estabelecimentosCache.reduce((sum, e) => 
+    sum + (e.cupons?.filter(c => c.ativo).length || 0), 0);
+  const totalCidades = new Set(estabelecimentosCache.map(e => e.cidade).filter(Boolean)).size;
+  const totalCategorias = new Set(estabelecimentosCache.map(e => e.categoria).filter(Boolean)).size;
+
+  const statsHTML = `
+    <div class="stat-card">
+      <h3>Total de Estabelecimentos</h3>
+      <div class="value">${totalEstab}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Cupons Ativos</h3>
+      <div class="value">${totalCupons}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Cidades</h3>
+      <div class="value">${totalCidades}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Categorias</h3>
+      <div class="value">${totalCategorias}</div>
+    </div>
+  `;
+
+  const statsContainer = document.getElementById('statsGrid');
+  if (statsContainer) {
+    statsContainer.innerHTML = statsHTML;
+  }
+}
+
+// Configurar eventos dos filtros do dashboard
+function inicializarFiltrosGrafico() {
+  const filtroTipo = document.getElementById('filtroTipo');
+  const filtroOrdem = document.getElementById('filtroOrdem');
+  const filtroLimite = document.getElementById('filtroLimite');
+
+  if (filtroTipo) {
+    filtroTipo.addEventListener('change', renderizarGraficoPizza);
+  }
+
+  if (filtroOrdem) {
+    filtroOrdem.addEventListener('change', renderizarGraficoPizza);
+  }
+
+  if (filtroLimite) {
+    filtroLimite.addEventListener('change', renderizarGraficoPizza);
+  }
+}
+
+// Inicializar todo o dashboard de gráficos
+function inicializarDashboardGraficos() {
+  if (estabelecimentosCache.length === 0) {
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    if (chartWrapper) {
+      chartWrapper.innerHTML = '<div class="no-data">Nenhum estabelecimento encontrado</div>';
+    }
+    return;
+  }
+
+  renderizarCardsEstatisticas();
+  inicializarFiltrosGrafico();
+  renderizarGraficoPizza();
+}
+
+// Atualizar dashboard completo (chamado após buscar estabelecimentos)
+function atualizarDashboardCompleto() {
+  renderizarCardsEstatisticas();
+  renderizarGraficoPizza();
+}
 
 
 

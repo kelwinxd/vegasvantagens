@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/global.css">
-    <title>Document</title>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <title>Dashboard Vegas</title>
 </head>
 <body class="body-painel">
     
@@ -129,6 +130,46 @@
                 </div>
             </div>
         </div>
+
+        <!--GRAFICO-->
+
+        <div class="filtros">
+        <div class="filtro-group">
+          <label for="filtroTipo">Visualizar por:</label>
+          <select id="filtroTipo">
+            <option value="cidade">Cidade</option>
+            <option value="categoria">Categoria</option>
+            <option value="cupons">Cupons Ativos</option>
+          </select>
+        </div>
+
+        <div class="filtro-group">
+          <label for="filtroOrdem">Ordenar:</label>
+          <select id="filtroOrdem">
+            <option value="desc">Maior para Menor</option>
+            <option value="asc">Menor para Maior</option>
+          </select>
+        </div>
+
+        <div class="filtro-group">
+          <label for="filtroLimite">Mostrar:</label>
+          <select id="filtroLimite">
+            <option value="5">Top 5</option>
+            <option value="10">Top 10</option>
+            <option value="0">Todos</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+      <!-- Cards de estatísticas serão inseridos aqui -->
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-wrapper">
+        <canvas id="graficoEstabelecimentos"></canvas>
+      </div>
    
     </div>
 
