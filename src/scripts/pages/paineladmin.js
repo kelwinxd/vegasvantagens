@@ -945,55 +945,12 @@ function popularFiltros() {
   _popularFiltroGrupos();
 }
 
-// ========== INICIALIZAÇÃO ==========
-// Chame isso quando carregar a página de estabelecimentos
-async function inicializarPaginaEstabelecimentos() {
-  await buscarEstabelecimentos(); // sua função existente
-  await popularFiltros();
-  inicializarFiltrosEstabelecimentos();
-  aplicarFiltros();
-}
 
-// Event listener para quando abrir a subpage de lista de estabelecimentos
-document.querySelector('[data-open-subpage="lista-estab"]')?.addEventListener('click', () => {
-  inicializarPaginaEstabelecimentos();
-});
 
-// Mapeamento de hierarquia: subpages filhas -> página pai
-const hierarquia = {
-  "criar-estab": "lista-estab",
 
-};
+
 
 // Listener genérico para botões principais
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-open-subpage]");
-  if (!btn) return;
-  
-  const subpage = btn.dataset.openSubpage;
-  
-  // Apenas atualiza botões do menu principal (não os de voltar)
-  if (!btn.classList.contains("btn-voltar")) {
-    // Remove active de todos os botões principais
-    document
-      .querySelectorAll(".btns-subpage [data-open-subpage]")
-      .forEach(el => el.classList.remove("active"));
-    
-    // Verifica se é uma subpage filha
-    const paginaPai = hierarquia[subpage];
-    
-    if (paginaPai) {
-      // Se é filha, ativa o botão pai
-      document.querySelector(`[data-open-subpage="${paginaPai}"]`)
-        ?.classList.add("active");
-    } else {
-      // Se não é filha, ativa o próprio botão
-      btn.classList.add("active");
-    }
-  }
-  
-  abrirSubPage(subpage);
-});
 
 
 function inicializarFiltroDashboard() {
