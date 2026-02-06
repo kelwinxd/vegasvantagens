@@ -386,6 +386,7 @@ document.querySelector(".search-estab").addEventListener("input", e => {
 
 
 // ========== NOVA CLASSE GERENCIADORA ==========
+// ========== NOVA CLASSE GERENCIADORA ==========
 class GerenciadorSubPages {
   constructor(pageElement) {
     this.page = pageElement;
@@ -396,9 +397,16 @@ class GerenciadorSubPages {
   init() {
     this.page.querySelectorAll("[data-open-subpage]").forEach(btn => {
       btn.addEventListener("click", (e) => {
-        // Ignora se for botão de voltar (será tratado separadamente)
-        if (btn.classList.contains("btn-voltar")) return;
+        const nomeSubpage = btn.dataset.openSubpage;
         
+        // Se for botão de voltar, usa o método voltarPara
+        if (btn.classList.contains("btn-voltar")) {
+          e.preventDefault();
+          this.voltarPara(nomeSubpage);
+          return;
+        }
+        
+        // Caso contrário, troca normalmente
         this.trocarSubPage(btn);
       });
     });
