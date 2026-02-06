@@ -40,6 +40,9 @@ import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '
       // Página de gerenciamento
       renderizarLista(estabelecimentosCache, "listaCards");
       inicializarFiltroDashboard()
+
+      //Grafico
+      inicializarDashboardGraficos();
          
       // Dashboard
       atualizarDashboard();
