@@ -385,21 +385,122 @@ document.querySelector(".search-estab").addEventListener("input", e => {
 
 
 
-function fecharSubPages() {
-  document.querySelectorAll(".sub-page")
-    .forEach(sp => sp.classList.remove("active"));
+// ========== NOVA CLASSE GERENCIADORA ==========
+class GerenciadorSubPages {
+  constructor(pageElement) {
+    this.page = pageElement;
+    this.hierarquia = {}; // Cada página pode ter sua própria hierarquia
+    this.init();
+  }
+  
+  init() {
+    this.page.querySelectorAll("[data-open-subpage]").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        // Ignora se for botão de voltar (será tratado separadamente)
+        if (btn.classList.contains("btn-voltar")) return;
+        
+        this.trocarSubPage(btn);
+      });
+    });
+  }
+  
+  trocarSubPage(btn) {
+    const nomeSubpage = btn.dataset.openSubpage;
+    
+    // Remove active de todos os botões principais desta página
+    this.page.querySelectorAll(".btns-subpage [data-open-subpage]")
+      .forEach(b => b.classList.remove("active"));
+    
+    // Verifica se é uma subpage filha
+    const paginaPai = this.hierarquia[nomeSubpage];
+    
+    if (paginaPai) {
+      // Se é filha, ativa o botão pai
+      this.page.querySelector(`[data-open-subpage="${paginaPai}"]`)
+        ?.classList.add("active");
+    } else {
+      // Se não é filha, ativa o próprio botão
+      btn.classList.add("active");
+    }
+    
+    this.abrirSubPage(nomeSubpage);
+  }
+  
+  abrirSubPage(nome) {
+    // Fecha todas as subpages DESTA página
+    this.page.querySelectorAll(".sub-page")
+      .forEach(sp => sp.classList.remove("active"));
+    
+    // Abre a subpage desejada
+    const subpage = this.page.querySelector(`.sub-page[data-subpage="${nome}"]`);
+    if (!subpage) {
+      console.warn("Subpage não encontrada:", nome);
+      return;
+    }
+    subpage.classList.add("active");
+  }
+  
+  // Método público para ser chamado de fora
+  voltarPara(nomeSubpage) {
+    this.abrirSubPage(nomeSubpage);
+    // Reativa o botão correspondente
+    const btn = this.page.querySelector(`[data-open-subpage="${nomeSubpage}"]`);
+    if (btn) {
+      this.page.querySelectorAll(".btns-subpage [data-open-subpage]")
+        .forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+  }
+  
+  // Setter para hierarquia
+  setHierarquia(hierarquia) {
+    this.hierarquia = hierarquia;
+  }
 }
 
-function abrirSubPage(nome) {
-  fecharSubPages();
-  const subpage = document.querySelector(
-    `.sub-page[data-subpage="${nome}"]`
-  );
-  if (!subpage) {
-    console.warn("Subpage não encontrada:", nome);
-    return;
+// ========== INICIALIZAÇÃO ==========
+const gerenciadores = {};
+
+document.querySelectorAll(".page").forEach(page => {
+  const pageId = page.dataset.page;
+  gerenciadores[pageId] = new GerenciadorSubPages(page);
+});
+
+// Configurar hierarquia para estabelecimentos
+if (gerenciadores.estabelecimentos) {
+  gerenciadores.estabelecimentos.setHierarquia({
+    "criar-estab": "lista-estab"
+  });
+}
+
+// Configurar hierarquia para promoções (se necessário no futuro)
+if (gerenciadores.promocoes) {
+  gerenciadores.promocoes.setHierarquia({
+    // "criar-cupom": "lista-cupom" // exemplo
+  });
+}
+
+// ========== FUNÇÕES ESPECÍFICAS ADAPTADAS ==========
+
+// Chame isso quando carregar a página de estabelecimentos
+async function inicializarPaginaEstabelecimentos() {
+  await buscarEstabelecimentos(); // sua função existente
+  await popularFiltros();
+  inicializarFiltrosEstabelecimentos();
+  aplicarFiltros();
+}
+
+// Event listener para quando abrir a subpage de lista de estabelecimentos
+document.querySelector('.page[data-page="estabelecimentos"] [data-open-subpage="lista-estab"]')
+  ?.addEventListener('click', () => {
+    inicializarPaginaEstabelecimentos();
+  });
+
+// Função específica para voltar aos estabelecimentos
+function voltarEstabelecimentos() {
+  if (gerenciadores.estabelecimentos) {
+    gerenciadores.estabelecimentos.voltarPara("lista-estab");
   }
-  subpage.classList.add("active");
 }
 
 var filtrosAtivos = {
@@ -894,13 +995,6 @@ document.addEventListener("click", (e) => {
   abrirSubPage(subpage);
 });
 
-// Função específica para voltar ao estabelecimentos
-function voltarEstabelecimentos() {
-  abrirSubPage("lista-estab");
-  // Reativa o botão Estabelecimentos
-  document.querySelector('[data-open-subpage="lista-estab"]')
-    ?.classList.add("active");
-}
 
 function inicializarFiltroDashboard() {
   const tabAtiva = document.querySelector(".tab.active");
@@ -3518,6 +3612,7 @@ async function popularSelectGrupos(selectId = "grupo2") {
 }
 
 // ========== CADASTRAR GRUPO (com atualização de cache) ==========
+// ========== CADASTRAR GRUPO (com atualização de cache) ==========
 async function cadastrarGrupo() {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -3570,8 +3665,10 @@ async function cadastrarGrupo() {
     limparCacheGrupos();
     await carregarGrupos(true); // força recarregar
     
-    // Volta para a lista de grupos
-    abrirSubPage("lista-grupo");
+    // Volta para a lista de grupos usando o gerenciador
+    if (gerenciadores.estabelecimentos) {
+      gerenciadores.estabelecimentos.voltarPara("lista-grupo");
+    }
 
   } catch (error) {
     console.error(error);
