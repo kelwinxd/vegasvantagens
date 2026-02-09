@@ -2232,29 +2232,29 @@ async function buscarImagemCupom(cupomId) {
 
 
 
-// ========== FUNÇÃO PARA POPULAR O SELECT ==========
-// Cole esta função no seu paineladmin.js
+// ========== FUNÇÃO PARA POPULAR O SELECT CUPOM ==========
 
-async function popularSelectEstabelecimentos() {
-  console.log("📋 Populando select de estabelecimentos...");
+
+async function renderizarCheckboxesEstabelecimentos() {
+  console.log("📋 Renderizando checkboxes de estabelecimentos...");
   
-  const select = document.getElementById("estabelecimentoId");
-  if (!select) {
-    console.error("❌ Select estabelecimentoId não encontrado!");
+  const container = document.querySelector(".estabelecimentos-checkbox-container");
+  if (!container) {
+    console.error("❌ Container .estabelecimentos-checkbox-container não encontrado!");
     return;
   }
 
-  // Limpa o select mantendo apenas a opção padrão
-  select.innerHTML = '<option value="">Selecione um estabelecimento...</option>';
+  // Limpa o container
+  container.innerHTML = '<p class="carregando-estabelecimentos">Carregando estabelecimentos...</p>';
 
   // Verifica se tem estabelecimentos no cache
   if (!window.estabelecimentosCache || estabelecimentosCache.length === 0) {
     console.warn("⚠️ Nenhum estabelecimento no cache, buscando...");
     
-    // Se não tem no cache, busca
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("❌ Token não encontrado");
+      container.innerHTML = '<p class="erro-estabelecimentos">Erro: Token não encontrado</p>';
       return;
     }
 
@@ -2270,25 +2270,130 @@ async function popularSelectEstabelecimentos() {
       
     } catch (err) {
       console.error("❌ Erro ao buscar estabelecimentos:", err);
-      alert("Erro ao carregar estabelecimentos: " + err.message);
+      container.innerHTML = `<p class="erro-estabelecimentos">Erro ao carregar estabelecimentos: ${err.message}</p>`;
       return;
     }
   }
 
-  // Ordena por nome
-  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) => 
+  // Limpa o container novamente antes de adicionar os checkboxes
+  container.innerHTML = "";
+
+  // Agrupa estabelecimentos por similaridade de nome
+  const grupos = agruparEstabelecimentosPorSimilaridade(estabelecimentosCache);
+
+  // Renderiza os grupos
+  grupos.forEach(grupo => {
+    // Cria um wrapper para cada grupo
+    const grupoDiv = document.createElement("div");
+    grupoDiv.className = "grupo-estabelecimentos";
+
+    // Se o grupo tem mais de um estabelecimento, adiciona um título
+    if (grupo.estabelecimentos.length > 1) {
+      const tituloGrupo = document.createElement("h4");
+      tituloGrupo.className = "titulo-grupo-estabelecimentos";
+      tituloGrupo.textContent = grupo.nomeBase;
+      grupoDiv.appendChild(tituloGrupo);
+    }
+
+    // Cria os checkboxes para cada estabelecimento do grupo
+    grupo.estabelecimentos.forEach(estab => {
+      const label = document.createElement("label");
+      label.className = "field-checkbox-estabelecimento";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "estabelecimentos[]";
+      input.value = estab.id;
+      input.id = `estab-${estab.id}`;
+      input.dataset.estabelecimentoNome = estab.nome;
+
+      const span = document.createElement("span");
+      span.textContent = `${estab.nome}${estab.cidade ? ` - ${estab.cidade}` : ''}`;
+
+      label.appendChild(input);
+      label.appendChild(span);
+
+      grupoDiv.appendChild(label);
+    });
+
+    container.appendChild(grupoDiv);
+  });
+
+  console.log(`✅ ${estabelecimentosCache.length} estabelecimentos renderizados em ${grupos.length} grupos`);
+}
+
+// Função auxiliar para agrupar estabelecimentos por similaridade
+function agruparEstabelecimentosPorSimilaridade(estabelecimentos) {
+  const grupos = [];
+  const processados = new Set();
+
+  // Ordena por nome primeiro
+  const estabelecimentosOrdenados = [...estabelecimentos].sort((a, b) => 
     a.nome.localeCompare(b.nome)
   );
 
-  // Adiciona as opções
   estabelecimentosOrdenados.forEach(estab => {
-    const option = document.createElement("option");
-    option.value = estab.id;
-    option.textContent = `${estab.nome} - ${estab.cidade || ''}`;
-    select.appendChild(option);
+    if (processados.has(estab.id)) return;
+
+    // Extrai o nome base (remove números, "filial", "unidade", etc)
+    const nomeBase = extrairNomeBase(estab.nome);
+
+    // Encontra estabelecimentos similares
+    const similares = estabelecimentosOrdenados.filter(e => {
+      if (processados.has(e.id)) return false;
+      const nomeBaseOutro = extrairNomeBase(e.nome);
+      return calcularSimilaridade(nomeBase, nomeBaseOutro) > 0.7; // 70% de similaridade
+    });
+
+    // Marca todos como processados
+    similares.forEach(s => processados.add(s.id));
+
+    grupos.push({
+      nomeBase: nomeBase,
+      estabelecimentos: similares
+    });
   });
 
-  console.log(`✅ ${estabelecimentosOrdenados.length} estabelecimentos adicionados ao select`);
+  return grupos;
+}
+
+// Extrai o nome base removendo números, filiais, etc
+function extrairNomeBase(nome) {
+  return nome
+    .replace(/\s*-\s*(filial|unidade|loja|un\.?)\s*\d+/gi, '')
+    .replace(/\s*\d+\s*$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Calcula similaridade entre dois textos (algoritmo simples)
+function calcularSimilaridade(str1, str2) {
+  const s1 = str1.toLowerCase();
+  const s2 = str2.toLowerCase();
+  
+  if (s1 === s2) return 1;
+  
+  // Verifica se um contém o outro
+  if (s1.includes(s2) || s2.includes(s1)) {
+    return 0.8;
+  }
+
+  // Calcula palavras em comum
+  const palavras1 = s1.split(' ');
+  const palavras2 = s2.split(' ');
+  const palavrasComuns = palavras1.filter(p => palavras2.includes(p));
+  
+  const totalPalavras = Math.max(palavras1.length, palavras2.length);
+  return palavrasComuns.length / totalPalavras;
+}
+
+// Função auxiliar para obter estabelecimentos selecionados
+function obterEstabelecimentosSelecionados() {
+  const checkboxes = document.querySelectorAll('input[name="estabelecimentos[]"]:checked');
+  return Array.from(checkboxes).map(cb => ({
+    id: cb.value,
+    nome: cb.dataset.estabelecimentoNome
+  }));
 }
 
 // ========== CHAMAR QUANDO ABRIR O FORMULÁRIO ==========
@@ -2358,7 +2463,7 @@ function popularSelectEstabelecimentosComBusca() {
 }
 
 // ========== MOSTRAR INFORMAÇÕES DO ESTABELECIMENTO SELECIONADO ==========
-// Adicione este código se quiser mostrar detalhes ao selecionar
+
 
 const selectEstab = document.getElementById("estabelecimentoId");
 selectEstab.addEventListener('change', (e) => {
@@ -2422,7 +2527,7 @@ async function cadastrarCupom() {
     limiteUso: parseInt(document.getElementById("limiteUso").value) || 0,
     limiteUsoPorUsuario: parseInt(document.getElementById("limiteUsoPorUsuario").value) || 0,
 
-    ativo: document.getElementById("ativo-cupom").checked,
+    ativo: ativo,
     estabelecimentoId: parseInt(estabId), // ✅ Agora pega do select
     status: ativo ? "Publicado" : "Rascunho",
 
@@ -2482,6 +2587,7 @@ async function cadastrarCupom() {
     }
 
     alert("Cupom criado com sucesso!");
+    carregarCuponsPromocoes()
 
     // Reset do formulário
     document.getElementById("formCupom").reset();
@@ -2742,6 +2848,8 @@ function obterCartoesSelecionados() {
 }
 
 
+
+//Estabelecimento Section
 async function cadastrarEstabelecimento2() {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -3580,7 +3688,6 @@ async function popularSelectGrupos(selectId = "grupo2") {
 }
 
 // ========== CADASTRAR GRUPO (com atualização de cache) ==========
-// ========== CADASTRAR GRUPO (com atualização de cache) ==========
 async function cadastrarGrupo() {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -4053,6 +4160,7 @@ window.limparFiltros = limparFiltros;
 window.estabelecimentosCache = estabelecimentosCache;
 window.limparFiltrosCupons = limparFiltrosCupons;
 window.voltarEstabelecimentos = voltarEstabelecimentos;
+window.renderizarCheckboxesEstabelecimentos = renderizarCheckboxesEstabelecimentos;
 
 
 
