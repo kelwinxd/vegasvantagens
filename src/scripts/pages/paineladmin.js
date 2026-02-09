@@ -3814,11 +3814,6 @@ async function popularEstabelecimentosParaGrupo() {
   }
 }
 
-// ========== OBTER IDS DOS ESTABELECIMENTOS SELECIONADOS ==========
-function obterEstabelecimentosSelecionados() {
-  return [...document.querySelectorAll("#listaEstabelecimentosGrupo input[type='checkbox']:checked")]
-    .map(cb => parseInt(cb.value));
-}
 
 
 
