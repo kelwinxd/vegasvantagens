@@ -1898,3 +1898,48 @@ line-height: normal;
       color: #95a5a6;
       font-size: 18px;
     }
+
+
+    .estabelecimentos-checkbox-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.grupo-estabelecimentos {
+  margin-bottom: 20px;
+}
+
+.titulo-grupo-estabelecimentos {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #007bff;
+}
+
+.field-checkbox-estabelecimento {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.field-checkbox-estabelecimento:hover {
+  background-color: #f5f5f5;
+}
+
+.field-checkbox-estabelecimento input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.field-checkbox-estabelecimento span {
+  flex: 1;
+}
