@@ -90,6 +90,8 @@ function renderizarCupons(cupons, categoria) {
     container.innerHTML = ""; 
 
     cupons.forEach(cupom => {
+
+        if(cupom.status == "Expirado") return
         console.log("cupom vindo:", cupom)
         const doisCartoes = cupom.cartoesAceitos.slice(0, 2)
             .map(c => `<span class="pill">${c.nome}</span>`)

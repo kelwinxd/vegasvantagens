@@ -191,6 +191,8 @@ if (avaliacaoEl) {
   }
 });
 
+
+//funcao antiga puxar Cupons
 /*
 function mostrarCuponsDoEstabelecimento(estabelecimento) {
   const nomeEstabelecimento = normalizarTexto(estabelecimento?.nome || '');
@@ -520,6 +522,7 @@ document.querySelectorAll('.coupon-card .coupon-cta').forEach(btn => {
  
 // atualizar barra do cupom
 /*
+
 (() => {
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
