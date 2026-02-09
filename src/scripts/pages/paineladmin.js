@@ -2429,65 +2429,7 @@ function abrirModalCriarCupom() {
 // ========== VERSÃO COM BUSCA (OPCIONAL - MAIS AVANÇADO) ==========
 // Se quiser um select com busca, use esta versão com filtro:
 
-function popularSelectEstabelecimentosComBusca() {
-  const select = document.getElementById("estabelecimentoId");
-  if (!select) return;
 
-  select.innerHTML = '<option value="">Selecione um estabelecimento...</option>';
-
-  if (!window.estabelecimentosCache || estabelecimentosCache.length === 0) {
-    return;
-  }
-
-  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) => 
-    a.nome.localeCompare(b.nome)
-  );
-
-  estabelecimentosOrdenados.forEach(estab => {
-    const option = document.createElement("option");
-    option.value = estab.id;
-    
-    // Adiciona mais informações na exibição
-    let texto = estab.nome;
-    if (estab.cidade) texto += ` - ${estab.cidade}`;
-    if (estab.status) texto += ` (${estab.status})`;
-    
-    option.textContent = texto;
-    
-    // Adiciona atributos de dados para filtro futuro
-    option.dataset.nome = estab.nome.toLowerCase();
-    option.dataset.cidade = (estab.cidade || '').toLowerCase();
-    
-    select.appendChild(option);
-  });
-}
-
-// ========== MOSTRAR INFORMAÇÕES DO ESTABELECIMENTO SELECIONADO ==========
-
-
-const selectEstab = document.getElementById("estabelecimentoId");
-selectEstab.addEventListener('change', (e) => {
-  const estabId = parseInt(e.target.value);
-  
-  if (!estabId) {
-    console.log("Nenhum estabelecimento selecionado");
-    return;
-  }
-  
-  // Encontra o estabelecimento selecionado
-  const estabelecimento = estabelecimentosCache.find(est => est.id === estabId);
-  
-  if (estabelecimento) {
-    console.log("✅ Estabelecimento selecionado:", estabelecimento);
-    console.log("ID:", estabelecimento.id);
-    console.log("Nome:", estabelecimento.nome);
-    console.log("Cidade:", estabelecimento.cidade);
-    
-    // Se quiser mostrar informações na tela:
-    // document.getElementById('infoEstab').textContent = 
-    //   `${estabelecimento.nome} - ${estabelecimento.cidade}`;
-  }
-});
 
 // ========== FUNÇÃO COMPLETA DE CADASTRAR CUPOM (ATUALIZADA) ==========
 
