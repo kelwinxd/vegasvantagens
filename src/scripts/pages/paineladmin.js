@@ -2534,8 +2534,7 @@ async function cadastrarCupom() {
     // Reset do formulário
     document.getElementById("formCupom").reset();
     
-    // Recarrega o select
-    popularSelectEstabelecimentos();
+    renderizarCheckboxesEstabelecimentos()
 
   } catch (err) {
     alert("Erro: " + err.message);
