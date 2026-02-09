@@ -2405,7 +2405,7 @@ document.querySelector('[data-open-subpage="criar-cupom"]').addEventListener('cl
   document.getElementById('formCupom').classList.add('active');
   
   // Popula o select
-  popularSelectEstabelecimentos();
+
 });
 
 // Ou se abre ao clicar em uma aba/menu:
@@ -2413,8 +2413,7 @@ function abrirPaginaCupons() {
   // Sua lógica de mostrar a página
   mostrarPagina('cupons');
   
-  // Popula o select
-  popularSelectEstabelecimentos();
+
 }
 
 // Ou se é um modal:
@@ -2422,8 +2421,7 @@ function abrirModalCriarCupom() {
   // Abre o modal
   document.getElementById('modalCupom').style.display = 'block';
   
-  // Popula o select
-  popularSelectEstabelecimentos();
+
 }
 
 // ========== VERSÃO COM BUSCA (OPCIONAL - MAIS AVANÇADO) ==========
