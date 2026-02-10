@@ -731,6 +731,11 @@ line-height: 18px;
   z-index: 9999;
 }
 
+.footer-gp {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Esconde o modal */
 .modal-gp.hidden {
   display: none;
@@ -813,12 +818,12 @@ line-height: 18px;
 
 /* Botão adicionar */
 .modal-gp-actions button:last-child {
-  background: #1976d2;
+  background: #434D9C;
   color: #fff;
 }
 
 .modal-gp-actions button:last-child:hover {
-  background: #155fa0;
+  background: #434D9C;
 }
 
 .modal-subtitle {
