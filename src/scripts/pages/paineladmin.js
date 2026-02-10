@@ -3656,7 +3656,7 @@ function renderizarListaGrupos(grupos) {
 
       <div class="grupo-actions">
         <button onclick="abrirModalVincular(${grupo.id})">
-          Adicionar estabelecimentos
+          Ver Mais
         </button>
       </div>
     `;

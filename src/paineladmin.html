@@ -1017,10 +1017,9 @@
 
    <div id="modalVincularEstab" class="modal-gp hidden" onclick="fecharModalVincular()">
   <div class="modal-gp-content" onclick="event.stopPropagation()">
-    <div class="modal-gp-header">
+    <button onclick="fecharModalVincular()" class="modal-close">X</button>
+    <h1>Detalhes do Grupo</h1>
 
-     
-    </div>
 
     <!-- JÁ VINCULADOS -->
     <h4 class="modal-subtitle">Estabelecimentos do grupo</h4>
@@ -1031,7 +1030,10 @@
     <div id="listaEstabModal" class="lista-modal-gp"></div>
 
     
+    <div class="modal-gp-header">
 
+     
+    </div>
     <div class="modal-gp-actions">
       <button onclick="fecharModalVincular()">Cancelar</button>
       <button onclick="confirmarVinculo()">Adicionar</button>
