@@ -3424,6 +3424,20 @@ async function abrirModalVincular(grupoId) {
 
   const listaVinculados = document.getElementById("listaEstabVinculados");
   const listaDisponiveis = document.getElementById("listaEstabModal");
+  const vincHeader = document.querySelector(".modal-gp-header");
+
+// Cria o botão
+const btnDelete = document.createElement("button");
+btnDelete.innerHTML = `
+  <img src="./imgs/trash-02.png" alt="Deletar">
+`;
+btnDelete.type = "button";
+btnDelete.className = "btn-icon-deletar-grupo";
+btnDelete.title = "Deletar grupo";
+btnDelete.onclick = () => deletarGrupo(grupoId);
+
+// Adiciona ao header
+vincHeader.appendChild(btnDelete);
 
   listaVinculados.innerHTML = "Carregando...";
   listaDisponiveis.innerHTML = "Carregando...";
@@ -3436,6 +3450,8 @@ async function abrirModalVincular(grupoId) {
     const vinculados = await buscarEstabelecimentosDoGrupo(grupoId);
 
     const idsVinculados = vinculados.map(e => e.id);
+
+
 
     /* =========================
        LISTA DE JÁ VINCULADOS
