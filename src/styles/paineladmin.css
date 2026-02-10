@@ -734,6 +734,7 @@ line-height: 18px;
 .footer-gp {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 /* Esconde o modal */

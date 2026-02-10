@@ -389,7 +389,7 @@ document.querySelector(".search-estab").addEventListener("input", e => {
 
 
 // ========== NOVA CLASSE GERENCIADORA ==========
-// ========== NOVA CLASSE GERENCIADORA ==========
+
 class GerenciadorSubPages {
   constructor(pageElement) {
     this.page = pageElement;
@@ -2427,9 +2427,68 @@ function abrirModalCriarCupom() {
 
 }
 
-// ========== VERSÃO COM BUSCA (OPCIONAL - MAIS AVANÇADO) ==========
-// Se quiser um select com busca, use esta versão com filtro:
+async function carregarCartoesParaCupom() {
+  const token = localStorage.getItem("token");
 
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cartoes`, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao buscar cartões");
+    }
+
+    const cartoes = await res.json();
+
+    console.log("Cartões carregados:", cartoes);
+    const container = document.querySelector(".cupom-cards-row");
+
+    if (!container) {
+      console.error("Container .cupom-cards-row não encontrado!");
+      return;
+    }
+
+    container.innerHTML = "";
+
+    cartoes.forEach(cartao => {
+      const label = document.createElement("label");
+      label.className = "field-checkbox-cartao";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "cartoes-cupom[]";
+      input.value = cartao.id;
+      input.id = `cartao-cupom-${cartao.id}`;
+
+      const span = document.createElement("span");
+      span.textContent = cartao.nome;
+
+      label.appendChild(input);
+      label.appendChild(span);
+
+      container.appendChild(label);
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível carregar os cartões.");
+  }
+}
+
+// Função para obter IDs dos cartões selecionados no formulário de cupom
+function obterCartoesSelecionadosCupom() {
+  return Array.from(
+    document.querySelectorAll('.cupom-cards-row input[type="checkbox"]:checked')
+  ).map(input => Number(input.value));
+}
 
 
 // ========== FUNÇÃO COMPLETA DE CADASTRAR CUPOM (ATUALIZADA) ==========
@@ -2441,17 +2500,21 @@ async function cadastrarCupom() {
     return;
   }
 
-  // Valida se um estabelecimento foi selecionado
-  const estabId = document.getElementById("estabelecimentoId").value;
-  if (!estabId || estabId === "") {
-    alert("Por favor, selecione um estabelecimento!");
+  // Valida se pelo menos um estabelecimento foi selecionado
+  const estabelecimentosSelecionados = obterEstabelecimentosSelecionados();
+  if (!estabelecimentosSelecionados || estabelecimentosSelecionados.length === 0) {
+    alert("Por favor, selecione pelo menos um estabelecimento!");
     return;
   }
+
+  // Pega os cartões selecionados
+  const cartoesSelecionados = obterCartoesSelecionadosCupom();
 
   function toIso(dt) {
     return dt ? new Date(dt).toISOString() : null;
   }
-  const ativo = document.getElementById("ativo-cupom").checked
+  
+  const ativo = document.getElementById("ativo-cupom").checked;
 
   // 1) MONTA O OBJETO DO CUPOM
   const data = {
@@ -2471,12 +2534,10 @@ async function cadastrarCupom() {
     limiteUsoPorUsuario: parseInt(document.getElementById("limiteUsoPorUsuario").value) || 0,
 
     ativo: ativo,
-    estabelecimentoId: parseInt(estabId), // ✅ Agora pega do select
+    estabelecimentoId: parseInt(estabelecimentosSelecionados[0].id), // Usa o primeiro estabelecimento selecionado
     status: ativo ? "Publicado" : "Rascunho",
 
-    cartoesAceitosIds: document.getElementById("cartoes").value
-      ? document.getElementById("cartoes").value.split(",").map(id => parseInt(id.trim()))
-      : []
+    cartoesAceitosIds: cartoesSelecionados // ✅ Agora vem dos checkboxes
   };
 
   try {
@@ -2530,18 +2591,22 @@ async function cadastrarCupom() {
     }
 
     alert("Cupom criado com sucesso!");
-    carregarCuponsPromocoes()
+    carregarCuponsPromocoes();
 
     // Reset do formulário
     document.getElementById("formCupom").reset();
     
-    renderizarCheckboxesEstabelecimentos()
+    // Recarrega os checkboxes
+    renderizarCheckboxesEstabelecimentos();
+    carregarCartoesParaCupom();
 
   } catch (err) {
     alert("Erro: " + err.message);
     console.error(err);
   }
 }
+
+
 //MAPA URL
 
 function extrairLatLngGoogleMaps(url) {
