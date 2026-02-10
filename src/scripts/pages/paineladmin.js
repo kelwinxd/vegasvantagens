@@ -3367,6 +3367,49 @@ let grupoSelecionadoId = null;
 
 let gruposCache = [];
 
+async function deletarGrupo(grupoId) {
+  // Confirmação antes de deletar
+  if (!confirm("Tem certeza que deseja deletar este grupo?")) {
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Grupos/${grupoId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      // Se der erro (provavelmente 400 ou 409 - conflito)
+      throw new Error("Erro ao deletar grupo");
+    }
+
+    alert("Grupo deletado com sucesso!");
+    
+    // Fecha o modal se estiver aberto
+    const modal = document.getElementById("modalVincularEstab");
+    if (modal && !modal.classList.contains("hidden")) {
+      modal.classList.add("hidden");
+    }
+
+    // Limpa o cache e recarrega os grupos
+    gruposCache = []; // Limpa o cache para forçar recarregar
+    await carregarGrupos(true); // Força o recarregamento
+
+  } catch (error) {
+    console.error("Erro ao deletar grupo:", error);
+    alert("Erro ao deletar, o grupo pode ter estabelecimentos vinculados!");
+  }
+}
+
 // ========== CARREGAR GRUPOS COM CACHE ==========
 async function carregarGrupos(forcarRecarregar = false) {
   const token = localStorage.getItem("token");
@@ -3379,6 +3422,8 @@ async function carregarGrupos(forcarRecarregar = false) {
   }
 
   try {
+    console.log("Buscando grupos da API...");
+    
     const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
       method: "GET",
       headers: {
@@ -3395,6 +3440,8 @@ async function carregarGrupos(forcarRecarregar = false) {
     
     // Atualiza o cache
     gruposCache = grupos;
+    
+    console.log(`${grupos.length} grupos carregados`);
     
     renderizarListaGrupos(grupos);
     
@@ -3425,6 +3472,7 @@ async function abrirModalVincular(grupoId) {
   const listaVinculados = document.getElementById("listaEstabVinculados");
   const listaDisponiveis = document.getElementById("listaEstabModal");
   const vincHeader = document.querySelector(".modal-gp-header");
+  vincHeader.innerHTML = ""
 
 // Cria o botão
 const btnDelete = document.createElement("button");
@@ -3504,49 +3552,7 @@ vincHeader.appendChild(btnDelete);
   }
 }
 
-async function deletarGrupo(grupoId) {
-  // Confirmação antes de deletar
-  if (!confirm("Tem certeza que deseja deletar este grupo?")) {
-    return;
-  }
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Você precisa estar logado.");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API_BASE}/api/Grupos/${grupoId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + token
-      }
-    });
-
-    if (!res.ok) {
-      // Se der erro (provavelmente 400 ou 409 - conflito)
-      throw new Error("Erro ao deletar grupo");
-    }
-
-    alert("Grupo deletado com sucesso!");
-    
-    // Fecha o modal se estiver aberto
-    const modal = document.getElementById("modalVincularEstab");
-    if (modal && !modal.classList.contains("hidden")) {
-      modal.classList.add("hidden");
-    }
-
-    // Recarrega a lista de grupos
-    if (typeof carregarGrupos === 'function') {
-      await carregarGrupos();
-    }
-
-  } catch (error) {
-    console.error("Erro ao deletar grupo:", error);
-    alert("Erro ao deletar, o grupo pode ter estabelecimentos vinculados!");
-  }
-}
 
 
 function fecharModalVincular() {
