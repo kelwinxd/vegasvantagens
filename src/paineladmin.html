@@ -672,6 +672,9 @@
 
    
 <div class="row">
+ <div class="field">
+  <label for="">Estabelecimentos</label>
+ </div>
  <div class="estabelecimentos-checkbox-container">
   
   </div>
@@ -1012,11 +1015,20 @@
 
 <!---Modal Grupo Vincular -->
 
-    <div id="modalVincularEstab" class="modal-gp hidden" onclick="fecharModalVincular()">
+   <div id="modalVincularEstab" class="modal-gp hidden" onclick="fecharModalVincular()">
   <div class="modal-gp-content" onclick="event.stopPropagation()">
-    <h3>Vincular estabelecimentos</h3>
+    <div class="modal-gp-header">
+      <h3>Ver Detalhes</h3>
+      <button 
+        type="button" 
+        class="btn-icon-deletar-grupo" 
+        onclick="deletarGrupo(grupoSelecionadoId)"
+        title="Deletar grupo">
+        <img src="./assets/icons/trash-02.png" alt="Deletar">
+      </button>
+    </div>
 
-      <!-- JÁ VINCULADOS -->
+    <!-- JÁ VINCULADOS -->
     <h4 class="modal-subtitle">Estabelecimentos do grupo</h4>
     <div id="listaEstabVinculados" class="lista-modal-gp"></div>
 
@@ -1024,14 +1036,12 @@
     <h4 class="modal-subtitle">Adicionar novos</h4>
     <div id="listaEstabModal" class="lista-modal-gp"></div>
 
-  
-
     <div class="modal-gp-actions">
       <button onclick="fecharModalVincular()">Cancelar</button>
       <button onclick="confirmarVinculo()">Adicionar</button>
     </div>
   </div>
-    </div>
+</div>
 
     </div>
     </div>

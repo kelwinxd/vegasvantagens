@@ -3417,7 +3417,6 @@ async function garantirEstabelecimentosNoCache() {
 }
 
 
-
 async function abrirModalVincular(grupoId) {
   grupoSelecionadoId = grupoId;
 
@@ -3486,6 +3485,50 @@ async function abrirModalVincular(grupoId) {
     console.error(err);
     listaVinculados.innerHTML = "Erro ao carregar dados.";
     listaDisponiveis.innerHTML = "";
+  }
+}
+
+async function deletarGrupo(grupoId) {
+  // Confirmação antes de deletar
+  if (!confirm("Tem certeza que deseja deletar este grupo?")) {
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Grupos/${grupoId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      // Se der erro (provavelmente 400 ou 409 - conflito)
+      throw new Error("Erro ao deletar grupo");
+    }
+
+    alert("Grupo deletado com sucesso!");
+    
+    // Fecha o modal se estiver aberto
+    const modal = document.getElementById("modalVincularEstab");
+    if (modal && !modal.classList.contains("hidden")) {
+      modal.classList.add("hidden");
+    }
+
+    // Recarrega a lista de grupos
+    if (typeof carregarGrupos === 'function') {
+      await carregarGrupos();
+    }
+
+  } catch (error) {
+    console.error("Erro ao deletar grupo:", error);
+    alert("Erro ao deletar, o grupo pode ter estabelecimentos vinculados!");
   }
 }
 
@@ -3765,9 +3808,6 @@ async function popularEstabelecimentosParaGrupo() {
 // DASHBOARD - GRÁFICOS E ESTATÍSTICAS
 // ==========================================
 
-// ==========================================
-// DASHBOARD - GRÁFICOS E ESTATÍSTICAS
-// ==========================================
 
 let graficoPizzaEstab = null;
 
