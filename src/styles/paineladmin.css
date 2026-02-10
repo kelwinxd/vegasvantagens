@@ -1943,3 +1943,37 @@ line-height: normal;
 .field-checkbox-estabelecimento span {
   flex: 1;
 }
+
+.modal-gp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-gp-header h3 {
+  margin: 0;
+}
+
+.btn-icon-deletar-grupo {
+  padding: 8px;
+  background-color: #dc3545;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon-deletar-grupo:hover {
+  background-color: #c82333;
+}
+
+.btn-icon-deletar-grupo img {
+  width: 20px;
+  height: 20px;
+  display: block;
+  filter: brightness(0) invert(1); /* torna o ícone branco */
+}

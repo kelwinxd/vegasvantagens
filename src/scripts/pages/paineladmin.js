@@ -4138,6 +4138,7 @@ window.estabelecimentosCache = estabelecimentosCache;
 window.limparFiltrosCupons = limparFiltrosCupons;
 window.voltarEstabelecimentos = voltarEstabelecimentos;
 window.renderizarCheckboxesEstabelecimentos = renderizarCheckboxesEstabelecimentos;
+window.deletarGrupo = deletarGrupo;
 
 
 
