@@ -2406,6 +2406,7 @@ document.querySelector('[data-open-subpage="criar-cupom"]').addEventListener('cl
   
   // Popula o select
   renderizarCheckboxesEstabelecimentos()
+    carregarCartoesParaCupom()
 
 });
 
@@ -2414,6 +2415,7 @@ function abrirPaginaCupons() {
   // Sua lógica de mostrar a página
   mostrarPagina('cupons');
   renderizarCheckboxesEstabelecimentos()
+  carregarCartoesParaCupom()
   
 
 }
@@ -2423,6 +2425,7 @@ function abrirModalCriarCupom() {
   // Abre o modal
   document.getElementById('modalCupom').style.display = 'block';
   renderizarCheckboxesEstabelecimentos()
+    carregarCartoesParaCupom()
   
 
 }
