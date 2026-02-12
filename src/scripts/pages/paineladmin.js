@@ -1839,12 +1839,259 @@ function limparFiltrosCupons() {
 let estabelecimentosModalCache = [];
 let cartoesModalCache = [];
 
+// ========================================
+// 🔹 RENDERIZAR IMAGENS DO CUPOM
+// ========================================
+function renderizarImagensCupomEdicao(cupom) {
+  const container = document.getElementById("imagensCupomEditContainer");
+  container.innerHTML = "";
+
+  const imagens = cupom.imagens || [];
+
+  // Encontra a imagem principal do cupom
+  const imagemPrincipal = imagens.find(img => img.principal === true) || imagens[0];
+
+  // 🔹 IMAGEM PRINCIPAL
+  container.appendChild(
+    criarBlocoImagemCupom({
+      titulo: "Imagem do Cupom",
+      imagem: imagemPrincipal,
+      cupomId: cupom.id,
+      isPrincipal: true
+    })
+  );
+}
+
+// ========================================
+// 🔹 CRIAR BLOCO DE IMAGEM (UI)
+// ========================================
+function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
+  const div = document.createElement("div");
+  div.className = "imagem-edit-item";
+
+  const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+  const tipoClasse = "upload-cupom";
+  const srcImagem = imagem?.url || PLACEHOLDER;
+
+  div.innerHTML = `
+    <strong>${titulo}</strong>
+
+    <div class="upload-card ${tipoClasse}">
+      <img />
+
+      <div class="upload-overlay">
+        <label class="upload-action">
+          <img src="./imgs/image-up.png" class="icon-edit" />
+          <input
+            type="file"
+            accept="image/*"
+            onchange="${
+              imagem
+                ? `substituirImagemCupom(event, ${cupomId}, ${imagem.id})`
+                : `adicionarImagemNovaCupom(event, ${cupomId})`
+            }"
+          />
+        </label>
+
+        ${
+          imagem
+            ? `
+              <button
+                type="button"
+                class="upload-action danger"
+                onclick="excluirImagemCupom(${imagem.id}, ${cupomId})"
+              >
+                <img src="./imgs/trash-02.png" class="icon-edit" />
+              </button>
+            `
+            : ""
+        }
+      </div>
+    </div>
+  `;
+
+  // 🔥 Fallback de imagem
+  const img = div.querySelector("img");
+  img.src = srcImagem;
+
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = PLACEHOLDER;
+  };
+
+  return div;
+}
+
+// ========================================
+// 🔹 ADICIONAR NOVA IMAGEM
+// ========================================
+async function adicionarImagemNovaCupom(event, cupomId) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  await enviarImagemCupom(cupomId, file, true);
+
+  alert("Imagem adicionada com sucesso");
+  recarregarCupomEdit();
+}
+
+// ========================================
+// 🔹 ENVIAR IMAGEM PARA API
+// ========================================
+async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Token não encontrado");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("principal", isPrincipal);
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/cupons/${cupomId}/imagens`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token
+        },
+        body: formData
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Erro ao enviar imagem");
+    }
+
+    return await res.json();
+
+  } catch (err) {
+    console.error("Erro ao enviar imagem:", err);
+    alert("Erro ao enviar imagem do cupom");
+    throw err;
+  }
+}
+
+// ========================================
+// 🔹 EXCLUIR IMAGEM
+// ========================================
+async function excluirImagemCupom(imagemId, cupomId) {
+  const token = localStorage.getItem("token");
+
+  if (!confirm("Deseja realmente excluir esta imagem?")) return;
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    if (!res.ok) {
+      alert("Erro ao excluir imagem");
+      return;
+    }
+
+    alert("Imagem excluída com sucesso");
+
+    // 🔄 Reabrir modal atualizado
+    recarregarCupomEdit();
+
+  } catch (err) {
+    console.error("Erro ao excluir imagem:", err);
+    alert("Erro ao excluir imagem");
+  }
+}
+
+// ========================================
+// 🔹 SUBSTITUIR IMAGEM EXISTENTE
+// ========================================
+async function substituirImagemCupom(event, cupomId, imagemId) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  try {
+    // 1️⃣ Tenta excluir a imagem antiga (se existir)
+    if (imagemId) {
+      const delResp = await fetch(
+        `${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }
+      );
+
+      // ✔️ 404 = imagem já não existe → segue o fluxo
+      if (!delResp.ok && delResp.status !== 404) {
+        throw new Error("Erro ao excluir imagem antiga");
+      }
+    }
+
+    // 2️⃣ Sempre tenta enviar a nova imagem
+    await enviarImagemCupom(cupomId, file, true);
+
+    alert("Imagem atualizada com sucesso");
+
+    // 🔄 Atualiza visual
+    recarregarCupomEdit();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao substituir a imagem.");
+  } finally {
+    // Limpa o input para permitir reenviar o mesmo arquivo se necessário
+    event.target.value = "";
+  }
+}
+
+// ========================================
+// 🔹 RECARREGAR CUPOM NO MODAL
+// ========================================
+async function recarregarCupomEdit() {
+  const id = document.getElementById("edit-id").value;
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/Cupons/${id}`,
+      {
+        headers: { Authorization: "Bearer " + token }
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Erro ao recarregar cupom");
+    }
+
+    const cupomAtualizado = await res.json();
+    renderizarImagensCupomEdicao(cupomAtualizado);
+
+  } catch (err) {
+    console.error("Erro ao recarregar cupom:", err);
+  }
+}
+
+// ========================================
+// 🔹 ATUALIZAR MODAL EDITAR CUPOM
+// ========================================
 async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
   const token = localStorage.getItem("token");
 
   try {
     // 🔹 Carrega estabelecimentos PASSANDO O NOME (não o ID)
-    await carregarEstabelecimentosModal(nomeEstab); // ← MUDANÇA AQUI
+    await carregarEstabelecimentosModal(nomeEstab);
     await carregarCartoesModal();
 
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
@@ -1882,9 +2129,6 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
 
     document.getElementById("edit-ativo").checked = cupom.ativo || false;
 
-    // 🔹 Exibe o estabelecimento vinculado
-   
-
     // 🔹 Exibe os cartões vinculados
     const cartoesHTML = cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0
       ? cupom.cartoesAceitos.map(cartao => 
@@ -1901,6 +2145,9 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
       });
     }
 
+    // 🔹 RENDERIZA AS IMAGENS DO CUPOM
+    renderizarImagensCupomEdicao(cupom);
+
     // Abre o modal
     document.getElementById("modalEditarCupom").classList.add("open");
 
@@ -1909,7 +2156,6 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     alert("Erro ao carregar dados do cupom.");
   }
 }
-
 // 🔹 Função para carregar estabelecimentos no select
 async function carregarEstabelecimentosModal(nomeEstabelecimentoSelecionado = null) {
   const token = localStorage.getItem("token");
@@ -2200,8 +2446,6 @@ async function excluirCupomPromocao(id) {
       fecharModalEditarCupom();
     }
   });
-
-
 
 
 async function buscarImagemCupom(cupomId) {
@@ -3083,11 +3327,7 @@ const data = {
   }
 }
 
-function fecharModalEditar() {
-  document.getElementById("estadoId2-edit").value = " "
-  document.getElementById("cidadeId2-edit").value = " "
-  document.getElementById("modalEditarOverlay2").style.display = "none";
-}
+
 
 function renderizarImagensEdicao(estab) {
   const container = document.getElementById("imagensEditContainer");
@@ -3180,6 +3420,7 @@ function criarBlocoImagem({ titulo, imagem, estabId, isLogo, isFachada }) {
 
   return div;
 }
+
 
 
 
@@ -3281,6 +3522,13 @@ async function substituirImagem(
     event.target.value = "";
   }
 }
+
+function fecharModalEditar() {
+  document.getElementById("estadoId2-edit").value = " "
+  document.getElementById("cidadeId2-edit").value = " "
+  document.getElementById("modalEditarOverlay2").style.display = "none";
+}
+
 
 
 async function recarregarEstabelecimentoEdit() {
