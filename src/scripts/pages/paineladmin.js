@@ -1846,10 +1846,10 @@ function renderizarImagensCupomEdicao(cupom) {
   const container = document.getElementById("imagensCupomEditContainer");
   container.innerHTML = "";
 
-  const imagens = cupom.imagens || [];
+   const imagens = cupom.imagens || [];
 
-  // Encontra a imagem principal do cupom
-  const imagemPrincipal = imagens.find(img => img.principal === true) || imagens[0];
+  // 🔹 Pega a ÚLTIMA imagem do array (mais recente)
+  const imagemPrincipal = imagens.length > 0 ? imagens[imagens.length - 1] : null;
 
   // 🔹 IMAGEM PRINCIPAL
   container.appendChild(
@@ -1872,7 +1872,8 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
   const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
   const tipoClasse = "upload-cupom";
-  const srcImagem = imagem?.url || PLACEHOLDER;
+  // 🔹 imagem agora é uma STRING (URL) e não um objeto
+  const srcImagem = imagem || PLACEHOLDER;
 
   div.innerHTML = `
     <strong>${titulo}</strong>
@@ -1888,7 +1889,7 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
             accept="image/*"
             onchange="${
               imagem
-                ? `substituirImagemCupom(event, ${cupomId}, ${imagem.id})`
+                ? `substituirImagemCupom(event, ${cupomId})`
                 : `adicionarImagemNovaCupom(event, ${cupomId})`
             }"
           />
@@ -1900,7 +1901,7 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
               <button
                 type="button"
                 class="upload-action danger"
-                onclick="excluirImagemCupom(${imagem.id}, ${cupomId})"
+                onclick="excluirImagemCupom(${cupomId})"
               >
                 <img src="./imgs/trash-02.png" class="icon-edit" />
               </button>
@@ -1922,7 +1923,6 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
 
   return div;
 }
-
 // ========================================
 // 🔹 ADICIONAR NOVA IMAGEM
 // ========================================
@@ -1976,16 +1976,16 @@ async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
 }
 
 // ========================================
-// 🔹 EXCLUIR IMAGEM
+// 🔹 EXCLUIR IMAGEM (exclui a última)
 // ========================================
-async function excluirImagemCupom(imagemId, cupomId) {
+async function excluirImagemCupom(cupomId) {
   const token = localStorage.getItem("token");
 
   if (!confirm("Deseja realmente excluir esta imagem?")) return;
 
   try {
     const res = await fetch(
-      `${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`,
+      `${API_BASE}/api/cupons/${cupomId}/imagens`,
       {
         method: "DELETE",
         headers: {
@@ -2013,7 +2013,7 @@ async function excluirImagemCupom(imagemId, cupomId) {
 // ========================================
 // 🔹 SUBSTITUIR IMAGEM EXISTENTE
 // ========================================
-async function substituirImagemCupom(event, cupomId, imagemId) {
+async function substituirImagemCupom(event, cupomId) {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -2021,25 +2021,23 @@ async function substituirImagemCupom(event, cupomId, imagemId) {
   if (!token) return;
 
   try {
-    // 1️⃣ Tenta excluir a imagem antiga (se existir)
-    if (imagemId) {
-      const delResp = await fetch(
-        `${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: "Bearer " + token
-          }
+    // 1️⃣ Exclui a imagem antiga
+    const delResp = await fetch(
+      `${API_BASE}/api/cupons/${cupomId}/imagens`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + token
         }
-      );
-
-      // ✔️ 404 = imagem já não existe → segue o fluxo
-      if (!delResp.ok && delResp.status !== 404) {
-        throw new Error("Erro ao excluir imagem antiga");
       }
+    );
+
+    // ✔️ 404 = imagem já não existe → segue o fluxo
+    if (!delResp.ok && delResp.status !== 404) {
+      throw new Error("Erro ao excluir imagem antiga");
     }
 
-    // 2️⃣ Sempre tenta enviar a nova imagem
+    // 2️⃣ Envia a nova imagem
     await enviarImagemCupom(cupomId, file, true);
 
     alert("Imagem atualizada com sucesso");
@@ -4477,6 +4475,10 @@ window.limparFiltrosCupons = limparFiltrosCupons;
 window.voltarEstabelecimentos = voltarEstabelecimentos;
 window.renderizarCheckboxesEstabelecimentos = renderizarCheckboxesEstabelecimentos;
 window.deletarGrupo = deletarGrupo;
+window.substituirImagemCupom = substituirImagemCupom;
+window.adicionarImagemNovaCupom = adicionarImagemNovaCupom;
+
+window.excluirImagemCupom = excluirImagemCupom;
 
 
 
