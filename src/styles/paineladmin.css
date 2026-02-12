@@ -174,7 +174,7 @@
   gap: 10px;
 }
 
-.btns-subpage button, .btn-action, .tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom, .btn-voltar, .btn-cad {
+.btns-subpage button, .btn-action, .tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom, .btn-voltar, .btn-cad, .btn-gp-cad, .btn-gp-can{
     width: 200px;
     height: 20px;
     border: none;
@@ -192,6 +192,16 @@
 
 .tab-filtro, .btn-limpar-filtros, .tab-filtro-cupom{
   width:180px;
+}
+
+.btn-gp-cad {
+  background-color: #dc2626;
+}
+
+.form-actions {
+  margin-top: 16px;
+  display: flex;
+  gap:36px;
 }
 
 .filtro-select {
