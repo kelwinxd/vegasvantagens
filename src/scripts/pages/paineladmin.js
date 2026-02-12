@@ -1876,7 +1876,7 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
   const srcImagem = imagem || PLACEHOLDER;
 
   div.innerHTML = `
-    <strong>${titulo}</strong>
+ 
 
     <div class="upload-card ${tipoClasse}">
       <img />
@@ -3675,7 +3675,7 @@ async function carregarEstadosModal() {
   );
 }
 
-//GRUPO
+//GRUPO SECTION
 
 let grupoSelecionadoId = null;
 
@@ -4479,6 +4479,7 @@ window.substituirImagemCupom = substituirImagemCupom;
 window.adicionarImagemNovaCupom = adicionarImagemNovaCupom;
 
 window.excluirImagemCupom = excluirImagemCupom;
+window.popularEstabelecimentosParaGrupo = popularEstabelecimentosParaGrupo
 
 
 
