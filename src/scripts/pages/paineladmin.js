@@ -3927,6 +3927,8 @@ async function confirmarVinculo() {
 
 // ========== RENDERIZAR LISTA DE GRUPOS ==========
 function renderizarListaGrupos(grupos) {
+
+  popularEstabelecimentosParaGrupo() 
   const container = document.getElementById("listaGrupo");
   if (!container) return;
 
