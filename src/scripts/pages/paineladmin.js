@@ -3033,6 +3033,7 @@ window.onload = async () => {
   document.querySelector('[data-open-subpage="lista-grupo"]')
   .addEventListener("click", () => {
     carregarGrupos();
+    popularEstabelecimentosParaGrupo() 
   });
 
 
@@ -3726,6 +3727,7 @@ async function deletarGrupo(grupoId) {
 
 // ========== CARREGAR GRUPOS COM CACHE ==========
 async function carregarGrupos(forcarRecarregar = false) {
+
   const token = localStorage.getItem("token");
 
   // Se já tem cache e não está forçando recarregar, usa o cache
