@@ -2081,22 +2081,55 @@ async function recarregarCupomEdit() {
   }
 }
 
+// ========== FUNÇÕES DO LOADER ==========
+function mostrarLoader(texto = "Carregando cupom...", subtexto = "Aguarde um momento") {
+  const loader = document.getElementById("modalLoader");
+  const loaderText = loader.querySelector(".loader-text");
+  const loaderSubtext = loader.querySelector(".loader-subtext");
+  
+  if (loaderText) loaderText.textContent = texto;
+  if (loaderSubtext) loaderSubtext.textContent = subtexto;
+  
+  loader.classList.add("active");
+  
+  // Desabilita scroll do body
+  document.body.style.overflow = "hidden";
+}
+
+function ocultarLoader() {
+  const loader = document.getElementById("modalLoader");
+  loader.classList.remove("active");
+  
+  // Reabilita scroll do body
+  document.body.style.overflow = "";
+}
+
 // ========================================
 // 🔹 ATUALIZAR MODAL EDITAR CUPOM
 // ========================================
 async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
   const token = localStorage.getItem("token");
 
+  // 🔹 INICIA O LOADER
+  mostrarLoader("Carregando cupom...", "Buscando informações do cupom");
+
   try {
     // 🔹 Carrega estabelecimentos PASSANDO O NOME (não o ID)
     await carregarEstabelecimentosModal(nomeEstab);
+    
+    // Atualiza texto do loader
+    mostrarLoader("Carregando cupom...", "Carregando cartões aceitos...");
     await carregarCartoesModal();
 
+    // Atualiza texto do loader
+    mostrarLoader("Carregando cupom...", "Processando dados do cupom...");
+    
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
       headers: { "Authorization": "Bearer " + token }
     });
 
     if (!res.ok) {
+      ocultarLoader();
       alert("Erro ao carregar dados do cupom.");
       return;
     }
@@ -2143,17 +2176,28 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
       });
     }
 
+    // Atualiza texto do loader
+    mostrarLoader("Carregando cupom...", "Carregando imagens...");
+    
     // 🔹 RENDERIZA AS IMAGENS DO CUPOM
-    renderizarImagensCupomEdicao(cupom);
+    await renderizarImagensCupomEdicao(cupom);
 
-    // Abre o modal
-    document.getElementById("modalEditarCupom").classList.add("open");
+    // 🔹 OCULTA O LOADER ANTES DE ABRIR O MODAL
+    ocultarLoader();
+    
+    // Pequeno delay para transição suave
+    setTimeout(() => {
+      // Abre o modal
+      document.getElementById("modalEditarCupom").classList.add("open");
+    }, 200);
 
   } catch (err) {
     console.error("Erro ao carregar cupom:", err);
+    ocultarLoader();
     alert("Erro ao carregar dados do cupom.");
   }
 }
+
 // 🔹 Função para carregar estabelecimentos no select
 async function carregarEstabelecimentosModal(nomeEstabelecimentoSelecionado = null) {
   const token = localStorage.getItem("token");
