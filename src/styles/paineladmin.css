@@ -2020,6 +2020,19 @@ line-height: normal;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   text-align: center;
   max-width: 300px;
+    position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  
+}
+
+#modalLoader {
+  display: none;
+}
+
+#modalLoader.active {
+  display: block;
 }
 
 .loader-spinner {
@@ -2030,6 +2043,8 @@ line-height: normal;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
+
+  
 }
 
 @keyframes spin {
