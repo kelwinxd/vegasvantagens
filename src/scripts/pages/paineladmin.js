@@ -3720,6 +3720,153 @@ async function carregarEstadosModal() {
   );
 }
 
+
+//Testes com modalEstab
+
+// Variáveis globais para armazenar imagens temporárias
+let previewLogoUrl = null;
+let previewFachadaUrl = null;
+
+// Abrir modal de preview
+function abrirPreview() {
+  const modal = document.getElementById('modal-preview');
+  modal.style.display = 'flex';
+  setTimeout(() => {
+    modal.classList.add('active');
+  }, 10);
+  
+  // Inicializar preview vazio
+  atualizarPreview();
+}
+
+// Fechar modal de preview
+function fecharPreview() {
+  const modal = document.getElementById('modal-preview');
+  modal.classList.remove('active');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+  
+  // Limpar formulário
+  document.getElementById('formCadastro2').reset();
+  previewLogoUrl = null;
+  previewFachadaUrl = null;
+}
+
+// Preview de imagens
+function previewImagem(input, tipo) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const url = e.target.result;
+    
+    if (tipo === 'logo') {
+      previewLogoUrl = url;
+      // Atualizar todas as instâncias do logo no preview
+      document.getElementById('prev-logo-img').src = url;
+      document.getElementById('prev-logo-mobile').src = url;
+      
+      const previewContainer = document.getElementById('preview-logo-small');
+      previewContainer.innerHTML = `<img src="${url}" alt="Preview Logo">`;
+    } else if (tipo === 'fachada') {
+      previewFachadaUrl = url;
+      // Atualizar todas as instâncias da fachada no preview
+      document.getElementById('prev-fachada-img').src = url;
+      document.getElementById('prev-fachada-mobile').src = url;
+      document.getElementById('prev-fachada-tablet').src = url;
+      
+      const previewContainer = document.getElementById('preview-fachada-small');
+      previewContainer.innerHTML = `<img src="${url}" alt="Preview Fachada">`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// Atualizar preview em tempo real (APENAS CAMPOS VISÍVEIS NO SITE)
+function atualizarPreview() {
+  // Nome (VISÍVEL)
+  const nome = document.getElementById('nomeEstab2').value.trim() || 'Nome do Estabelecimento';
+  document.getElementById('prev-nome').textContent = nome;
+  document.getElementById('prev-nome-mobile').textContent = nome;
+  
+  // Telefone (VISÍVEL)
+  const telefone = document.getElementById('telefone2').value.trim() || 'Preencha o telefone no formulário';
+  document.getElementById('prev-telefone').textContent = telefone;
+  
+  // Sobre (VISÍVEL)
+  const sobre = document.getElementById('sobre2').value.trim() || 'Adicione uma descrição sobre o estabelecimento';
+  document.getElementById('prev-sobre').textContent = sobre;
+  
+  // Endereço completo (VISÍVEL)
+  const rua = document.getElementById('rua2').value.trim();
+  const numero = document.getElementById('numero2').value.trim();
+  const bairro = document.getElementById('bairro2').value.trim();
+  const complemento = document.getElementById('complemento2').value.trim();
+  const cidadeSelect = document.getElementById('cidadeId2');
+  const cidade = cidadeSelect.options[cidadeSelect.selectedIndex]?.text || 'Americana';
+  const estado = 'SP';
+  
+  let endereco = '';
+  if (rua) endereco += rua;
+  if (numero) endereco += `, ${numero}`;
+  if (complemento) endereco += ` - ${complemento}`;
+  if (bairro) endereco += ` - ${bairro}`;
+  if (endereco) endereco += ` - ${cidade}/${estado}`;
+  else endereco = 'Preencha o endereço no formulário';
+  
+  document.getElementById('prev-endereco').textContent = endereco;
+  
+  // Categoria (VISÍVEL)
+  const categoriaSelect = document.getElementById('categoriaId2');
+  const categoriaNome = categoriaSelect.options[categoriaSelect.selectedIndex]?.text || 'Bares e Restaurantes';
+  document.getElementById('prev-categoria').textContent = categoriaNome;
+}
+
+// Extrair Lat/Long do Google Maps URL
+function extrairLatLong() {
+  const mapUrl = document.getElementById('mapurl2').value;
+  
+  if (!mapUrl) {
+    alert('Por favor, insira a URL do Google Maps');
+    return;
+  }
+  
+  // Regex para extrair coordenadas de diferentes formatos de URL do Google Maps
+  const regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+  const match = mapUrl.match(regex);
+  
+  if (match) {
+    document.getElementById('latitude2').value = match[1];
+    document.getElementById('longitude2').value = match[2];
+    alert('✅ Coordenadas extraídas com sucesso!');
+  } else {
+    alert('❌ Não foi possível extrair as coordenadas. Verifique se a URL está correta.');
+  }
+}
+
+// Sua função cadastrarEstabelecimento2() original permanece igual
+// Apenas certifique-se de que ela usa os IDs corretos (que já estão: nomeEstab2, razaoSocial2, etc.)
+
+// Fechar modal ao clicar fora
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('modal-preview');
+  if (e.target === modal) {
+    fecharPreview();
+  }
+});
+
+// Tecla ESC para fechar
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('modal-preview');
+    if (modal && modal.classList.contains('active')) {
+      fecharPreview();
+    }
+  }
+});
+
 //GRUPO SECTION
 
 let grupoSelecionadoId = null;
@@ -4565,6 +4712,7 @@ window.adicionarImagemNovaCupom = adicionarImagemNovaCupom;
 
 window.excluirImagemCupom = excluirImagemCupom;
 window.popularEstabelecimentosParaGrupo = popularEstabelecimentosParaGrupo
+window.abrirPreview = abrirPreview
 
 
 

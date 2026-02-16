@@ -193,7 +193,7 @@
       <input type="text" class="search-estab" placeholder="Buscar por nome ou cidade...">
       
       <!-- Botão criar -->
-      <button data-open-subpage="criar-estab" class="btn-action" type="button">
+      <button data-open-subpage="criar-estab" class="btn-action" onclick="abrirPreview()" type="button">
         + Criar
       </button>
     </div>
@@ -1068,6 +1068,311 @@
     <p class="loader-subtext">Aguarde um momento</p>
   </div>
 </div>
+
+<!-- Modal de Preview - FORMULÁRIO REAL -->
+<div id="modal-preview" class="modal-preview" style="display: none;">
+  <div class="modal-preview-container">
+    <!-- Botão fechar -->
+    <button class="btn-fechar-preview" onclick="fecharPreview()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <!-- Conteúdo dividido: 30% Form | 70% Preview -->
+    <div class="preview-content">
+      <!-- Lado Esquerdo: Formulário REAL (30%) -->
+      <div class="preview-form-side">
+        <div class="form-scroll">
+          <h2 class="preview-title">Cadastrar Estabelecimento</h2>
+          
+          <form class="form-estab" id="formCadastro2">
+            <h3 class="title-form">Dados Iniciais</h3>
+
+            <div class="row">
+              <div class="field">
+                <label>Nome Fantasia *</label>
+                <input type="text" placeholder="Ex: Mercado Central" id="nomeEstab2" oninput="atualizarPreview()" />
+              </div>
+
+              <div class="field">
+                <label>Razão Social *</label>
+                <input type="text" placeholder="Ex: Mercado Central LTDA" id="razaoSocial2" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>CNPJ *</label>
+                <input type="text" placeholder="00.000.000/0001-00" id="cnpj2" />
+              </div>
+
+              <div class="field">
+                <label>Ativo</label>
+                <label class="switch">
+                  <input type="checkbox" id="ativoEstab2" checked>
+                  <span class="slider-edit"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Telefone *</label>
+                <input type="text" placeholder="(11) 99999-9999" id="telefone2" oninput="atualizarPreview()" />
+              </div>
+
+              <div class="field">
+                <label>Email de Contato</label>
+                <input type="email" placeholder="contato@empresa.com" id="emailContato2" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Grupo</label>
+                <select id="grupo2">
+                  <option>Selecione</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Categoria *</label>
+                <select id="categoriaId2" onchange="atualizarPreview()">
+                  <option>Selecione</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field full">
+                <label>Sobre</label>
+                <textarea placeholder="Breve descrição do estabelecimento" id="sobre2" oninput="atualizarPreview()" rows="3"></textarea>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Logo</label>
+                <input type="file" id="logoImagem2" onchange="previewImagem(this, 'logo')" accept="image/*">
+                <div class="preview-img-small" id="preview-logo-small"></div>
+              </div>
+
+              <div class="field">
+                <label>Fachada</label>
+                <input type="file" id="fachadaImagem2" onchange="previewImagem(this, 'fachada')" accept="image/*">
+                <div class="preview-img-small" id="preview-fachada-small"></div>
+              </div>
+            </div>
+
+            <h3 class="title-form">Endereço</h3>
+
+            <div class="row">
+              <div class="field">
+                <label>CEP *</label>
+                <input type="text" placeholder="00000-000" id="cep2" oninput="atualizarPreview()" />
+              </div>
+
+              <div class="field">
+                <label>Estado</label>
+                <select id="estadoId2">
+                  <option value="1">São Paulo</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Cidade *</label>
+                <select id="cidadeId2" onchange="atualizarPreview()">
+                  <option value="1">Americana</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Rua *</label>
+                <input type="text" placeholder="Ex: Avenida Brasil" id="rua2" oninput="atualizarPreview()" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Número *</label>
+                <input type="text" placeholder="123" id="numero2" oninput="atualizarPreview()" />
+              </div>
+
+              <div class="field">
+                <label>Bairro</label>
+                <input type="text" placeholder="Centro" id="bairro2" oninput="atualizarPreview()" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field full">
+                <label>Complemento</label>
+                <input type="text" placeholder="Apto, sala, bloco (opcional)" id="complemento2" oninput="atualizarPreview()" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field full">
+                <label>Mapa URL</label>
+                <input type="text" id="mapurl2" placeholder="https://maps.google.com/..." />
+              </div>
+              <button class="btn-map" type="button" onclick="extrairLatLong()">Extrair Lat/Long</button>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Latitude</label>
+                <input type="text" placeholder="-22.7392" id="latitude2" class="latitude2" />
+              </div>
+
+              <div class="field">
+                <label>Longitude</label>
+                <input type="text" placeholder="-47.3313" id="longitude2" class="longitude2" />
+              </div>
+            </div>
+
+            <h3 class="title-form">Cartões Aceitos</h3> 
+            <div class="cards-row">
+              <label class="field-ratio">
+                <input type="checkbox" id="cartao-1">
+                <span>Vegas Alimentação</span>
+              </label>
+
+              <label class="field-ratio">
+                <input type="checkbox" id="cartao-2">
+                <span>Vegas Refeição</span>
+              </label>
+
+              <label class="field-ratio">
+                <input type="checkbox" id="cartao-3">
+                <span>Vegas Day</span>
+              </label>
+
+              <label class="field-ratio">
+                <input type="checkbox" id="cartao-4">
+                <span>Vegas Farmácia</span>
+              </label>
+
+              <label class="field-ratio">
+                <input type="checkbox" id="cartao-5">
+                <span>Vegas Plus</span>
+              </label>
+
+              <label class="field-ratio">
+                <input type="checkbox" id="cartao-6">
+                <span>Vegas Pay</span>
+              </label>
+            </div>
+
+            <div class="preview-actions">
+              <button type="button" onclick="cadastrarEstabelecimento2()" class="btn-salvar-preview">
+                💾 Cadastrar Estabelecimento
+              </button>
+              <button type="button" onclick="fecharPreview()" class="btn-cancelar-preview">
+                ✕ Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Lado Direito: Preview (70%) -->
+      <div class="preview-display-side">
+        <div class="preview-header">
+          <h3>🖥️ Preview do Site</h3>
+          <span class="preview-badge">✨ Visualização em tempo real</span>
+        </div>
+        
+        <div class="preview-scroll">
+          <div class="preview-note">
+            <p>📌 Veja como seu estabelecimento aparecerá no site</p>
+          </div>
+
+          <section class="comercio preview-comercio">
+            <h1 class="tag-comercio" id="prev-categoria">Bares e Restaurantes</h1>
+            
+            <div class="comercio-container">
+              <!-- Imagem Principal (Fachada) -->
+              <div class="main-img">
+                <img src="./imgs/default-image.png" class="img-comercio" id="prev-fachada-img" alt="Fachada">
+              </div>
+              
+              <div class="main-info">
+                <!-- Mobile -->
+                <div class="header-info-mobile">
+                  <div class="header-info-mobile-head">
+                    <div class="img-logo">
+                      <img src="./imgs/default-image.png" class="logo" id="prev-logo-mobile" alt="Logo">
+                    </div>
+                    <div class="names-ava">
+                      <h2 class="title-comercio" id="prev-nome-mobile">Nome do Estabelecimento</h2>
+                    </div>
+                  </div>
+                  <div class="main-img">
+                    <img src="./imgs/default-image.png" class="img-comercio" id="prev-fachada-mobile" alt="Fachada">
+                  </div>
+                </div>
+
+                <!-- Desktop -->
+                <div class="header-info">
+                  <div class="img-logo">
+                    <img src="./imgs/default-image.png" class="logo" id="prev-logo-img" alt="Logo">
+                  </div>
+                  <div class="inner-info">
+                    <div class="names-ava">
+                      <h2 class="title-comercio" id="prev-nome">Nome do Estabelecimento</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tablet -->
+                <div class="main-img-tablet">
+                  <img src="./imgs/default-image.png" class="img-comercio" id="prev-fachada-tablet" alt="Fachada">
+                </div>
+
+                <div class="line line-1"></div>
+                
+                <!-- Cards de Informação -->
+                <div class="info-cards">
+                  <div class="primary-infos">
+                    <!-- Endereço -->
+                    <div class="info-card adress-card">
+                      <h3>📍 Endereço:</h3>
+                      <p class="adress" id="prev-endereco">Preencha o endereço no formulário</p>
+                    </div>
+                    
+                    <!-- Telefone -->
+                    <div class="info-card phone-card">
+                      <h3>📞 Telefone:</h3>
+                      <p class="phone" id="prev-telefone">Preencha o telefone no formulário</p>
+                    </div>
+                    
+                    <!-- Sobre -->
+                    <div class="info-card">
+                      <h3>ℹ️ Sobre:</h3>
+                      <p class="descricao" id="prev-sobre">Adicione uma descrição sobre o estabelecimento</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="line line-last"></div>
+              </div>
+            </div>
+          </section>
+
+          <div class="preview-footer-note">
+            <p>💡 <strong>Campos administrativos não visíveis:</strong> CNPJ, Razão Social, Email, Grupo, Status Ativo, Coordenadas, Cartões Aceitos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     </div>
     </div>
