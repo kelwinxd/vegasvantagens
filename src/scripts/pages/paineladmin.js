@@ -3771,7 +3771,6 @@ async function deletarGrupo(grupoId) {
 
 // ========== CARREGAR GRUPOS COM CACHE ==========
 async function carregarGrupos(forcarRecarregar = false) {
-
   const token = localStorage.getItem("token");
 
   // Se já tem cache e não está forçando recarregar, usa o cache
@@ -3793,7 +3792,9 @@ async function carregarGrupos(forcarRecarregar = false) {
     });
 
     if (!response.ok) {
-      throw new Error("Erro ao buscar grupos");
+      const errorText = await response.text();
+      console.error("Erro na resposta:", response.status, errorText);
+      throw new Error(`Erro ${response.status}: ${errorText || "Erro ao buscar grupos"}`);
     }
 
     const grupos = await response.json();
@@ -3808,8 +3809,22 @@ async function carregarGrupos(forcarRecarregar = false) {
     return grupos;
 
   } catch (error) {
-    console.error(error);
-    alert("Não foi possível carregar os grupos");
+    console.error("Erro ao carregar grupos:", error);
+    
+    // Se for erro de CORS ou rede, tenta usar cache antigo se existir
+    if (gruposCache.length > 0) {
+      console.warn("Usando cache antigo devido ao erro");
+      renderizarListaGrupos(gruposCache);
+      return gruposCache;
+    }
+    
+    // Se for erro de fetch (CORS/rede), mostra mensagem mais clara
+    if (error.message.includes("Failed to fetch")) {
+      alert("Erro de conexão com o servidor. Verifique se o backend está rodando e configurado corretamente.");
+    } else {
+      alert("Não foi possível carregar os grupos: " + error.message);
+    }
+    
     return [];
   }
 }
@@ -3822,7 +3837,6 @@ async function garantirEstabelecimentosNoCache() {
   await buscarEstabelecimentos();
   return estabelecimentosCache;
 }
-
 
 async function abrirModalVincular(grupoId) {
   grupoSelecionadoId = grupoId;
@@ -4035,25 +4049,29 @@ function limparCacheGrupos() {
 
 // ========== POPULAR SELECT DE GRUPOS (usando cache) ==========
 async function popularSelectGrupos(selectId = "grupo2") {
-  // Se não tem cache, carrega
-  if (gruposCache.length === 0) {
-    await carregarGrupos();
+  try {
+    // Se não tem cache, carrega
+    if (gruposCache.length === 0) {
+      await carregarGrupos();
+    }
+
+    const select = document.getElementById(selectId);
+    if (!select) {
+      console.warn(`Select #${selectId} não encontrado`);
+      return;
+    }
+
+    select.innerHTML = '<option value="">Selecione</option>';
+
+    gruposCache.forEach(grupo => {
+      const option = document.createElement("option");
+      option.value = grupo.id;
+      option.textContent = grupo.nome;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Erro ao popular select de grupos:", error);
   }
-
-  const select = document.getElementById(selectId);
-  if (!select) {
-    console.warn(`Select #${selectId} não encontrado`);
-    return;
-  }
-
-  select.innerHTML = '<option value="">Selecione</option>';
-
-  gruposCache.forEach(grupo => {
-    const option = document.createElement("option");
-    option.value = grupo.id;
-    option.textContent = grupo.nome;
-    select.appendChild(option);
-  });
 }
 
 // ========== CADASTRAR GRUPO (com atualização de cache) ==========
@@ -4097,13 +4115,17 @@ async function cadastrarGrupo() {
 
     if (!response.ok) {
       const erro = await response.text();
-      throw new Error(erro);
+      console.error("Erro ao criar grupo:", response.status, erro);
+      throw new Error(erro || `Erro ${response.status} ao criar grupo`);
     }
 
     const grupo = await response.json();
     
     alert("Grupo cadastrado com sucesso!");
     document.getElementById("formCadastroGrupo").reset();
+    
+    // 🔹 Aguarda um pouco antes de recarregar (dá tempo do backend processar)
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // 🔹 LIMPA O CACHE E RECARREGA
     limparCacheGrupos();
@@ -4115,24 +4137,39 @@ async function cadastrarGrupo() {
     }
 
   } catch (error) {
-    console.error(error);
-    alert("Erro ao cadastrar grupo: " + error.message);
+    console.error("Erro detalhado:", error);
+    
+    if (error.message.includes("Failed to fetch")) {
+      alert("Erro de conexão ao cadastrar grupo. Verifique se o servidor está acessível.");
+    } else {
+      alert("Erro ao cadastrar grupo: " + error.message);
+    }
   }
 }
 
 async function buscarEstabelecimentosDoGrupo(grupoId) {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(
-    `${API_BASE}/api/Grupos/${grupoId}/estabelecimentos-por-grupo`,
-    {
-      headers: { Authorization: "Bearer " + token }
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/Grupos/${grupoId}/estabelecimentos-por-grupo`,
+      {
+        headers: { Authorization: "Bearer " + token }
+      }
+    );
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Erro ao buscar estabelecimentos:", res.status, errorText);
+      throw new Error(`Erro ${res.status}: ${errorText || "Erro ao buscar estabelecimentos do grupo"}`);
     }
-  );
 
-  if (!res.ok) throw new Error("Erro ao buscar estabelecimentos do grupo");
-
-  return await res.json();
+    return await res.json();
+    
+  } catch (error) {
+    console.error("Erro ao buscar estabelecimentos do grupo:", error);
+    throw error;
+  }
 }
 
 // ========== POPULAR ESTABELECIMENTOS PARA GRUPO ==========
