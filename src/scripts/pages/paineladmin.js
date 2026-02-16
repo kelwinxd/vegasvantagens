@@ -2187,13 +2187,7 @@ await carregarCartoesModal(idsCartoes);
       : '<p class="text-muted">Nenhum cartão vinculado</p>';
     document.getElementById("cartoes-vinculados").innerHTML = cartoesHTML;
 
-    // SELECT MULTIPLE para cartões aceitos
-    if (cupom.cartoesAceitos && cupom.cartoesAceitos.length > 0) {
-      const selectCartoes = document.getElementById("edit-cartoes");
-      Array.from(selectCartoes.options).forEach(option => {
-        option.selected = cupom.cartoesAceitos.some(cartao => cartao.id === parseInt(option.value));
-      });
-    }
+    
 
     // Atualiza texto do loader
     mostrarLoader("Carregando cupom...", "Carregando imagens...");
