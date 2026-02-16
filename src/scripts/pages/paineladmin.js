@@ -2131,11 +2131,7 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     
     // Atualiza texto do loader
     mostrarLoader("Carregando cupom...", "Carregando cartões aceitos...");
-    const idsCartoes = cupom.cartoesAceitos
-  ? cupom.cartoesAceitos.map(c => c.id)
-  : [];
-
-await carregarCartoesModal(idsCartoes);
+  
 
 
     // Atualiza texto do loader
@@ -2156,6 +2152,12 @@ await carregarCartoesModal(idsCartoes);
 
     // Salva o cupom original para reenviar TUDO no PUT
     window._cupomEditando = cupom;
+
+      const idsCartoes = cupom.cartoesAceitos
+  ? cupom.cartoesAceitos.map(c => c.id)
+  : [];
+
+await carregarCartoesModal(idsCartoes);
 
     // Preenche os campos do modal
     document.getElementById("edit-id").value = cupom.id;
