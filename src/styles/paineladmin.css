@@ -2183,12 +2183,7 @@ line-height: normal;
   font-weight: 600;
 }
 
-.preview-form-side .row {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 15px;
-}
+
 
 .preview-form-side .field {
   display: flex;
@@ -2446,6 +2441,7 @@ input:checked + .slider-edit:before {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  height: 120%;
 }
 
 .comercio-p {
@@ -2487,15 +2483,7 @@ input:checked + .slider-edit:before {
   display: none;
 }
 
-.preview-comercio .img-logo {
-  width: 110px;
-  height: 110px;
-  border-radius: 15px;
-  overflow: hidden;
-  border: 4px solid #f0f0f0;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+
 
 .preview-comercio .logo {
   width: 100%;
@@ -2503,45 +2491,9 @@ input:checked + .slider-edit:before {
   object-fit: cover;
 }
 
-.preview-comercio .title-comercio {
-  font-size: 26px;
-  color: #2c3e50;
-  margin: 0;
-  font-weight: 700;
-  line-height: 1.3;
-}
 
 
-.preview-comercio .info-card {
-  margin-bottom: 20px;
-  padding: 18px 20px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 10px;
-  border-left: 5px solid #667eea;
-  transition: all 0.3s ease;
-}
 
-.preview-comercio .info-card:hover {
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-}
-
-.preview-comercio .info-card h3 {
-  font-size: 14px;
-  color: #667eea;
-  margin: 0 0 10px 0;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.preview-comercio .info-card p {
-  margin: 0;
-  color: #495057;
-  font-size: 15px;
-  line-height: 1.6;
-  font-weight: 500;
-}
 
 /* Botões de Ação */
 .preview-actions {

@@ -4721,7 +4721,8 @@ window.adicionarImagemNovaCupom = adicionarImagemNovaCupom;
 
 window.excluirImagemCupom = excluirImagemCupom;
 window.popularEstabelecimentosParaGrupo = popularEstabelecimentosParaGrupo
-window.abrirPreview = abrirPreview
+window.abrirPreview = abrirPreview;
+window.fecharPreview = fecharPreview;
 window.previewImagem = previewImagem;
 
 
