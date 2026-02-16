@@ -4713,6 +4713,7 @@ window.adicionarImagemNovaCupom = adicionarImagemNovaCupom;
 window.excluirImagemCupom = excluirImagemCupom;
 window.popularEstabelecimentosParaGrupo = popularEstabelecimentosParaGrupo
 window.abrirPreview = abrirPreview
+window.previewImagem = previewImagem;
 
 
 
