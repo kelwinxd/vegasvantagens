@@ -351,6 +351,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 100);
     });
   }
+
+    const form = document.getElementById('formCadastro2');
+
+  // Atualiza preview sempre que qualquer campo mudar
+  form.addEventListener('input', atualizarPreview);
+  form.addEventListener('change', atualizarPreview);
+
+  // Executa uma vez ao abrir
+  atualizarPreview();
 });
 
   function filtrarEstabelecimentos(texto) {
@@ -3590,7 +3599,6 @@ async function recarregarEstabelecimentoEdit() {
 }
 
 
-
 async function abrirModalEditar(estab) {
 
     // 🔹 Abre o modal
@@ -3729,6 +3737,7 @@ let previewFachadaUrl = null;
 
 // Abrir modal de preview
 function abrirPreview() {
+ 
   const modal = document.getElementById('modal-preview');
   modal.style.display = 'flex';
   setTimeout(() => {
