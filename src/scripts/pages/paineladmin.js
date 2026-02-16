@@ -3066,7 +3066,7 @@ window.onload = async () => {
   carregarCategorias();
   await carregarEstados();
   carregarCartoes();
-  popularSelectGrupos()
+
   
 
   
