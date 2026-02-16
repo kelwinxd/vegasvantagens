@@ -858,10 +858,16 @@
       <!-- Cartões Aceitos -->
       <div class="row-edit-cupom">
         <div class="field-edit-cupom">
-          <label>Cartões Aceitos (Ctrl + Clique para múltiplos)</label>
-          <select id="edit-cartoes" multiple>
-            <!-- Opções carregadas via JS -->
-          </select>
+ 
+        <div class="row-edit-cupom">
+  <div class="field-edit-cupom">
+    <label>Cartões Aceitos</label>
+    <div id="edit-cartoes-container" class="cartoes-checkbox-container">
+      <!-- Checkboxes carregados via JS -->
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
 
@@ -1220,10 +1226,15 @@
             </div>
 
             <div class="row">
-              <div class="field full">
+            <div class="field full">
                 <label>Mapa URL</label>
                 <input type="text" id="mapurl2" placeholder="https://maps.google.com/..." />
               </div>
+            </div>
+            
+
+            <div class="row">
+             
               <button class="btn-map" type="button" onclick="extrairLatLong()">Extrair Lat/Long</button>
             </div>
 

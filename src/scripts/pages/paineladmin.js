@@ -108,6 +108,9 @@ async function carregarCartoes() {
   }
 }
 
+
+
+
  inicializarPaginaEstabelecimentos();
 
 function renderizarLista(lista, containerId) {
@@ -2128,7 +2131,12 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     
     // Atualiza texto do loader
     mostrarLoader("Carregando cupom...", "Carregando cartões aceitos...");
-    await carregarCartoesModal();
+    const idsCartoes = cupom.cartoesAceitos
+  ? cupom.cartoesAceitos.map(c => c.id)
+  : [];
+
+await carregarCartoesModal(idsCartoes);
+
 
     // Atualiza texto do loader
     mostrarLoader("Carregando cupom...", "Processando dados do cupom...");
@@ -2260,49 +2268,48 @@ async function carregarEstabelecimentosModal(nomeEstabelecimentoSelecionado = nu
   }
 }
 // 🔹 Função para carregar cartões no select multiple
-async function carregarCartoesModal() {
+async function carregarCartoesModal(cartoesSelecionados = []) {
   const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert("Você precisa estar logado.");
-    return;
-  }
 
   try {
     const res = await fetch(`${API_BASE}/api/Cartoes`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
+      headers: { Authorization: "Bearer " + token }
     });
 
-    if (!res.ok) {
-      throw new Error("Erro ao buscar cartões");
-    }
+    if (!res.ok) throw new Error("Erro ao buscar cartões");
 
     const cartoes = await res.json();
-    
-    // 🔹 Salva no cache
-    cartoesModalCache = cartoes;
+    const container = document.getElementById("edit-cartoes-container");
 
-    const selectCartoes = document.getElementById("edit-cartoes");
+    container.innerHTML = "";
 
-    // Limpa opções existentes
-    selectCartoes.innerHTML = "";
-
-    // Adiciona os cartões
     cartoes.forEach(cartao => {
-      const option = document.createElement("option");
-      option.value = cartao.id;
-      option.textContent = cartao.nome;
-      selectCartoes.appendChild(option);
+      const label = document.createElement("label");
+      label.className = "checkbox-cartao";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = cartao.id;
+      input.name = "edit-cartoes";
+
+      // 🔥 Já marca se estiver vinculado ao cupom
+      if (cartoesSelecionados.includes(cartao.id)) {
+        input.checked = true;
+      }
+
+      const span = document.createElement("span");
+      span.textContent = cartao.nome;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      container.appendChild(label);
     });
 
   } catch (error) {
-    console.error("Erro ao carregar cartões:", error);
-    alert("Não foi possível carregar os cartões.");
+    console.error(error);
+    alert("Erro ao carregar cartões.");
   }
 }
-
 // 🔹 Exibe o estabelecimento vinculado ao cupom
 function exibirEstabelecimentoVinculado(estabelecimentoId) {
   const container = document.getElementById("estabelecimento-vinculado");
@@ -2401,8 +2408,10 @@ async function salvarEdicaoCupom() {
     const dataInicioISO = dataInicio ? new Date(dataInicio).toISOString() : new Date().toISOString();
     const dataExpiracaoISO = dataExpiracao ? new Date(dataExpiracao).toISOString() : new Date().toISOString();
 
-    // Pega cartões selecionados (select multiple)
-    const selectCartoes = document.getElementById("edit-cartoes");
+    const cartoesSelecionados = Array.from(
+  document.querySelectorAll('#edit-cartoes-container input[type="checkbox"]:checked')
+).map(cb => parseInt(cb.value));
+
     const cartoesAceitosIds = Array.from(selectCartoes.selectedOptions).map(opt => parseInt(opt.value));
 
     // Status baseado no checkbox ativo
@@ -2424,7 +2433,7 @@ async function salvarEdicaoCupom() {
       "limiteUsoPorUsuario": limiteUsoPorUsuario,
       "ativo": ativo,
       "estabelecimentoId": estabelecimentoId,
-      "cartoesAceitosIds": cartoesAceitosIds,
+      "cartoesAceitosIds": cartoesSelecionados,
       "status": status
     };
 
