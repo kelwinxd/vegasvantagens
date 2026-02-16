@@ -1332,6 +1332,27 @@ line-height: normal;
 
 /* CUPOM MODAL */
 
+.cartoes-checkbox-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkbox-cartao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f4f6fb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.checkbox-cartao:hover {
+  background: #e6ebff;
+}
 
 
 .modal-overlay-edit-cupom {
@@ -2441,11 +2462,11 @@ input:checked + .slider-edit:before {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  height: 1000px;
+  height: auto;
 }
 
 .comercio-p {
-     height: 100%;
+     height: auto;
     width: 100%;
     padding-inline: 56px;
         max-width: 1520px;
