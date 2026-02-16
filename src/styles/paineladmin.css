@@ -2448,11 +2448,19 @@ input:checked + .slider-edit:before {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-
-
-.preview-comercio .comercio-container {
-  padding: 25px;
+.comercio-p {
+     height: 100%;
+    width: 100%;
+    padding-inline: 56px;
+        max-width: 1520px;
+    
+    margin: 0 auto;
+    padding-top: 64px;
+    padding-bottom: 64px;
 }
+
+
+
 
 
 
