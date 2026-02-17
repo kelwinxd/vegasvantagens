@@ -3763,7 +3763,7 @@ btnMobile.addEventListener("click", () => {
   containerPreview.classList.add("active")
   containerComercio.classList.add("active")
   headerComercio.classList.add("active")
-  containerComercio.getElementById("f-img").style.display = 'none'
+  containerComercio.querySelector("#f-img").style.display = 'none'
 
   } else return
 })
