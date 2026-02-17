@@ -2466,14 +2466,17 @@ input:checked + .slider-edit:before {
 }
 
 .comercio-p {
-     height: auto;
+    height: auto;
     width: 100%;
     padding-inline: 56px;
-        max-width: 1520px;
-    
+    max-width: 1520px;
     margin: 0 auto;
     padding-top: 64px;
     padding-bottom: 64px;
+}
+
+.comercio-p.active {
+  max-width: 768px;
 }
 
 

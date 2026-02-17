@@ -3740,6 +3740,26 @@ async function carregarEstadosModal() {
 let previewLogoUrl = null;
 let previewFachadaUrl = null;
 
+const btnDesktop = document.getElementById("desktop-btn-p")
+const btnMobile = document.getElementById("mobile-btn-p")
+const containerPreview = document.querySelector(".comercio-p")
+
+btnDesktop.addEventListener("click", () => {
+  if(containerPreview.classList.contains("active"))
+  {
+  containerPreview.classList.remove("active")
+
+  } else return
+})
+
+btnMobile.addEventListener("click", () => {
+  if(!containerPreview.classList.contains("active"))
+  {
+  containerPreview.classList.add("active")
+
+  } else return
+})
+
 // Abrir modal de preview
 function abrirPreview() {
  
