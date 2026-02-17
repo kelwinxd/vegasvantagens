@@ -3744,12 +3744,15 @@ const btnDesktop = document.getElementById("desktop-btn-p")
 const btnMobile = document.getElementById("mobile-btn-p")
 const containerPreview = document.querySelector(".comercio-p")
 const containerComercio = document.querySelector(".viewport")
+const headerComercio = document.querySelector(".mobile-header-comercio")
 
 btnDesktop.addEventListener("click", () => {
   if(containerPreview.classList.contains("active"))
   {
   containerPreview.classList.remove("active")
-    containerComercio.classList.remove("active")
+  containerComercio.classList.remove("active")
+  headerComercio.classList.remove("active")
+  containerComercio.getElementById("f-img").style.display = 'block'
 
   } else return
 })
@@ -3759,6 +3762,8 @@ btnMobile.addEventListener("click", () => {
   {
   containerPreview.classList.add("active")
   containerComercio.classList.add("active")
+  headerComercio.classList.add("active")
+  containerComercio.getElementById("f-img").style.display = 'none'
 
   } else return
 })

@@ -2477,7 +2477,7 @@ input:checked + .slider-edit:before {
 
 .viewport {
   display: flex;
-  flex-direction: row
+  flex-direction: row;
 }
 
 .viewport.active {
@@ -2486,6 +2486,22 @@ input:checked + .slider-edit:before {
 .comercio-p.active {
   max-width: 480px;
   
+}
+
+.mobile-header-comercio {
+  display: none;
+}
+
+.mobile-header-comercio.active {
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+.mobile-header-comercio .img-logo img {
+    width: 80px;
+    height: 80px;
 }
 
 
