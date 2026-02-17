@@ -2596,6 +2596,7 @@ input:checked + .slider-edit:before {
 }
 .preview-comercio-wrapper.viewport-mobile .header-info-mobile .main-img {
   margin-bottom: 10px;
+  height: 690px;
 }
 .preview-comercio-wrapper.viewport-mobile .primary-infos {
   display: flex;
