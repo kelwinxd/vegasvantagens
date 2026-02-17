@@ -2475,8 +2475,17 @@ input:checked + .slider-edit:before {
     padding-bottom: 64px;
 }
 
+.viewport {
+  display: flex;
+  flex-direction: row
+}
+
+.viewport.active {
+  flex-direction: column;
+}
 .comercio-p.active {
   max-width: 480px;
+  
 }
 
 
