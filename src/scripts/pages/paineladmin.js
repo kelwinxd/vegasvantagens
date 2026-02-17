@@ -3740,33 +3740,37 @@ async function carregarEstadosModal() {
 let previewLogoUrl = null;
 let previewFachadaUrl = null;
 
-const btnDesktop = document.getElementById("desktop-btn-p")
-const btnMobile = document.getElementById("mobile-btn-p")
-const containerPreview = document.querySelector(".comercio-p")
-const containerComercio = document.querySelector(".viewport")
-const headerComercio = document.querySelector(".mobile-header-comercio")
+const btnDesktopP = document.getElementById('btn-desktop-p');
+const btnTabletP  = document.getElementById('btn-tablet-p');
+const btnMobileP  = document.getElementById('btn-mobile-p');
+const wrapperPreview = document.getElementById('preview-comercio-wrapper');
 
-btnDesktop.addEventListener("click", () => {
-  if(containerPreview.classList.contains("active"))
-  {
-  containerPreview.classList.remove("active")
-  containerComercio.classList.remove("active")
-  headerComercio.classList.remove("active")
-  containerComercio.getElementById("f-img").style.display = 'block'
+const viewportBtns = [btnDesktopP, btnTabletP, btnMobileP];
 
-  } else return
-})
+function setViewport(mode) {
+  // Remove todas as classes de viewport
+  wrapperPreview.classList.remove('viewport-tablet', 'viewport-mobile');
 
-btnMobile.addEventListener("click", () => {
-  if(!containerPreview.classList.contains("active"))
-  {
-  containerPreview.classList.add("active")
-  containerComercio.classList.add("active")
-  headerComercio.classList.add("active")
-  containerComercio.querySelector("#f-img").style.display = 'none'
+  // Remove active de todos os botões
+  viewportBtns.forEach(b => b.classList.remove('active'));
 
-  } else return
-})
+  if (mode === 'tablet') {
+    wrapperPreview.classList.add('viewport-tablet');
+    wrapperPreview.style.maxWidth = '768px';
+    btnTabletP.classList.add('active');
+  } else if (mode === 'mobile') {
+    wrapperPreview.classList.add('viewport-mobile');
+    wrapperPreview.style.maxWidth = '480px';
+    btnMobileP.classList.add('active');
+  } else {
+    wrapperPreview.style.maxWidth = '100%';
+    btnDesktopP.classList.add('active');
+  }
+}
+
+btnDesktopP.addEventListener('click', () => setViewport('desktop'));
+btnTabletP.addEventListener('click',  () => setViewport('tablet'));
+btnMobileP.addEventListener('click',  () => setViewport('mobile'));
 
 // Abrir modal de preview
 function abrirPreview() {

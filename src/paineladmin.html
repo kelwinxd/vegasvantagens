@@ -1299,13 +1299,28 @@
       <div class="preview-display-side">
         <div class="preview-header">
           <h3>🖥️ Preview do Site</h3>
-          <button id="desktop-btn-p">Desktop</button>
-          <button id="mobile-btn-p">Mobile</button>
+          <div class="preview-viewport-btns">
+    <button class="viewport-btn active" id="btn-desktop-p" title="Desktop (>1024px)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+      </svg>
+    </button>
+    <button class="viewport-btn" id="btn-tablet-p" title="Tablet (768px)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor"/>
+      </svg>
+    </button>
+    <button class="viewport-btn" id="btn-mobile-p" title="Mobile (480px)">
+      <svg width="16" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
           <span class="preview-badge">✨ Visualização em tempo real</span>
         </div>
         
         <div class="preview-scroll">
-          
+          <div class="preview-comercio-wrapper" id="preview-comercio-wrapper">
           <section class="comercio-p preview-comercio">
             <h1 class="tag-comercio" id="prev-categoria">Bares e Restaurantes</h1>
             
@@ -1378,6 +1393,7 @@
               </div>
             </div>
           </section>
+          </div>
 
           <div class="preview-footer-note">
             <p>💡 <strong>Campos administrativos não visíveis:</strong> CNPJ, Razão Social, Email, Grupo, Status Ativo, Coordenadas, Cartões Aceitos</p>
