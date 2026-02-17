@@ -2598,6 +2598,10 @@ input:checked + .slider-edit:before {
   margin-bottom: 10px;
   height: 690px;
 }
+
+.preview-comercio-wrapper.viewport-mobile .header-info-mobile .main-img img {
+  height: 100%;
+}
 .preview-comercio-wrapper.viewport-mobile .primary-infos {
   display: flex;
   flex-direction: column;
