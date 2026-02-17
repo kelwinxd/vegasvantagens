@@ -2476,7 +2476,7 @@ input:checked + .slider-edit:before {
 }
 
 .comercio-p.active {
-  max-width: 768px;
+  max-width: 480px;
 }
 
 
