@@ -3060,27 +3060,16 @@ function cpPopularCartoes() {
   });
 }
 
-// Popular estabelecimentos (adaptar conforme sua lógica real)
 async function cpPopularEstabelecimentos() {
-
-  
   const container = document.getElementById("cp-estab-container");
-  if (!container) {
-    console.error("❌ Container .estabelecimentos-checkbox-container não encontrado!");
-    return;
-  }
+  if (!container) return;
 
-  // Limpa o container
   container.innerHTML = '<p class="carregando-estabelecimentos">Carregando estabelecimentos...</p>';
 
-  // Verifica se tem estabelecimentos no cache
   if (!window.estabelecimentosCache || estabelecimentosCache.length === 0) {
-    console.warn("⚠️ Nenhum estabelecimento no cache, buscando...");
-    
     const token = localStorage.getItem("token");
     if (!token) {
-      console.error("❌ Token não encontrado");
-      container.innerHTML = '<p class="erro-estabelecimentos">Erro: Token não encontrado</p>';
+      container.innerHTML = '<p class="erro-estabelecimentos">Token não encontrado</p>';
       return;
     }
 
@@ -3088,20 +3077,26 @@ async function cpPopularEstabelecimentos() {
       const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
         headers: { Authorization: "Bearer " + token }
       });
-
       if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
-      
-      const data = await res.json();
-      estabelecimentosCache = data;
-      
+      estabelecimentosCache = await res.json();
     } catch (err) {
-      console.error("❌ Erro ao buscar estabelecimentos:", err);
-      container.innerHTML = `<p class="erro-estabelecimentos">Erro ao carregar estabelecimentos: ${err.message}</p>`;
+      container.innerHTML = `<p class="erro-estabelecimentos">Erro: ${err.message}</p>`;
       return;
     }
   }
-}
 
+  // ✅ PARTE QUE FALTAVA: renderizar os checkboxes
+  container.innerHTML = '';
+  estabelecimentosCache.forEach(estab => {
+    const label = document.createElement('label');
+    label.className = 'field-ratio';
+    label.innerHTML = `
+      <input type="checkbox" value="${estab.id}" data-nome="${estab.nomeFantasia || estab.nome}">
+      <span>${estab.nomeFantasia || estab.nome}</span>
+    `;
+    container.appendChild(label);
+  });
+}
 
 //MAPA URL
 
