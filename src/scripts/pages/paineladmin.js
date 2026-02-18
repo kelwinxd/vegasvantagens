@@ -3061,11 +3061,45 @@ function cpPopularCartoes() {
 }
 
 // Popular estabelecimentos (adaptar conforme sua lógica real)
-function cpPopularEstabelecimentos() {
-  const container = document.getElementById('cp-estab-container');
-  if (!container || container.children.length > 0) return;
-  // Aqui você pode reutilizar a mesma lógica de renderizarCheckboxesEstabelecimentos()
-  // adaptada para o container cp-estab-container
+async function cpPopularEstabelecimentos() {
+
+  
+  const container = document.getElementById("cp-estab-container");
+  if (!container) {
+    console.error("❌ Container .estabelecimentos-checkbox-container não encontrado!");
+    return;
+  }
+
+  // Limpa o container
+  container.innerHTML = '<p class="carregando-estabelecimentos">Carregando estabelecimentos...</p>';
+
+  // Verifica se tem estabelecimentos no cache
+  if (!window.estabelecimentosCache || estabelecimentosCache.length === 0) {
+    console.warn("⚠️ Nenhum estabelecimento no cache, buscando...");
+    
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("❌ Token não encontrado");
+      container.innerHTML = '<p class="erro-estabelecimentos">Erro: Token não encontrado</p>';
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+        headers: { Authorization: "Bearer " + token }
+      });
+
+      if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+      
+      const data = await res.json();
+      estabelecimentosCache = data;
+      
+    } catch (err) {
+      console.error("❌ Erro ao buscar estabelecimentos:", err);
+      container.innerHTML = `<p class="erro-estabelecimentos">Erro ao carregar estabelecimentos: ${err.message}</p>`;
+      return;
+    }
+  }
 }
 
 
