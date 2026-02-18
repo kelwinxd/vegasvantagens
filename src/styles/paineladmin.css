@@ -2520,6 +2520,10 @@ input:checked + .slider-edit:before {
   max-width: 100%;
 }
 
+.preview-comercio .header-info, .preview-comercio .header-info-mobile-head {
+  align-items: center;
+}
+
 /* === Classes que replicam os media queries por viewport === */
 
 /* Tablet (simula @media max-width: 768px) */
@@ -2798,4 +2802,119 @@ aspect-ratio: 1/1;
 .preview-form-side::-webkit-scrollbar-thumb:hover,
 .preview-scroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%);
+}
+
+
+
+/* cupom preview */
+
+/* === Modal Preview Cupom === */
+.mpc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 35, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.mpc-overlay.active { opacity: 1; }
+
+.mpc-container {
+  position: relative;
+  background: #f5f6fa;
+  border-radius: 20px;
+  width: 95vw;
+  max-width: 1300px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(10, 15, 35, 0.3);
+}
+
+.mpc-btn-fechar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  transition: background 0.2s;
+}
+.mpc-btn-fechar:hover { background: #f0f0f0; }
+
+.mpc-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Form side */
+.mpc-form-side {
+  width: 38%;
+  background: #fff;
+  border-right: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.mpc-form-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding: 32px 28px 32px;
+}
+.mpc-form-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e2340;
+  margin: 0 0 24px;
+}
+
+/* Preview side */
+.mpc-preview-side {
+  width: 62%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.mpc-preview-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+}
+.mpc-preview-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e2340;
+  margin: 0;
+}
+.mpc-preview-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding: 32px 28px;
+}
+
+/* Modal preview inline */
+.mpc-modal-preview-wrap {
+  background: rgba(10,15,35,0.15);
+  border-radius: 20px;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
 }

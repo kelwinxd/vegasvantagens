@@ -490,11 +490,14 @@ document.querySelectorAll(".page").forEach(page => {
 });
 
 // Configurar hierarquia para estabelecimentos
+/*
 if (gerenciadores.estabelecimentos) {
   gerenciadores.estabelecimentos.setHierarquia({
     "criar-estab": "lista-estab"
   });
 }
+
+*/
 
 // Configurar hierarquia para promoções (se necessário no futuro)
 if (gerenciadores.promocoes) {
@@ -2909,6 +2912,157 @@ async function cadastrarCupom() {
   }
 }
 
+// URLs temporárias das imagens do cupom
+let cpImgGaleriaUrl = null;
+let cpImgModalUrl   = null;
+
+// Abrir modal preview cupom
+function abrirPreviewCupom() {
+  const modal = document.getElementById('modal-preview-cupom');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('active'), 10);
+  sincronizarCupomPreview();
+  // Popula cartões e estabelecimentos se necessário
+  cpPopularCartoes();
+  cpPopularEstabelecimentos();
+}
+
+// Fechar modal preview cupom
+function fecharPreviewCupom() {
+  const modal = document.getElementById('modal-preview-cupom');
+  modal.classList.remove('active');
+  setTimeout(() => {
+    modal.style.display = 'none';
+    document.getElementById('formCupomPreview').reset();
+    cpImgGaleriaUrl = null;
+    cpImgModalUrl   = null;
+    document.getElementById('cp-thumb-galeria').innerHTML = '';
+    document.getElementById('cp-thumb-modal').innerHTML   = '';
+    fecharModalCupomPreview();
+  }, 300);
+}
+
+// Abrir/fechar modal dentro do preview
+function abrirModalCupomPreview() {
+  document.getElementById('cpv-modal-wrap').style.display = 'flex';
+}
+function fecharModalCupomPreview() {
+  document.getElementById('cpv-modal-wrap').style.display = 'none';
+}
+
+// Preview de imagem do cupom
+function cpPreviewImagem(input, tipo) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const url = e.target.result;
+    if (tipo === 'galeria') {
+      cpImgGaleriaUrl = url;
+      document.getElementById('cpv-card-img').src = url;
+      document.getElementById('cp-thumb-galeria').innerHTML = `<img src="${url}" alt="preview">`;
+    } else {
+      cpImgModalUrl = url;
+      document.getElementById('cpv-modal-img').src = url;
+      document.getElementById('cp-thumb-modal').innerHTML = `<img src="${url}" alt="preview">`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// Formatar data para exibição
+function cpFormatarData(dtString) {
+  if (!dtString) return '--/--/----';
+  const d = new Date(dtString);
+  if (isNaN(d)) return '--/--/----';
+  return d.toLocaleDateString('pt-BR');
+}
+
+// Sincronizar campos → preview em tempo real
+function sincronizarCupomPreview() {
+  const titulo        = document.getElementById('cp-titulo').value.trim()        || 'Título do cupom';
+  const descricao     = document.getElementById('cp-descricao').value.trim()     || 'Descrição do cupom aparece aqui';
+  const modalTitulo   = document.getElementById('cp-modalTitulo').value.trim()   || 'Título do Modal';
+  const modalDescricao= document.getElementById('cp-modalDescricao').value.trim()|| 'Descrição modal aparece aqui';
+  const valorDesconto = document.getElementById('cp-valorDesconto').value.trim();
+  const dataExpiracao = document.getElementById('cp-dataExpiracao').value;
+  const dataFormatada = cpFormatarData(dataExpiracao);
+
+  // Badge do card
+  document.getElementById('cpv-badge-titulo').textContent =
+    valorDesconto ? `${valorDesconto}% De desconto!` : 'Desconto!';
+
+  // Corpo do card
+  document.getElementById('cpv-titulo').textContent    = titulo;
+  document.getElementById('cpv-descricao').textContent = descricao;
+  document.getElementById('cpv-validade').textContent  = dataFormatada;
+
+  // Modal
+  document.getElementById('cpv-modal-titulo').textContent    = modalTitulo;
+  document.getElementById('cpv-modal-descricao').textContent = modalDescricao;
+  document.getElementById('cpv-modal-chip-validade').innerHTML =
+    `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Válido até ${dataFormatada}`;
+  document.getElementById('cpv-modal-validade-texto').textContent = dataFormatada;
+
+  // Pills dos cartões
+  cpAtualizarPillsPreview();
+}
+
+// Cartões selecionados → pills no card e modal
+function cpAtualizarPillsPreview() {
+  const cores = {
+    'Vegas Alimentação': { bg: '#d4f5d4', color: '#1a7a1a' },
+    'Vegas Refeição':    { bg: '#d4e8ff', color: '#1a4fa0' },
+    'Vegas Day':         { bg: '#ffe4d4', color: '#a04a1a' },
+    'Vegas Farmácia':    { bg: '#f5d4f5', color: '#7a1a7a' },
+    'Vegas Plus':        { bg: '#fff3d4', color: '#8a6000' },
+    'Vegas Pay':         { bg: '#d4fff5', color: '#007a5a' },
+  };
+
+  const checkboxes = document.querySelectorAll('#cp-cards-row input[type="checkbox"]');
+  let pillsCard  = '';
+  let pillsModal = '';
+  let count      = 0;
+
+  checkboxes.forEach(cb => {
+    if (cb.checked) {
+      const nome = cb.dataset.nome || cb.value || cb.id;
+      const cor  = cores[nome] || { bg: '#e8eaf6', color: '#434D9C' };
+      if (count < 2) {
+        pillsCard += `<span class="pill" style="background:${cor.bg};color:${cor.color};">${nome.replace('Vegas ','')}</span>`;
+      }
+      pillsModal += `<span class="pill" style="background:${cor.bg};color:${cor.color};padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;">${nome.replace('Vegas ','')}</span>`;
+      count++;
+    }
+  });
+
+  document.getElementById('cpv-meta-pills').innerHTML  = pillsCard || '<span class="pill pill-alt">Cartão</span>';
+  document.getElementById('cpv-modal-pills').innerHTML = pillsModal || '<span style="color:#888;font-size:13px;">Nenhum selecionado</span>';
+}
+
+// Popular cartões no form do preview (reutiliza os mesmos do form principal)
+function cpPopularCartoes() {
+  const container = document.getElementById('cp-cards-row');
+  if (!container || container.children.length > 0) return;
+
+  const cartoes = ['Vegas Alimentação','Vegas Refeição','Vegas Day','Vegas Farmácia','Vegas Plus','Vegas Pay'];
+  cartoes.forEach((nome, i) => {
+    container.innerHTML += `
+      <label class="field-ratio">
+        <input type="checkbox" id="cp-cartao-${i+1}" data-nome="${nome}" onchange="sincronizarCupomPreview()">
+        <span>${nome}</span>
+      </label>`;
+  });
+}
+
+// Popular estabelecimentos (adaptar conforme sua lógica real)
+function cpPopularEstabelecimentos() {
+  const container = document.getElementById('cp-estab-container');
+  if (!container || container.children.length > 0) return;
+  // Aqui você pode reutilizar a mesma lógica de renderizarCheckboxesEstabelecimentos()
+  // adaptada para o container cp-estab-container
+}
+
 
 //MAPA URL
 
@@ -4761,7 +4915,9 @@ window.popularEstabelecimentosParaGrupo = popularEstabelecimentosParaGrupo
 window.abrirPreview = abrirPreview;
 window.fecharPreview = fecharPreview;
 window.previewImagem = previewImagem;
-
-
+window.abrirPreviewCupom = abrirPreviewCupom;
+window.fecharPreviewCupom = fecharPreviewCupom;
+window.abrirModalCupomPreview = abrirModalCupomPreview
+window.cpPreviewImagem = cpPreviewImagem;
 
 
