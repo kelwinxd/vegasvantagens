@@ -2921,6 +2921,11 @@ function abrirPreviewCupom() {
   const modal = document.getElementById('modal-preview-cupom');
   modal.style.display = 'flex';
   setTimeout(() => modal.classList.add('active'), 10);
+
+    // ✅ Registra listeners no form (igual ao formCadastro2)
+  const form = document.getElementById('formCupomPreview');
+  form.addEventListener('input', sincronizarCupomPreview);
+  form.addEventListener('change', sincronizarCupomPreview);
   sincronizarCupomPreview();
   // Popula cartões e estabelecimentos se necessário
   cpPopularCartoes();
