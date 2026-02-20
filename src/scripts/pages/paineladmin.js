@@ -3091,7 +3091,7 @@ async function cpPopularEstabelecimentos() {
     const label = document.createElement('label');
     label.className = 'field-ratio';
     label.innerHTML = `
-      <input type="checkbox" value="${estab.id}" data-nome="${estab.nomeFantasia || estab.nome}">
+      <input type="checkbox" name="estabelecimentos[]" value="${estab.id}" data-nome="${estab.nomeFantasia || estab.nome}">
       <span>${estab.nomeFantasia || estab.nome}</span>
     `;
     container.appendChild(label);
