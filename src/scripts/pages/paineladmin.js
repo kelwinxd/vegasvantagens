@@ -2799,6 +2799,7 @@ function obterCartoesSelecionadosCupom() {
 
 // ========== FUNÇÃO COMPLETA DE CADASTRAR CUPOM (ATUALIZADA) ==========
 
+/* Cadastro antigo 
 async function cadastrarCupom() {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -2903,6 +2904,109 @@ async function cadastrarCupom() {
     document.getElementById("formCupom").reset();
     
     // Recarrega os checkboxes
+    renderizarCheckboxesEstabelecimentos();
+    carregarCartoesParaCupom();
+
+  } catch (err) {
+    alert("Erro: " + err.message);
+    console.error(err);
+  }
+}
+
+*/
+
+async function cadastrarCupom() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  const estabelecimentosSelecionados = obterEstabelecimentosSelecionados();
+  if (!estabelecimentosSelecionados || estabelecimentosSelecionados.length === 0) {
+    alert("Por favor, selecione pelo menos um estabelecimento!");
+    return;
+  }
+
+  const cartoesSelecionados = obterCartoesSelecionadosCupom();
+
+  function toIso(dt) {
+    return dt ? new Date(dt).toISOString() : null;
+  }
+
+  const ativo = document.getElementById("cp-ativo").checked;
+
+  const data = {
+    codigo:               document.getElementById("cp-codigo").value,
+    titulo:               document.getElementById("cp-titulo").value,
+    descricao:            document.getElementById("cp-descricao").value,
+    modalTitulo:          document.getElementById("cp-modalTitulo").value,
+    modalDescricao:       document.getElementById("cp-modalDescricao").value,
+    tipo:                 "Percentual",
+    valorDesconto:        parseFloat(document.getElementById("cp-valorDesconto").value),
+    valorMinimoCompra:    parseFloat(document.getElementById("cp-valorMinimoCompra").value) || 0,
+
+    dataInicio:           toIso(document.getElementById("cp-dataInicio").value),
+    dataExpiracao:        toIso(document.getElementById("cp-dataExpiracao").value),
+
+    limiteUso:            parseInt(document.getElementById("cp-limiteUso").value) || 0,
+    limiteUsoPorUsuario:  parseInt(document.getElementById("cp-limiteUsoPorUsuario").value) || 0,
+
+    ativo:                ativo,
+    estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
+    status:               ativo ? "Publicado" : "Rascunho",
+
+    cartoesAceitosIds:    cartoesSelecionados
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cupons`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Erro ao criar cupom: " + res.status);
+
+    const cupomCriado = await res.json();
+    const cupomId = cupomCriado.id;
+
+    console.log("Cupom criado com ID:", cupomId);
+
+    const galeriaFile = document.getElementById("cp-imgGaleria").files[0];
+    const modalFile   = document.getElementById("cp-imgModal").files[0];
+
+    async function enviarImagem(tipo, file) {
+      const form = new FormData();
+      form.append("imagem", file);
+      form.append("tipo", tipo);
+
+      const imgRes = await fetch(`${API_BASE}/api/Cupons/${cupomId}/imagens`, {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + token },
+        body: form
+      });
+
+      if (!imgRes.ok) throw new Error("Erro ao enviar imagem " + tipo);
+    }
+
+    if (galeriaFile) {
+      await enviarImagem("Galeria", galeriaFile);
+      console.log("Imagem Galeria enviada!");
+    }
+
+    if (modalFile) {
+      await enviarImagem("Modal", modalFile);
+      console.log("Imagem Modal enviada!");
+    }
+
+    alert("Cupom criado com sucesso!");
+    carregarCuponsPromocoes();
+
+    document.getElementById("formCupom").reset();
     renderizarCheckboxesEstabelecimentos();
     carregarCartoesParaCupom();
 
