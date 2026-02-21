@@ -2911,6 +2911,13 @@ aspect-ratio: 1/1;
   padding: 32px 28px;
 }
 
+.input-cp {
+    width: 100%;
+  min-width: 0;      /* essencial em flex! */
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 /* Modal preview inline */
 .mpc-modal-preview-wrap {
   background: rgba(10,15,35,0.15);

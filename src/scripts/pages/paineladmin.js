@@ -2792,7 +2792,7 @@ async function carregarCartoesParaCupom() {
 // Função para obter IDs dos cartões selecionados no formulário de cupom
 function obterCartoesSelecionadosCupom() {
   return Array.from(
-    document.querySelectorAll('.cupom-cards-row input[type="checkbox"]:checked')
+    document.querySelectorAll('#cp-cards-row-preview input[type="checkbox"]:checked')
   ).map(input => Number(input.value));
 }
 
@@ -2936,28 +2936,49 @@ async function cadastrarCupom() {
 
   const ativo = document.getElementById("cp-ativo").checked;
 
-  const data = {
-    codigo:               document.getElementById("cp-codigo").value,
-    titulo:               document.getElementById("cp-titulo").value,
-    descricao:            document.getElementById("cp-descricao").value,
-    modalTitulo:          document.getElementById("cp-modalTitulo").value,
-    modalDescricao:       document.getElementById("cp-modalDescricao").value,
-    tipo:                 "Percentual",
-    valorDesconto:        parseFloat(document.getElementById("cp-valorDesconto").value),
-    valorMinimoCompra:    parseFloat(document.getElementById("cp-valorMinimoCompra").value) || 0,
+  const valorDesconto     = parseFloat(document.getElementById("cp-valorDesconto").value);
+  const valorMinimoCompra = parseFloat(document.getElementById("cp-valorMinimoCompra").value) || 0;
+  const limiteUso         = parseInt(document.getElementById("cp-limiteUso").value) || 0;
+  const limiteUsoPorUsuario = parseInt(document.getElementById("cp-limiteUsoPorUsuario").value) || 0;
 
+  // Validação dos campos obrigatórios
+  if (!document.getElementById("cp-codigo").value.trim()) {
+    alert("Preencha o código do cupom!"); return;
+  }
+  if (!document.getElementById("cp-titulo").value.trim()) {
+    alert("Preencha o título do cupom!"); return;
+  }
+  if (isNaN(valorDesconto)) {
+    alert("Preencha o valor de desconto!"); return;
+  }
+  if (!document.getElementById("cp-dataInicio").value) {
+    alert("Preencha a data de início!"); return;
+  }
+  if (!document.getElementById("cp-dataExpiracao").value) {
+    alert("Preencha a data de expiração!"); return;
+  }
+
+  const data = {
+    codigo:               document.getElementById("cp-codigo").value.trim(),
+    titulo:               document.getElementById("cp-titulo").value.trim(),
+    descricao:            document.getElementById("cp-descricao").value.trim(),
+    modalTitulo:          document.getElementById("cp-modalTitulo").value.trim(),
+    modalDescricao:       document.getElementById("cp-modalDescricao").value.trim(),
+    tipo:                 "Percentual",
+    valorDesconto,
+    valorMinimoCompra,
     dataInicio:           toIso(document.getElementById("cp-dataInicio").value),
     dataExpiracao:        toIso(document.getElementById("cp-dataExpiracao").value),
-
-    limiteUso:            parseInt(document.getElementById("cp-limiteUso").value) || 0,
-    limiteUsoPorUsuario:  parseInt(document.getElementById("cp-limiteUsoPorUsuario").value) || 0,
-
-    ativo:                ativo,
+    limiteUso,
+    limiteUsoPorUsuario,
+    ativo,
     estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
     status:               ativo ? "Publicado" : "Rascunho",
-
     cartoesAceitosIds:    cartoesSelecionados
   };
+
+  // 👇 LOG para conferir o payload antes de enviar
+  console.log("Payload enviado:", JSON.stringify(data, null, 2));
 
   try {
     const res = await fetch(`${API_BASE}/api/Cupons`, {
@@ -2969,11 +2990,15 @@ async function cadastrarCupom() {
       body: JSON.stringify(data)
     });
 
-    if (!res.ok) throw new Error("Erro ao criar cupom: " + res.status);
+    // 👇 Lê o corpo do erro para diagnóstico
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error("Resposta da API (erro):", errBody);
+      throw new Error(`Erro ao criar cupom: ${res.status} — ${errBody}`);
+    }
 
     const cupomCriado = await res.json();
     const cupomId = cupomCriado.id;
-
     console.log("Cupom criado com ID:", cupomId);
 
     const galeriaFile = document.getElementById("cp-imgGaleria").files[0];
@@ -2993,20 +3018,14 @@ async function cadastrarCupom() {
       if (!imgRes.ok) throw new Error("Erro ao enviar imagem " + tipo);
     }
 
-    if (galeriaFile) {
-      await enviarImagem("Galeria", galeriaFile);
-      console.log("Imagem Galeria enviada!");
-    }
-
-    if (modalFile) {
-      await enviarImagem("Modal", modalFile);
-      console.log("Imagem Modal enviada!");
-    }
+    if (galeriaFile) { await enviarImagem("Galeria", galeriaFile); console.log("Imagem Galeria enviada!"); }
+    if (modalFile)   { await enviarImagem("Modal",   modalFile);   console.log("Imagem Modal enviada!"); }
 
     alert("Cupom criado com sucesso!");
     carregarCuponsPromocoes();
 
-    document.getElementById("formCupom").reset();
+    // Reset — usa o ID correto do form novo
+    document.getElementById("formCupomPreview").reset();
     renderizarCheckboxesEstabelecimentos();
     carregarCartoesParaCupom();
 
