@@ -3147,7 +3147,7 @@ function cpAtualizarPillsPreview() {
     'Vegas Pay':         { bg: '#d4fff5', color: '#007a5a' },
   };
 
-  const checkboxes = document.querySelectorAll('#cp-cards-row input[type="checkbox"]');
+  const checkboxes = document.querySelectorAll('#cp-cards-row-preview input[type="checkbox"]');
   let pillsCard  = '';
   let pillsModal = '';
   let count      = 0;
