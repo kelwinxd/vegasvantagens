@@ -1533,12 +1533,14 @@ function aplicarFiltrosNaListaAtual() {
   }
   
   // Filtro por status
-  if (filtrosCuponsAtivos.status === "publicados") {
-    resultado = resultado.filter(cupom => {
-      return cupom.status === "Publicado" && 
-             cupom.ativo === true && 
-             !cupomEstaExpirado(cupom);
-    });
+
+if (filtrosCuponsAtivos.status === "publicados") {
+  resultado = resultado.filter(cupom => {
+    const estaAtivo = cupom.ativo === true || cupom.ativo === "true";
+    return cupom.status === "Publicado" && 
+           estaAtivo && 
+           !cupomEstaExpirado(cupom);
+  });
     console.log(`  Após status (publicados): ${resultado.length} resultados`);
     
   } else if (filtrosCuponsAtivos.status === "expirados") {
@@ -1572,6 +1574,7 @@ function aplicarFiltrosNaListaAtual() {
   
   // Renderiza os resultados
   renderizarPromocoes(resultado);
+  console.log("Cupom exemplo:", window._cuponsPromocoesAtual[0]);
   
   // Atualiza contadores com a lista atual (não filtrada por status)
   _atualizarContadoresCuponsComLista(window._cuponsPromocoesAtual);
