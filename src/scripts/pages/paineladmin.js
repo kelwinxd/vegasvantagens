@@ -2974,7 +2974,7 @@ async function cadastrarCupom() {
     ativo: ativo,
     estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
     status:               ativo ? "Publicado" : "Rascunho",
-    cartoesAceitosIds:    cartoesSelecionados
+    cartoesAceitosIds:    cartoesSelecionados.map(id => parseInt(id))
   };
 
   // 👇 LOG para conferir o payload antes de enviar
