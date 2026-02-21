@@ -1129,12 +1129,15 @@ function renderizarPromocoes(cupons) {
         ? c.imagens[0]
         : PLACEHOLDER;
 
-    // Renderiza badges de cartões
-    const cartoesHTML = c.cartoesAceitos && c.cartoesAceitos.length > 0
-      ? c.cartoesAceitos.map(cartao => 
-          `<span class="badge-cartao">${cartao.nome}</span>`
-        ).join('')
-      : '';
+    // Renderiza badges de cartões (máximo 2 + contador)
+const cartoesVisiveis = c.cartoesAceitos ? c.cartoesAceitos.slice(0, 2) : [];
+const cartoesExtras = c.cartoesAceitos ? c.cartoesAceitos.length - 2 : 0;
+
+const cartoesHTML = cartoesVisiveis.length > 0
+  ? cartoesVisiveis.map(cartao => 
+      `<span class="badge-cartao">${cartao.nome}</span>`
+    ).join('') + (cartoesExtras > 0 ? `<span class="badge-cartao badge-cartao-extra">+${cartoesExtras}</span>` : '')
+  : '';
 
     // Verifica se está publicado (status === "Publicado")
     const isPublicado = c.status === "Publicado";
@@ -1182,6 +1185,10 @@ function renderizarPromocoes(cupons) {
       </article>
     `);
   });   
+
+  cupons.forEach(c => {
+  console.log(`Cupom: ${c.titulo} | status: "${c.status}" | ativo: ${c.ativo} (${typeof c.ativo})`)})
+  
 
   // 🔹 SALVAR O CACHE GLOBALMENTE
   window._cuponsCacheMap = cuponsCacheMap;
