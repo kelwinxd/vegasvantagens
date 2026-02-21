@@ -2968,6 +2968,7 @@ async function cadastrarCupom() {
     alert("Preencha a data de expiração!"); return;
   }
 
+
   const data = {
     codigo:               document.getElementById("cp-codigo").value.trim(),
     titulo:               document.getElementById("cp-titulo").value.trim(),
@@ -3007,9 +3008,16 @@ async function cadastrarCupom() {
       throw new Error(`Erro ao criar cupom: ${res.status} — ${errBody}`);
     }
 
-    const cupomCriado = await res.json();
-    const cupomId = cupomCriado.id;
-    console.log("Cupom criado com ID:", cupomId);
+    
+  const cupomCriado = await res.json();
+const cupomId = cupomCriado.id;
+console.log("Cupom criado com ID:", cupomId);
+
+// 👇 Força o status correto logo após criar
+if (ativo) {
+  await atualizarStatusCupomPatch(cupomId, "Publicado");
+  console.log("Status forçado para Publicado");
+}
 
     const galeriaFile = document.getElementById("cp-imgGaleria").files[0];
     const modalFile   = document.getElementById("cp-imgModal").files[0];
