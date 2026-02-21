@@ -2793,7 +2793,7 @@ async function carregarCartoesParaCupom() {
 function obterCartoesSelecionadosCupom() {
   return Array.from(
     document.querySelectorAll('#cp-cards-row-preview input[type="checkbox"]:checked')
-  ).map(input => Number(input.value));
+  ).map(input => parseInt(input.dataset.id));
 }
 
 
@@ -2974,7 +2974,7 @@ async function cadastrarCupom() {
     ativo: ativo,
     estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
     status:               ativo ? "Publicado" : "Rascunho",
-    cartoesAceitosIds:    cartoesSelecionados.map(id => parseInt(id))
+    cartoesAceitosIds:    cartoesSelecionados
   };
 
   // 👇 LOG para conferir o payload antes de enviar
