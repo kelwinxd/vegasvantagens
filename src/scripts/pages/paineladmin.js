@@ -2971,7 +2971,7 @@ async function cadastrarCupom() {
     dataExpiracao:        toIso(document.getElementById("cp-dataExpiracao").value),
     limiteUso,
     limiteUsoPorUsuario,
-    ativo,
+    ativo: ativo,
     estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
     status:               ativo ? "Publicado" : "Rascunho",
     cartoesAceitosIds:    cartoesSelecionados
@@ -3169,18 +3169,48 @@ function cpAtualizarPillsPreview() {
 }
 
 // Popular cartões no form do preview (reutiliza os mesmos do form principal)
-function cpPopularCartoes() {
-  const container = document.getElementById('cp-cards-row');
+async function cpPopularCartoes() {
+  const container = document.getElementById('cp-cards-row-preview');
   if (!container || container.children.length > 0) return;
 
-  const cartoes = ['Vegas Alimentação','Vegas Refeição','Vegas Day','Vegas Farmácia','Vegas Plus','Vegas Pay'];
-  cartoes.forEach((nome, i) => {
-    container.innerHTML += `
-      <label class="field-ratio">
-        <input type="checkbox" id="cp-cartao-${i+1}" data-nome="${nome}" onchange="sincronizarCupomPreview()">
-        <span>${nome}</span>
-      </label>`;
-  });
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Cartoes`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+
+    if (!res.ok) throw new Error("Erro ao buscar cartões");
+
+    const cartoes = await res.json();
+
+    cartoes.forEach(cartao => {
+      const label = document.createElement("label");
+      label.className = "field-ratio";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.id = `cp-cartao-${cartao.id}`;
+      input.dataset.id = cartao.id;
+      input.dataset.nome = cartao.nome;
+      input.addEventListener("change", sincronizarCupomPreview);
+
+      const span = document.createElement("span");
+      span.textContent = cartao.nome;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      container.appendChild(label);
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível carregar os cartões.");
+  }
 }
 
 async function cpPopularEstabelecimentos() {
