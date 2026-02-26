@@ -919,16 +919,13 @@ function _configurarEventListeners() {
     console.warn("  ⚠️ Input de busca não encontrado");
   }
   
-  // Tabs de status
+  // Tabs de status (statusPublicacao)
   const tabs = document.querySelectorAll(".tab-filtro");
   if (tabs.length > 0) {
     tabs.forEach(tab => {
       tab.addEventListener("click", function(e) {
-        // Remove active de todas
         tabs.forEach(t => t.classList.remove("active"));
-        // Adiciona active na clicada
         this.classList.add("active");
-        // Atualiza filtro
         filtrosAtivos.status = this.getAttribute("data-status");
         aplicarFiltros();
       });
@@ -970,11 +967,25 @@ function _configurarEventListeners() {
     });
     console.log("  ✅ Select de grupo configurado");
   }
+
+  // Select Status Operacional
+  const selectStatusOp = document.getElementById("filtroStatusOperacional");
+  if (selectStatusOp) {
+    selectStatusOp.addEventListener("change", function(e) {
+      filtrosAtivos.statusOperacional = e.target.value;
+      console.log("⚙️ Status operacional selecionado:", e.target.value);
+      aplicarFiltros();
+    });
+    console.log("  ✅ Select de status operacional configurado");
+  } else {
+    console.warn("  ⚠️ Select de status operacional não encontrado");
+  }
   
   console.log("✅ Event listeners configurados");
 }
 
 // ========== APLICAR FILTROS ==========
+
 function aplicarFiltros() {
   console.log("🔍 Aplicando filtros...", filtrosAtivos);
   
@@ -991,20 +1002,26 @@ function aplicarFiltros() {
     console.log(`  Após busca: ${resultado.length} resultados`);
   }
   
-  // Filtro por status
+  // Filtro por statusPublicacao
   if (filtrosAtivos.status !== "todos") {
     const statusBusca = filtrosAtivos.status === "publicados" ? "Publicado" : "Rascunho";
-    resultado = resultado.filter(estab => estab.status === statusBusca);
-    console.log(`  Após status (${statusBusca}): ${resultado.length} resultados`);
+    resultado = resultado.filter(estab => estab.statusPublicacao === statusBusca);
+    console.log(`  Após statusPublicacao (${statusBusca}): ${resultado.length} resultados`);
+  }
+
+  // Filtro por statusOperacional
+  if (filtrosAtivos.statusOperacional && filtrosAtivos.statusOperacional !== "Todos") {
+    resultado = resultado.filter(estab => estab.statusOperacional === filtrosAtivos.statusOperacional);
+    console.log(`  Após statusOperacional (${filtrosAtivos.statusOperacional}): ${resultado.length} resultados`);
   }
   
-  // Filtro por cidade - CORRIGIDO
+  // Filtro por cidade
   if (filtrosAtivos.cidade && filtrosAtivos.cidade !== 'Todos') {
     resultado = resultado.filter(estab => estab.cidade === filtrosAtivos.cidade);
     console.log(`  Após cidade (${filtrosAtivos.cidade}): ${resultado.length} resultados`);
   }
   
-  // Filtro por categoria - CORRIGIDO
+  // Filtro por categoria
   if (filtrosAtivos.categoria && filtrosAtivos.categoria !== 'Todos') {
     resultado = resultado.filter(estab => {
       return estab.categorias && 
@@ -1014,7 +1031,7 @@ function aplicarFiltros() {
     console.log(`  Após categoria (${filtrosAtivos.categoria}): ${resultado.length} resultados`);
   }
   
-  // Filtro por grupo - CORRIGIDO
+  // Filtro por grupo
   if (filtrosAtivos.grupo && filtrosAtivos.grupo !== 'Todos') {
     const grupoId = parseInt(filtrosAtivos.grupo);
     resultado = resultado.filter(estab => estab.grupoId === grupoId);
@@ -1023,14 +1040,12 @@ function aplicarFiltros() {
   
   console.log(`✅ ${resultado.length} de ${estabelecimentosCache.length} estabelecimentos`);
   
-  // Renderiza os resultados
   if (typeof renderizarLista === 'function') {
     renderizarLista(resultado, "listaCards");
   } else {
     console.error("❌ Função renderizarLista não encontrada!");
   }
   
-  // Atualiza contadores
   _atualizarContadores();
 }
 
@@ -1038,8 +1053,8 @@ function aplicarFiltros() {
 // ========== ATUALIZAR CONTADORES ==========
 function _atualizarContadores() {
   const total = estabelecimentosCache.length;
-  const publicados = estabelecimentosCache.filter(e => e.status === "Publicado").length;
-  const rascunhos = estabelecimentosCache.filter(e => e.status === "Rascunho").length;
+  const publicados = estabelecimentosCache.filter(e => e.statusPublicacao === "Publicado").length;
+  const rascunhos = estabelecimentosCache.filter(e => e.statusPublicacao === "Rascunho").length;
   
   const countTodos = document.getElementById("count-todos");
   const countPublicados = document.getElementById("count-publicados");
@@ -1051,6 +1066,9 @@ function _atualizarContadores() {
   
   console.log(`📊 Contadores: Total=${total}, Publicados=${publicados}, Rascunhos=${rascunhos}`);
 }
+
+
+
 
 // ========== INICIALIZAÇÃO AUTOMÁTICA ==========
 // Garante que os filtros sejam inicializados quando o DOM estiver pronto
@@ -1085,6 +1103,10 @@ function limparFiltros() {
   
   const selectGrupo = document.getElementById("filtroGrupo");
   if (selectGrupo) selectGrupo.value = "";
+
+  const filtroStatusOp = document.getElementById("filtroStatusOperacional");
+  if (filtroStatusOp) filtroStatusOp.value = "Todos";
+  filtrosAtivos.statusOperacional = "Todos";
   
   // Ativa a tab "Todos"
   const tabs = document.querySelectorAll(".tab-filtro");
