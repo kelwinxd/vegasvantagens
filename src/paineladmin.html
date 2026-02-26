@@ -1176,6 +1176,35 @@
               </div>
             </div>
 
+            <!-- NOVO: Status -->
+            <h3 class="title-form">Status</h3>
+
+            <div class="row">
+              <div class="field">
+                <label>Status Editorial (Publicação)</label>
+                <select id="statusPublicacao2">
+                  <option value="Rascunho">Rascunho</option>
+                  <option value="Publicado">Publicado</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Status Operacional (Negócio)</label>
+                <select id="statusOperacional2" onchange="toggleMotivoCancelamento()">
+                  <option value="Ativo">Ativo</option>
+                  <option value="Pausado">Pausado</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row" id="row-motivo-cancelamento" style="display: none;">
+              <div class="field full">
+                <label>Motivo do Cancelamento</label>
+                <textarea placeholder="Descreva o motivo do cancelamento..." id="motivoCancelamento2" rows="2"></textarea>
+              </div>
+            </div>
+
             <h3 class="title-form">Endereço</h3>
 
             <div class="row">
@@ -1247,6 +1276,58 @@
               <div class="field">
                 <label>Longitude</label>
                 <input type="text" placeholder="-47.3313" id="longitude2" class="longitude2" />
+              </div>
+            </div>
+
+            <!-- NOVO: Dados do Consultor -->
+            <h3 class="title-form">Dados do Consultor</h3>
+
+            <div class="row">
+              <div class="field">
+                <label>Nome do Consultor</label>
+                <input type="text" placeholder="Ex: João Silva" id="consultorNome2" />
+              </div>
+
+              <div class="field">
+                <label>Email do Consultor</label>
+                <input type="email" placeholder="consultor@empresa.com" id="consultorEmail2" />
+              </div>
+            </div>
+
+            <!-- NOVO: Representante Legal -->
+            <h3 class="title-form">Representante Legal</h3>
+
+            <div class="row">
+              <div class="field">
+                <label>Nome do Representante</label>
+                <input type="text" placeholder="Ex: Maria Oliveira" id="representanteLegalNome2" />
+              </div>
+
+              <div class="field">
+                <label>CPF do Representante</label>
+                <input type="text" placeholder="000.000.000-00" id="cpfRepresentante2" />
+              </div>
+            </div>
+
+            <!-- NOVO: Segundo Contato -->
+            <h3 class="title-form">Segundo Contato</h3>
+
+            <div class="row">
+              <div class="field">
+                <label>Nome</label>
+                <input type="text" placeholder="Ex: Carlos Pereira" id="segundoContatoNome2" />
+              </div>
+
+              <div class="field">
+                <label>Telefone</label>
+                <input type="text" placeholder="(11) 99999-9999" id="segundoContatoTelefone2" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field full">
+                <label>Cargo</label>
+                <input type="text" placeholder="Ex: Gerente, Sócio..." id="segundoContatoCargo2" />
               </div>
             </div>
 

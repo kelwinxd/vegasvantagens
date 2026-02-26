@@ -113,6 +113,219 @@ async function carregarCartoes() {
 
  inicializarPaginaEstabelecimentos();
 
+
+function renderizarLista(lista, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (lista.length === 0) {
+    container.innerHTML = "<p>Nenhum estabelecimento.</p>";
+    return;
+  }
+
+  lista.forEach(estab => {
+    const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+    let imagemSrc = PLACEHOLDER;
+
+    if (estab.imagemPrincipal) {
+      imagemSrc = estab.imagemPrincipal;
+    } else if (estab.imagens && estab.imagens.length > 0) {
+      const fachada = estab.imagens.find(i => i.fachada);
+      const logo = estab.imagens.find(i => i.logo);
+
+      if (fachada && fachada.url) {
+        imagemSrc = fachada.url;
+      } else if (logo && logo.url) {
+        imagemSrc = logo.url;
+      }
+    }
+
+    // Renderiza categorias
+    let categoriasHTML = '';
+    if (estab.categorias && estab.categorias.length > 0) {
+      categoriasHTML = estab.categorias.map(cat =>
+        `<span class="categoria-badge">${cat}</span>`
+      ).join('');
+    }
+
+    // Badge do status operacional
+    const statusOpClass = {
+      "Ativo": "status-op-ativo",
+      "Pausado": "status-op-pausado",
+      "Cancelado": "status-op-cancelado"
+    }[estab.statusOperacional] || "status-op-ativo";
+
+    const statusOpLabel = estab.statusOperacional || "Ativo";
+
+    // Toggle controla statusPublicacao
+    const isPublicado = estab.statusPublicacao === "Publicado";
+
+    const cardHTML = `
+     <div class="card-estab-novo" data-id="${estab.id}">
+        <div class="card-img-container">
+          <img src="${imagemSrc}" alt="${estab.nome}">
+        </div>
+        
+        <div class="info-wrapper">
+          <div class="card-info-container">
+            <div class="header-info-container">
+              <div class="header-info-names">
+                <h3 class="card-titulo">${estab.nome}</h3>
+                <p class="card-localizacao">${estab.cidade || ""} - ${estab.unidadeFederativa || "SP"}</p>
+              </div>
+
+              <div class="toggle-container">
+                <label class="switch-card" title="Publicação: ${isPublicado ? 'Publicado' : 'Rascunho'}">
+                  <input type="checkbox" id="toggle-pub-${estab.id}" ${isPublicado ? "checked" : ""} data-estab-id="${estab.id}">
+                  <span class="slider-card"></span>
+                </label>
+                <span class="status-op-badge ${statusOpClass}">${statusOpLabel}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-acoes-container">
+            <div class="card-categorias">
+              ${categoriasHTML}
+            </div>
+            <div class="botoes-acoes">
+              <button class="btn-acao btn-editar" data-action="editar">
+                <img src="./imgs/icons/edit-e.svg" alt="Editar">
+              </button>
+              <button class="btn-acao btn-excluir" data-action="excluir">
+                <img src="./imgs/icons/trash-02.svg" alt="Excluir">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', cardHTML);
+
+    const card = container.lastElementChild;
+
+    // Toggle: altera statusPublicacao, mantém statusOperacional atual do objeto
+    const togglePub = card.querySelector(`#toggle-pub-${estab.id}`);
+    togglePub.addEventListener("change", async (e) => {
+      const isChecked = e.target.checked;
+      const estabelecimentoId = e.target.dataset.estabId;
+      const novoStatusPublicacao = isChecked ? "Publicado" : "Rascunho";
+
+      try {
+        await atualizarStatusEstabelecimentoPatch(
+          estabelecimentoId,
+          novoStatusPublicacao,
+          estab.statusOperacional || "Ativo"
+        );
+
+        // Atualiza cache local
+        estab.statusPublicacao = novoStatusPublicacao;
+
+        // Atualiza cache global
+        const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
+        if (index !== -1) {
+          estabelecimentosCache[index].statusPublicacao = novoStatusPublicacao;
+        }
+
+        togglePub.closest('label').title = `Publicação: ${novoStatusPublicacao}`;
+
+        console.log(`✅ statusPublicacao do estabelecimento ${estabelecimentoId} atualizado para: ${novoStatusPublicacao}`);
+
+        if (typeof _atualizarContadores === 'function') {
+          _atualizarContadores();
+        }
+
+      } catch (err) {
+        console.error("❌ Erro ao alterar statusPublicacao:", err);
+        alert("Erro ao alterar status de publicação: " + err.message);
+        e.target.checked = !isChecked;
+      }
+    });
+
+    // Botão editar
+    const btnEditar = card.querySelector('[data-action="editar"]');
+    btnEditar.addEventListener("click", (e) => {
+      e.stopPropagation();
+      abrirModalEditar(estab);
+    });
+
+    // Botão excluir
+    const btnExcluir = card.querySelector('[data-action="excluir"]');
+    btnExcluir.addEventListener("click", async (e) => {
+      e.stopPropagation();
+
+      if (!confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) return;
+
+      const token = localStorage.getItem("token");
+
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/Estabelecimentos/${estab.id}`,
+          {
+            method: "DELETE",
+            headers: { "Authorization": "Bearer " + token }
+          }
+        );
+
+        if (!res.ok) throw new Error("Erro ao excluir");
+
+        const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
+        if (index > -1) estabelecimentosCache.splice(index, 1);
+
+        card.remove();
+        alert("Estabelecimento excluído com sucesso!");
+
+        if (typeof _atualizarContadores === 'function') _atualizarContadores();
+        if (typeof inicializarFiltros === 'function') inicializarFiltros();
+
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao excluir o estabelecimento.");
+      }
+    });
+  });
+}
+
+// ========== PATCH STATUS — mesmo endpoint /status, envia ambos os campos ==========
+async function atualizarStatusEstabelecimentoPatch(estabelecimentoId, statusPublicacao, statusOperacional) {
+  const token = localStorage.getItem("token");
+
+  if (!token) throw new Error("Token não encontrado");
+
+  console.log(`🔄 Atualizando status do estabelecimento ${estabelecimentoId}:`, { statusPublicacao, statusOperacional });
+
+  const response = await fetch(`${API_BASE}/api/Estabelecimentos/${estabelecimentoId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": "Bearer " + token,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ statusPublicacao, statusOperacional })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("❌ Erro na resposta:", errorText);
+    throw new Error(`Erro ao atualizar status: ${response.status} - ${errorText}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    const data = await response.json();
+    console.log("✅ Resposta do servidor:", data);
+    return data;
+  }
+
+  console.log("✅ Status atualizado com sucesso");
+  return null;
+}
+
+
+ /*
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -338,6 +551,7 @@ async function atualizarStatusEstabelecimentoPatch(estabelecimentoId, novoStatus
   }
 }
 
+*/
 
 
 // ========== INICIALIZAÇÃO ==========
@@ -2421,7 +2635,6 @@ async function salvarEdicaoCupom() {
   document.querySelectorAll('#edit-cartoes-container input[type="checkbox"]:checked')
 ).map(cb => parseInt(cb.value));
 
-    const cartoesAceitosIds = Array.from(selectCartoes.selectedOptions).map(opt => parseInt(opt.value));
 
     // Status baseado no checkbox ativo
     const status = ativo ? "Publicado" : "Rascunho";
@@ -3528,59 +3741,67 @@ async function cadastrarEstabelecimento2() {
   }
 
   const categoriaId = parseInt(document.getElementById("categoriaId2").value) || null;
-
-  const cidadeSelect = document.getElementById("cidadeId2");
-
   const ativo = document.getElementById("ativoEstab2").checked;
-  
 
-const data = {
-  "nome": document.getElementById("nomeEstab2").value.trim(),
-  "razaoSocial": document.getElementById("razaoSocial2").value.trim(),
-  "cnpj": document.getElementById("cnpj2").value.trim(),
-  "telefone": document.getElementById("telefone2").value.trim(),
-  "emailContato": document.getElementById("emailContato2").value.trim(),
-  "ativo": document.getElementById("ativoEstab2").checked,
+  const data = {
+    "nome": document.getElementById("nomeEstab2").value.trim(),
+    "razaoSocial": document.getElementById("razaoSocial2").value.trim(),
+    "cnpj": document.getElementById("cnpj2").value.trim(),
+    "telefone": document.getElementById("telefone2").value.trim(),
+    "emailContato": document.getElementById("emailContato2").value.trim(),
+    "ativo": ativo,
 
-  "categoriaId": Number(document.getElementById("categoriaId2").value),
-  "cidadeId": Number(document.getElementById("cidadeId2").value),
+    "categoriaId": Number(document.getElementById("categoriaId2").value),
+    "cidadeId": Number(document.getElementById("cidadeId2").value),
 
-  "rua": document.getElementById("rua2").value.trim(),
-  "numero": document.getElementById("numero2").value.trim(),
-  "bairro": document.getElementById("bairro2").value.trim(),
-  "complemento": document.getElementById("complemento2").value.trim(),
-  "cep": document.getElementById("cep2").value.trim(),
+    "rua": document.getElementById("rua2").value.trim(),
+    "numero": document.getElementById("numero2").value.trim(),
+    "bairro": document.getElementById("bairro2").value.trim(),
+    "complemento": document.getElementById("complemento2").value.trim(),
+    "cep": document.getElementById("cep2").value.trim(),
 
-  "latitude": Number(document.getElementById("latitude2").value),
-  "longitude": Number(document.getElementById("longitude2").value),
+    "latitude": Number(document.getElementById("latitude2").value),
+    "longitude": Number(document.getElementById("longitude2").value),
 
-  "grupoId": Number(document.getElementById("grupo2").value) || null,
-  "mapaUrl": document.getElementById("mapurl2").value.trim(),
-  "sobre": document.getElementById("sobre2").value.trim(),
-  "status": ativo ? "Publicado" : "Rascunho"
-};
+    "grupoId": Number(document.getElementById("grupo2").value) || null,
+    "mapaUrl": document.getElementById("mapurl2").value.trim(),
+    "sobre": document.getElementById("sobre2").value.trim(),
 
+    // Status
+    "statusPublicacao": document.getElementById("statusPublicacao2").value,
+    "statusOperacional": document.getElementById("statusOperacional2").value,
+    "motivoCancelamento": document.getElementById("statusOperacional2").value === "Cancelado"
+      ? document.getElementById("motivoCancelamento2").value.trim()
+      : "",
 
+    // Consultor
+    "consultorNome": document.getElementById("consultorNome2").value.trim(),
+    "consultorEmail": document.getElementById("consultorEmail2").value.trim(),
 
-console.log('rodou antes do  try')
+    // Representante Legal
+    "representanteLegalNome": document.getElementById("representanteLegalNome2").value.trim(),
+    "cpfRepresentante": document.getElementById("cpfRepresentante2").value.trim(),
 
+    // Segundo Contato
+    "segundoContatoNome": document.getElementById("segundoContatoNome2").value.trim(),
+    "segundoContatoTelefone": document.getElementById("segundoContatoTelefone2").value.trim(),
+    "segundoContatoCargo": document.getElementById("segundoContatoCargo2").value.trim(),
+  };
+
+  console.log('rodou antes do try');
 
   try {
     const res = await fetch(`${API_BASE}/api/Estabelecimentos/Criar`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
-          body: JSON.stringify(data),
-        
-        });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data),
+    });
 
-console.log(data)
-
-console.log('depois do try');
-
-
+    console.log(data);
+    console.log('depois do try');
 
     if (!res.ok) {
       const erro = await res.text();
@@ -3589,7 +3810,7 @@ console.log('depois do try');
 
     const estab = await res.json();
 
-    // 🔹 VINCULAR CATEGORIA (AQUI ESTAVA FALTANDO)
+    // 🔹 VINCULAR CATEGORIA
     if (categoriaId) {
       await vincularCategoria(estab.id, categoriaId);
     }
@@ -3598,29 +3819,27 @@ console.log('depois do try');
     const grupoId = Number(document.getElementById("grupo2").value);
     if (grupoId) {
       await fetch(
-    `${API_BASE}/api/Grupos/${grupoId}/vincular-estabelecimentos/${estab.id}`,
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+        `${API_BASE}/api/Grupos/${grupoId}/vincular-estabelecimentos/${estab.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
+      ).then(res => {
+        if (!res.ok) {
+          throw new Error("Erro ao vincular grupo");
+        }
+      });
     }
-  ).then(res => {
-    if (!res.ok) {
-      throw new Error("Erro ao vincular grupo");
-    }
-  });
-  }
 
     // 🔹 VINCULAR CARTÕES
     const cartoesIds = obterCartoesSelecionados();
     if (cartoesIds.length > 0) {
-  await vincularCartoes(estab.id, cartoesIds);
+      await vincularCartoes(estab.id, cartoesIds);
     }
 
-    // 🔹 envio das imagens
-
-    
+    // 🔹 ENVIO DAS IMAGENS
     const logo = document.getElementById("logoImagem2").files[0];
     const fachada = document.getElementById("fachadaImagem2").files[0];
 
