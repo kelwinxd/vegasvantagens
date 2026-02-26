@@ -755,39 +755,25 @@ var filtrosAtivos = {
 // ========== FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO ==========
 function inicializarFiltros() {
   console.log("🚀 INICIANDO FILTROS...");
-  
-  // Verifica se os dados existem
-  if (!window.estabelecimentosCache) {
-    console.error("❌ estabelecimentosCache não existe!");
+
+  // Listeners sempre registrados — só dependem do DOM
+  _configurarEventListeners();
+
+  // O restante depende dos dados da API
+  if (!window.estabelecimentosCache || !Array.isArray(estabelecimentosCache) || estabelecimentosCache.length === 0) {
+    console.warn("⚠️ Cache vazio — listeners registrados, aguardando dados.");
     return;
   }
-  
-  if (!Array.isArray(estabelecimentosCache)) {
-    console.error("❌ estabelecimentosCache não é um array!");
-    return;
-  }
-  
-  if (estabelecimentosCache.length === 0) {
-    console.warn("⚠️ estabelecimentosCache está vazio!");
-    return;
-  }
-  
+
   console.log(`✅ ${estabelecimentosCache.length} estabelecimentos encontrados`);
-  
-  // Popula os filtros
+
   _popularFiltroCidades();
   _popularFiltroCategorias();
   _popularFiltroGrupos();
-  
-  // Configura event listeners
-  _configurarEventListeners();
-  
-  // Atualiza contadores
+
   _atualizarContadores();
-  
-  // Aplica filtros iniciais
   aplicarFiltros();
-  
+
   console.log("✅ FILTROS INICIALIZADOS COM SUCESSO!");
 }
 
