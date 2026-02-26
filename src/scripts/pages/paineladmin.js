@@ -907,6 +907,20 @@ function _popularFiltroGrupos() {
 // ========== CONFIGURAR EVENT LISTENERS ==========
 function _configurarEventListeners() {
   console.log("🎧 Configurando event listeners...");
+
+   // Select Status Operacional
+  const selectStatusOp = document.getElementById("filtroStatusOperacional");
+  console.log(selectStatusOp, "componente dos status")
+  if (selectStatusOp) {
+    selectStatusOp.addEventListener("change", function(e) {
+      filtrosAtivos.statusOperacional = e.target.value;
+      console.log("⚙️ Status operacional selecionado:", e.target.value);
+      aplicarFiltros();
+    });
+    console.log("  ✅ Select de status operacional configurado");
+  } else {
+    console.warn("  ⚠️ Select de status operacional não encontrado");
+  }
   
   // Busca
   const inputBusca = document.querySelector(".search-estab");
@@ -969,18 +983,7 @@ function _configurarEventListeners() {
     console.log("  ✅ Select de grupo configurado");
   }
 
-  // Select Status Operacional
-  const selectStatusOp = document.getElementById("filtroStatusOperacional");
-  if (selectStatusOp) {
-    selectStatusOp.addEventListener("change", function(e) {
-      filtrosAtivos.statusOperacional = e.target.value;
-      console.log("⚙️ Status operacional selecionado:", e.target.value);
-      aplicarFiltros();
-    });
-    console.log("  ✅ Select de status operacional configurado");
-  } else {
-    console.warn("  ⚠️ Select de status operacional não encontrado");
-  }
+ 
   
   console.log("✅ Event listeners configurados");
 }
