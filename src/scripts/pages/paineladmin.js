@@ -746,6 +746,7 @@ function voltarEstabelecimentos() {
 var filtrosAtivos = {
   busca: "",
   status: "todos",
+  statusOperacional: "Todos",
   cidade: "Todos",
   categoria: "Todos",
   grupo: "Todos"
@@ -1083,13 +1084,14 @@ function limparFiltros() {
   console.log("🧹 Limpando filtros...");
   
   // Reseta o estado
-  filtrosAtivos = {
-    busca: "",
-    status: "todos",
-    cidade: "",
-    categoria: "",
-    grupo: ""
-  };
+var filtrosAtivos = {
+  busca: "",
+  status: "todos",
+  statusOperacional: "Todos",
+  cidade: "Todos",
+  categoria: "Todos",
+  grupo: "Todos"
+};
   
   // Limpa os campos
   const inputBusca = document.querySelector(".search-estab");
