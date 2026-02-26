@@ -1011,10 +1011,14 @@ function aplicarFiltros() {
   }
 
   // Filtro por statusOperacional
-  if (filtrosAtivos.statusOperacional && filtrosAtivos.statusOperacional !== "Todos") {
-    resultado = resultado.filter(estab => estab.statusOperacional === filtrosAtivos.statusOperacional);
-    console.log(`  Após statusOperacional (${filtrosAtivos.statusOperacional}): ${resultado.length} resultados`);
-  }
+  // Filtro por statusOperacional
+if (filtrosAtivos.statusOperacional && filtrosAtivos.statusOperacional !== "Todos") {
+  console.log("🔎 Valores de statusOperacional no cache:", 
+    estabelecimentosCache.map(e => ({ nome: e.nome, statusOperacional: e.statusOperacional }))
+  );
+  resultado = resultado.filter(estab => estab.statusOperacional === filtrosAtivos.statusOperacional);
+  console.log(`  Após statusOperacional (${filtrosAtivos.statusOperacional}): ${resultado.length} resultados`);
+}
   
   // Filtro por cidade
   if (filtrosAtivos.cidade && filtrosAtivos.cidade !== 'Todos') {
