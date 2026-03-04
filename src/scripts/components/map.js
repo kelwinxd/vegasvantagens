@@ -34,7 +34,7 @@ async function fetchAllStores(accessToken) {
 
     // 🔹 FILTRA SOMENTE PUBLICADOS
     const publicados = lista.filter(
-      loja => loja.status === "Publicado"
+      loja => loja.statusPublicacao === "Publicado"
     );
 
     const detalhes = await Promise.all(
