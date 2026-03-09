@@ -2945,10 +2945,9 @@ aspect-ratio: 1/1;
 
 /* ── Container principal ─────────────────────────────────── */
 .modal-ver-container {
-  position: relative;
-  width: 100%;
-  max-width: 1300px;
-  height: 90vh;
+  width: calc(100% - 60px);
+  height: calc(100% - 60px);
+  max-width: 2000px;
   background: #fff;
   border-radius: 16px;
   overflow: hidden;

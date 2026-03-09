@@ -4660,48 +4660,47 @@ async function salvarEdicaoUnificada() {
   const id    = document.getElementById("ver-estab-id").value;
   if (!id) return;
 
-  const statusPub = document.getElementById("vi-statusPub").value;
-  const statusOp  = document.getElementById("vi-statusOp").value;
+  const statusOp = document.getElementById("vi-statusOp").value;
 
   const data = {
-    nome:         document.getElementById("vi-nomeEstab").value.trim(),
-    razaoSocial:  document.getElementById("vi-razaoSocial").value.trim(),
-    cnpj:         document.getElementById("vi-cnpj").value.trim(),
-    telefone:     document.getElementById("vi-telefone").value.trim(),
-    emailContato: document.getElementById("vi-email").value.trim(),
-    sobre:        document.getElementById("vi-sobre").value.trim(),
+    "nome":         document.getElementById("vi-nomeEstab").value.trim(),
+    "razaoSocial":  document.getElementById("vi-razaoSocial").value.trim(),
+    "cnpj":         document.getElementById("vi-cnpj").value.trim(),
+    "telefone":     document.getElementById("vi-telefone").value.trim(),
+    "emailContato": document.getElementById("vi-email").value.trim(),
+    "ativo":        document.getElementById("vi-statusPub").value === "Publicado",
 
-    statusPublicacao:  statusPub,
-    statusOperacional: statusOp,
-    motivoCancelamento: statusOp === "Cancelado"
+    "categoriaId":  Number(document.getElementById("vi-categoriaId").value) || null,
+    "cidadeId":     Number(document.getElementById("vi-cidadeId").value)     || null,
+
+    "rua":          document.getElementById("vi-rua").value.trim(),
+    "numero":       document.getElementById("vi-numero").value.trim(),
+    "bairro":       document.getElementById("vi-bairro").value.trim(),
+    "complemento":  document.getElementById("vi-complemento").value.trim(),
+    "cep":          document.getElementById("vi-cep").value.trim(),
+
+    "latitude":     parseFloat(document.getElementById("vi-latitude").value)  || null,
+    "longitude":    parseFloat(document.getElementById("vi-longitude").value) || null,
+
+    "grupoId":      _estabAtual?.grupoId || null,
+    "mapaUrl":      document.getElementById("vi-mapurl").value.trim(),
+    "sobre":        document.getElementById("vi-sobre").value.trim(),
+
+    "statusPublicacao":  document.getElementById("vi-statusPub").value,  // "Rascunho" | "Publicado"
+    "statusOperacional": statusOp,                                        // "Ativo" | "Pausado" | "Cancelado"
+
+    "consultorNome":          document.getElementById("vi-consultorNome").value.trim(),
+    "consultorEmail":         document.getElementById("vi-consultorEmail").value.trim(),
+    "representanteLegalNome": document.getElementById("vi-repNome").value.trim(),
+    "cpfRepresentante":       document.getElementById("vi-repCpf").value.trim(),
+
+    "motivoCancelamento": statusOp === "Cancelado"
       ? document.getElementById("vi-motivo").value.trim()
       : "",
 
-    ativo: statusPub === "Publicado",
-    status: statusPub,
-
-    categoriaId: Number(document.getElementById("vi-categoriaId").value),
-    cidadeId:    Number(document.getElementById("vi-cidadeId").value),
-
-    rua:         document.getElementById("vi-rua").value.trim(),
-    numero:      document.getElementById("vi-numero").value.trim(),
-    bairro:      document.getElementById("vi-bairro").value.trim(),
-    complemento: document.getElementById("vi-complemento").value.trim(),
-    cep:         document.getElementById("vi-cep").value.trim(),
-
-    mapaUrl:   document.getElementById("vi-mapurl").value.trim(),
-    latitude:  Number(document.getElementById("vi-latitude").value) || null,
-    longitude: Number(document.getElementById("vi-longitude").value) || null,
-
-    consultorNome:           document.getElementById("vi-consultorNome").value.trim(),
-    consultorEmail:          document.getElementById("vi-consultorEmail").value.trim(),
-    representanteLegalNome:  document.getElementById("vi-repNome").value.trim(),
-    cpfRepresentante:        document.getElementById("vi-repCpf").value.trim(),
-    segundoContatoNome:      document.getElementById("vi-seg2Nome").value.trim(),
-    segundoContatoTelefone:  document.getElementById("vi-seg2Tel").value.trim(),
-    segundoContatoCargo:     document.getElementById("vi-seg2Cargo").value.trim(),
-
-    grupoId: _estabAtual?.grupoId || null
+    "segundoContatoNome":      document.getElementById("vi-seg2Nome").value.trim(),
+    "segundoContatoTelefone":  document.getElementById("vi-seg2Tel").value.trim(),
+    "segundoContatoCargo":     document.getElementById("vi-seg2Cargo").value.trim(),
   };
 
   try {
@@ -4714,24 +4713,24 @@ async function salvarEdicaoUnificada() {
       body: JSON.stringify(data)
     });
 
-    if (!res.ok) throw new Error("Erro ao atualizar estabelecimento");
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Resposta da API:", errText);
+      throw new Error(errText || `HTTP ${res.status}`);
+    }
 
     alert("Estabelecimento atualizado com sucesso!");
 
     // Atualiza cache global
     const idx = estabelecimentosCache.findIndex(e => e.id === _estabAtual.id);
-    if (idx !== -1) {
-      estabelecimentosCache[idx] = { ...estabelecimentosCache[idx], ...data };
-    }
+    if (idx !== -1) estabelecimentosCache[idx] = { ...estabelecimentosCache[idx], ...data };
 
-    // Fecha o modal e recarrega lista
     fecharVerEstab();
     buscarEstabelecimentos();
-
     if (typeof _atualizarContadores === "function") _atualizarContadores();
 
   } catch (err) {
-    console.error(err);
+    console.error("Erro ao salvar:", err);
     alert("Erro ao salvar alterações: " + err.message);
   }
 }
