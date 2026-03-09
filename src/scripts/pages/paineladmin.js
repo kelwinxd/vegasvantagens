@@ -4215,28 +4215,60 @@ let _estabAtual = null;
  * Chamado ao clicar no card (ícone editar OU no próprio card).
  * Abre o modal em modo VISUALIZAÇÃO com todas as infos preenchidas.
  */
+// Carrega cidades do estado via endpoint correto e seleciona pelo nome
+async function carregarCidadesVer(cidadeNomeSelecionada = null) {
+  const token    = localStorage.getItem("token");
+  const estadoId = document.getElementById("vi-estadoId").value;
+  if (!estadoId || !token) return;
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/Cidades/por-estabelecimento/${estadoId}`,
+      { headers: { "Authorization": "Bearer " + token } }
+    );
+    if (!res.ok) return;
+
+    const cidades = await res.json();
+    const select  = document.getElementById("vi-cidadeId");
+    select.innerHTML = "";
+
+    cidades.forEach(cidade => {
+      const opt      = document.createElement("option");
+      opt.value      = cidade.id;
+      opt.textContent = cidade.nome;
+
+      // Seleciona pelo match exato de nome (ex: "Americana")
+      if (cidadeNomeSelecionada && cidade.nome === cidadeNomeSelecionada) {
+        opt.selected = true;
+      }
+
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    console.error("Erro ao carregar cidades:", err);
+  }
+}
+
+
+// abrirModalEditar atualizado — passa estab.cidade e estab.unidadeFederativaId corretamente
 async function abrirModalEditar(estab) {
   _estabAtual = estab;
 
-  // Garante modo visualização ao abrir
   _setModoVisualizacao();
-
-  // Popula os campos
   _popularVerModal(estab);
 
-  // Carrega selects (categorias + estados) em paralelo
   await Promise.all([
     carregarCategoriasVer(estab.categorias?.[0]),
     carregarEstadosVer()
   ]);
 
-  // Depois que o select de estado está populado, carrega as cidades
+  // Seta o estado e carrega as cidades já selecionando pelo nome
   if (estab.unidadeFederativaId) {
     document.getElementById("vi-estadoId").value = estab.unidadeFederativaId;
-    await carregarCidadesVer(estab.cidade);
+    await carregarCidadesVer(estab.cidade); // estab.cidade = "Americana"
   }
 
-  // Exibe modal
   document.getElementById("modal-ver-estab").style.display = "flex";
 }
 
@@ -4610,27 +4642,6 @@ async function carregarEstadosVer() {
   } catch (err) { console.error("Erro ao carregar estados:", err); }
 }
 
-async function carregarCidadesVer(cidadeNomeSelecionada = null) {
-  const token = localStorage.getItem("token");
-  const estadoId = document.getElementById("vi-estadoId").value;
-  if (!estadoId || !token) return;
-  try {
-    const res = await fetch(`${API_BASE}/api/Cidades?unidadeFederativaId=${estadoId}`, {
-      headers: { "Authorization": "Bearer " + token }
-    });
-    if (!res.ok) return;
-    const cidades = await res.json();
-    const select = document.getElementById("vi-cidadeId");
-    select.innerHTML = "";
-    cidades.forEach(cidade => {
-      const opt = document.createElement("option");
-      opt.value = cidade.id;
-      opt.textContent = cidade.nome;
-      if (cidade.nome === cidadeNomeSelecionada) opt.selected = true;
-      select.appendChild(opt);
-    });
-  } catch (err) { console.error("Erro ao carregar cidades:", err); }
-}
 
 // ── TOGGLE MOTIVO CANCELAMENTO ────────────────────────────────
 
