@@ -1105,24 +1105,291 @@
 
 
 <!-- ============================================================
-     MODAL VER/EDITAR ESTABELECIMENTO (substitui modalEditarOverlay2)
-     Fluxo: abre em modo "visualização" → botão "Editar" ativa modo edição
+     MODAL VER / EDITAR ESTABELECIMENTO
+     Estrutura idêntica ao modal-preview (criação)
+     IDs mantidos — nenhuma alteração de JS necessária
      ============================================================ -->
-<div id="modal-ver-estab" class="modal-ver-estab" style="display:none;">
-  <div class="modal-ver-container">
+<div id="modal-ver-estab" class="modal-preview" style="display:none;">
+  <div class="modal-preview-container">
 
     <!-- Botão fechar -->
-    <button class="btn-fechar-ver" onclick="fecharVerEstab()">
+    <button class="btn-fechar-preview" onclick="fecharVerEstab()">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
 
-    <div class="ver-content">
+    <div class="preview-content">
 
-      <!-- ── LADO ESQUERDO: Preview do site (60%) ─────────── -->
-      <div class="ver-preview-side">
-        <div class="ver-preview-header">
+      <!-- ── LADO ESQUERDO: Formulário ver/editar (30%) ────── -->
+      <div class="preview-form-side">
+        <div class="form-scroll">
+
+          <!-- Cabeçalho: nome + badges + botões ação -->
+          <div class="ver-form-header">
+            <div class="ver-form-title-group">
+              <h2 class="preview-title" id="ver-form-nome-titulo" style="margin-bottom:6px;">—</h2>
+              <div class="ver-status-badges">
+                <span class="badge-pub" id="ver-badge-pub">—</span>
+                <span class="badge-op"  id="ver-badge-op">—</span>
+              </div>
+            </div>
+            <div class="ver-form-actions-top">
+              <button class="btn-salvar-preview" id="btn-ativar-edicao" type="button" onclick="ativarModoEdicao()">
+                ✏️ Editar
+              </button>
+              <button class="btn-salvar-preview" id="btn-salvar-edicao" type="button" style="display:none; background:#15803d;" onclick="salvarEdicaoUnificada()">
+                💾 Salvar alterações
+              </button>
+              <button class="btn-cancelar-preview" id="btn-cancelar-edicao" type="button" style="display:none;" onclick="cancelarModoEdicao()">
+                ✕ Cancelar edição
+              </button>
+            </div>
+          </div>
+
+          <input type="hidden" id="ver-estab-id">
+
+          <!-- IMAGENS -->
+          <h3 class="title-form">Imagens</h3>
+          <div class="row">
+            <div id="ver-imagens-container" class="ver-imagens-grid" style="width:100%;"></div>
+          </div>
+
+          <!-- DADOS PRINCIPAIS -->
+          <h3 class="title-form">Dados Principais</h3>
+
+          <div class="row">
+            <div class="field">
+              <label>Nome Fantasia</label>
+              <div class="ver-value" id="vv-nome">—</div>
+              <input class="ver-input" id="vi-nomeEstab" type="text" placeholder="Nome Fantasia" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Razão Social</label>
+              <div class="ver-value" id="vv-razaoSocial">—</div>
+              <input class="ver-input" id="vi-razaoSocial" type="text" placeholder="Razão Social" style="display:none;">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>CNPJ</label>
+              <div class="ver-value" id="vv-cnpj">—</div>
+              <input class="ver-input" id="vi-cnpj" type="text" placeholder="00.000.000/0001-00" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Telefone</label>
+              <div class="ver-value" id="vv-telefone">—</div>
+              <input class="ver-input" id="vi-telefone" type="text" placeholder="(11) 99999-9999" style="display:none;">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>Email de Contato</label>
+              <div class="ver-value" id="vv-email">—</div>
+              <input class="ver-input" id="vi-email" type="email" placeholder="contato@empresa.com" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Categoria</label>
+              <div class="ver-value" id="vv-categoria">—</div>
+              <select class="ver-input" id="vi-categoriaId" style="display:none;"></select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field full">
+              <label>Sobre</label>
+              <div class="ver-value" id="vv-sobre">—</div>
+              <textarea class="ver-input" id="vi-sobre" rows="3" placeholder="Descrição do estabelecimento" style="display:none;"></textarea>
+            </div>
+          </div>
+
+          <!-- STATUS -->
+          <h3 class="title-form">Status</h3>
+
+          <div class="row">
+            <div class="field">
+              <label>Status Editorial</label>
+              <div class="ver-value" id="vv-statusPub">—</div>
+              <select class="ver-input" id="vi-statusPub" style="display:none;">
+                <option value="Rascunho">Rascunho</option>
+                <option value="Publicado">Publicado</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Status Operacional</label>
+              <div class="ver-value" id="vv-statusOp">—</div>
+              <select class="ver-input" id="vi-statusOp" style="display:none;" onchange="toggleMotivoVer()">
+                <option value="Ativo">Ativo</option>
+                <option value="Pausado">Pausado</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" id="ver-row-motivo" style="display:none;">
+            <div class="field full">
+              <label>Motivo do Cancelamento</label>
+              <div class="ver-value" id="vv-motivo">—</div>
+              <textarea class="ver-input" id="vi-motivo" rows="2" placeholder="Descreva o motivo..." style="display:none;"></textarea>
+            </div>
+          </div>
+
+          <!-- ENDEREÇO -->
+          <h3 class="title-form">Endereço</h3>
+
+          <div class="row">
+            <div class="field">
+              <label>CEP</label>
+              <div class="ver-value" id="vv-cep">—</div>
+              <input class="ver-input" id="vi-cep" type="text" placeholder="00000-000" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Estado</label>
+              <div class="ver-value" id="vv-estado">—</div>
+              <select class="ver-input" id="vi-estadoId" style="display:none;" onchange="carregarCidadesVer()"></select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>Cidade</label>
+              <div class="ver-value" id="vv-cidade">—</div>
+              <select class="ver-input" id="vi-cidadeId" style="display:none;"></select>
+            </div>
+            <div class="field">
+              <label>Rua</label>
+              <div class="ver-value" id="vv-rua">—</div>
+              <input class="ver-input" id="vi-rua" type="text" placeholder="Ex: Avenida Brasil" style="display:none;">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>Número</label>
+              <div class="ver-value" id="vv-numero">—</div>
+              <input class="ver-input" id="vi-numero" type="text" placeholder="123" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Bairro</label>
+              <div class="ver-value" id="vv-bairro">—</div>
+              <input class="ver-input" id="vi-bairro" type="text" placeholder="Centro" style="display:none;">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field full">
+              <label>Complemento</label>
+              <div class="ver-value" id="vv-complemento">—</div>
+              <input class="ver-input" id="vi-complemento" type="text" placeholder="Apto, sala, bloco (opcional)" style="display:none;">
+            </div>
+          </div>
+
+          <!-- MAPA -->
+          <h3 class="title-form">Mapa</h3>
+
+          <div class="row">
+            <div class="field full">
+              <label>URL Google Maps</label>
+              <div class="ver-value" id="vv-mapurl">—</div>
+              <input class="ver-input" id="vi-mapurl" type="text" placeholder="https://maps.google.com/..." style="display:none;">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label>Latitude</label>
+              <div class="ver-value" id="vv-latitude">—</div>
+              <input class="ver-input" id="vi-latitude" type="text" placeholder="-22.7392" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Longitude</label>
+              <div class="ver-value" id="vv-longitude">—</div>
+              <input class="ver-input" id="vi-longitude" type="text" placeholder="-47.3313" style="display:none;">
+            </div>
+          </div>
+
+          <!-- DADOS DO CONSULTOR -->
+          <h3 class="title-form">Dados do Consultor</h3>
+
+          <div class="row">
+            <div class="field">
+              <label>Nome do Consultor</label>
+              <div class="ver-value" id="vv-consultorNome">—</div>
+              <input class="ver-input" id="vi-consultorNome" type="text" placeholder="Ex: João Silva" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Email do Consultor</label>
+              <div class="ver-value" id="vv-consultorEmail">—</div>
+              <input class="ver-input" id="vi-consultorEmail" type="email" placeholder="consultor@empresa.com" style="display:none;">
+            </div>
+          </div>
+
+          <!-- REPRESENTANTE LEGAL -->
+          <h3 class="title-form">Representante Legal</h3>
+
+          <div class="row">
+            <div class="field">
+              <label>Nome do Representante</label>
+              <div class="ver-value" id="vv-repNome">—</div>
+              <input class="ver-input" id="vi-repNome" type="text" placeholder="Ex: Maria Oliveira" style="display:none;">
+            </div>
+            <div class="field">
+              <label>CPF do Representante</label>
+              <div class="ver-value" id="vv-repCpf">—</div>
+              <input class="ver-input" id="vi-repCpf" type="text" placeholder="000.000.000-00" style="display:none;">
+            </div>
+          </div>
+
+          <!-- SEGUNDO CONTATO -->
+          <h3 class="title-form">Segundo Contato</h3>
+
+          <div class="row">
+            <div class="field">
+              <label>Nome</label>
+              <div class="ver-value" id="vv-seg2Nome">—</div>
+              <input class="ver-input" id="vi-seg2Nome" type="text" placeholder="Ex: Carlos Pereira" style="display:none;">
+            </div>
+            <div class="field">
+              <label>Telefone</label>
+              <div class="ver-value" id="vv-seg2Tel">—</div>
+              <input class="ver-input" id="vi-seg2Tel" type="text" placeholder="(11) 99999-9999" style="display:none;">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field full">
+              <label>Cargo</label>
+              <div class="ver-value" id="vv-seg2Cargo">—</div>
+              <input class="ver-input" id="vi-seg2Cargo" type="text" placeholder="Ex: Gerente, Sócio..." style="display:none;">
+            </div>
+          </div>
+
+          <!-- CARTÕES -->
+          <h3 class="title-form">Cartões Aceitos</h3>
+          <div class="row">
+            <div class="field full">
+              <div id="ver-cartoes-container" class="ver-cartoes-lista"></div>
+            </div>
+          </div>
+
+          <!-- Botões rodapé (modo edição) -->
+          <div class="preview-actions" id="ver-actions-rodape" style="display:none;">
+            <button type="button" class="btn-salvar-preview" onclick="salvarEdicaoUnificada()">
+              💾 Salvar alterações
+            </button>
+            <button type="button" class="btn-cancelar-preview" onclick="cancelarModoEdicao()">
+              ✕ Cancelar edição
+            </button>
+          </div>
+
+        </div><!-- /form-scroll -->
+      </div><!-- /preview-form-side -->
+
+      <!-- ── LADO DIREITO: Preview do site (70%) ───────────── -->
+      <div class="preview-display-side">
+        <div class="preview-header">
           <h3>🖥️ Preview do Site</h3>
           <div class="preview-viewport-btns">
             <button class="viewport-btn active" id="btn-desktop-v" title="Desktop" onclick="mudarViewportVer('desktop')">
@@ -1135,21 +1402,20 @@
               <svg width="16" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
             </button>
           </div>
+          <span class="preview-badge">✨ Visualização em tempo real</span>
         </div>
 
-        <div class="ver-preview-scroll">
-          <div class="ver-preview-wrapper" id="ver-preview-wrapper">
+        <div class="preview-scroll">
+          <div class="preview-comercio-wrapper" id="ver-preview-wrapper">
             <section class="comercio-p preview-comercio">
               <h1 class="tag-comercio" id="ver-categoria">—</h1>
               <div class="comercio-container viewport">
 
-                <!-- Fachada Desktop -->
                 <div class="main-img" id="ver-f-img">
                   <img src="./imgs/default-image.png" class="img-comercio" id="ver-fachada-img" alt="Fachada">
                 </div>
 
                 <div class="main-info">
-                  <!-- Mobile header -->
                   <div class="header-info-mobile mobile-header-comercio">
                     <div class="header-info-mobile-head">
                       <div class="img-logo"><img src="./imgs/default-image.png" class="logo" id="ver-logo-mobile" alt="Logo"></div>
@@ -1158,14 +1424,14 @@
                     <div class="main-img"><img src="./imgs/default-image.png" class="img-comercio" id="ver-fachada-mobile" alt="Fachada"></div>
                   </div>
 
-                  <!-- Desktop header -->
                   <div class="header-info">
                     <div class="img-logo"><img src="./imgs/default-image.png" class="logo" id="ver-logo-img" alt="Logo"></div>
                     <div class="inner-info"><div class="names-ava"><h2 class="title-comercio" id="ver-nome">—</h2></div></div>
                   </div>
 
-                  <!-- Tablet fachada -->
-                  <div class="main-img-tablet"><img src="./imgs/default-image.png" class="img-comercio" id="ver-fachada-tablet" alt="Fachada"></div>
+                  <div class="main-img-tablet">
+                    <img src="./imgs/default-image.png" class="img-comercio" id="ver-fachada-tablet" alt="Fachada">
+                  </div>
 
                   <div class="line line-1"></div>
 
@@ -1182,257 +1448,15 @@
               </div>
             </section>
           </div>
+
+          <div class="preview-footer-note">
+            <p>💡 <strong>Campos administrativos não visíveis:</strong> CNPJ, Razão Social, Email, Coordenadas, Cartões Aceitos</p>
+          </div>
         </div>
-      </div><!-- /ver-preview-side -->
+      </div><!-- /preview-display-side -->
 
-      <!-- ── LADO DIREITO: Painel de info / edição (40%) ─── -->
-      <div class="ver-form-side">
-        <div class="ver-form-scroll">
-
-          <!-- Cabeçalho com nome e botão editar -->
-          <div class="ver-form-header">
-            <div class="ver-form-title-group">
-              <h2 id="ver-form-nome-titulo">—</h2>
-              <div class="ver-status-badges">
-                <span class="badge-pub" id="ver-badge-pub">—</span>
-                <span class="badge-op"  id="ver-badge-op">—</span>
-              </div>
-            </div>
-
-            <!-- Botões de ação -->
-            <div class="ver-form-actions-top">
-              <!-- Modo Visualização: mostra "Editar" -->
-              <button class="btn-modo-editar" id="btn-ativar-edicao" onclick="ativarModoEdicao()">
-                ✏️ Editar
-              </button>
-              <!-- Modo Edição: mostra "Salvar" e "Cancelar edição" -->
-              <button class="btn-modo-salvar" id="btn-salvar-edicao" style="display:none;" onclick="salvarEdicaoUnificada()">
-                💾 Salvar alterações
-              </button>
-              <button class="btn-modo-cancelar-edit" id="btn-cancelar-edicao" style="display:none;" onclick="cancelarModoEdicao()">
-                ✕ Cancelar edição
-              </button>
-            </div>
-          </div>
-
-          <!-- ─ Campos do formulário (visualização ↔ edição) ─ -->
-          <input type="hidden" id="ver-estab-id">
-
-          <!-- IMAGENS -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Imagens</h3>
-            <div id="ver-imagens-container" class="ver-imagens-grid"></div>
-          </div>
-
-          <!-- DADOS PRINCIPAIS -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Dados Principais</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>Nome Fantasia</label>
-                <div class="ver-value" id="vv-nome">—</div>
-                <input class="ver-input" id="vi-nomeEstab" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Razão Social</label>
-                <div class="ver-value" id="vv-razaoSocial">—</div>
-                <input class="ver-input" id="vi-razaoSocial" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>CNPJ</label>
-                <div class="ver-value" id="vv-cnpj">—</div>
-                <input class="ver-input" id="vi-cnpj" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Telefone</label>
-                <div class="ver-value" id="vv-telefone">—</div>
-                <input class="ver-input" id="vi-telefone" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Email de Contato</label>
-                <div class="ver-value" id="vv-email">—</div>
-                <input class="ver-input" id="vi-email" type="email" style="display:none;">
-              </div>
-              <div class="ver-field full">
-                <label>Sobre</label>
-                <div class="ver-value" id="vv-sobre">—</div>
-                <textarea class="ver-input" id="vi-sobre" rows="3" style="display:none;"></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- STATUS -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Status</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>Status Editorial</label>
-                <div class="ver-value" id="vv-statusPub">—</div>
-                <select class="ver-input" id="vi-statusPub" style="display:none;">
-                  <option value="Rascunho">Rascunho</option>
-                  <option value="Publicado">Publicado</option>
-                </select>
-              </div>
-              <div class="ver-field">
-                <label>Status Operacional</label>
-                <div class="ver-value" id="vv-statusOp">—</div>
-                <select class="ver-input" id="vi-statusOp" style="display:none;" onchange="toggleMotivoVer()">
-                  <option value="Ativo">Ativo</option>
-                  <option value="Pausado">Pausado</option>
-                  <option value="Cancelado">Cancelado</option>
-                </select>
-              </div>
-              <div class="ver-field full" id="ver-row-motivo" style="display:none;">
-                <label>Motivo do Cancelamento</label>
-                <div class="ver-value" id="vv-motivo">—</div>
-                <textarea class="ver-input" id="vi-motivo" rows="2" style="display:none;"></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- CATEGORIA -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Categoria</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>Categoria</label>
-                <div class="ver-value" id="vv-categoria">—</div>
-                <select class="ver-input" id="vi-categoriaId" style="display:none;"></select>
-              </div>
-            </div>
-          </div>
-
-          <!-- ENDEREÇO -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Endereço</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>CEP</label>
-                <div class="ver-value" id="vv-cep">—</div>
-                <input class="ver-input" id="vi-cep" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Estado</label>
-                <div class="ver-value" id="vv-estado">—</div>
-                <select class="ver-input" id="vi-estadoId" style="display:none;" onchange="carregarCidadesVer()"></select>
-              </div>
-              <div class="ver-field">
-                <label>Cidade</label>
-                <div class="ver-value" id="vv-cidade">—</div>
-                <select class="ver-input" id="vi-cidadeId" style="display:none;"></select>
-              </div>
-              <div class="ver-field">
-                <label>Rua</label>
-                <div class="ver-value" id="vv-rua">—</div>
-                <input class="ver-input" id="vi-rua" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Número</label>
-                <div class="ver-value" id="vv-numero">—</div>
-                <input class="ver-input" id="vi-numero" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Bairro</label>
-                <div class="ver-value" id="vv-bairro">—</div>
-                <input class="ver-input" id="vi-bairro" type="text" style="display:none;">
-              </div>
-              <div class="ver-field full">
-                <label>Complemento</label>
-                <div class="ver-value" id="vv-complemento">—</div>
-                <input class="ver-input" id="vi-complemento" type="text" style="display:none;">
-              </div>
-            </div>
-          </div>
-
-          <!-- MAPA -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Mapa</h3>
-            <div class="ver-grid">
-              <div class="ver-field full">
-                <label>URL Google Maps</label>
-                <div class="ver-value" id="vv-mapurl">—</div>
-                <input class="ver-input" id="vi-mapurl" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Latitude</label>
-                <div class="ver-value" id="vv-latitude">—</div>
-                <input class="ver-input" id="vi-latitude" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Longitude</label>
-                <div class="ver-value" id="vv-longitude">—</div>
-                <input class="ver-input" id="vi-longitude" type="text" style="display:none;">
-              </div>
-            </div>
-          </div>
-
-          <!-- DADOS DO CONSULTOR -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Dados do Consultor</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>Nome</label>
-                <div class="ver-value" id="vv-consultorNome">—</div>
-                <input class="ver-input" id="vi-consultorNome" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Email</label>
-                <div class="ver-value" id="vv-consultorEmail">—</div>
-                <input class="ver-input" id="vi-consultorEmail" type="email" style="display:none;">
-              </div>
-            </div>
-          </div>
-
-          <!-- REPRESENTANTE LEGAL -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Representante Legal</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>Nome</label>
-                <div class="ver-value" id="vv-repNome">—</div>
-                <input class="ver-input" id="vi-repNome" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>CPF</label>
-                <div class="ver-value" id="vv-repCpf">—</div>
-                <input class="ver-input" id="vi-repCpf" type="text" style="display:none;">
-              </div>
-            </div>
-          </div>
-
-          <!-- SEGUNDO CONTATO -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Segundo Contato</h3>
-            <div class="ver-grid">
-              <div class="ver-field">
-                <label>Nome</label>
-                <div class="ver-value" id="vv-seg2Nome">—</div>
-                <input class="ver-input" id="vi-seg2Nome" type="text" style="display:none;">
-              </div>
-              <div class="ver-field">
-                <label>Telefone</label>
-                <div class="ver-value" id="vv-seg2Tel">—</div>
-                <input class="ver-input" id="vi-seg2Tel" type="text" style="display:none;">
-              </div>
-              <div class="ver-field full">
-                <label>Cargo</label>
-                <div class="ver-value" id="vv-seg2Cargo">—</div>
-                <input class="ver-input" id="vi-seg2Cargo" type="text" style="display:none;">
-              </div>
-            </div>
-          </div>
-
-          <!-- CARTÕES (só visualização — toggle edita via API separada) -->
-          <div class="ver-secao">
-            <h3 class="ver-secao-titulo">Cartões Aceitos</h3>
-            <div id="ver-cartoes-container" class="ver-cartoes-lista"></div>
-          </div>
-
-        </div><!-- /ver-form-scroll -->
-      </div><!-- /ver-form-side -->
-
-    </div><!-- /ver-content -->
-  </div><!-- /ver-container -->
+    </div><!-- /preview-content -->
+  </div><!-- /modal-preview-container -->
 </div><!-- /#modal-ver-estab -->
 
 

@@ -3298,3 +3298,208 @@ textarea.ver-input { resize: vertical; }
   color: #aaa;
   font-style: italic;
 }
+
+/* ============================================================
+   MODAL VER/EDITAR — CSS adicional
+   Apenas o que não existe ainda no projeto.
+   Tudo o mais herda do .modal-preview, .form-scroll, .row, .field, etc.
+   ============================================================ */
+
+/* ── Cabeçalho do painel esquerdo ──────────────────────────── */
+.ver-form-header {
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.ver-form-title-group {
+  margin-bottom: 10px;
+}
+
+.ver-form-title-group .preview-title {
+  margin-bottom: 6px !important;
+}
+
+.ver-status-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.ver-form-actions-top {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Badges de status ───────────────────────────────────────── */
+.badge-pub,
+.badge-op {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pub-publicado { background: #e6f9f0; color: #15803d; }
+.pub-rascunho  { background: #fef9e7; color: #92400e; }
+
+.status-op-ativo     { background: #e6f9f0; color: #15803d; }
+.status-op-pausado   { background: #fff7ed; color: #c2410c; }
+.status-op-cancelado { background: #fef2f2; color: #dc2626; }
+
+/* ── Campos: valor (visualização) vs input (edição) ────────── */
+.ver-value {
+  font-size: 13px;
+  color: #1a1a1a;
+  line-height: 1.5;
+  min-height: 20px;
+  padding: 6px 0 8px;
+  border-bottom: 1px solid #f0f0f0;
+  word-break: break-word;
+}
+
+/* Os .ver-input herdam o estilo dos inputs do .form-estab */
+.ver-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: Rubik, sans-serif;
+  outline: none;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.ver-input:focus {
+  border-color: #4B57A3;
+  background: #fff;
+}
+
+textarea.ver-input {
+  resize: vertical;
+}
+
+/* ── Grid de imagens ────────────────────────────────────────── */
+.ver-imagens-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.ver-img-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ver-img-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.ver-img-wrap {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.ver-img-thumb {
+  display: block;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Overlay de ação (visível só em modo edição) */
+.ver-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ver-img-btn-trocar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.ver-img-btn-trocar input[type="file"] { display: none; }
+.ver-img-btn-trocar:hover { background: #e8eeff; }
+
+.ver-img-btn-excluir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #dc2626;
+  transition: background 0.2s;
+}
+.ver-img-btn-excluir:hover { background: #fef2f2; }
+
+/* Logo circular, fachada retangular — igual ao upload-card */
+.ver-img-item[data-tipo="logo"] .ver-img-wrap {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+.ver-img-item[data-tipo="fachada"] .ver-img-wrap {
+  width: 200px;
+  height: 100px;
+  border-radius: 12px;
+}
+
+/* ── Cartões ────────────────────────────────────────────────── */
+.ver-cartoes-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.ver-sem-cartao {
+  font-size: 13px;
+  color: #aaa;
+  font-style: italic;
+}
+
+/* ── Viewport preview (lado direito) ───────────────────────── */
+#ver-preview-wrapper.viewport-tablet {
+  max-width: 768px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 2px #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#ver-preview-wrapper.viewport-mobile {
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 2px #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+}
