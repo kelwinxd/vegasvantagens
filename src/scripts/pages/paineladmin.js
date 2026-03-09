@@ -3972,7 +3972,7 @@ const data = {
     if (!res.ok) throw new Error("Erro ao atualizar estabelecimento");
 
     alert("Estabelecimento atualizado com sucesso!");
-    fecharModalEditar();
+    fecharModalEditarVer();
     buscarEstabelecimentos();
 
   } catch (err) {
@@ -4751,7 +4751,7 @@ function mudarViewportVer(tipo) {
 
 // ── COMPATIBILIDADE: fecharModalEditar antigo ────────────────
 // (mantido para não quebrar chamadas existentes no código)
-function fecharModalEditar() {
+function fecharModalEditarVer() {
   fecharVerEstab();
 }
 
@@ -5868,6 +5868,6 @@ window.toggleMotivoVer         = toggleMotivoVer;
 window._verTrocarImagem        = _verTrocarImagem;
 window._verAdicionarImagem     = _verAdicionarImagem;
 window._verExcluirImagem       = _verExcluirImagem;
-window.fecharModalEditar       = fecharModalEditar; // retrocompat
+window.fecharModalEditarVer       = fecharModalEditarVer; // retrocompat
 
 
