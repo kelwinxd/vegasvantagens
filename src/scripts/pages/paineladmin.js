@@ -4756,7 +4756,7 @@ function fecharModalEditarVer() {
 }
 
 
-
+/*
 async function carregarCategoriasModal(categoriaNomeSelecionada = null) {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -4799,6 +4799,8 @@ async function carregarCategoriasModal(categoriaNomeSelecionada = null) {
     console.error(err);
   }
 }
+
+*/
 
 
 async function carregarEstadosModal() {
