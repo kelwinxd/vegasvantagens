@@ -114,6 +114,13 @@ async function carregarCartoes() {
  inicializarPaginaEstabelecimentos();
 
 
+// ============================================================
+//  renderizarLista — ATUALIZADO
+//  Clique no card → abrirModalEditar() (modal unificado ver/editar)
+//  Botão editar   → idem
+//  Botão excluir  → excluí normalmente
+// ============================================================
+
 function renderizarLista(lista, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -129,46 +136,40 @@ function renderizarLista(lista, containerId) {
     const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
     let imagemSrc = PLACEHOLDER;
-
     if (estab.imagemPrincipal) {
       imagemSrc = estab.imagemPrincipal;
     } else if (estab.imagens && estab.imagens.length > 0) {
       const fachada = estab.imagens.find(i => i.fachada);
-      const logo = estab.imagens.find(i => i.logo);
-
-      if (fachada && fachada.url) {
-        imagemSrc = fachada.url;
-      } else if (logo && logo.url) {
-        imagemSrc = logo.url;
-      }
+      const logo    = estab.imagens.find(i => i.logo);
+      if (fachada?.url)     imagemSrc = fachada.url;
+      else if (logo?.url)   imagemSrc = logo.url;
     }
 
-    // Renderiza categorias
+    // Categorias
     let categoriasHTML = '';
-    if (estab.categorias && estab.categorias.length > 0) {
+    if (estab.categorias?.length > 0) {
       categoriasHTML = estab.categorias.map(cat =>
         `<span class="categoria-badge">${cat}</span>`
       ).join('');
     }
 
-    // Badge do status operacional
+    // Badge status operacional
     const statusOpClass = {
-      "Ativo": "status-op-ativo",
-      "Pausado": "status-op-pausado",
+      "Ativo":     "status-op-ativo",
+      "Pausado":   "status-op-pausado",
       "Cancelado": "status-op-cancelado"
     }[estab.statusOperacional] || "status-op-ativo";
 
     const statusOpLabel = estab.statusOperacional || "Ativo";
-
-    // Toggle controla statusPublicacao
-    const isPublicado = estab.statusPublicacao === "Publicado";
+    const isPublicado   = estab.statusPublicacao === "Publicado";
 
     const cardHTML = `
-     <div class="card-estab-novo" data-id="${estab.id}">
+      <div class="card-estab-novo" data-id="${estab.id}" style="cursor:pointer;" title="Clique para ver detalhes">
         <div class="card-img-container">
-          <img src="${imagemSrc}" alt="${estab.nome}">
+          <img src="${imagemSrc}" alt="${estab.nome}"
+               onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
         </div>
-        
+
         <div class="info-wrapper">
           <div class="card-info-container">
             <div class="header-info-container">
@@ -179,7 +180,8 @@ function renderizarLista(lista, containerId) {
 
               <div class="toggle-container">
                 <label class="switch-card" title="Publicação: ${isPublicado ? 'Publicado' : 'Rascunho'}">
-                  <input type="checkbox" id="toggle-pub-${estab.id}" ${isPublicado ? "checked" : ""} data-estab-id="${estab.id}">
+                  <input type="checkbox" id="toggle-pub-${estab.id}"
+                    ${isPublicado ? "checked" : ""} data-estab-id="${estab.id}">
                   <span class="slider-card"></span>
                 </label>
                 <span class="status-op-badge ${statusOpClass}">${statusOpLabel}</span>
@@ -192,10 +194,10 @@ function renderizarLista(lista, containerId) {
               ${categoriasHTML}
             </div>
             <div class="botoes-acoes">
-              <button class="btn-acao btn-editar" data-action="editar">
+              <button class="btn-acao btn-editar" data-action="editar" title="Ver / Editar">
                 <img src="./imgs/icons/edit-e.svg" alt="Editar">
               </button>
-              <button class="btn-acao btn-excluir" data-action="excluir">
+              <button class="btn-acao btn-excluir" data-action="excluir" title="Excluir">
                 <img src="./imgs/icons/trash-02.svg" alt="Excluir">
               </button>
             </div>
@@ -208,11 +210,23 @@ function renderizarLista(lista, containerId) {
 
     const card = container.lastElementChild;
 
-    // Toggle: altera statusPublicacao, mantém statusOperacional atual do objeto
+    // ── Clique no card (qualquer área exceto botões e toggle) abre o modal ver ──
+    card.addEventListener("click", (e) => {
+      // Ignora cliques nos botões de ação e no toggle de publicação
+      if (
+        e.target.closest("[data-action]") ||
+        e.target.closest(".switch-card") ||
+        e.target.closest("input[type='checkbox']")
+      ) return;
+      abrirModalEditar(estab);
+    });
+
+    // ── Toggle: altera statusPublicacao ───────────────────────────────────────
     const togglePub = card.querySelector(`#toggle-pub-${estab.id}`);
     togglePub.addEventListener("change", async (e) => {
-      const isChecked = e.target.checked;
-      const estabelecimentoId = e.target.dataset.estabId;
+      e.stopPropagation();
+      const isChecked           = e.target.checked;
+      const estabelecimentoId   = e.target.dataset.estabId;
       const novoStatusPublicacao = isChecked ? "Publicado" : "Rascunho";
 
       try {
@@ -222,22 +236,15 @@ function renderizarLista(lista, containerId) {
           estab.statusOperacional || "Ativo"
         );
 
-        // Atualiza cache local
         estab.statusPublicacao = novoStatusPublicacao;
 
-        // Atualiza cache global
         const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
-        if (index !== -1) {
-          estabelecimentosCache[index].statusPublicacao = novoStatusPublicacao;
-        }
+        if (index !== -1) estabelecimentosCache[index].statusPublicacao = novoStatusPublicacao;
 
         togglePub.closest('label').title = `Publicação: ${novoStatusPublicacao}`;
+        console.log(`✅ statusPublicacao → ${novoStatusPublicacao}`);
 
-        console.log(`✅ statusPublicacao do estabelecimento ${estabelecimentoId} atualizado para: ${novoStatusPublicacao}`);
-
-        if (typeof _atualizarContadores === 'function') {
-          _atualizarContadores();
-        }
+        if (typeof _atualizarContadores === 'function') _atualizarContadores();
 
       } catch (err) {
         console.error("❌ Erro ao alterar statusPublicacao:", err);
@@ -246,16 +253,14 @@ function renderizarLista(lista, containerId) {
       }
     });
 
-    // Botão editar
-    const btnEditar = card.querySelector('[data-action="editar"]');
-    btnEditar.addEventListener("click", (e) => {
+    // ── Botão editar ──────────────────────────────────────────────────────────
+    card.querySelector('[data-action="editar"]').addEventListener("click", (e) => {
       e.stopPropagation();
       abrirModalEditar(estab);
     });
 
-    // Botão excluir
-    const btnExcluir = card.querySelector('[data-action="excluir"]');
-    btnExcluir.addEventListener("click", async (e) => {
+    // ── Botão excluir ─────────────────────────────────────────────────────────
+    card.querySelector('[data-action="excluir"]').addEventListener("click", async (e) => {
       e.stopPropagation();
 
       if (!confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) return;
@@ -263,13 +268,10 @@ function renderizarLista(lista, containerId) {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch(
-          `${API_BASE}/api/Estabelecimentos/${estab.id}`,
-          {
-            method: "DELETE",
-            headers: { "Authorization": "Bearer " + token }
-          }
-        );
+        const res = await fetch(`${API_BASE}/api/Estabelecimentos/${estab.id}`, {
+          method: "DELETE",
+          headers: { "Authorization": "Bearer " + token }
+        });
 
         if (!res.ok) throw new Error("Erro ao excluir");
 
@@ -280,7 +282,7 @@ function renderizarLista(lista, containerId) {
         alert("Estabelecimento excluído com sucesso!");
 
         if (typeof _atualizarContadores === 'function') _atualizarContadores();
-        if (typeof inicializarFiltros === 'function') inicializarFiltros();
+        if (typeof inicializarFiltros    === 'function') inicializarFiltros();
 
       } catch (err) {
         console.error(err);
@@ -4199,67 +4201,561 @@ async function recarregarEstabelecimentoEdit() {
 }
 
 
+// ============================================================
+//  MODAL VER / EDITAR ESTABELECIMENTO — Unificado
+//  Substitui: abrirModalEditar() e o antigo #modalEditarOverlay2
+// ============================================================
+
+// Guarda o objeto completo do estab aberto atualmente
+let _estabAtual = null;
+
+// ── ABRIR ────────────────────────────────────────────────────
+
+/**
+ * Chamado ao clicar no card (ícone editar OU no próprio card).
+ * Abre o modal em modo VISUALIZAÇÃO com todas as infos preenchidas.
+ */
 async function abrirModalEditar(estab) {
+  _estabAtual = estab;
 
-    // 🔹 Abre o modal
-  document.getElementById("modalEditarOverlay2").style.display = "flex";
-  // 🔹 Carrega selects antes de setar valores
-  
-  await carregarEstadosModal();
-  await carregarCategoriasModal(estab.categorias?.[0]);
+  // Garante modo visualização ao abrir
+  _setModoVisualizacao();
 
- 
+  // Popula os campos
+  _popularVerModal(estab);
 
-  // 🔹 ID do estabelecimento
-  document.getElementById("editId2").value = estab.id;
+  // Carrega selects (categorias + estados) em paralelo
+  await Promise.all([
+    carregarCategoriasVer(estab.categorias?.[0]),
+    carregarEstadosVer()
+  ]);
 
-  // 🔹 Dados principais
-  document.getElementById("nomeEstab2-edit").value = estab.nome || "";
-  document.getElementById("razaoSocial2-edit").value = estab.razaoSocial || "";
-  document.getElementById("cnpj2-edit").value = estab.cnpj || "";
-  document.getElementById("telefone2-edit").value = estab.telefone || "";
-  document.getElementById("emailContato2-edit").value = estab.emailContato || "";
-
-  // 🔹 Publicado / Rascunho
-  document.getElementById("ativoEstab2-edit").checked =
-    estab.status === "Publicado";
-
-  // 🔹 Categoria
- 
-    console.log("categoria:", estab.categorias)
-
-  // 🔹 Endereço
-  document.getElementById("rua2-edit").value = estab.rua || "";
-  document.getElementById("numero2-edit").value = estab.numero || "";
-  document.getElementById("bairro2-edit").value = estab.bairro || "";
-  document.getElementById("complemento2-edit").value = estab.complemento || "";
-  document.getElementById("cep2-edit").value = estab.cep || "";
-  
-
-
-  // 🔹 Coordenadas
-  document.getElementById("latitude2-edit").value = estab.latitude || "";
-  document.getElementById("longitude2-edit").value = estab.longitude || "";
-
-  // 🔹 Extras
-  document.getElementById("mapurl2-edit").value = estab.mapaUrl || "";
-  document.getElementById("sobre2-edit").value = estab.sobre || "";
-
-  renderizarImagensEdicao(estab);
-
-  /**
-   * 🔹 ESTADO → CIDADE
-   * Só carrega cidades depois que o estado estiver definido
-   */
+  // Depois que o select de estado está populado, carrega as cidades
   if (estab.unidadeFederativaId) {
-    document.getElementById("estadoId2-edit").value = estab.unidadeFederativaId;
-    
-    // Carrega cidades do estado e depois seleciona a cidade correta
-    await carregarCidades2(estab.cidade);
+    document.getElementById("vi-estadoId").value = estab.unidadeFederativaId;
+    await carregarCidadesVer(estab.cidade);
   }
 
-
+  // Exibe modal
+  document.getElementById("modal-ver-estab").style.display = "flex";
 }
+
+function fecharVerEstab() {
+  document.getElementById("modal-ver-estab").style.display = "none";
+  _estabAtual = null;
+  _setModoVisualizacao(); // reseta para visualização ao fechar
+}
+
+// ── MODO VISUALIZAÇÃO / EDIÇÃO ────────────────────────────────
+
+function ativarModoEdicao() {
+  if (!_estabAtual) return;
+
+  // Preenche os inputs com os valores atuais
+  _preencherInputs(_estabAtual);
+
+  // Troca .ver-value por .ver-input em todos os campos
+  document.querySelectorAll("#modal-ver-estab .ver-value").forEach(el => (el.style.display = "none"));
+  document.querySelectorAll("#modal-ver-estab .ver-input").forEach(el => (el.style.display = ""));
+
+  // Mostra/esconde botões
+  document.getElementById("btn-ativar-edicao").style.display   = "none";
+  document.getElementById("btn-salvar-edicao").style.display   = "";
+  document.getElementById("btn-cancelar-edicao").style.display = "";
+
+  // Imagens: mostrar overlays de troca
+  _toggleImagensEdicao(true);
+
+  // Status Operacional: checar motivo
+  toggleMotivoVer();
+}
+
+function cancelarModoEdicao() {
+  _setModoVisualizacao();
+}
+
+function _setModoVisualizacao() {
+  document.querySelectorAll("#modal-ver-estab .ver-value").forEach(el => (el.style.display = ""));
+  document.querySelectorAll("#modal-ver-estab .ver-input").forEach(el => (el.style.display = "none"));
+
+  document.getElementById("btn-ativar-edicao").style.display   = "";
+  document.getElementById("btn-salvar-edicao").style.display   = "none";
+  document.getElementById("btn-cancelar-edicao").style.display = "none";
+
+  // Esconde campo motivo cancelamento
+  document.getElementById("ver-row-motivo").style.display = "none";
+
+  _toggleImagensEdicao(false);
+}
+
+// ── POPULAR MODAL COM DADOS DO ESTAB ─────────────────────────
+
+function _popularVerModal(estab) {
+  // ID oculto
+  document.getElementById("ver-estab-id").value = estab.id;
+
+  // Título no header
+  document.getElementById("ver-form-nome-titulo").textContent = estab.nome || "—";
+
+  // Badges de status
+  const badgePub = document.getElementById("ver-badge-pub");
+  badgePub.textContent = estab.statusPublicacao || "Rascunho";
+  badgePub.className   = "badge-pub " + (estab.statusPublicacao === "Publicado" ? "pub-publicado" : "pub-rascunho");
+
+  const badgeOp = document.getElementById("ver-badge-op");
+  badgeOp.textContent = estab.statusOperacional || "Ativo";
+  badgeOp.className   = "badge-op status-op-" + (estab.statusOperacional || "Ativo").toLowerCase();
+
+  // Preview do site (lado esquerdo)
+  _atualizarPreviewVer(estab);
+
+  // Campos .ver-value
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val || "—";
+  };
+
+  set("vv-nome",         estab.nome);
+  set("vv-razaoSocial",  estab.razaoSocial);
+  set("vv-cnpj",         estab.cnpj);
+  set("vv-telefone",     estab.telefone);
+  set("vv-email",        estab.emailContato);
+  set("vv-sobre",        estab.sobre);
+  set("vv-statusPub",    estab.statusPublicacao);
+  set("vv-statusOp",     estab.statusOperacional);
+  set("vv-motivo",       estab.motivoCancelamento);
+  set("vv-categoria",    estab.categorias?.[0] || "—");
+  set("vv-cep",          estab.cep);
+  set("vv-estado",       estab.unidadeFederativa || "—");
+  set("vv-cidade",       estab.cidade);
+  set("vv-rua",          estab.rua);
+  set("vv-numero",       estab.numero);
+  set("vv-bairro",       estab.bairro);
+  set("vv-complemento",  estab.complemento);
+  set("vv-mapurl",       estab.mapaUrl);
+  set("vv-latitude",     estab.latitude);
+  set("vv-longitude",    estab.longitude);
+  set("vv-consultorNome",  estab.consultorNome);
+  set("vv-consultorEmail", estab.consultorEmail);
+  set("vv-repNome",      estab.representanteLegalNome);
+  set("vv-repCpf",       estab.cpfRepresentante);
+  set("vv-seg2Nome",     estab.segundoContatoNome);
+  set("vv-seg2Tel",      estab.segundoContatoTelefone);
+  set("vv-seg2Cargo",    estab.segundoContatoCargo);
+
+  // Motivo cancelamento: mostra apenas se cancelado (em modo viz)
+  const rowMotivo = document.getElementById("ver-row-motivo");
+  if (estab.statusOperacional === "Cancelado") {
+    rowMotivo.style.display = "";
+  }
+
+  // Cartões
+  _renderizarCartoesVer(estab);
+
+  // Imagens
+  _renderizarImagensVer(estab);
+}
+
+function _preencherInputs(estab) {
+  const setInput = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val || "";
+  };
+
+  setInput("vi-nomeEstab",     estab.nome);
+  setInput("vi-razaoSocial",   estab.razaoSocial);
+  setInput("vi-cnpj",          estab.cnpj);
+  setInput("vi-telefone",      estab.telefone);
+  setInput("vi-email",         estab.emailContato);
+  setInput("vi-sobre",         estab.sobre);
+  setInput("vi-statusPub",     estab.statusPublicacao);
+  setInput("vi-statusOp",      estab.statusOperacional);
+  setInput("vi-motivo",        estab.motivoCancelamento);
+  setInput("vi-cep",           estab.cep);
+  setInput("vi-rua",           estab.rua);
+  setInput("vi-numero",        estab.numero);
+  setInput("vi-bairro",        estab.bairro);
+  setInput("vi-complemento",   estab.complemento);
+  setInput("vi-mapurl",        estab.mapaUrl);
+  setInput("vi-latitude",      estab.latitude);
+  setInput("vi-longitude",     estab.longitude);
+  setInput("vi-consultorNome", estab.consultorNome);
+  setInput("vi-consultorEmail",estab.consultorEmail);
+  setInput("vi-repNome",       estab.representanteLegalNome);
+  setInput("vi-repCpf",        estab.cpfRepresentante);
+  setInput("vi-seg2Nome",      estab.segundoContatoNome);
+  setInput("vi-seg2Tel",       estab.segundoContatoTelefone);
+  setInput("vi-seg2Cargo",     estab.segundoContatoCargo);
+
+  // Selects que precisam de valor numérico
+  if (estab.unidadeFederativaId) {
+    document.getElementById("vi-estadoId").value = estab.unidadeFederativaId;
+  }
+}
+
+// ── PREVIEW LADO ESQUERDO ────────────────────────────────────
+
+function _atualizarPreviewVer(estab) {
+  const PLACEHOLDER = "./imgs/default-image.png";
+
+  const imagens   = estab.imagens || [];
+  const logoObj   = imagens.find(i => i.logo);
+  const fachadaObj= imagens.find(i => i.fachada);
+
+  const logoSrc    = logoObj?.url    || estab.imagemPrincipal || PLACEHOLDER;
+  const fachadaSrc = fachadaObj?.url || estab.imagemPrincipal || PLACEHOLDER;
+
+  // Atualiza todas as imgs do preview
+  ["ver-logo-img", "ver-logo-mobile"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.src = logoSrc; el.onerror = () => { el.onerror=null; el.src=PLACEHOLDER; }; }
+  });
+
+  ["ver-fachada-img", "ver-fachada-mobile", "ver-fachada-tablet"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.src = fachadaSrc; el.onerror = () => { el.onerror=null; el.src=PLACEHOLDER; }; }
+  });
+
+  // Textos do preview
+  const textSet = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || "—"; };
+  textSet("ver-nome",       estab.nome);
+  textSet("ver-nome-mobile",estab.nome);
+  textSet("ver-sobre",      estab.sobre);
+  textSet("ver-telefone",   estab.telefone);
+  textSet("ver-categoria",  estab.categorias?.[0] || "—");
+
+  const partes = [estab.rua, estab.numero, estab.bairro, estab.cidade].filter(Boolean);
+  textSet("ver-endereco", partes.join(", ") || "—");
+}
+
+// ── IMAGENS NO PAINEL DIREITO ─────────────────────────────────
+
+function _renderizarImagensVer(estab) {
+  const container = document.getElementById("ver-imagens-container");
+  container.innerHTML = "";
+
+  const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+
+  const imagens   = estab.imagens || [];
+  const logoObj   = imagens.find(i => i.logo);
+  const fachadaObj= imagens.find(i => i.fachada);
+
+  [
+    { label: "Logo",    obj: logoObj,    isLogo: true,  isFachada: false },
+    { label: "Fachada", obj: fachadaObj, isLogo: false, isFachada: true  }
+  ].forEach(({ label, obj, isLogo, isFachada }) => {
+    const src = obj?.url || PLACEHOLDER;
+
+    const wrap = document.createElement("div");
+    wrap.className = "ver-img-item";
+    wrap.dataset.tipo = label.toLowerCase();
+
+    wrap.innerHTML = `
+      <span class="ver-img-label">${label}</span>
+      <div class="ver-img-wrap">
+        <img class="ver-img-thumb" src="${src}" alt="${label}"
+             onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+        <!-- Overlay de edição — visível apenas em modo edição -->
+        <div class="ver-img-overlay" style="display:none;">
+          <label class="ver-img-btn-trocar" title="Trocar imagem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <input type="file" accept="image/*"
+              onchange="${obj
+                ? `_verTrocarImagem(event, ${estab.id}, ${obj.id}, ${isLogo}, ${isFachada})`
+                : `_verAdicionarImagem(event, ${estab.id}, ${isLogo}, ${isFachada})`}">
+          </label>
+          ${obj ? `
+          <button type="button" class="ver-img-btn-excluir" title="Excluir imagem"
+            onclick="_verExcluirImagem(${obj.id}, ${estab.id})">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+            </svg>
+          </button>` : ""}
+        </div>
+      </div>
+    `;
+    container.appendChild(wrap);
+  });
+}
+
+function _toggleImagensEdicao(ativar) {
+  document.querySelectorAll("#ver-imagens-container .ver-img-overlay").forEach(el => {
+    el.style.display = ativar ? "flex" : "none";
+  });
+}
+
+// ── AÇÕES DE IMAGEM ───────────────────────────────────────────
+
+async function _verTrocarImagem(event, estabId, imagemId, isLogo, isFachada) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const token = localStorage.getItem("token");
+
+  try {
+    if (imagemId) {
+      const del = await fetch(`${API_BASE}/api/estabelecimentos/${estabId}/imagens/${imagemId}`, {
+        method: "DELETE", headers: { Authorization: "Bearer " + token }
+      });
+      if (!del.ok && del.status !== 404) throw new Error("Erro ao excluir imagem antiga");
+    }
+    await enviarImagemEstabelecimento(estabId, file, isLogo, isFachada);
+    alert("Imagem atualizada com sucesso!");
+    await _recarregarEstabVer(estabId);
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao trocar imagem: " + err.message);
+  } finally {
+    event.target.value = "";
+  }
+}
+
+async function _verAdicionarImagem(event, estabId, isLogo, isFachada) {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    await enviarImagemEstabelecimento(estabId, file, isLogo, isFachada);
+    alert("Imagem adicionada com sucesso!");
+    await _recarregarEstabVer(estabId);
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao adicionar imagem: " + err.message);
+  } finally {
+    event.target.value = "";
+  }
+}
+
+async function _verExcluirImagem(imagemId, estabId) {
+  if (!confirm("Deseja realmente excluir esta imagem?")) return;
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/api/estabelecimentos/${estabId}/imagens/${imagemId}`, {
+    method: "DELETE", headers: { Authorization: "Bearer " + token }
+  });
+  if (!res.ok) { alert("Erro ao excluir imagem"); return; }
+  alert("Imagem excluída com sucesso!");
+  await _recarregarEstabVer(estabId);
+}
+
+async function _recarregarEstabVer(estabId) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/api/Estabelecimentos/${estabId}`, {
+    headers: { Authorization: "Bearer " + token }
+  });
+  if (!res.ok) return;
+  const estab = await res.json();
+  _estabAtual = estab;
+  _popularVerModal(estab);
+  // Mantém modo edição ativo
+  ativarModoEdicao();
+}
+
+// ── CARTÕES ───────────────────────────────────────────────────
+
+function _renderizarCartoesVer(estab) {
+  const container = document.getElementById("ver-cartoes-container");
+  if (!container) return;
+
+  const cartoes = estab.cartoesAceitos || [];
+  if (cartoes.length === 0) {
+    container.innerHTML = '<span class="ver-sem-cartao">Nenhum cartão vinculado</span>';
+    return;
+  }
+  container.innerHTML = cartoes
+    .map(c => `<span class="categoria-badge">${c.nome || c}</span>`)
+    .join("");
+}
+
+// ── SELECTS DINÂMICOS ─────────────────────────────────────────
+
+async function carregarCategoriasVer(categoriaNomeSelecionada = null) {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/CategoriasEstabelecimentos`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const select = document.getElementById("vi-categoriaId");
+    select.innerHTML = "";
+    data.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat.id;
+      opt.textContent = cat.nome;
+      if (cat.nome === categoriaNomeSelecionada) opt.selected = true;
+      select.appendChild(opt);
+    });
+  } catch (err) { console.error("Erro ao carregar categorias:", err); }
+}
+
+async function carregarEstadosVer() {
+  // Reutiliza a mesma função já existente no projeto, apenas popula o select correto
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/UnidadesFederativas`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const select = document.getElementById("vi-estadoId");
+    select.innerHTML = "";
+    data.forEach(uf => {
+      const opt = document.createElement("option");
+      opt.value = uf.id;
+      opt.textContent = uf.nome;
+      select.appendChild(opt);
+    });
+  } catch (err) { console.error("Erro ao carregar estados:", err); }
+}
+
+async function carregarCidadesVer(cidadeNomeSelecionada = null) {
+  const token = localStorage.getItem("token");
+  const estadoId = document.getElementById("vi-estadoId").value;
+  if (!estadoId || !token) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/Cidades?unidadeFederativaId=${estadoId}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (!res.ok) return;
+    const cidades = await res.json();
+    const select = document.getElementById("vi-cidadeId");
+    select.innerHTML = "";
+    cidades.forEach(cidade => {
+      const opt = document.createElement("option");
+      opt.value = cidade.id;
+      opt.textContent = cidade.nome;
+      if (cidade.nome === cidadeNomeSelecionada) opt.selected = true;
+      select.appendChild(opt);
+    });
+  } catch (err) { console.error("Erro ao carregar cidades:", err); }
+}
+
+// ── TOGGLE MOTIVO CANCELAMENTO ────────────────────────────────
+
+function toggleMotivoVer() {
+  const select    = document.getElementById("vi-statusOp");
+  const rowMotivo = document.getElementById("ver-row-motivo");
+  if (!select || !rowMotivo) return;
+
+  const isCancelado = select.value === "Cancelado";
+  rowMotivo.style.display = isCancelado ? "" : "none";
+
+  // value/display do textarea de motivo
+  const vvMotivo = document.getElementById("vv-motivo");
+  const viMotivo = document.getElementById("vi-motivo");
+  if (isCancelado) {
+    // Em modo edição, mostra input; em visualização, mostra .ver-value
+    const emEdicao = document.getElementById("vi-nomeEstab").style.display !== "none";
+    if (emEdicao) { viMotivo.style.display = ""; vvMotivo.style.display = "none"; }
+    else           { vvMotivo.style.display = ""; viMotivo.style.display = "none"; }
+  }
+}
+
+// ── SALVAR EDIÇÃO ─────────────────────────────────────────────
+
+async function salvarEdicaoUnificada() {
+  const token = localStorage.getItem("token");
+  const id    = document.getElementById("ver-estab-id").value;
+  if (!id) return;
+
+  const statusPub = document.getElementById("vi-statusPub").value;
+  const statusOp  = document.getElementById("vi-statusOp").value;
+
+  const data = {
+    nome:         document.getElementById("vi-nomeEstab").value.trim(),
+    razaoSocial:  document.getElementById("vi-razaoSocial").value.trim(),
+    cnpj:         document.getElementById("vi-cnpj").value.trim(),
+    telefone:     document.getElementById("vi-telefone").value.trim(),
+    emailContato: document.getElementById("vi-email").value.trim(),
+    sobre:        document.getElementById("vi-sobre").value.trim(),
+
+    statusPublicacao:  statusPub,
+    statusOperacional: statusOp,
+    motivoCancelamento: statusOp === "Cancelado"
+      ? document.getElementById("vi-motivo").value.trim()
+      : "",
+
+    ativo: statusPub === "Publicado",
+    status: statusPub,
+
+    categoriaId: Number(document.getElementById("vi-categoriaId").value),
+    cidadeId:    Number(document.getElementById("vi-cidadeId").value),
+
+    rua:         document.getElementById("vi-rua").value.trim(),
+    numero:      document.getElementById("vi-numero").value.trim(),
+    bairro:      document.getElementById("vi-bairro").value.trim(),
+    complemento: document.getElementById("vi-complemento").value.trim(),
+    cep:         document.getElementById("vi-cep").value.trim(),
+
+    mapaUrl:   document.getElementById("vi-mapurl").value.trim(),
+    latitude:  Number(document.getElementById("vi-latitude").value) || null,
+    longitude: Number(document.getElementById("vi-longitude").value) || null,
+
+    consultorNome:           document.getElementById("vi-consultorNome").value.trim(),
+    consultorEmail:          document.getElementById("vi-consultorEmail").value.trim(),
+    representanteLegalNome:  document.getElementById("vi-repNome").value.trim(),
+    cpfRepresentante:        document.getElementById("vi-repCpf").value.trim(),
+    segundoContatoNome:      document.getElementById("vi-seg2Nome").value.trim(),
+    segundoContatoTelefone:  document.getElementById("vi-seg2Tel").value.trim(),
+    segundoContatoCargo:     document.getElementById("vi-seg2Cargo").value.trim(),
+
+    grupoId: _estabAtual?.grupoId || null
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Erro ao atualizar estabelecimento");
+
+    alert("Estabelecimento atualizado com sucesso!");
+
+    // Atualiza cache global
+    const idx = estabelecimentosCache.findIndex(e => e.id === _estabAtual.id);
+    if (idx !== -1) {
+      estabelecimentosCache[idx] = { ...estabelecimentosCache[idx], ...data };
+    }
+
+    // Fecha o modal e recarrega lista
+    fecharVerEstab();
+    buscarEstabelecimentos();
+
+    if (typeof _atualizarContadores === "function") _atualizarContadores();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao salvar alterações: " + err.message);
+  }
+}
+
+// ── VIEWPORT (botões Desktop/Tablet/Mobile) ───────────────────
+
+function mudarViewportVer(tipo) {
+  const wrapper = document.getElementById("ver-preview-wrapper");
+  wrapper.className = "ver-preview-wrapper";
+  if (tipo === "tablet") wrapper.classList.add("viewport-tablet");
+  if (tipo === "mobile") wrapper.classList.add("viewport-mobile");
+
+  ["desktop","tablet","mobile"].forEach(t => {
+    document.getElementById(`btn-${t}-v`).classList.toggle("active", t === tipo);
+  });
+}
+
+// ── COMPATIBILIDADE: fecharModalEditar antigo ────────────────
+// (mantido para não quebrar chamadas existentes no código)
+function fecharModalEditar() {
+  fecharVerEstab();
+}
+
+
 
 async function carregarCategoriasModal(categoriaNomeSelecionada = null) {
   const token = localStorage.getItem("token");
@@ -5360,5 +5856,18 @@ window.abrirPreviewCupom = abrirPreviewCupom;
 window.fecharPreviewCupom = fecharPreviewCupom;
 window.abrirModalCupomPreview = abrirModalCupomPreview
 window.cpPreviewImagem = cpPreviewImagem;
+// ── EXPOR GLOBALMENTE ─────────────────────────────────────────
+window.abrirModalEditar        = abrirModalEditar;
+window.fecharVerEstab          = fecharVerEstab;
+window.ativarModoEdicao        = ativarModoEdicao;
+window.cancelarModoEdicao      = cancelarModoEdicao;
+window.salvarEdicaoUnificada   = salvarEdicaoUnificada;
+window.mudarViewportVer        = mudarViewportVer;
+window.carregarCidadesVer      = carregarCidadesVer;
+window.toggleMotivoVer         = toggleMotivoVer;
+window._verTrocarImagem        = _verTrocarImagem;
+window._verAdicionarImagem     = _verAdicionarImagem;
+window._verExcluirImagem       = _verExcluirImagem;
+window.fecharModalEditar       = fecharModalEditar; // retrocompat
 
 

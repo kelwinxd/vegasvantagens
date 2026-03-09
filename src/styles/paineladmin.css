@@ -957,7 +957,7 @@ line-height: 18px;
 /* Input de busca */
 .search-estab {
   flex: 1;
-  max-width: 320px;
+  max-width: 100%;
 
   padding: 8px 12px;
   border-radius: 6px;
@@ -2483,8 +2483,9 @@ input:checked + .slider-edit:before {
 /* === Botões de viewport === */
 .preview-viewport-btns {
   display: flex;
-  gap: 4px;
+  gap: 8px;
   margin-left: auto;
+  margin-right: 36px;
 }
 
 .viewport-btn {
@@ -2925,4 +2926,376 @@ aspect-ratio: 1/1;
   padding: 40px 20px;
   display: flex;
   justify-content: center;
+}
+
+
+
+/* Novo Modal Editar Preview */
+
+#modal-ver-estab {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* ── Container principal ─────────────────────────────────── */
+.modal-ver-container {
+  position: relative;
+  width: 100%;
+  max-width: 1300px;
+  height: 90vh;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+}
+
+/* ── Botão fechar ────────────────────────────────────────── */
+.btn-fechar-ver {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  background: #f1f1f1;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.btn-fechar-ver:hover { background: #e0e0e0; }
+
+/* ── Layout: Preview (esquerda) + Painel (direita) ───────── */
+.ver-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* LADO ESQUERDO — Preview (60%) */
+.ver-preview-side {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e5e5;
+  background: #f8f8f8;
+}
+
+.ver-preview-header {
+  padding: 14px 18px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ver-preview-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.ver-preview-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.ver-preview-wrapper {
+  transform-origin: top center;
+  transition: all 0.3s ease;
+}
+
+/* Viewports no modal ver */
+.ver-preview-wrapper.viewport-tablet {
+  max-width: 768px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 2px #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ver-preview-wrapper.viewport-mobile {
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 2px #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* LADO DIREITO — Painel Info/Edit (40%) */
+.ver-form-side {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.ver-form-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* ── Header do painel direito ────────────────────────────── */
+.ver-form-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.ver-form-title-group h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+}
+
+.ver-status-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+/* Badge publicação */
+.badge-pub {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.pub-publicado { background: #e6f9f0; color: #15803d; }
+.pub-rascunho  { background: #fef9e7; color: #92400e; }
+
+/* Badge operacional */
+.badge-op {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-op-ativo    { background: #e6f9f0; color: #15803d; }
+.status-op-pausado  { background: #fff7ed; color: #c2410c; }
+.status-op-cancelado{ background: #fef2f2; color: #dc2626; }
+
+/* Botões de ação (Editar / Salvar / Cancelar edição) */
+.ver-form-actions-top {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-modo-editar {
+  padding: 8px 18px;
+  background: #4B57A3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-modo-editar:hover { background: #3a4590; }
+
+.btn-modo-salvar {
+  padding: 8px 18px;
+  background: #15803d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-modo-salvar:hover { background: #166534; }
+
+.btn-modo-cancelar-edit {
+  padding: 8px 14px;
+  background: #f1f1f1;
+  color: #555;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-modo-cancelar-edit:hover { background: #e0e0e0; }
+
+/* ── Seções ──────────────────────────────────────────────── */
+.ver-secao {
+  margin-bottom: 22px;
+}
+
+.ver-secao-titulo {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #888;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* ── Grid de campos ──────────────────────────────────────── */
+.ver-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ver-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ver-field.full {
+  grid-column: span 2;
+}
+
+.ver-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Valor em modo visualização */
+.ver-value {
+  font-size: 13px;
+  color: #1a1a1a;
+  line-height: 1.5;
+  min-height: 20px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  word-break: break-word;
+}
+
+/* Input em modo edição */
+.ver-input {
+  font-size: 13px;
+  color: #1a1a1a;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  padding: 7px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ver-input:focus { border-color: #4B57A3; background: #fff; }
+
+textarea.ver-input { resize: vertical; }
+
+/* ── Imagens ─────────────────────────────────────────────── */
+.ver-imagens-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.ver-img-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ver-img-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ver-img-wrap {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f0f0f0;
+  aspect-ratio: 4/3;
+}
+
+.ver-img-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay de ações (edição) */
+.ver-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ver-img-btn-trocar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.ver-img-btn-trocar input[type="file"] { display: none; }
+.ver-img-btn-trocar:hover { background: #e8eeff; }
+
+.ver-img-btn-excluir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #dc2626;
+  transition: background 0.2s;
+}
+.ver-img-btn-excluir:hover { background: #fef2f2; }
+
+/* ── Cartões ─────────────────────────────────────────────── */
+.ver-cartoes-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ver-sem-cartao {
+  font-size: 13px;
+  color: #aaa;
+  font-style: italic;
 }
