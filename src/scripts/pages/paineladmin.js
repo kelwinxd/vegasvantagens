@@ -4250,13 +4250,121 @@ async function carregarCidadesVer(cidadeNomeSelecionada = null) {
 }
 
 
-// abrirModalEditar atualizado — passa estab.cidade e estab.unidadeFederativaId corretamente
-// Abrir
+// ============================================================
+//  PREVIEW REATIVO — Modal Ver/Editar
+//  Espelha o comportamento do atualizarPreview() do modal criar
+// ============================================================
+
+function atualizarPreviewVer() {
+  // Nome
+  const nome = document.getElementById("vi-nomeEstab")?.value.trim() || 
+               document.getElementById("vv-nome")?.textContent || "Nome do Estabelecimento";
+  document.getElementById("ver-nome").textContent        = nome;
+  document.getElementById("ver-nome-mobile").textContent = nome;
+
+  // Telefone
+  const telefone = document.getElementById("vi-telefone")?.value.trim() ||
+                   document.getElementById("vv-telefone")?.textContent || "—";
+  document.getElementById("ver-telefone").textContent = telefone;
+
+  // Sobre
+  const sobre = document.getElementById("vi-sobre")?.value.trim() ||
+                document.getElementById("vv-sobre")?.textContent || "—";
+  document.getElementById("ver-sobre").textContent = sobre;
+
+  // Endereço
+  const rua         = document.getElementById("vi-rua")?.value.trim()         || document.getElementById("vv-rua")?.textContent        || "";
+  const numero      = document.getElementById("vi-numero")?.value.trim()      || document.getElementById("vv-numero")?.textContent     || "";
+  const bairro      = document.getElementById("vi-bairro")?.value.trim()      || document.getElementById("vv-bairro")?.textContent     || "";
+  const complemento = document.getElementById("vi-complemento")?.value.trim() || document.getElementById("vv-complemento")?.textContent|| "";
+
+  const cidadeSelect = document.getElementById("vi-cidadeId");
+  const cidade = cidadeSelect?.options[cidadeSelect.selectedIndex]?.text ||
+                 document.getElementById("vv-cidade")?.textContent || "";
+
+  let endereco = "";
+  if (rua)         endereco += rua;
+  if (numero)      endereco += `, ${numero}`;
+  if (complemento) endereco += ` - ${complemento}`;
+  if (bairro)      endereco += ` - ${bairro}`;
+  if (endereco)    endereco += ` - ${cidade}/SP`;
+  else             endereco  = "—";
+
+  document.getElementById("ver-endereco").textContent = endereco;
+
+  // Categoria
+  const catSelect = document.getElementById("vi-categoriaId");
+  const categoria = catSelect?.options[catSelect.selectedIndex]?.text ||
+                    document.getElementById("vv-categoria")?.textContent || "—";
+  document.getElementById("ver-categoria").textContent = categoria;
+}
+
+
+// ============================================================
+//  LIGAR EVENTOS REATIVOS nos inputs do modal de edição
+//  Chame esta função UMA VEZ dentro de abrirModalEditar()
+// ============================================================
+
+function _ligarPreviewReativoVer() {
+  const mapeamento = [
+    { inputId: "vi-nomeEstab"  },
+    { inputId: "vi-telefone"   },
+    { inputId: "vi-sobre"      },
+    { inputId: "vi-rua"        },
+    { inputId: "vi-numero"     },
+    { inputId: "vi-bairro"     },
+    { inputId: "vi-complemento"},
+    { inputId: "vi-cidadeId"   },
+    { inputId: "vi-categoriaId"},
+  ];
+
+  mapeamento.forEach(({ inputId }) => {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    // Remove listener antigo para não duplicar
+    el.removeEventListener("input",  atualizarPreviewVer);
+    el.removeEventListener("change", atualizarPreviewVer);
+    el.addEventListener("input",  atualizarPreviewVer);
+    el.addEventListener("change", atualizarPreviewVer);
+  });
+}
+
+
+// ============================================================
+//  VIEWPORT — botões Desktop / Tablet / Mobile
+//  Igual ao comportamento do modal de criação
+// ============================================================
+
+function mudarViewportVer(tipo) {
+  const wrapper = document.getElementById("ver-preview-wrapper");
+  if (!wrapper) return;
+
+  // Remove classes anteriores
+  wrapper.classList.remove("viewport-tablet", "viewport-mobile");
+
+  if (tipo === "tablet") wrapper.classList.add("viewport-tablet");
+  if (tipo === "mobile") wrapper.classList.add("viewport-mobile");
+
+  // Atualiza botões ativos
+  ["desktop", "tablet", "mobile"].forEach(t => {
+    const btn = document.getElementById(`btn-${t}-v`);
+    if (btn) btn.classList.toggle("active", t === tipo);
+  });
+}
+
+
+// ============================================================
+//  abrirModalEditar — versão final com preview reativo
+// ============================================================
+
 async function abrirModalEditar(estab) {
   _estabAtual = estab;
 
   _setModoVisualizacao();
   _popularVerModal(estab);
+
+  // Liga eventos reativos (só depois de popular para não disparar desnecessariamente)
+  _ligarPreviewReativoVer();
 
   await Promise.all([
     carregarCategoriasVer(estab.categorias?.[0]),
@@ -4267,6 +4375,12 @@ async function abrirModalEditar(estab) {
     document.getElementById("vi-estadoId").value = estab.unidadeFederativaId;
     await carregarCidadesVer(estab.cidade);
   }
+
+  // Atualiza preview com os dados já carregados
+  atualizarPreviewVer();
+
+  // Reseta viewport para desktop
+  mudarViewportVer("desktop");
 
   const modal = document.getElementById("modal-ver-estab");
   modal.style.display = "";
@@ -4752,18 +4866,6 @@ async function salvarEdicaoUnificada() {
   }
 }
 
-// ── VIEWPORT (botões Desktop/Tablet/Mobile) ───────────────────
-
-function mudarViewportVer(tipo) {
-  const wrapper = document.getElementById("ver-preview-wrapper");
-  wrapper.className = "ver-preview-wrapper";
-  if (tipo === "tablet") wrapper.classList.add("viewport-tablet");
-  if (tipo === "mobile") wrapper.classList.add("viewport-mobile");
-
-  ["desktop","tablet","mobile"].forEach(t => {
-    document.getElementById(`btn-${t}-v`).classList.toggle("active", t === tipo);
-  });
-}
 
 // ── COMPATIBILIDADE: fecharModalEditar antigo ────────────────
 // (mantido para não quebrar chamadas existentes no código)
