@@ -4251,6 +4251,7 @@ async function carregarCidadesVer(cidadeNomeSelecionada = null) {
 
 
 // abrirModalEditar atualizado — passa estab.cidade e estab.unidadeFederativaId corretamente
+// Abrir
 async function abrirModalEditar(estab) {
   _estabAtual = estab;
 
@@ -4262,20 +4263,26 @@ async function abrirModalEditar(estab) {
     carregarEstadosVer()
   ]);
 
-  // Seta o estado e carrega as cidades já selecionando pelo nome
   if (estab.unidadeFederativaId) {
     document.getElementById("vi-estadoId").value = estab.unidadeFederativaId;
-    await carregarCidadesVer(estab.cidade); // estab.cidade = "Americana"
+    await carregarCidadesVer(estab.cidade);
   }
 
-  document.getElementById("modal-ver-estab").style.display = "flex";
+  const modal = document.getElementById("modal-ver-estab");
+  modal.style.display = "";
+  modal.classList.add("active");
 }
 
+// Fechar
 function fecharVerEstab() {
-  document.getElementById("modal-ver-estab").style.display = "none";
+  const modal = document.getElementById("modal-ver-estab");
+  modal.classList.remove("active");
+  modal.style.display = "none";
   _estabAtual = null;
-  _setModoVisualizacao(); // reseta para visualização ao fechar
+  _setModoVisualizacao();
 }
+
+
 
 // ── MODO VISUALIZAÇÃO / EDIÇÃO ────────────────────────────────
 
