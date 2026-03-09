@@ -3750,7 +3750,6 @@ function obterCartoesSelecionados() {
 }
 
 
-
 //Estabelecimento Section
 async function cadastrarEstabelecimento2() {
   const token = localStorage.getItem("token");
@@ -5835,6 +5834,8 @@ function atualizarDashboardCompleto() {
 
 buscarEstabelecimentos();
 carregarCuponsPromocoes();
+
+window.abrirModalEditar = abrirModalEditar;
 window.cadastrarCupom = cadastrarCupom;
 window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
@@ -5869,7 +5870,7 @@ window.fecharPreviewCupom = fecharPreviewCupom;
 window.abrirModalCupomPreview = abrirModalCupomPreview
 window.cpPreviewImagem = cpPreviewImagem;
 // ── EXPOR GLOBALMENTE ─────────────────────────────────────────
-window.abrirModalEditar        = abrirModalEditar;
+
 window.fecharVerEstab          = fecharVerEstab;
 window.ativarModoEdicao        = ativarModoEdicao;
 window.cancelarModoEdicao      = cancelarModoEdicao;
