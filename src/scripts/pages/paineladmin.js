@@ -2630,9 +2630,6 @@ async function excluirCupomPromocao(id) {
 }
 
 
- function fecharModalEditarCupom() {
-    document.getElementById("modalEditarCupom").classList.remove("open");
-  }
 
   // Fechar ao clicar fora do modal
   document.getElementById("modalEditarCupom").addEventListener("click", (e) => {
