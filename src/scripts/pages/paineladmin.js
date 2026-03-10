@@ -3717,38 +3717,6 @@ function _atualizarHeaderCupom() {
 }
 
 
-function _toDatetimeLocal(date) {
-  const pad = n => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-// ============================================================
-//  RESETAR FORMULÁRIO
-// ============================================================
-function _resetarFormCupom() {
-  const form = document.getElementById("formCupomPreview");
-  if (form) form.reset();
-
-  cpImgGaleriaUrl = null;
-  cpImgModalUrl   = null;
-
-  const thumbG = document.getElementById("cp-thumb-galeria");
-  const thumbM = document.getElementById("cp-thumb-modal");
-  if (thumbG) thumbG.innerHTML = "";
-  if (thumbM) thumbM.innerHTML = "";
-
-  document.getElementById("cpv-card-img").src  = "./imgs/default-image.png";
-  document.getElementById("cpv-modal-img").src = "./imgs/default-image.png";
-
-  // Desmarca cartões
-  document.querySelectorAll("#cp-cards-row-preview input[type='checkbox']").forEach(cb => cb.checked = false);
-  // Desmarca estabelecimentos
-  document.querySelectorAll("#cp-estab-container input[type='checkbox']").forEach(cb => cb.checked = false);
-
-  sincronizarCupomPreview();
-  _atualizarHeaderCupom();
-}
-
 // ============================================================
 //  SALVAR — redireciona para criar ou editar
 // ============================================================
