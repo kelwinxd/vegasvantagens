@@ -1408,7 +1408,7 @@
 
         <div class="preview-scroll">
           <div class="preview-comercio-wrapper" id="ver-preview-wrapper">
-            
+
             <section class="comercio-p preview-comercio">
               <h1 class="tag-comercio" id="ver-categoria">—</h1>
 
@@ -1465,7 +1465,7 @@
 
 <!--preview cupom-->
 
-<!-- Modal Preview Cupom -->
+<!-- Modal Preview Cupom — Unificado (Criar + Ver + Editar) -->
 <div id="modal-preview-cupom" class="mpc-overlay" style="display:none;">
   <div class="mpc-container">
 
@@ -1479,112 +1479,180 @@
     <!-- Layout: 35% form | 65% preview -->
     <div class="mpc-layout">
 
-      <!-- Lado Esquerdo: Formulário -->
+      <!-- ── Lado Esquerdo: Formulário ── -->
       <div class="mpc-form-side">
         <div class="mpc-form-scroll">
-          <h2 class="mpc-form-title">Cadastrar Cupom</h2>
+
+          <!-- Header dinâmico -->
+          <div class="ver-form-header" style="margin-bottom:16px;">
+            <h2 class="mpc-form-title" id="cp-form-titulo">Cadastrar Cupom</h2>
+
+            <!-- Badges de status (só no modo visualização de edição) -->
+            <div class="ver-status-badges" id="cp-status-badges" style="display:none;">
+              <span id="cp-badge-status" class="badge-pub">Rascunho</span>
+              <span id="cp-badge-ativo"  class="badge-op">Ativo</span>
+            </div>
+
+            <!-- Botões do topo (modo visualização) -->
+            <div class="ver-form-actions-top" id="cp-actions-visualizacao" style="display:none;">
+              <button type="button" class="btn-ativar-edicao" id="btn-ativar-edicao-cupom"
+                      onclick="ativarModoEdicaoCupom()">
+                ✏️ Editar
+              </button>
+            </div>
+
+            <!-- Botões do topo (modo edição) -->
+            <div class="ver-form-actions-top" id="cp-actions-edicao" style="display:none;">
+              <button type="button" class="btn-salvar-preview" id="btn-salvar-edicao-cupom"
+                      onclick="salvarEdicaoCupom()">
+                💾 Salvar
+              </button>
+              <button type="button" class="btn-cancelar-preview" id="btn-cancelar-edicao-cupom"
+                      onclick="cancelarModoEdicaoCupom()">
+                ✕ Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- ══════════════════════════════════════════════
+               FORMULÁRIO — usado em modo CRIAÇÃO e EDIÇÃO
+               ============================================== -->
           <form id="formCupomPreview" autocomplete="off">
 
+            <!-- Código / Título -->
             <div class="row">
               <div class="field">
                 <label>Código</label>
-                <input type="text" id="cp-codigo" >
+                <span class="ver-value" id="vv-cp-codigo">—</span>
+                <input class="ver-input" type="text" id="cp-codigo" placeholder="EX: PROMO10">
               </div>
               <div class="field">
                 <label>Título</label>
-                <input type="text" id="cp-titulo" >
+                <span class="ver-value" id="vv-cp-titulo">—</span>
+                <input class="ver-input" type="text" id="cp-titulo" placeholder="Título do cupom">
               </div>
             </div>
 
+            <!-- Título Modal -->
             <div class="row">
               <div class="field">
                 <label>Título Modal</label>
-                <input type="text" id="cp-modalTitulo">
+                <span class="ver-value" id="vv-cp-modalTitulo">—</span>
+                <input class="ver-input" type="text" id="cp-modalTitulo" placeholder="Título do modal">
               </div>
             </div>
 
+            <!-- Descrição Card -->
             <div class="row">
               <div class="field">
                 <label>Descrição Card</label>
-                <input type="text" id="cp-descricao" >
+                <span class="ver-value" id="vv-cp-descricao">—</span>
+                <input class="ver-input" type="text" id="cp-descricao" placeholder="Descrição do card">
               </div>
             </div>
 
+            <!-- Descrição Modal -->
             <div class="row">
               <div class="field">
                 <label>Descrição Modal</label>
-                <input type="text" id="cp-modalDescricao">
+                <span class="ver-value" id="vv-cp-modalDescricao">—</span>
+                <input class="ver-input" type="text" id="cp-modalDescricao" placeholder="Descrição do modal">
               </div>
             </div>
 
+            <!-- Desconto / Valor Mínimo -->
             <div class="row">
               <div class="field">
                 <label>Desconto (%)</label>
-                <input type="number" id="cp-valorDesconto" min="0" max="100">
+                <span class="ver-value" id="vv-cp-valorDesconto">—</span>
+                <input class="ver-input" type="number" id="cp-valorDesconto" min="0" max="100">
               </div>
               <div class="field">
                 <label>Valor Mínimo</label>
-                <input type="number" id="cp-valorMinimoCompra" min="0" max="1000" step="0.01">
+                <span class="ver-value" id="vv-cp-valorMinimoCompra">—</span>
+                <input class="ver-input" type="number" id="cp-valorMinimoCompra" min="0" step="0.01">
               </div>
             </div>
 
+            <!-- Datas -->
             <div class="row">
               <div class="field">
                 <label>Data Início</label>
-                <input type="datetime-local" id="cp-dataInicio">
+                <span class="ver-value" id="vv-cp-dataInicio">—</span>
+                <input class="ver-input" type="datetime-local" id="cp-dataInicio">
               </div>
               <div class="field">
                 <label>Data Expiração</label>
-                <input type="datetime-local" id="cp-dataExpiracao">
+                <span class="ver-value" id="vv-cp-dataExpiracao">—</span>
+                <input class="ver-input" type="datetime-local" id="cp-dataExpiracao">
               </div>
             </div>
 
+            <!-- Limites / Ativo -->
             <div class="row">
               <div class="field">
                 <label>Limite de Uso</label>
-                <input type="number" id="cp-limiteUso">
+                <span class="ver-value" id="vv-cp-limiteUso">—</span>
+                <input class="ver-input" type="number" id="cp-limiteUso">
               </div>
               <div class="field">
                 <label>Limite por Usuário</label>
-                <input type="number" id="cp-limiteUsoPorUsuario">
+                <span class="ver-value" id="vv-cp-limiteUsoPorUsuario">—</span>
+                <input class="ver-input" type="number" id="cp-limiteUsoPorUsuario">
               </div>
               <div class="field">
                 <label>Ativo</label>
-                <label class="switch">
+                <!-- visualização -->
+                <span class="ver-value" id="vv-cp-ativo">—</span>
+                <!-- edição -->
+                <label class="switch ver-input" style="display:none;">
                   <input type="checkbox" id="cp-ativo" checked>
                   <span class="slider-edit"></span>
                 </label>
               </div>
             </div>
 
+            <!-- Estabelecimentos -->
             <div class="row">
               <div class="field">
-                <label>Estabelecimentos</label>
-                <div class="estabelecimentos-checkbox-container" id="cp-estab-container"></div>
+                <label>Estabelecimento</label>
+                <span class="ver-value" id="vv-cp-estab">—</span>
+                <div class="ver-input estabelecimentos-checkbox-container"
+                     id="cp-estab-container" style="display:none;"></div>
               </div>
             </div>
 
+            <!-- Cartões Aceitos -->
             <div class="row">
               <div class="field">
                 <label>Cartões Aceitos</label>
-                <div class="cupom-cards-row" id="cp-cards-row-preview"></div>
+                <!-- visualização: badges -->
+                <div class="ver-value" id="vv-cp-cartoes" style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <span style="color:#999;">Nenhum</span>
+                </div>
+                <!-- edição: checkboxes -->
+                <div class="ver-input cupom-cards-row" id="cp-cards-row-preview" style="display:none;"></div>
               </div>
             </div>
 
-            <div class="row">
+            <!-- Imagens (só no modo edição / criação) -->
+            <div class="row ver-input" id="cp-row-imagens" style="display:none;">
               <div class="field">
                 <label>Imagem Cupom (Card)</label>
-                <input type="file" id="cp-imgGaleria" class="input-cp" accept="image/*" onchange="cpPreviewImagem(this,'galeria')">
+                <input type="file" id="cp-imgGaleria" class="input-cp" accept="image/*"
+                       onchange="cpPreviewImagem(this,'galeria')">
                 <div id="cp-thumb-galeria" class="preview-img-small"></div>
               </div>
               <div class="field">
                 <label>Imagem Modal</label>
-                <input type="file" id="cp-imgModal" class="input-cp" accept="image/*" onchange="cpPreviewImagem(this,'modal')">
+                <input type="file" id="cp-imgModal" class="input-cp" accept="image/*"
+                       onchange="cpPreviewImagem(this,'modal')">
                 <div id="cp-thumb-modal" class="preview-img-small"></div>
               </div>
             </div>
 
-            <div class="preview-actions">
+            <!-- Ações rodapé — só modo CRIAÇÃO -->
+            <div class="preview-actions" id="cp-actions-rodape-criar">
               <button type="button" onclick="cadastrarCupom()" class="btn-salvar-preview">
                 💾 Cadastrar Cupom
               </button>
@@ -1597,7 +1665,7 @@
         </div>
       </div>
 
-      <!-- Lado Direito: Preview -->
+      <!-- ── Lado Direito: Preview ── -->
       <div class="mpc-preview-side">
         <div class="mpc-preview-header">
           <h3>🖥️ Preview do Cupom</h3>
@@ -1606,7 +1674,7 @@
 
         <div class="mpc-preview-scroll">
 
-          <!-- === CARD DO CUPOM (idêntico ao real) === -->
+          <!-- CARD DO CUPOM -->
           <div style="max-width:360px; margin: 0 auto 40px;">
             <article class="coupon-card">
               <div class="coupon-media">
@@ -1630,10 +1698,11 @@
             </article>
           </div>
 
-          <!-- === MODAL DO CUPOM (idêntico ao real) === -->
+          <!-- MODAL DO CUPOM -->
           <div class="mpc-modal-preview-wrap" id="cpv-modal-wrap" style="display:none;">
-            <div class="coupon-modal" style="position:relative; transform:none; left:auto; top:auto; max-width:100%; box-shadow: 0 30px 70px rgba(10,15,35,.25);">
-              <button class="cm-close" style="position:absolute; right:-20px; top:-20px;" aria-label="Fechar" onclick="fecharModalCupomPreview()">&times;</button>
+            <div class="coupon-modal" style="position:relative;transform:none;left:auto;top:auto;max-width:100%;box-shadow:0 30px 70px rgba(10,15,35,.25);">
+              <button class="cm-close" style="position:absolute;right:-20px;top:-20px;"
+                      aria-label="Fechar" onclick="fecharModalCupomPreview()">&times;</button>
               <div class="cm-wrap">
                 <div class="cm-topchips">
                   <span class="cm-chip" id="cpv-modal-chip-validade">
@@ -1645,21 +1714,28 @@
                     Categoria
                   </span>
                 </div>
-
                 <div class="cm-badge">
                   <img id="cpv-modal-img" src="./imgs/default-image.png" alt="desconto" loading="lazy"
-                    style="width:390px;height:291px;display: block;">
+                       style="width:390px;height:291px;display:block;">
                 </div>
-
-                <h2 class="cm-title" id="cpv-modal-titulo" style="text-align:center;color:#1e2340;font-size:22px;font-weight:700;margin:12px 0 8px;">Título do Modal</h2>
-                <p class="cm-sub" id="cpv-modal-descricao" style="text-align:center;font-size:14px;color:#586274;margin-bottom:16px;">Descrição modal aparece aqui</p>
-
-                <p class="aceitos-cm" style="text-align:center;font-weight:600;font-size:14px;margin-bottom:10px;">Cartões Aceitos:</p>
-                <div class="cm-pills" id="cpv-modal-pills" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;"></div>
-
+                <h2 class="cm-title" id="cpv-modal-titulo"
+                    style="text-align:center;color:#1e2340;font-size:22px;font-weight:700;margin:12px 0 8px;">
+                  Título do Modal
+                </h2>
+                <p class="cm-sub" id="cpv-modal-descricao"
+                   style="text-align:center;font-size:14px;color:#586274;margin-bottom:16px;">
+                  Descrição modal aparece aqui
+                </p>
+                <p class="aceitos-cm" style="text-align:center;font-weight:600;font-size:14px;margin-bottom:10px;">
+                  Cartões Aceitos:
+                </p>
+                <div class="cm-pills" id="cpv-modal-pills"
+                     style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;"></div>
                 <div class="cm-alert" style="background:#f1f3fb;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
                   <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3446b8" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3446b8" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
                     <strong style="color:#3446b8;font-size:15px;">Atenção!</strong>
                   </div>
                   <p style="color:#3446b8;font-weight:600;font-size:13px;margin:0 0 4px 0;">
@@ -1669,9 +1745,8 @@
                     Não acumulável com outras promoções. Apresente o cupom no momento do pedido.
                   </p>
                 </div>
-
                 <a href="#" class="cm-cta" role="button"
-                  style="display:block;text-align:center;background:#3446b8;color:#fff;border-radius:999px;padding:14px;font-weight:700;text-decoration:none;">
+                   style="display:block;text-align:center;background:#3446b8;color:#fff;border-radius:999px;padding:14px;font-weight:700;text-decoration:none;">
                   Consultar no mapa
                 </a>
               </div>
@@ -1679,7 +1754,7 @@
           </div>
 
           <div class="preview-footer-note" style="margin-top:24px;">
-            <p>💡 Clique em <strong>"Ver Oferta"</strong> para visualizar o modal. Campos como limite de uso, datas e estabelecimentos são administrativos.</p>
+            <p>💡 Clique em <strong>"Ver Oferta"</strong> para visualizar o modal.</p>
           </div>
 
         </div>
