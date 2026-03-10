@@ -6221,5 +6221,6 @@ window._verTrocarImagem        = _verTrocarImagem;
 window._verAdicionarImagem     = _verAdicionarImagem;
 window._verExcluirImagem       = _verExcluirImagem;
 window.fecharModalEditarVer       = fecharModalEditarVer; // retrocompat
+window.ativarModoEdicaoCupom = ativarModoEdicaoCupom;
 
 
