@@ -1359,9 +1359,9 @@ function renderizarPromocoes(cupons) {
     const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
     const imagem =
-      c.imagens && c.imagens.length
-        ? c.imagens[0]
-        : PLACEHOLDER;
+  c.imagens && c.imagens.length
+    ? (c.imagens[c.imagens.length - 1]?.url || c.imagens[0]?.url || PLACEHOLDER)
+    : PLACEHOLDER;
 
     // Badges de cartões (máximo 2 + contador)
     const cartoesVisiveis = c.cartoesAceitos ? c.cartoesAceitos.slice(0, 2) : [];
