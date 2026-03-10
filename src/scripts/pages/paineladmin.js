@@ -3090,17 +3090,79 @@ if (ativo) {
   }
 }
 
+
 // ============================================================
-//  MODAL CUPOM UNIFICADO — Criar + Editar com preview reativo
-//  Substitui abrirModalEditarCupom() e abrirPreviewCupom()
-//  Cole este bloco inteiro no paineladmin.js
+//  MODAL CUPOM UNIFICADO — Criar + Ver + Editar
+//  Substitui todo o bloco anterior do cupom-modal-unificado.js
 // ============================================================
 
-// ── Estado global ─────────────────────────────────────────────
-let _cupomAtual       = null;   // null = modo criação, objeto = modo edição
-let cpImgGaleriaUrl   = null;
-let cpImgModalUrl     = null;
-let _modoEdicaoCupom  = false;
+let _cupomAtual      = null;   // null = criação | objeto = edição
+let _modoEdicaoCupom = false;  // false = visualização | true = editando
+let cpImgGaleriaUrl  = null;
+let cpImgModalUrl    = null;
+
+// ============================================================
+//  MODOS — visualização / edição / criação
+// ============================================================
+
+function _setCupomModoVisualizacao() {
+  // Esconde inputs, mostra ver-values
+  document.querySelectorAll("#formCupomPreview .ver-input").forEach(el => el.style.display = "none");
+  document.querySelectorAll("#formCupomPreview .ver-value").forEach(el => el.style.display = "");
+
+  // Botões
+  document.getElementById("cp-actions-visualizacao").style.display = "";
+  document.getElementById("cp-actions-edicao").style.display       = "none";
+  document.getElementById("cp-actions-rodape-criar").style.display = "none";
+
+  // Badges de status visíveis
+  document.getElementById("cp-status-badges").style.display = "";
+
+  _modoEdicaoCupom = false;
+}
+
+function _setCupomModoCriacao() {
+  // Mostra inputs, esconde ver-values
+  document.querySelectorAll("#formCupomPreview .ver-input").forEach(el => el.style.display = "");
+  document.querySelectorAll("#formCupomPreview .ver-value").forEach(el => el.style.display = "none");
+
+  // Botões
+  document.getElementById("cp-actions-visualizacao").style.display = "none";
+  document.getElementById("cp-actions-edicao").style.display       = "none";
+  document.getElementById("cp-actions-rodape-criar").style.display = "";
+
+  // Badges de status ocultos na criação
+  document.getElementById("cp-status-badges").style.display = "none";
+
+  document.getElementById("cp-form-titulo").textContent = "Cadastrar Cupom";
+  _modoEdicaoCupom = false;
+}
+
+function ativarModoEdicaoCupom() {
+  if (!_cupomAtual) return;
+
+  document.querySelectorAll("#formCupomPreview .ver-input").forEach(el => el.style.display = "");
+  document.querySelectorAll("#formCupomPreview .ver-value").forEach(el => el.style.display = "none");
+
+  document.getElementById("cp-actions-visualizacao").style.display = "none";
+  document.getElementById("cp-actions-edicao").style.display       = "";
+  document.getElementById("cp-actions-rodape-criar").style.display = "none";
+  document.getElementById("cp-status-badges").style.display        = "";
+
+  document.getElementById("cp-form-titulo").textContent = "Editar Cupom";
+  _modoEdicaoCupom = true;
+
+  // Liga preview reativo ao ativar edição
+  _ligarPreviewReativoCupom();
+}
+
+function cancelarModoEdicaoCupom() {
+  if (!_cupomAtual) return;
+  // Repopula os ver-values com os dados originais e volta ao modo visualização
+  _popularVerValuesCupom(_cupomAtual);
+  _setCupomModoVisualizacao();
+  sincronizarCupomPreview();
+}
 
 // ============================================================
 //  ABRIR MODAL — Criação
@@ -3110,7 +3172,7 @@ function abrirPreviewCupom() {
   _modoEdicaoCupom = false;
 
   _resetarFormCupom();
-  _atualizarHeaderCupom();
+  _setCupomModoCriacao();
 
   const modal = document.getElementById("modal-preview-cupom");
   modal.style.display = "flex";
@@ -3119,18 +3181,12 @@ function abrirPreviewCupom() {
   cpPopularCartoes();
   cpPopularEstabelecimentos();
 
-  // Liga preview reativo
-  const form = document.getElementById("formCupomPreview");
-  form.removeEventListener("input",  sincronizarCupomPreview);
-  form.removeEventListener("change", sincronizarCupomPreview);
-  form.addEventListener("input",  sincronizarCupomPreview);
-  form.addEventListener("change", sincronizarCupomPreview);
-
+  _ligarPreviewReativoCupom();
   sincronizarCupomPreview();
 }
 
 // ============================================================
-//  ABRIR MODAL — Edição (substitui abrirModalEditarCupom)
+//  ABRIR MODAL — Edição (abre em modo VISUALIZAÇÃO)
 // ============================================================
 async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
   const token = localStorage.getItem("token");
@@ -3138,7 +3194,6 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
   mostrarLoader("Carregando cupom...", "Buscando informações do cupom");
 
   try {
-    // 1. Busca dados completos do cupom
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
       headers: { Authorization: "Bearer " + token }
     });
@@ -3149,32 +3204,25 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
       return;
     }
 
-    const cupom = await res.json();
-    _cupomAtual      = cupom;
-    _modoEdicaoCupom = true;
+    const cupom   = await res.json();
+    _cupomAtual   = cupom;
     window._cupomEditando = cupom;
 
-    // 2. Popula cartões e estabelecimentos primeiro (precisam existir no DOM)
     mostrarLoader("Carregando cupom...", "Carregando cartões e estabelecimentos...");
+
+    // Popula cartões e estabelecimentos (precisam existir antes de marcar)
     await Promise.all([
       cpPopularCartoes(),
       cpPopularEstabelecimentos()
     ]);
 
-    // 3. Preenche o formulário com dados do cupom
-    _preencherFormCupom(cupom, nomeEstab);
+    // Preenche os ver-values (modo visualização)
+    _popularVerValuesCupom(cupom);
 
-    // 4. Atualiza header para modo edição
-    _atualizarHeaderCupom();
+    // Preenche os inputs (para quando ativar edição)
+    _preencherInputsCupom(cupom, nomeEstab);
 
-    // 5. Liga preview reativo
-    const form = document.getElementById("formCupomPreview");
-    form.removeEventListener("input",  sincronizarCupomPreview);
-    form.removeEventListener("change", sincronizarCupomPreview);
-    form.addEventListener("input",  sincronizarCupomPreview);
-    form.addEventListener("change", sincronizarCupomPreview);
-
-    // 6. Imagem do cupom
+    // Imagem
     cpImgGaleriaUrl = null;
     cpImgModalUrl   = null;
     const imagens = cupom.imagens || [];
@@ -3188,9 +3236,12 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
       }
     }
 
+    // Abre em modo VISUALIZAÇÃO
+    document.getElementById("cp-form-titulo").textContent = cupom.titulo || "Ver Cupom";
+    _setCupomModoVisualizacao();
+
     ocultarLoader();
 
-    // 7. Abre o modal
     const modal = document.getElementById("modal-preview-cupom");
     modal.style.display = "flex";
     setTimeout(() => {
@@ -3220,85 +3271,100 @@ function fecharPreviewCupom() {
   }, 300);
 }
 
-// retrocompat
-function fecharModalEditarCupom() {
-  fecharPreviewCupom();
+function fecharModalEditarCupom() { fecharPreviewCupom(); }
+
+// ============================================================
+//  POPULAR VER-VALUES (modo visualização)
+// ============================================================
+function _popularVerValuesCupom(cupom) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = (val !== null && val !== undefined && val !== "") ? val : "—";
+  };
+
+  set("vv-cp-codigo",             cupom.codigo);
+  set("vv-cp-titulo",             cupom.titulo);
+  set("vv-cp-modalTitulo",        cupom.modalTitulo);
+  set("vv-cp-descricao",          cupom.descricao);
+  set("vv-cp-modalDescricao",     cupom.modalDescricao);
+  set("vv-cp-valorDesconto",      cupom.valorDesconto != null ? `${cupom.valorDesconto}%` : "—");
+  set("vv-cp-valorMinimoCompra",  cupom.valorMinimoCompra != null ? `R$ ${parseFloat(cupom.valorMinimoCompra).toFixed(2)}` : "—");
+  set("vv-cp-limiteUso",          cupom.limiteUso);
+  set("vv-cp-limiteUsoPorUsuario",cupom.limiteUsoPorUsuario);
+  set("vv-cp-ativo",              cupom.ativo ? "✅ Sim" : "❌ Não");
+
+  // Datas formatadas
+  set("vv-cp-dataInicio",    cupom.dataInicio    ? new Date(cupom.dataInicio).toLocaleString("pt-BR")    : "—");
+  set("vv-cp-dataExpiracao", cupom.dataExpiracao ? new Date(cupom.dataExpiracao).toLocaleString("pt-BR") : "—");
+
+  // Estabelecimento
+  set("vv-cp-estab", cupom.nomeEstabelecimento || cupom.estabelecimento?.nome || "—");
+
+  // Badges de status
+  const badgeStatus = document.getElementById("cp-badge-status");
+  badgeStatus.textContent = cupom.status || "Rascunho";
+  badgeStatus.className   = "badge-pub " + (cupom.status === "Publicado" ? "pub-publicado" : "pub-rascunho");
+
+  const badgeAtivo = document.getElementById("cp-badge-ativo");
+  badgeAtivo.textContent = cupom.ativo ? "Ativo" : "Inativo";
+  badgeAtivo.className   = "badge-op " + (cupom.ativo ? "status-op-ativo" : "status-op-pausado");
+
+  // Cartões — badges no ver-value
+  const vvCartoes = document.getElementById("vv-cp-cartoes");
+  const cartoes   = cupom.cartoesAceitos || [];
+  vvCartoes.innerHTML = cartoes.length > 0
+    ? cartoes.map(c => `<span class="categoria-badge">${c.nome || c}</span>`).join("")
+    : '<span style="color:#999;">Nenhum</span>';
 }
 
 // ============================================================
-//  HEADER DINÂMICO — muda título e botão de salvar
+//  PREENCHER INPUTS (preparar para modo edição)
 // ============================================================
-function _atualizarHeaderCupom() {
-  const titulo = document.querySelector("#formCupomPreview .mpc-form-title, #modal-preview-cupom .mpc-form-title");
-  const btnSalvar = document.querySelector("#modal-preview-cupom .btn-salvar-preview");
-
-  if (_modoEdicaoCupom) {
-    if (titulo)    titulo.textContent        = "Editar Cupom";
-    if (btnSalvar) btnSalvar.textContent     = "💾 Salvar Alterações";
-    if (btnSalvar) btnSalvar.onclick         = salvarEdicaoCupom;
-  } else {
-    if (titulo)    titulo.textContent        = "Cadastrar Cupom";
-    if (btnSalvar) btnSalvar.textContent     = "💾 Cadastrar Cupom";
-    if (btnSalvar) btnSalvar.onclick         = cadastrarCupom;
-  }
-}
-
-// ============================================================
-//  PREENCHER FORMULÁRIO com dados do cupom existente
-// ============================================================
-function _preencherFormCupom(cupom, nomeEstab) {
+function _preencherInputsCupom(cupom, nomeEstab) {
   const set = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.value = val ?? "";
   };
 
-  set("cp-codigo",           cupom.codigo);
-  set("cp-titulo",           cupom.titulo);
-  set("cp-descricao",        cupom.descricao);
-  set("cp-modalTitulo",      cupom.modalTitulo);
-  set("cp-modalDescricao",   cupom.modalDescricao);
-  set("cp-valorDesconto",    cupom.valorDesconto);
-  set("cp-valorMinimoCompra",cupom.valorMinimoCompra);
-  set("cp-limiteUso",        cupom.limiteUso);
+  set("cp-codigo",            cupom.codigo);
+  set("cp-titulo",            cupom.titulo);
+  set("cp-modalTitulo",       cupom.modalTitulo);
+  set("cp-descricao",         cupom.descricao);
+  set("cp-modalDescricao",    cupom.modalDescricao);
+  set("cp-valorDesconto",     cupom.valorDesconto);
+  set("cp-valorMinimoCompra", cupom.valorMinimoCompra);
+  set("cp-limiteUso",         cupom.limiteUso);
   set("cp-limiteUsoPorUsuario", cupom.limiteUsoPorUsuario);
 
-  // Datas — formato datetime-local
-  if (cupom.dataInicio) {
-    const dtI = new Date(cupom.dataInicio);
-    document.getElementById("cp-dataInicio").value = _toDatetimeLocal(dtI);
-  }
-  if (cupom.dataExpiracao) {
-    const dtE = new Date(cupom.dataExpiracao);
-    document.getElementById("cp-dataExpiracao").value = _toDatetimeLocal(dtE);
-  }
+  // Datas
+  if (cupom.dataInicio)    document.getElementById("cp-dataInicio").value    = _toDatetimeLocal(new Date(cupom.dataInicio));
+  if (cupom.dataExpiracao) document.getElementById("cp-dataExpiracao").value = _toDatetimeLocal(new Date(cupom.dataExpiracao));
 
   // Checkbox ativo
   const elAtivo = document.getElementById("cp-ativo");
   if (elAtivo) elAtivo.checked = cupom.ativo ?? true;
 
-  // Estabelecimento — marca o checkbox do estabelecimento correto
+  // Estabelecimento — marca o checkbox após render
   setTimeout(() => {
-    const checkboxes = document.querySelectorAll('#cp-estab-container input[type="checkbox"]');
-    checkboxes.forEach(cb => {
+    document.querySelectorAll("#cp-estab-container input[type='checkbox']").forEach(cb => {
       const estabId = parseInt(cb.value);
-      // Marca se o ID bate com o estabelecimentoId do cupom
       const deveMarcar = cupom.estabelecimentoIds
         ? cupom.estabelecimentoIds.includes(estabId)
         : (cupom.estabelecimentoId && estabId === parseInt(cupom.estabelecimentoId));
       cb.checked = deveMarcar;
 
-      // Fallback: seleciona pelo nome se não tiver ID
+      // Fallback pelo nome
       if (!cb.checked && nomeEstab) {
-        const nomeCheckbox = cb.dataset.nome || cb.closest("label")?.textContent?.trim();
-        if (nomeCheckbox === nomeEstab) cb.checked = true;
+        const nomeCb = cb.dataset.nome || "";
+        if (nomeCb === nomeEstab) cb.checked = true;
       }
     });
   }, 100);
 
-  // Cartões — marca os checkboxes
+  // Cartões — marca checkboxes
   setTimeout(() => {
     const idsCartoes = (cupom.cartoesAceitos || []).map(c => c.id);
-    document.querySelectorAll('#cp-cards-row-preview input[type="checkbox"]').forEach(cb => {
+    document.querySelectorAll("#cp-cards-row-preview input[type='checkbox']").forEach(cb => {
       cb.checked = idsCartoes.includes(parseInt(cb.dataset.id));
     });
     sincronizarCupomPreview();
@@ -3328,77 +3394,60 @@ function _resetarFormCupom() {
   document.getElementById("cpv-card-img").src  = "./imgs/default-image.png";
   document.getElementById("cpv-modal-img").src = "./imgs/default-image.png";
 
-  // Desmarca cartões
   document.querySelectorAll("#cp-cards-row-preview input[type='checkbox']").forEach(cb => cb.checked = false);
-  // Desmarca estabelecimentos
   document.querySelectorAll("#cp-estab-container input[type='checkbox']").forEach(cb => cb.checked = false);
 
+  // Limpa ver-values
+  document.querySelectorAll("#formCupomPreview .ver-value").forEach(el => el.textContent = "—");
+  document.getElementById("vv-cp-cartoes").innerHTML = '<span style="color:#999;">Nenhum</span>';
+
   sincronizarCupomPreview();
-  _atualizarHeaderCupom();
 }
 
 // ============================================================
-//  SALVAR — redireciona para criar ou editar
-// ============================================================
-async function salvarCupomUnificado() {
-  if (_modoEdicaoCupom) {
-    await salvarEdicaoCupom();
-  } else {
-    await cadastrarCupom();
-  }
-}
-
-// ============================================================
-//  salvarEdicaoCupom — agora fecha o modal unificado
+//  SALVAR EDIÇÃO
 // ============================================================
 async function salvarEdicaoCupom() {
   const token = localStorage.getItem("token");
-  const cupomOriginal = window._cupomEditando;
-
-  if (!cupomOriginal) {
-    alert("Erro: dados do cupom não encontrados.");
-    return;
-  }
+  if (!_cupomAtual) { alert("Erro: cupom não encontrado."); return; }
 
   try {
-    const id                  = cupomOriginal.id;
+    const id                  = _cupomAtual.id;
     const codigo              = document.getElementById("cp-codigo").value;
     const titulo              = document.getElementById("cp-titulo").value;
     const descricao           = document.getElementById("cp-descricao").value;
     const modalTitulo         = document.getElementById("cp-modalTitulo").value;
     const modalDescricao      = document.getElementById("cp-modalDescricao").value;
-    const valorDesconto       = parseFloat(document.getElementById("cp-valorDesconto").value)      || 0;
-    const valorMinimoCompra   = parseFloat(document.getElementById("cp-valorMinimoCompra").value)  || 0;
-    const limiteUso           = parseInt(document.getElementById("cp-limiteUso").value)            || 0;
-    const limiteUsoPorUsuario = parseInt(document.getElementById("cp-limiteUsoPorUsuario").value)  || 0;
+    const valorDesconto       = parseFloat(document.getElementById("cp-valorDesconto").value)       || 0;
+    const valorMinimoCompra   = parseFloat(document.getElementById("cp-valorMinimoCompra").value)   || 0;
+    const limiteUso           = parseInt(document.getElementById("cp-limiteUso").value)             || 0;
+    const limiteUsoPorUsuario = parseInt(document.getElementById("cp-limiteUsoPorUsuario").value)   || 0;
     const ativo               = document.getElementById("cp-ativo").checked;
 
-    const dataInicio    = document.getElementById("cp-dataInicio").value;
-    const dataExpiracao = document.getElementById("cp-dataExpiracao").value;
+    const dataInicio       = document.getElementById("cp-dataInicio").value;
+    const dataExpiracao    = document.getElementById("cp-dataExpiracao").value;
     const dataInicioISO    = dataInicio    ? new Date(dataInicio).toISOString()    : new Date().toISOString();
     const dataExpiracaoISO = dataExpiracao ? new Date(dataExpiracao).toISOString() : new Date().toISOString();
 
-    // Estabelecimento selecionado
-    const estabChecked = document.querySelector('#cp-estab-container input[type="checkbox"]:checked');
-    const estabelecimentoId = estabChecked ? parseInt(estabChecked.value) : parseInt(cupomOriginal.estabelecimentoId);
+    const estabChecked = document.querySelector("#cp-estab-container input[type='checkbox']:checked");
+    const estabelecimentoId = estabChecked
+      ? parseInt(estabChecked.value)
+      : parseInt(_cupomAtual.estabelecimentoId);
 
-    // Cartões selecionados
     const cartoesSelecionados = Array.from(
-      document.querySelectorAll('#cp-cards-row-preview input[type="checkbox"]:checked')
+      document.querySelectorAll("#cp-cards-row-preview input[type='checkbox']:checked")
     ).map(cb => parseInt(cb.dataset.id));
-
-    const status = ativo ? "Publicado" : "Rascunho";
 
     const body = {
       codigo, titulo, descricao, modalTitulo, modalDescricao,
-      tipo: cupomOriginal.tipo || "",
+      tipo: _cupomAtual.tipo || "",
       valorDesconto, valorMinimoCompra,
       dataInicio: dataInicioISO,
       dataExpiracao: dataExpiracaoISO,
       limiteUso, limiteUsoPorUsuario, ativo,
       estabelecimentoId,
       cartoesAceitosIds: cartoesSelecionados,
-      status
+      status: ativo ? "Publicado" : "Rascunho"
     };
 
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
@@ -3410,19 +3459,15 @@ async function salvarEdicaoCupom() {
       body: JSON.stringify(body)
     });
 
-    if (!res.ok) {
-      const erro = await res.text();
-      throw new Error(erro);
-    }
+    if (!res.ok) throw new Error(await res.text());
 
     alert("Cupom atualizado com sucesso!");
     fecharPreviewCupom();
 
-    // Limpa todos os caches antes de recarregar
+    // Limpa caches e recarrega
     window._cuponsPromocoes = null;
     window._cuponsCacheMap  = null;
     localStorage.removeItem("cache_cupons_promocoes");
-
     await carregarCuponsPromocoes({ ignoreCache: true });
 
   } catch (err) {
@@ -3432,50 +3477,79 @@ async function salvarEdicaoCupom() {
 }
 
 // ============================================================
-//  SINCRONIZAR PREVIEW — reativo, igual ao de criação
+//  PREVIEW REATIVO
 // ============================================================
-function sincronizarCupomPreview() {
-  const titulo         = document.getElementById("cp-titulo")?.value.trim()         || "Título do cupom";
-  const descricao      = document.getElementById("cp-descricao")?.value.trim()      || "Descrição do cupom aparece aqui";
-  const modalTitulo    = document.getElementById("cp-modalTitulo")?.value.trim()    || "Título do Modal";
-  const modalDescricao = document.getElementById("cp-modalDescricao")?.value.trim() || "Descrição modal aparece aqui";
-  const valorDesconto  = document.getElementById("cp-valorDesconto")?.value.trim();
-  const dataExpiracao  = document.getElementById("cp-dataExpiracao")?.value;
-  const dataFormatada  = cpFormatarData(dataExpiracao);
+function _ligarPreviewReativoCupom() {
+  const ids = [
+    "cp-titulo", "cp-descricao", "cp-modalTitulo", "cp-modalDescricao",
+    "cp-valorDesconto", "cp-dataExpiracao", "cp-ativo"
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.removeEventListener("input",  sincronizarCupomPreview);
+    el.removeEventListener("change", sincronizarCupomPreview);
+    el.addEventListener("input",  sincronizarCupomPreview);
+    el.addEventListener("change", sincronizarCupomPreview);
+  });
+}
 
+function sincronizarCupomPreview() {
+  // Em modo visualização, usa os ver-values; em edição/criação, usa os inputs
+  const emEdicao = _modoEdicaoCupom || _cupomAtual === null;
+
+  const titulo         = emEdicao
+    ? (document.getElementById("cp-titulo")?.value.trim()         || "Título do cupom")
+    : (document.getElementById("vv-cp-titulo")?.textContent       || "Título do cupom");
+
+  const descricao      = emEdicao
+    ? (document.getElementById("cp-descricao")?.value.trim()      || "Descrição do cupom aparece aqui")
+    : (document.getElementById("vv-cp-descricao")?.textContent    || "Descrição do cupom aparece aqui");
+
+  const modalTitulo    = emEdicao
+    ? (document.getElementById("cp-modalTitulo")?.value.trim()    || "Título do Modal")
+    : (document.getElementById("vv-cp-modalTitulo")?.textContent  || "Título do Modal");
+
+  const modalDescricao = emEdicao
+    ? (document.getElementById("cp-modalDescricao")?.value.trim() || "Descrição modal aparece aqui")
+    : (document.getElementById("vv-cp-modalDescricao")?.textContent || "Descrição modal aparece aqui");
+
+  const valorDesconto  = emEdicao
+    ? document.getElementById("cp-valorDesconto")?.value.trim()
+    : (_cupomAtual?.valorDesconto ?? "");
+
+  const dataExpiracao  = emEdicao
+    ? document.getElementById("cp-dataExpiracao")?.value
+    : (_cupomAtual?.dataExpiracao ?? "");
+
+  const dataFormatada = cpFormatarData(dataExpiracao);
+
+  // Atualiza card
   document.getElementById("cpv-badge-titulo").textContent =
     valorDesconto ? `${valorDesconto}% De desconto!` : "Desconto!";
-
   document.getElementById("cpv-titulo").textContent    = titulo;
   document.getElementById("cpv-descricao").textContent = descricao;
   document.getElementById("cpv-validade").textContent  = dataFormatada;
 
+  // Atualiza modal
   document.getElementById("cpv-modal-titulo").textContent    = modalTitulo;
   document.getElementById("cpv-modal-descricao").textContent = modalDescricao;
   document.getElementById("cpv-modal-chip-validade").innerHTML =
-    `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Válido até ${dataFormatada}`;
+    `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+    </svg> Válido até ${dataFormatada}`;
   document.getElementById("cpv-modal-validade-texto").textContent = dataFormatada;
 
   cpAtualizarPillsPreview();
 }
 
 // ============================================================
-//  POPULAR CARTÕES — agora com suporte a marcar existentes
+//  POPULAR CARTÕES
 // ============================================================
-async function cpPopularCartoes(cartoesSelecionados = []) {
+async function cpPopularCartoes() {
   const container = document.getElementById("cp-cards-row-preview");
   if (!container) return;
-
-  // Só busca da API se o container estiver vazio
-  if (container.children.length > 0) {
-    // Apenas atualiza os checks
-    if (cartoesSelecionados.length > 0) {
-      container.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        cb.checked = cartoesSelecionados.includes(parseInt(cb.dataset.id));
-      });
-    }
-    return;
-  }
+  if (container.children.length > 0) return; // já populado
 
   const token = localStorage.getItem("token");
   if (!token) return;
@@ -3484,7 +3558,7 @@ async function cpPopularCartoes(cartoesSelecionados = []) {
     const res = await fetch(`${API_BASE}/api/Cartoes`, {
       headers: { Authorization: "Bearer " + token }
     });
-    if (!res.ok) throw new Error("Erro ao buscar cartões");
+    if (!res.ok) throw new Error();
     const cartoes = await res.json();
 
     cartoes.forEach(cartao => {
@@ -3496,7 +3570,6 @@ async function cpPopularCartoes(cartoesSelecionados = []) {
       input.id           = `cp-cartao-${cartao.id}`;
       input.dataset.id   = cartao.id;
       input.dataset.nome = cartao.nome;
-      input.checked      = cartoesSelecionados.includes(cartao.id);
       input.addEventListener("change", sincronizarCupomPreview);
 
       const span = document.createElement("span");
@@ -3506,7 +3579,6 @@ async function cpPopularCartoes(cartoesSelecionados = []) {
       label.appendChild(span);
       container.appendChild(label);
     });
-
   } catch (err) {
     console.error("Erro ao carregar cartões:", err);
   }
@@ -3518,7 +3590,6 @@ async function cpPopularCartoes(cartoesSelecionados = []) {
 async function cpPopularEstabelecimentos() {
   const container = document.getElementById("cp-estab-container");
   if (!container) return;
-
   if (container.children.length > 0 &&
       !container.querySelector(".carregando-estabelecimentos")) return;
 
@@ -3554,7 +3625,7 @@ async function cpPopularEstabelecimentos() {
 }
 
 // ============================================================
-//  RESTANTE DAS FUNÇÕES (inalteradas)
+//  UTILITÁRIOS
 // ============================================================
 
 function cpFormatarData(dtString) {
@@ -3608,12 +3679,89 @@ function cpAtualizarPillsPreview() {
     }
   });
 
+  // Em modo visualização sem edição, usa os cartões do objeto
+  if (!_modoEdicaoCupom && _cupomAtual && count === 0) {
+    (_cupomAtual.cartoesAceitos || []).forEach((c, i) => {
+      const nome = c.nome || c;
+      const cor  = cores[nome] || { bg: "#e8eaf6", color: "#434D9C" };
+      if (i < 2) pillsCard  += `<span class="pill" style="background:${cor.bg};color:${cor.color};">${nome.replace("Vegas ", "")}</span>`;
+      pillsModal += `<span class="pill" style="background:${cor.bg};color:${cor.color};padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;">${nome.replace("Vegas ", "")}</span>`;
+    });
+  }
+
   document.getElementById("cpv-meta-pills").innerHTML  = pillsCard  || '<span class="pill pill-alt">Cartão</span>';
   document.getElementById("cpv-modal-pills").innerHTML = pillsModal || '<span style="color:#888;font-size:13px;">Nenhum selecionado</span>';
 }
 
 function abrirModalCupomPreview()  { document.getElementById("cpv-modal-wrap").style.display = "flex"; }
 function fecharModalCupomPreview() { document.getElementById("cpv-modal-wrap").style.display = "none"; }
+
+
+
+// ============================================================
+//  HEADER DINÂMICO — muda título e botão de salvar
+// ============================================================
+function _atualizarHeaderCupom() {
+  const titulo = document.querySelector("#formCupomPreview .mpc-form-title, #modal-preview-cupom .mpc-form-title");
+  const btnSalvar = document.querySelector("#modal-preview-cupom .btn-salvar-preview");
+
+  if (_modoEdicaoCupom) {
+    if (titulo)    titulo.textContent        = "Editar Cupom";
+    if (btnSalvar) btnSalvar.textContent     = "💾 Salvar Alterações";
+    if (btnSalvar) btnSalvar.onclick         = salvarEdicaoCupom;
+  } else {
+    if (titulo)    titulo.textContent        = "Cadastrar Cupom";
+    if (btnSalvar) btnSalvar.textContent     = "💾 Cadastrar Cupom";
+    if (btnSalvar) btnSalvar.onclick         = cadastrarCupom;
+  }
+}
+
+
+function _toDatetimeLocal(date) {
+  const pad = n => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+// ============================================================
+//  RESETAR FORMULÁRIO
+// ============================================================
+function _resetarFormCupom() {
+  const form = document.getElementById("formCupomPreview");
+  if (form) form.reset();
+
+  cpImgGaleriaUrl = null;
+  cpImgModalUrl   = null;
+
+  const thumbG = document.getElementById("cp-thumb-galeria");
+  const thumbM = document.getElementById("cp-thumb-modal");
+  if (thumbG) thumbG.innerHTML = "";
+  if (thumbM) thumbM.innerHTML = "";
+
+  document.getElementById("cpv-card-img").src  = "./imgs/default-image.png";
+  document.getElementById("cpv-modal-img").src = "./imgs/default-image.png";
+
+  // Desmarca cartões
+  document.querySelectorAll("#cp-cards-row-preview input[type='checkbox']").forEach(cb => cb.checked = false);
+  // Desmarca estabelecimentos
+  document.querySelectorAll("#cp-estab-container input[type='checkbox']").forEach(cb => cb.checked = false);
+
+  sincronizarCupomPreview();
+  _atualizarHeaderCupom();
+}
+
+// ============================================================
+//  SALVAR — redireciona para criar ou editar
+// ============================================================
+async function salvarCupomUnificado() {
+  if (_modoEdicaoCupom) {
+    await salvarEdicaoCupom();
+  } else {
+    await cadastrarCupom();
+  }
+}
+
+
+
 
 //MAPA URL
 
