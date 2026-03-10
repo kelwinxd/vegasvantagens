@@ -3077,7 +3077,7 @@ if (ativo) {
     if (modalFile)   { await enviarImagem("Modal",   modalFile);   console.log("Imagem Modal enviada!"); }
 
     alert("Cupom criado com sucesso!");
-    carregarCuponsPromocoes();
+     carregarCuponsPromocoes({ ignoreCache: true });
 
     // Reset — usa o ID correto do form novo
     document.getElementById("formCupomPreview").reset();
@@ -3462,6 +3462,7 @@ async function salvarEdicaoCupom() {
     if (!res.ok) throw new Error(await res.text());
 
     alert("Cupom atualizado com sucesso!");
+    carregarCuponsPromocoes()
     fecharPreviewCupom();
 
     // Limpa caches e recarrega
