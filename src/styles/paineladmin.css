@@ -3027,6 +3027,14 @@ aspect-ratio: 1/1;
   border-radius: 8px;
   overflow: hidden;
 }
+.ver-preview-wrapper.viewport-tablet .comercio-p {
+  height: auto;
+}
+
+.ver-preview-wrapper.viewport-mobile .comercio-p {
+  height: auto;
+}
+
 .ver-preview-wrapper.viewport-mobile {
   max-width: 480px;
   margin: 0 auto;
