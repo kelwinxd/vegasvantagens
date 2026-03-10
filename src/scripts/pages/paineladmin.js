@@ -3417,7 +3417,13 @@ async function salvarEdicaoCupom() {
 
     alert("Cupom atualizado com sucesso!");
     fecharPreviewCupom();
-    carregarCuponsPromocoes({ ignoreCache: true });
+
+    // Limpa todos os caches antes de recarregar
+    window._cuponsPromocoes = null;
+    window._cuponsCacheMap  = null;
+    localStorage.removeItem("cache_cupons_promocoes");
+
+    await carregarCuponsPromocoes({ ignoreCache: true });
 
   } catch (err) {
     console.error("Erro ao salvar cupom:", err);
