@@ -3462,14 +3462,22 @@ async function salvarEdicaoCupom() {
     if (!res.ok) throw new Error(await res.text());
 
     alert("Cupom atualizado com sucesso!");
-    carregarCuponsPromocoes()
-    fecharPreviewCupom();
 
-    // Limpa caches e recarrega
+    // Fecha o modal diretamente sem setTimeout para não competir com o reload
+    const modal = document.getElementById("modal-preview-cupom");
+    modal.classList.remove("active");
+    modal.style.display = "none";
+    _cupomAtual      = null;
+    _modoEdicaoCupom = false;
+    fecharModalCupomPreview();
+
+    // Limpa caches
     window._cuponsPromocoes = null;
     window._cuponsCacheMap  = null;
     localStorage.removeItem("cache_cupons_promocoes");
-    await carregarCuponsPromocoes({ ignoreCache: true });
+
+    // Recarrega a lista
+    await carregarCuponsPromocoes();
 
   } catch (err) {
     console.error("Erro ao salvar cupom:", err);
