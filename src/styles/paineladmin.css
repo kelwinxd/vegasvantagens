@@ -3502,30 +3502,15 @@ textarea.ver-input {
   margin: 0 auto;
   box-shadow: 0 0 0 2px #ccc;
   border-radius: 8px;
-  overflow: hidden;
+  height: auto;
 }
 #ver-preview-wrapper.viewport-mobile {
   max-width: 480px;
   margin: 0 auto;
   box-shadow: 0 0 0 2px #ccc;
   border-radius: 12px;
-  overflow: hidden;
+  height: auto;
+  
 }
 
-/* ── Fix: preview do modal VER no viewport desktop ── */
-/* ── Fix altura modal ver ── */
-#ver-preview-wrapper {
-  height: auto !important;
-  min-height: 0 !important;
-}
-
-#ver-preview-wrapper .comercio-p {
-  height: auto !important;
-  padding-inline: 20px !important;
-}
-
-#ver-preview-wrapper .preview-comercio {
-  height: auto !important;
-  overflow: visible !important;
-}
 
