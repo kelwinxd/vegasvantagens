@@ -3514,7 +3514,7 @@ textarea.ver-input {
 
 /* ── Fix: preview do modal VER no viewport desktop ── */
 #ver-preview-wrapper .comercio-p {
-  padding-inline: 20px;
+  height: auto;
   max-width: 100%;
 }
 
@@ -3530,9 +3530,11 @@ textarea.ver-input {
 /* Tablet */
 #ver-preview-wrapper.viewport-tablet .comercio-p {
   padding-inline: 16px;
+  height: auto;
 }
 
 /* Mobile */
 #ver-preview-wrapper.viewport-mobile .comercio-p {
   padding-inline: 12px;
+  height: auto;
 }
