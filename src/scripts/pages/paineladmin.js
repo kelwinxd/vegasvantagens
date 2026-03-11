@@ -2224,36 +2224,32 @@ async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
 // ========================================
 async function excluirImagemCupom(cupomId) {
   const token = localStorage.getItem("token");
-
   if (!confirm("Deseja realmente excluir esta imagem?")) return;
 
+  const imagens = _cupomAtual?.imagens || [];
+  const imagemAtual = imagens[imagens.length - 1];
+  const imagemId = imagemAtual?.id;
+
+  if (!imagemId) {
+    alert("Nenhuma imagem encontrada para excluir.");
+    return;
+  }
+
   try {
-    const res = await fetch(
-      `${API_BASE}/api/cupons/${cupomId}/imagens`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + token
-        }
-      }
-    );
+    const res = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`, {
+      method: "DELETE",
+      headers: { Authorization: "Bearer " + token }
+    });
 
-    if (!res.ok) {
-      alert("Erro ao excluir imagem");
-      return;
-    }
+    if (!res.ok) throw new Error("Erro ao excluir imagem");
 
-    alert("Imagem excluída com sucesso");
-
-    // 🔄 Reabrir modal atualizado
-    recarregarCupomEdit();
+    await recarregarCupomEdit();
 
   } catch (err) {
-    console.error("Erro ao excluir imagem:", err);
-    alert("Erro ao excluir imagem");
+    console.error(err);
+    alert("Erro ao excluir imagem: " + err.message);
   }
 }
-
 // ========================================
 // 🔹 SUBSTITUIR IMAGEM EXISTENTE
 // ========================================
@@ -2265,39 +2261,35 @@ async function substituirImagemCupom(event, cupomId) {
   if (!token) return;
 
   try {
-    // 1️⃣ Exclui a imagem antiga
-    const delResp = await fetch(
-      `${API_BASE}/api/cupons/${cupomId}/imagens`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + token
-        }
-      }
-    );
+    // Pega o ID da imagem atual do cupom
+    const imagens = _cupomAtual?.imagens || [];
+    const imagemAtual = imagens[imagens.length - 1];
+    const imagemId = imagemAtual?.id;
 
-    // ✔️ 404 = imagem já não existe → segue o fluxo
-    if (!delResp.ok && delResp.status !== 404) {
-      throw new Error("Erro ao excluir imagem antiga");
+    // Deleta a imagem antiga pelo ID
+    if (imagemId) {
+      const delResp = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token }
+      });
+
+      if (!delResp.ok && delResp.status !== 404) {
+        throw new Error("Erro ao excluir imagem antiga");
+      }
     }
 
-    // 2️⃣ Envia a nova imagem
+    // Envia a nova imagem
     await enviarImagemCupom(cupomId, file, true);
 
-    alert("Imagem atualizada com sucesso");
-
-    // 🔄 Atualiza visual
-    recarregarCupomEdit();
+    await recarregarCupomEdit();
 
   } catch (err) {
     console.error(err);
-    alert("Erro ao substituir a imagem.");
+    alert("Erro ao substituir a imagem: " + err.message);
   } finally {
-    // Limpa o input para permitir reenviar o mesmo arquivo se necessário
     event.target.value = "";
   }
 }
-
 // ========================================
 // 🔹 RECARREGAR CUPOM NO MODAL
 // ========================================
