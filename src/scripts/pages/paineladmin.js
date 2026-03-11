@@ -197,9 +197,7 @@ function renderizarLista(lista, containerId) {
               <button class="btn-acao btn-editar" data-action="editar" title="Ver / Editar">
                 <img src="./imgs/icons/edit-e.svg" alt="Editar">
               </button>
-              <button class="btn-acao btn-excluir" data-action="excluir" title="Excluir">
-                <img src="./imgs/icons/trash-02.svg" alt="Excluir">
-              </button>
+             
             </div>
           </div>
         </div>
@@ -259,37 +257,41 @@ function renderizarLista(lista, containerId) {
       abrirModalEditar(estab);
     });
 
-    // ── Botão excluir ─────────────────────────────────────────────────────────
-    card.querySelector('[data-action="excluir"]').addEventListener("click", async (e) => {
-      e.stopPropagation();
-
-      if (!confirm(`Tem certeza que deseja excluir "${estab.nome}"?`)) return;
-
-      const token = localStorage.getItem("token");
-
-      try {
-        const res = await fetch(`${API_BASE}/api/Estabelecimentos/${estab.id}`, {
-          method: "DELETE",
-          headers: { "Authorization": "Bearer " + token }
-        });
-
-        if (!res.ok) throw new Error("Erro ao excluir");
-
-        const index = estabelecimentosCache.findIndex(e => e.id === estab.id);
-        if (index > -1) estabelecimentosCache.splice(index, 1);
-
-        card.remove();
-        alert("Estabelecimento excluído com sucesso!");
-
-        if (typeof _atualizarContadores === 'function') _atualizarContadores();
-        if (typeof inicializarFiltros    === 'function') inicializarFiltros();
-
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao excluir o estabelecimento.");
-      }
-    });
+  
   });
+}
+
+async function excluirEstabDoModal() {
+  if (!_estabAtual) return;
+  if (!confirm(`Tem certeza que deseja excluir "${_estabAtual.nome}"?`)) return;
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos/${_estabAtual.id}`, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    if (!res.ok) throw new Error("Erro ao excluir");
+
+    // Remove do cache e do DOM
+    const index = estabelecimentosCache.findIndex(e => e.id === _estabAtual.id);
+    if (index > -1) estabelecimentosCache.splice(index, 1);
+
+    const card = document.querySelector(`.card-estab-novo[data-id="${_estabAtual.id}"]`);
+    if (card) card.remove();
+
+    alert("Estabelecimento excluído com sucesso!");
+    fecharVerEstab();
+
+    if (typeof _atualizarContadores === 'function') _atualizarContadores();
+    if (typeof inicializarFiltros    === 'function') inicializarFiltros();
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao excluir o estabelecimento.");
+  }
 }
 
 // ========== PATCH STATUS — mesmo endpoint /status, envia ambos os campos ==========
@@ -6232,5 +6234,4 @@ window._verAdicionarImagem     = _verAdicionarImagem;
 window._verExcluirImagem       = _verExcluirImagem;
 window.fecharModalEditarVer       = fecharModalEditarVer; // retrocompat
 window.ativarModoEdicaoCupom = ativarModoEdicaoCupom;
-
-
+window.excluirEstabDoModal = excluirEstabDoModal
