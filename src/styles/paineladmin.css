@@ -3513,28 +3513,19 @@ textarea.ver-input {
 }
 
 /* ── Fix: preview do modal VER no viewport desktop ── */
+/* ── Fix altura modal ver ── */
+#ver-preview-wrapper {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
 #ver-preview-wrapper .comercio-p {
-  height: auto;
-  max-width: 100%;
+  height: auto !important;
+  padding-inline: 20px !important;
 }
 
-#ver-preview-wrapper .desc-ofertas {
-  padding-inline: 20px;
-  max-width: 100%;
+#ver-preview-wrapper .preview-comercio {
+  height: auto !important;
+  overflow: visible !important;
 }
 
-#ver-preview-wrapper .primary-infos {
-  padding-inline: 20px;
-}
-
-/* Tablet */
-#ver-preview-wrapper.viewport-tablet .comercio-p {
-  padding-inline: 16px;
-  height: auto;
-}
-
-/* Mobile */
-#ver-preview-wrapper.viewport-mobile .comercio-p {
-  padding-inline: 12px;
-  height: auto;
-}
