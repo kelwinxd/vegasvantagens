@@ -1358,10 +1358,9 @@ function renderizarPromocoes(cupons) {
 
     const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
-    const imagem =
-  c.imagens && c.imagens.length
-    ? (c.imagens[c.imagens.length - 1]?.url || c.imagens[0]?.url || PLACEHOLDER)
-    : PLACEHOLDER;
+    const imagem = (c.imagens && c.imagens.length)
+  ? c.imagens[c.imagens.length - 1]
+  : PLACEHOLDER;
 
     // Badges de cartões (máximo 2 + contador)
     const cartoesVisiveis = c.cartoesAceitos ? c.cartoesAceitos.slice(0, 2) : [];
@@ -2300,15 +2299,13 @@ async function recarregarCupomEdit() {
     _cupomAtual = cupomAtualizado;
     window._cupomEditando = cupomAtualizado;
 
-    // Atualiza imagem no preview
+    // imagens são strings diretas
     const imagens = cupomAtualizado.imagens || [];
     if (imagens.length > 0) {
-      const imgUrl = imagens[imagens.length - 1]?.url || null;
-      if (imgUrl) {
-        document.getElementById("cpv-card-img").src  = imgUrl;
-        document.getElementById("cpv-modal-img").src = imgUrl;
-        document.getElementById("cp-thumb-galeria").innerHTML = `<img src="${imgUrl}" alt="preview">`;
-      }
+      const imgUrl = imagens[imagens.length - 1]; // string direta
+      document.getElementById("cpv-card-img").src  = imgUrl;
+      document.getElementById("cpv-modal-img").src = imgUrl;
+      document.getElementById("cp-thumb-galeria").innerHTML = `<img src="${imgUrl}" alt="preview">`;
     }
   } catch (err) {
     console.error("Erro ao recarregar cupom:", err);
