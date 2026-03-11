@@ -2302,24 +2302,30 @@ async function substituirImagemCupom(event, cupomId) {
 // 🔹 RECARREGAR CUPOM NO MODAL
 // ========================================
 async function recarregarCupomEdit() {
-  const id = document.getElementById("edit-id").value;
+  if (!_cupomAtual?.id) return;
   const token = localStorage.getItem("token");
 
   try {
-    const res = await fetch(
-      `${API_BASE}/api/Cupons/${id}`,
-      {
-        headers: { Authorization: "Bearer " + token }
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Erro ao recarregar cupom");
-    }
+    const res = await fetch(`${API_BASE}/api/Cupons/${_cupomAtual.id}`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+    if (!res.ok) return;
 
     const cupomAtualizado = await res.json();
-    renderizarImagensCupomEdicao(cupomAtualizado);
+    cupomAtualizado.nomeEstabelecimento = _cupomAtual.nomeEstabelecimento;
+    _cupomAtual = cupomAtualizado;
+    window._cupomEditando = cupomAtualizado;
 
+    // Atualiza imagem no preview
+    const imagens = cupomAtualizado.imagens || [];
+    if (imagens.length > 0) {
+      const imgUrl = imagens[imagens.length - 1]?.url || null;
+      if (imgUrl) {
+        document.getElementById("cpv-card-img").src  = imgUrl;
+        document.getElementById("cpv-modal-img").src = imgUrl;
+        document.getElementById("cp-thumb-galeria").innerHTML = `<img src="${imgUrl}" alt="preview">`;
+      }
+    }
   } catch (err) {
     console.error("Erro ao recarregar cupom:", err);
   }
@@ -3644,9 +3650,11 @@ function cpFormatarData(dtString) {
   return d.toLocaleDateString("pt-BR");
 }
 
-function cpPreviewImagem(input, tipo) {
+async function cpPreviewImagem(input, tipo) {
   const file = input.files[0];
   if (!file) return;
+
+  // Atualiza preview local imediatamente
   const reader = new FileReader();
   reader.onload = (e) => {
     const url = e.target.result;
@@ -3661,6 +3669,17 @@ function cpPreviewImagem(input, tipo) {
     }
   };
   reader.readAsDataURL(file);
+
+  // Se está editando um cupom existente, envia para a API
+  if (_cupomAtual?.id) {
+    try {
+      await substituirImagemCupom({ target: { files: [file], value: "" } }, _cupomAtual.id);
+    } catch (err) {
+      console.error("Erro ao enviar imagem:", err);
+    } finally {
+      input.value = "";
+    }
+  }
 }
 
 function cpAtualizarPillsPreview() {
