@@ -4599,10 +4599,11 @@ function mudarViewportVer(tipo) {
 async function abrirModalEditar(estab) {
   _estabAtual = estab;
 
+  // Mostra loader enquanto carrega
+  mostrarLoader("Carregando estabelecimento...", "Aguarde um momento");
+
   _setModoVisualizacao();
   _popularVerModal(estab);
-
-  // Liga eventos reativos (só depois de popular para não disparar desnecessariamente)
   _ligarPreviewReativoVer();
 
   await Promise.all([
@@ -4615,11 +4616,11 @@ async function abrirModalEditar(estab) {
     await carregarCidadesVer(estab.cidade);
   }
 
-  // Atualiza preview com os dados já carregados
   atualizarPreviewVer();
-
-  // Reseta viewport para desktop
   mudarViewportVer("desktop");
+
+  // Esconde loader e abre modal
+  ocultarLoader();
 
   const modal = document.getElementById("modal-ver-estab");
   modal.style.display = "";

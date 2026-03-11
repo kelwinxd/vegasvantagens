@@ -3511,3 +3511,28 @@ textarea.ver-input {
   border-radius: 12px;
   overflow: hidden;
 }
+
+/* ── Fix: preview do modal VER no viewport desktop ── */
+#ver-preview-wrapper .comercio-p {
+  padding-inline: 20px;
+  max-width: 100%;
+}
+
+#ver-preview-wrapper .desc-ofertas {
+  padding-inline: 20px;
+  max-width: 100%;
+}
+
+#ver-preview-wrapper .primary-infos {
+  padding-inline: 20px;
+}
+
+/* Tablet */
+#ver-preview-wrapper.viewport-tablet .comercio-p {
+  padding-inline: 16px;
+}
+
+/* Mobile */
+#ver-preview-wrapper.viewport-mobile .comercio-p {
+  padding-inline: 12px;
+}
