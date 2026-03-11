@@ -2188,8 +2188,8 @@ async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
   if (!token) { alert("Token não encontrado"); return; }
 
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("principal", isPrincipal);
+formData.append("imagem", file); // ← era "file", deve ser "imagem"
+formData.append("principal", isPrincipal);
 
   try {
     const res = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens`, {
