@@ -2185,28 +2185,22 @@ async function adicionarImagemNovaCupom(event, cupomId) {
 // ========================================
 async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
   const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Token não encontrado");
-    return;
-  }
+  if (!token) { alert("Token não encontrado"); return; }
 
   const formData = new FormData();
   formData.append("file", file);
   formData.append("principal", isPrincipal);
 
   try {
-    const res = await fetch(
-      `${API_BASE}/api/cupons/${cupomId}/imagens`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token
-        },
-        body: formData
-      }
-    );
+    const res = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens`, {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token },
+      body: formData
+    });
 
     if (!res.ok) {
+      const erroTexto = await res.text();
+      console.error("❌ Resposta da API:", res.status, erroTexto); // ← log do erro real
       throw new Error("Erro ao enviar imagem");
     }
 
@@ -2214,11 +2208,9 @@ async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
 
   } catch (err) {
     console.error("Erro ao enviar imagem:", err);
-    alert("Erro ao enviar imagem do cupom");
     throw err;
   }
 }
-
 // ========================================
 // 🔹 EXCLUIR IMAGEM (exclui a última)
 // ========================================
