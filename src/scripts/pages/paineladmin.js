@@ -4946,18 +4946,48 @@ async function _recarregarEstabVer(estabId) {
 
 // ── CARTÕES ───────────────────────────────────────────────────
 
-function _renderizarCartoesVer(estab) {
-  const container = document.getElementById("ver-cartoes-container");
-  if (!container) return;
+async function _renderizarCartoesVer(estab) {
+  const listaContainer = document.getElementById("ver-cartoes-container");
+  const editContainer  = document.getElementById("ver-cartoes-edit");
+  if (!listaContainer || !editContainer) return;
 
-  const cartoes = estab.cartoesAceitos || [];
-  if (cartoes.length === 0) {
-    container.innerHTML = '<span class="ver-sem-cartao">Nenhum cartão vinculado</span>';
-    return;
+  // IDs dos cartões que o estabelecimento já tem
+  const cartoesSelecionados = estab.cartoesAceitos?.map(c => c.id) || [];
+
+  // ── MODO VISUALIZAÇÃO: badges ──────────────────────────────
+  if (cartoesSelecionados.length === 0) {
+    listaContainer.innerHTML = '<span style="color:#999;font-size:13px;">Nenhum cartão vinculado</span>';
+  } else {
+    listaContainer.innerHTML = estab.cartoesAceitos
+      .map(c => `<span class="badge-cartao-ver">💳 ${c.nome}</span>`)
+      .join("");
   }
-  container.innerHTML = cartoes
-    .map(c => `<span class="categoria-badge">${c.nome || c}</span>`)
-    .join("");
+
+  // ── MODO EDIÇÃO: checkboxes via API ────────────────────────
+  editContainer.innerHTML = '<span style="color:#999;font-size:12px;">Carregando cartões...</span>';
+
+  try {
+    const token = localStorage.getItem("token");
+    const res   = await fetch(`${API_BASE}/api/Cartoes`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+    if (!res.ok) throw new Error();
+    const todosCartoes = await res.json();
+
+    editContainer.innerHTML = "";
+    todosCartoes.forEach(cartao => {
+      const checked = cartoesSelecionados.includes(cartao.id) ? "checked" : "";
+      const label = document.createElement("label");
+      label.className = "field-ratio";
+      label.innerHTML = `
+        <input type="checkbox" class="ver-cartao-check" value="${cartao.id}" ${checked}>
+        <span>${cartao.nome}</span>
+      `;
+      editContainer.appendChild(label);
+    });
+  } catch {
+    editContainer.innerHTML = '<span style="color:#c00;font-size:12px;">Erro ao carregar cartões</span>';
+  }
 }
 
 // ── SELECTS DINÂMICOS ─────────────────────────────────────────
@@ -5059,8 +5089,8 @@ async function salvarEdicaoUnificada() {
     "mapaUrl":      document.getElementById("vi-mapurl").value.trim(),
     "sobre":        document.getElementById("vi-sobre").value.trim(),
 
-    "statusPublicacao":  document.getElementById("vi-statusPub").value,  // "Rascunho" | "Publicado"
-    "statusOperacional": statusOp,                                        // "Ativo" | "Pausado" | "Cancelado"
+    "statusPublicacao":  document.getElementById("vi-statusPub").value,
+    "statusOperacional": statusOp,
 
     "consultorNome":          document.getElementById("vi-consultorNome").value.trim(),
     "consultorEmail":         document.getElementById("vi-consultorEmail").value.trim(),
@@ -5074,6 +5104,11 @@ async function salvarEdicaoUnificada() {
     "segundoContatoNome":      document.getElementById("vi-seg2Nome").value.trim(),
     "segundoContatoTelefone":  document.getElementById("vi-seg2Tel").value.trim(),
     "segundoContatoCargo":     document.getElementById("vi-seg2Cargo").value.trim(),
+
+    // ✅ Cartões selecionados nos checkboxes do modo edição
+    "cartoesAceitosIds": Array.from(
+      document.querySelectorAll('#ver-cartoes-edit .ver-cartao-check:checked')
+    ).map(el => Number(el.value)),
   };
 
   try {
@@ -5094,7 +5129,6 @@ async function salvarEdicaoUnificada() {
 
     alert("Estabelecimento atualizado com sucesso!");
 
-    // Atualiza cache global
     const idx = estabelecimentosCache.findIndex(e => e.id === _estabAtual.id);
     if (idx !== -1) estabelecimentosCache[idx] = { ...estabelecimentosCache[idx], ...data };
 
@@ -5107,7 +5141,6 @@ async function salvarEdicaoUnificada() {
     alert("Erro ao salvar alterações: " + err.message);
   }
 }
-
 
 // ── COMPATIBILIDADE: fecharModalEditar antigo ────────────────
 // (mantido para não quebrar chamadas existentes no código)
@@ -6234,4 +6267,4 @@ window._verAdicionarImagem     = _verAdicionarImagem;
 window._verExcluirImagem       = _verExcluirImagem;
 window.fecharModalEditarVer       = fecharModalEditarVer; // retrocompat
 window.ativarModoEdicaoCupom = ativarModoEdicaoCupom;
-window.excluirEstabDoModal = excluirEstabDoModal
+window.excluirEstabDoModal = excluirEstabDoModal;

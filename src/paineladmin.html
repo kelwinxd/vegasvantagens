@@ -1373,13 +1373,16 @@
           </div>
 
           <!-- CARTÕES -->
-          <h3 class="title-form">Cartões Aceitos</h3>
-          <div class="row">
-            <div class="field full">
-              <div id="ver-cartoes-container" class="ver-cartoes-lista"></div>
-            </div>
-          </div>
-
+          <!-- DEPOIS -->
+<h3 class="title-form">Cartões Aceitos</h3>
+<div class="row">
+  <div class="field full">
+    <!-- Modo visualização: badges -->
+    <div id="ver-cartoes-container" class="ver-cartoes-lista ver-value"></div>
+    <!-- Modo edição: checkboxes (mesmo estilo do formulário de criação) -->
+    <div id="ver-cartoes-edit" class="cards-row ver-input" style="display:none;"></div>
+  </div>
+</div>
           <!-- Botões rodapé (modo edição) -->
           <div class="preview-actions" id="ver-actions-rodape" style="display:none;">
             <button type="button" class="btn-salvar-preview" onclick="salvarEdicaoUnificada()">
