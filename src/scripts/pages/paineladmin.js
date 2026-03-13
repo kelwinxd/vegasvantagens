@@ -5258,15 +5258,18 @@ btnDesktopP.addEventListener('click', () => setViewport('desktop'));
 btnTabletP.addEventListener('click',  () => setViewport('tablet'));
 btnMobileP.addEventListener('click',  () => setViewport('mobile'));
 
-// Abrir modal de preview
-function abrirPreview() {
- 
+// Abrir modal de preview do estab
+// Abrir modal de preview do estab
+async function abrirPreview() {
   const modal = document.getElementById('modal-preview');
   modal.style.display = 'flex';
   setTimeout(() => {
     modal.classList.add('active');
   }, 10);
-  
+
+  // Carrega grupos e popula o select
+  await popularSelectGrupos('grupo2');
+
   // Inicializar preview vazio
   atualizarPreview();
 }
@@ -5389,6 +5392,8 @@ document.addEventListener('click', function(e) {
   }
 });
 
+
+
 // Tecla ESC para fechar
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
@@ -5399,7 +5404,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-//GRUPO SECTION
+//GRUPO SECTION -----------------------------------
 
 let grupoSelecionadoId = null;
 
