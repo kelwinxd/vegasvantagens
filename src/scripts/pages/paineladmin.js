@@ -4979,6 +4979,7 @@ async function _renderizarCartoesVer(estab) {
       const checked = cartoesSelecionados.includes(cartao.id) ? "checked" : "";
       const label = document.createElement("label");
       label.className = "field-ratio";
+      label.style.display = "flex";
       label.innerHTML = `
         <input type="checkbox" class="ver-cartao-check" value="${cartao.id}" ${checked}>
         <span>${cartao.nome}</span>
@@ -5346,7 +5347,7 @@ function atualizarPreview() {
   let endereco = '';
   if (rua) endereco += rua;
   if (numero) endereco += `, ${numero}`;
-  if (complemento) endereco += ` - ${complemento}`;
+  
   if (bairro) endereco += ` - ${bairro}`;
   if (endereco) endereco += ` - ${cidade}/${estado}`;
   else endereco = 'Preencha o endereço no formulário';
