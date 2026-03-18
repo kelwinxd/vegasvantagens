@@ -1435,35 +1435,54 @@ function renderizarPromocoes(cupons) {
     });
 
     // ── Toggle publicação ─────────────────────────────────────────────
-    article.querySelector(".switch-cupom-admin input").addEventListener("change", async (e) => {
-      e.stopPropagation();
-      const cupomId    = e.target.dataset.cupomId;
-      const isChecked  = e.target.checked;
-      const novoStatus = isChecked ? "Publicado" : "Rascunho";
+   // ── Toggle publicação ─────────────────────────────────────────────
+article.querySelector(".switch-cupom-admin input").addEventListener("change", async (e) => {
+  e.stopPropagation();
+  const cupomId    = e.target.dataset.cupomId;
+  const isChecked  = e.target.checked;
+  const novoStatus = isChecked ? "Publicado" : "Rascunho";
 
-      try {
-        await atualizarStatusCupomPatch(cupomId, novoStatus);
+  try {
+    await atualizarStatusCupomPatch(cupomId, novoStatus);
 
-        // Atualiza cache local
-        const cupom = cuponsCacheMap.get(cupomId);
-        if (cupom) cupom.status = novoStatus;
+    // ✅ Atualiza cache local do card
+    const cupom = cuponsCacheMap.get(cupomId);
+    if (cupom) {
+      cupom.status = novoStatus;
+      cupom.ativo  = isChecked; // 🔧 FIX 1: sincroniza o campo ativo
+    }
 
-        // Atualiza cache global
-        if (window._cuponsPromocoes) {
-          const index = window._cuponsPromocoes.findIndex(cp => cp.id.toString() === cupomId);
-          if (index !== -1) window._cuponsPromocoes[index].status = novoStatus;
-        }
-
-        if (typeof _atualizarContadoresCupons === "function") _atualizarContadoresCupons();
-
-        console.log(`✅ Status do cupom ${cupomId} → ${novoStatus}`);
-
-      } catch (err) {
-        console.error("❌ Erro ao atualizar status:", err);
-        alert("Erro ao atualizar status do cupom.");
-        e.target.checked = !isChecked;
+    // ✅ Atualiza cache global _cuponsPromocoes
+    if (window._cuponsPromocoes) {
+      const index = window._cuponsPromocoes.findIndex(cp => cp.id.toString() === cupomId);
+      if (index !== -1) {
+        window._cuponsPromocoes[index].status = novoStatus;
+        window._cuponsPromocoes[index].ativo  = isChecked; // 🔧 FIX 1
       }
-    });
+    }
+
+    // 🔧 FIX 3: Atualiza também _cuponsPromocoesAtual (quando há filtro de estabelecimento)
+    if (window._cuponsPromocoesAtual) {
+      const index = window._cuponsPromocoesAtual.findIndex(cp => cp.id.toString() === cupomId);
+      if (index !== -1) {
+        window._cuponsPromocoesAtual[index].status = novoStatus;
+        window._cuponsPromocoesAtual[index].ativo  = isChecked;
+      }
+    }
+
+    // 🔧 FIX 2: Re-aplica os filtros ativos para atualizar lista + contadores
+    if (typeof aplicarFiltrosCuponsAtual === "function") {
+      aplicarFiltrosCuponsAtual();
+    }
+
+    console.log(`✅ Status do cupom ${cupomId} → ${novoStatus}`);
+
+  } catch (err) {
+    console.error("❌ Erro ao atualizar status:", err);
+    alert("Erro ao atualizar status do cupom.");
+    e.target.checked = !isChecked;
+  }
+});
   });
 
   cupons.forEach(c => {
@@ -2739,6 +2758,7 @@ function obterEstabelecimentosSelecionados() {
 // Adicione esta linha quando o formulário de cupom for aberto
 
 // Exemplo: Se você tem um botão que abre o formulário
+/*
 document.querySelector('[data-open-subpage="criar-cupom"]').addEventListener('click', () => {
   // Mostra o formulário
   document.getElementById('formCupom').classList.add('active');
@@ -2748,6 +2768,8 @@ document.querySelector('[data-open-subpage="criar-cupom"]').addEventListener('cl
     carregarCartoesParaCupom()
 
 });
+
+*/
 
 // Ou se abre ao clicar em uma aba/menu:
 function abrirPaginaCupons() {
