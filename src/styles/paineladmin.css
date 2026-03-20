@@ -2138,23 +2138,16 @@ line-height: normal;
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 44px;
-  height: 44px;
-  background: #ff4444;
-  border: none;
-  border-radius: 50%;
-  color: white;
-  cursor: pointer;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+  width: 24px;
+height: 24px;
+flex-shrink: 0;
+background: transparent;
+ border-radius: 50%;
 }
 
 .btn-fechar-preview:hover {
-  background: #cc0000;
+ background: rgba(218, 218, 218, 0.133);
+
   transform: rotate(90deg) scale(1.1);
 }
 
