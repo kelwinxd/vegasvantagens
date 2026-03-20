@@ -2179,14 +2179,13 @@ line-height: normal;
 }
 
 .preview-title {
-  font-size: 22px;
-  margin-bottom: 8px;
-  color: #2c3e50;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+color: #3F4F9C;
+font-family: Rubik;
+font-size: 32px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+margin-bottom: 40px;
 }
 
 .preview-form-side .form-estab {
@@ -2196,12 +2195,13 @@ line-height: normal;
 }
 
 .preview-form-side .title-form {
-  font-size: 16px;
-  color: #495057;
-  margin: 25px 0 15px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #667eea;
-  font-weight: 600;
+display: flex;
+padding-bottom: 16px;
+align-items: center;
+gap: 10px;
+align-self: stretch;
+border-bottom: 1px solid #A4A4A4;
+margin-bottom: 24px;
 }
 
 
@@ -2216,13 +2216,16 @@ line-height: normal;
 }
 
 .preview-form-side .field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+color: #6F6F6F;
+font-family: Rubik;
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+}
+
+.preview-form-side .row {
+  margin-bottom: 16px;
 }
 
 .preview-form-side input[type="text"],
@@ -2396,7 +2399,7 @@ input:checked + .slider-edit:before {
   color: white;
   padding: 25px 35px;
   display: flex;
-  justify-content: space-between;
+  gap: 122px;
   align-items: center;
   position: sticky;
   top: 0;
@@ -2468,6 +2471,11 @@ input:checked + .slider-edit:before {
   height: auto;
 }
 
+#prev-sobre {
+  max-width: 100%;
+  line-break:auto;
+}
+
 .comercio-p {
     height: auto;
     width: 100%;
@@ -2488,18 +2496,25 @@ input:checked + .slider-edit:before {
   margin-right: 36px;
 }
 
+
+
 .viewport-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1.5px solid #e0e0e0;
-  background: transparent;
-  color: #888;
-  cursor: pointer;
-  transition: all 0.2s;
+display: flex;
+padding: 10px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+color: #797979;
+ border-radius: 8px;
+}
+
+.viewport-btn span {
+  color: #FFF;
+font-family: Rubik;
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
 }
 
 .viewport-btn:hover {
@@ -2508,9 +2523,10 @@ input:checked + .slider-edit:before {
 }
 
 .viewport-btn.active {
-  border-color: #333;
-  background: #333;
-  color: #fff;
+ 
+background: linear-gradient(180deg, #565DA6 36.93%, #D67F65 192.05%);
+box-shadow: 0 4px 21.6px 0 rgba(0, 0, 0, 0.06);
+color: #fff;
 }
 
 
