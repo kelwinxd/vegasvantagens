@@ -2135,15 +2135,11 @@ line-height: normal;
 
 /* Botão Fechar */
 .btn-fechar-preview {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   width: 24px;
 height: 24px;
 flex-shrink: 0;
-background: transparent;
- border-radius: 50%;
- border: none;
+border: none;
+
 }
 
 .btn-fechar-preview:hover {
@@ -2393,7 +2389,7 @@ input:checked + .slider-edit:before {
   color: white;
   padding: 25px 35px;
   display: flex;
-  gap: 122px;
+  justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
@@ -2491,7 +2487,7 @@ line-height: normal;
   display: flex;
   gap: 8px;
   margin-left: auto;
-  margin-right: 36px;
+  margin-right: 122px;
   border-radius: 16px;
 border: 1px solid #EEE;
 background: #FFF;
@@ -2509,6 +2505,8 @@ gap: 10px;
 color: #797979;
  border-radius: 8px;
  border: none;
+ background: transparent;
+ cursor: pointer;
 }
 
 .viewport-btn span {
@@ -2531,6 +2529,11 @@ background: linear-gradient(180deg, #565DA6 36.93%, #D67F65 192.05%);
 box-shadow: 0 4px 21.6px 0 rgba(0, 0, 0, 0.06);
 color: #fff;
 }
+
+.viewport-btn.active span {
+   color: #fff;
+}
+
 
 
 
