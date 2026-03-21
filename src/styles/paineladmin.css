@@ -2143,6 +2143,7 @@ height: 24px;
 flex-shrink: 0;
 background: transparent;
  border-radius: 50%;
+ border: none;
 }
 
 .btn-fechar-preview:hover {
@@ -2397,7 +2398,7 @@ input:checked + .slider-edit:before {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: transparent;
 }
 
 .preview-header h3 {
@@ -2491,6 +2492,10 @@ line-height: normal;
   gap: 8px;
   margin-left: auto;
   margin-right: 36px;
+  border-radius: 16px;
+border: 1px solid #EEE;
+background: #FFF;
+box-shadow: 0 4px 21.6px 0 rgba(0, 0, 0, 0.06);
 }
 
 
@@ -2503,10 +2508,11 @@ align-items: center;
 gap: 10px;
 color: #797979;
  border-radius: 8px;
+ border: none;
 }
 
 .viewport-btn span {
-  color: #FFF;
+  color: #797979;
 font-family: Rubik;
 font-size: 16px;
 font-style: normal;
@@ -2516,7 +2522,7 @@ line-height: normal;
 
 .viewport-btn:hover {
   border-color: #666;
-  color: #333;
+  color: #fff;
 }
 
 .viewport-btn.active {
