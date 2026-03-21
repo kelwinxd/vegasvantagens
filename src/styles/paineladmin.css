@@ -2154,21 +2154,21 @@ background: transparent;
 /* Conteúdo Principal - 30% Form | 70% Preview */
 .preview-content {
   display: grid;
-  grid-template-columns: 30% 70%;
+  grid-template-columns: 35% 65%;
   height: 100%;
   gap: 0;
 }
 
 /* ==== LADO ESQUERDO - FORMULÁRIO (30%) ==== */
 .preview-form-side {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #ffff;
   border-right: 3px solid #dee2e6;
   overflow-y: auto;
   position: relative;
 }
 
 .form-scroll {
-  padding: 80px 25px 40px;
+  padding: 32px;
 }
 
 .preview-title {
@@ -2388,7 +2388,7 @@ input:checked + .slider-edit:before {
 }
 
 .preview-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
   color: white;
   padding: 25px 35px;
   display: flex;
@@ -2401,9 +2401,12 @@ input:checked + .slider-edit:before {
 }
 
 .preview-header h3 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
+  color: #000;
+font-family: Rubik;
+font-size: 24px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
 }
 
 .preview-badge {
@@ -2466,7 +2469,8 @@ input:checked + .slider-edit:before {
 
 #prev-sobre {
   max-width: 100%;
-  line-break:auto;
+  word-break: break-word;
+
 }
 
 .comercio-p {
