@@ -718,11 +718,14 @@ if (gerenciadores.estabelecimentos) {
 */
 
 // Configurar hierarquia para promoções (se necessário no futuro)
+/*
 if (gerenciadores.promocoes) {
   gerenciadores.promocoes.setHierarquia({
     // "criar-cupom": "lista-cupom" // exemplo
   });
 }
+
+*/
 
 // ========== FUNÇÕES ESPECÍFICAS ADAPTADAS ==========
 
@@ -1783,8 +1786,7 @@ function aplicarFiltrosNaListaAtual() {
 if (filtrosCuponsAtivos.status === "publicados") {
   resultado = resultado.filter(cupom => {
     const estaAtivo = cupom.ativo === true || cupom.ativo === "true";
-    return cupom.status === "Publicado" && 
-           estaAtivo && 
+    return cupom.status === "Publicado" &&  
            !cupomEstaExpirado(cupom);
   });
     console.log(`  Após status (publicados): ${resultado.length} resultados`);

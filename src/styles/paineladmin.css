@@ -2139,6 +2139,9 @@ line-height: normal;
 height: 24px;
 flex-shrink: 0;
 border: none;
+cursor: pointer;
+background: transparent;
+padding: 2px;
 
 }
 
@@ -2394,7 +2397,7 @@ input:checked + .slider-edit:before {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: transparent;
+  background: #F3F4F7;
 }
 
 .preview-header h3 {
@@ -2419,7 +2422,7 @@ line-height: normal;
   flex: 1;
   overflow-y: auto;
   padding: 30px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #F3F4F7;
   display: flex;
   flex-direction: column;
   align-items: center;
