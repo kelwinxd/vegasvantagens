@@ -87,82 +87,78 @@ function formatarDataBrasileira(isoString) {
 
 function renderizarCupons(cupons, categoria) {
     const container = document.querySelector(".coupon-grid");
-    container.innerHTML = ""; 
+    container.innerHTML = "";
 
     cupons.forEach(cupom => {
+        if (cupom.status == "Expirado") return;
 
-        if(cupom.status == "Expirado") return
-        console.log("cupom vindo:", cupom)
         const doisCartoes = cupom.cartoesAceitos.slice(0, 2)
             .map(c => `<span class="pill">${c.nome}</span>`)
             .join("");
-        console.log("imagem cupom",cupom.imagens[0])
+
+        // imagemTipoId === 1 → Galeria (card)
+        const imagens = cupom.imagens || [];
+        const imgGaleria = imagens.find(img => img.imagemTipoId === 1);
+        const imgCardUrl = imgGaleria?.url || './imgs/woman-card.png';
+
         container.insertAdjacentHTML("beforeend", `
         <article class="coupon-card">
-
             <div class="coupon-media">
-                <img src="${cupom.imagens[0] || './imgs/woman-card.png'}" loading="lazy">
-                <span class="coupon-badge">
-                    <strong>${cupom.titulo}</strong>
-                </span>
+                <img src="${imgCardUrl}" loading="lazy">
+              <span class="coupon-badge">
+    <strong>${cupom.tag || cupom.titulo}</strong>
+</span>
             </div>
-
             <div class="coupon-body">
-
                 <div class="coupon-meta">
                     <span class="meta-cat">${categoria}</span>
                     <div class="meta-pills">${doisCartoes}</div>
                 </div>
-
                 <h3 class="coupon-title">${cupom.titulo}</h3>
                 <p class="coupon-sub">${cupom.descricao}</p>
-
                 <button class="coupon-cta" type="button" data-modal-target="${cupom.codigo}">
                     Ver Oferta
                 </button>
-
                 <p class="coupon-valid">Válido até ${formatarDataBrasileira(cupom.dataExpiracao)}</p>
-
             </div>
-
         </article>
         `);
     });
 }
 
-
 function criarModais(cupons, mapaUrl) {
     const container = document.body;
-    
+
     cupons.forEach(cupom => {
         const todosCartoes = cupom.cartoesAceitos
             .map(c => `<span class="cm-pill">${c.nome}</span>`)
             .join("");
 
+        // imagemTipoId === 2 → Modal
+        const imagens = cupom.imagens || [];
+        const imgModal   = imagens.find(img => img.imagemTipoId === 2);
+        const imgGaleria = imagens.find(img => img.imagemTipoId === 1);
+        const imgModalUrl = imgModal?.url || imgGaleria?.url || './imgs/woman-card.png';
+
         container.insertAdjacentHTML("beforeend", `
         <dialog class="coupon-modal" data-modal="${cupom.codigo}">
             <button class="cm-close" aria-label="Fechar">&times;</button>
-
             <div class="cm-wrap">
-
                 <div class="cm-topchips">
-                    <span class="cm-chip"><img src="./imgs/utils-icon.png" alt="">Fitness</span>
+                    <span class="cm-chip">
+                        <img src="./imgs/utils-icon.png" alt="">
+                        ${cupom.tag || "Oferta"}
+                    </span>
                 </div>
-
                 <div class="cm-badge">
-               <img src="${cupom.imagens[cupom.imagens.length - 1]}" alt="10% de desconto" loading="lazy">
-  
+                    <img src="${imgModalUrl}" alt="${cupom.titulo}" loading="lazy">
                 </div>
-                
                 <h2 class="cm-title">${cupom.titulo}</h2>
-
                 <p class="cm-sub">${cupom.modalDescricao}</p>
-
                 <p class="aceitos-cm">Cartões Aceitos:</p>
                 <div class="cm-pills">
                     ${todosCartoes}
                 </div>
-
                 <div class="cm-alert">
                     <div class="flex-alert">
                         <img src="./imgs/alert-icon.png" alt=""><strong>Atenção!</strong>
@@ -171,7 +167,6 @@ function criarModais(cupons, mapaUrl) {
                         Não acumulável com outras promoções. Apresente o cupom no momento do pedido.
                     </p>
                 </div>
-
                 <a href="${mapaUrl}" class="cm-cta" role="button">Consultar no mapa</a>
             </div>
         </dialog>
