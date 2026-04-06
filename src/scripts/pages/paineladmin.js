@@ -3531,14 +3531,14 @@ function sincronizarCupomPreview() {
 
   // Atualiza card
   document.getElementById("cpv-badge-titulo").textContent =
-    valorDesconto ? `${valorDesconto}% De desconto!` : "Desconto!";
+    tag;
   document.getElementById("cpv-titulo").textContent    = titulo;
   document.getElementById("cpv-descricao").textContent = descricao;
   document.getElementById("cpv-validade").textContent  = dataFormatada;
 
   // Atualiza tag no preview (se existir o elemento)
   const cpvMetaCat = document.getElementById("cpv-meta-cat");
-  if (cpvMetaCat) cpvMetaCat.textContent = tag || "Categoria";
+  if (cpvMetaCat) cpvMetaCat.textContent = "Categoria";
 
   // Atualiza modal
   document.getElementById("cpv-modal-titulo").textContent    = modalTitulo;
