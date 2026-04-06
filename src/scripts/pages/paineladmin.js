@@ -2114,22 +2114,31 @@ function renderizarImagensCupomEdicao(cupom) {
   container.innerHTML = "";
 
   const imagens = cupom.imagens || [];
-  // pega a imagem de galeria (tipo 1) ou a última disponível
-  const imagemGaleria = imagens.find(img => img.imagemTipoId === 1) 
-                     || (imagens.length > 0 ? imagens[imagens.length - 1] : null);
+  const imagemGaleria = imagens.find(img => img.imagemTipoId === 1) || null;
+  const imagemModal   = imagens.find(img => img.imagemTipoId === 2) || null;
 
   container.appendChild(
     criarBlocoImagemCupom({
-      titulo: "Imagem do Cupom",
-      imagem: imagemGaleria, // objeto completo com .id e .url
-      cupomId: cupom.id
+      titulo: "Imagem Cupom (Card)",
+      imagem: imagemGaleria,
+      cupomId: cupom.id,
+      imagemTipoId: 1
+    })
+  );
+
+  container.appendChild(
+    criarBlocoImagemCupom({
+      titulo: "Imagem Modal",
+      imagem: imagemModal,
+      cupomId: cupom.id,
+      imagemTipoId: 2
     })
   );
 }
 // ========================================
 // 🔹 CRIAR BLOCO DE IMAGEM (UI)
 // ========================================
-function criarBlocoImagemCupom({ titulo, imagem, cupomId }) {
+function criarBlocoImagemCupom({ titulo, imagem, cupomId, imagemTipoId }) {
   const div = document.createElement("div");
   div.className = "imagem-edit-item";
 
@@ -2139,6 +2148,7 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId }) {
   const srcImagem = imagem?.url || PLACEHOLDER;
 
   div.innerHTML = `
+    <strong>${titulo}</strong>
     <div class="upload-card upload-cupom">
       <img />
       <div class="upload-overlay">
@@ -2150,7 +2160,7 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId }) {
             onchange="${
               imagemId
                 ? `substituirImagemCupom(event, ${cupomId}, ${imagemId})`
-                : `adicionarImagemNovaCupom(event, ${cupomId})`
+                : `adicionarImagemNovaCupom(event, ${cupomId}, ${imagemTipoId})`
             }"
           />
         </label>
@@ -2183,16 +2193,15 @@ async function adicionarImagemNovaCupom(event, cupomId) {
   await recarregarCupomEdit();
 }
 
-async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
+async function enviarImagemCupom(cupomId, file, isPrincipal = true, imagemTipoId = 1) {
   const token = localStorage.getItem("token");
   if (!token) { alert("Token não encontrado"); return; }
 
   const formData = new FormData();
   formData.append("imagem", file);
-  formData.append("principal", isPrincipal);
 
   try {
-    const res = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens`, {
+    const res = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens?imagemTipoId=${imagemTipoId}`, {
       method: "POST",
       headers: { Authorization: "Bearer " + token },
       body: formData
@@ -2211,7 +2220,6 @@ async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
     throw err;
   }
 }
-
 
 async function excluirImagemCupom(cupomId, imagemId) {
   const token = localStorage.getItem("token");
@@ -2257,7 +2265,7 @@ async function substituirImagemCupom(event, cupomId, imagemId) {
       }
     }
 
-    await enviarImagemCupom(cupomId, file, true);
+    await enviarImagemCupom(cupomId, file, true, imagemTipoId);
     await recarregarCupomEdit();
 
   } catch (err) {
