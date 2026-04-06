@@ -1364,7 +1364,7 @@ function renderizarPromocoes(cupons) {
     const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
     const imagem = (c.imagens && c.imagens.length)
-  ? c.imagens[c.imagens.length - 1]
+  ? (c.imagens.find(img => img.imagemTipoId === 1)?.url || PLACEHOLDER)
   : PLACEHOLDER;
 
     // Badges de cartões (máximo 2 + contador)
@@ -2110,43 +2110,37 @@ let cartoesModalCache = [];
 // ========================================
 function renderizarImagensCupomEdicao(cupom) {
   const container = document.getElementById("imagensCupomEditContainer");
+  if (!container) return;
   container.innerHTML = "";
 
-   const imagens = cupom.imagens || [];
+  const imagens = cupom.imagens || [];
+  // pega a imagem de galeria (tipo 1) ou a última disponível
+  const imagemGaleria = imagens.find(img => img.imagemTipoId === 1) 
+                     || (imagens.length > 0 ? imagens[imagens.length - 1] : null);
 
-  // 🔹 Pega a ÚLTIMA imagem do array (mais recente)
-  const imagemPrincipal = imagens.length > 0 ? imagens[imagens.length - 1] : null;
-
-  // 🔹 IMAGEM PRINCIPAL
   container.appendChild(
     criarBlocoImagemCupom({
       titulo: "Imagem do Cupom",
-      imagem: imagemPrincipal,
-      cupomId: cupom.id,
-      isPrincipal: true
+      imagem: imagemGaleria, // objeto completo com .id e .url
+      cupomId: cupom.id
     })
   );
 }
-
 // ========================================
 // 🔹 CRIAR BLOCO DE IMAGEM (UI)
 // ========================================
-function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
+function criarBlocoImagemCupom({ titulo, imagem, cupomId }) {
   const div = document.createElement("div");
   div.className = "imagem-edit-item";
 
   const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
 
-  const tipoClasse = "upload-cupom";
-  // 🔹 imagem agora é uma STRING (URL) e não um objeto
-  const srcImagem = imagem || PLACEHOLDER;
+  const imagemId  = imagem?.id  || null;
+  const srcImagem = imagem?.url || PLACEHOLDER;
 
   div.innerHTML = `
- 
-
-    <div class="upload-card ${tipoClasse}">
+    <div class="upload-card upload-cupom">
       <img />
-
       <div class="upload-overlay">
         <label class="upload-action">
           <img src="./imgs/image-up.png" class="icon-edit" />
@@ -2154,38 +2148,27 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
             type="file"
             accept="image/*"
             onchange="${
-              imagem
-                ? `substituirImagemCupom(event, ${cupomId})`
+              imagemId
+                ? `substituirImagemCupom(event, ${cupomId}, ${imagemId})`
                 : `adicionarImagemNovaCupom(event, ${cupomId})`
             }"
           />
         </label>
-
         ${
-          imagem
-            ? `
-              <button
-                type="button"
-                class="upload-action danger"
-                onclick="excluirImagemCupom(${cupomId})"
-              >
+          imagemId
+            ? `<button type="button" class="upload-action danger"
+                onclick="excluirImagemCupom(${cupomId}, ${imagemId})">
                 <img src="./imgs/trash-02.png" class="icon-edit" />
-              </button>
-            `
+               </button>`
             : ""
         }
       </div>
     </div>
   `;
 
-  // 🔥 Fallback de imagem
   const img = div.querySelector("img");
   img.src = srcImagem;
-
-  img.onerror = () => {
-    img.onerror = null;
-    img.src = PLACEHOLDER;
-  };
+  img.onerror = () => { img.onerror = null; img.src = PLACEHOLDER; };
 
   return div;
 }
@@ -2195,23 +2178,18 @@ function criarBlocoImagemCupom({ titulo, imagem, cupomId, isPrincipal }) {
 async function adicionarImagemNovaCupom(event, cupomId) {
   const file = event.target.files[0];
   if (!file) return;
-
   await enviarImagemCupom(cupomId, file, true);
-
   alert("Imagem adicionada com sucesso");
-  recarregarCupomEdit();
+  await recarregarCupomEdit();
 }
 
-// ========================================
-// 🔹 ENVIAR IMAGEM PARA API
-// ========================================
 async function enviarImagemCupom(cupomId, file, isPrincipal = true) {
   const token = localStorage.getItem("token");
   if (!token) { alert("Token não encontrado"); return; }
 
   const formData = new FormData();
-formData.append("imagem", file); // ← era "file", deve ser "imagem"
-formData.append("principal", isPrincipal);
+  formData.append("imagem", file);
+  formData.append("principal", isPrincipal);
 
   try {
     const res = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens`, {
@@ -2222,7 +2200,7 @@ formData.append("principal", isPrincipal);
 
     if (!res.ok) {
       const erroTexto = await res.text();
-      console.error("❌ Resposta da API:", res.status, erroTexto); // ← log do erro real
+      console.error("❌ Resposta da API:", res.status, erroTexto);
       throw new Error("Erro ao enviar imagem");
     }
 
@@ -2233,16 +2211,11 @@ formData.append("principal", isPrincipal);
     throw err;
   }
 }
-// ========================================
-// 🔹 EXCLUIR IMAGEM (exclui a última)
-// ========================================
-async function excluirImagemCupom(cupomId) {
+
+
+async function excluirImagemCupom(cupomId, imagemId) {
   const token = localStorage.getItem("token");
   if (!confirm("Deseja realmente excluir esta imagem?")) return;
-
-  const imagens = _cupomAtual?.imagens || [];
-  const imagemAtual = imagens[imagens.length - 1];
-  const imagemId = imagemAtual?.id;
 
   if (!imagemId) {
     alert("Nenhuma imagem encontrada para excluir.");
@@ -2264,10 +2237,8 @@ async function excluirImagemCupom(cupomId) {
     alert("Erro ao excluir imagem: " + err.message);
   }
 }
-// ========================================
-// 🔹 SUBSTITUIR IMAGEM EXISTENTE
-// ========================================
-async function substituirImagemCupom(event, cupomId) {
+
+async function substituirImagemCupom(event, cupomId, imagemId) {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -2275,12 +2246,6 @@ async function substituirImagemCupom(event, cupomId) {
   if (!token) return;
 
   try {
-    // Pega o ID da imagem atual do cupom
-    const imagens = _cupomAtual?.imagens || [];
-    const imagemAtual = imagens[imagens.length - 1];
-    const imagemId = imagemAtual?.id;
-
-    // Deleta a imagem antiga pelo ID
     if (imagemId) {
       const delResp = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`, {
         method: "DELETE",
@@ -2292,9 +2257,7 @@ async function substituirImagemCupom(event, cupomId) {
       }
     }
 
-    // Envia a nova imagem
     await enviarImagemCupom(cupomId, file, true);
-
     await recarregarCupomEdit();
 
   } catch (err) {
@@ -2322,14 +2285,20 @@ async function recarregarCupomEdit() {
     _cupomAtual = cupomAtualizado;
     window._cupomEditando = cupomAtualizado;
 
-    // imagens são strings diretas
+    // imagens são objetos com .url e .id
     const imagens = cupomAtualizado.imagens || [];
-    if (imagens.length > 0) {
-      const imgUrl = imagens[imagens.length - 1]; // string direta
+    const imagemGaleria = imagens.find(img => img.imagemTipoId === 1);
+    const imgUrl = imagemGaleria?.url || (imagens.length > 0 ? imagens[imagens.length - 1]?.url : null);
+
+    if (imgUrl) {
       document.getElementById("cpv-card-img").src  = imgUrl;
       document.getElementById("cpv-modal-img").src = imgUrl;
       document.getElementById("cp-thumb-galeria").innerHTML = `<img src="${imgUrl}" alt="preview">`;
     }
+
+    // Re-renderiza o bloco de imagem com o id correto
+    renderizarImagensCupomEdicao(cupomAtualizado);
+
   } catch (err) {
     console.error("Erro ao recarregar cupom:", err);
   }
