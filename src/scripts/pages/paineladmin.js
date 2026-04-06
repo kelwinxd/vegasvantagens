@@ -2249,17 +2249,20 @@ async function excluirImagemCupom(cupomId, imagemId) {
 async function substituirImagemCupom(event, cupomId, imagemId) {
   const file = event.target.files[0];
   if (!file) return;
-
   const token = localStorage.getItem("token");
   if (!token) return;
 
   try {
+    // Busca o tipo da imagem atual no _cupomAtual
+    const imagens = _cupomAtual?.imagens || [];
+    const imagemAtual = imagens.find(img => img.id === imagemId);
+    const imagemTipoId = imagemAtual?.imagemTipoId || 1;
+
     if (imagemId) {
       const delResp = await fetch(`${API_BASE}/api/cupons/${cupomId}/imagens/${imagemId}`, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + token }
       });
-
       if (!delResp.ok && delResp.status !== 404) {
         throw new Error("Erro ao excluir imagem antiga");
       }
@@ -3406,6 +3409,7 @@ async function salvarEdicaoCupom() {
     const codigo              = document.getElementById("cp-codigo").value;
     const titulo              = document.getElementById("cp-titulo").value;
     const descricao           = document.getElementById("cp-descricao").value;
+    const tag                 = document.getElementById("cp-tagCupom").value;
     const modalTitulo         = document.getElementById("cp-modalTitulo").value;
     const modalDescricao      = document.getElementById("cp-modalDescricao").value;
     const valorDesconto       = parseFloat(document.getElementById("cp-valorDesconto").value)       || 0;
@@ -3429,7 +3433,7 @@ async function salvarEdicaoCupom() {
     ).map(cb => parseInt(cb.dataset.id));
 
     const body = {
-      codigo, titulo, descricao, modalTitulo, modalDescricao,
+      codigo, titulo, descricao, tag, modalTitulo, modalDescricao,
       tipo: _cupomAtual.tipo || "",
       valorDesconto, valorMinimoCompra,
       dataInicio: dataInicioISO,
@@ -3453,7 +3457,6 @@ async function salvarEdicaoCupom() {
 
     alert("Cupom atualizado com sucesso!");
 
-    // Fecha o modal diretamente sem setTimeout para não competir com o reload
     const modal = document.getElementById("modal-preview-cupom");
     modal.classList.remove("active");
     modal.style.display = "none";
@@ -3461,12 +3464,10 @@ async function salvarEdicaoCupom() {
     _modoEdicaoCupom = false;
     fecharModalCupomPreview();
 
-    // Limpa caches
     window._cuponsPromocoes = null;
     window._cuponsCacheMap  = null;
     localStorage.removeItem("cache_cupons_promocoes");
 
-    // Recarrega a lista
     await carregarCuponsPromocoes();
 
   } catch (err) {
@@ -3475,13 +3476,10 @@ async function salvarEdicaoCupom() {
   }
 }
 
-// ============================================================
-//  PREVIEW REATIVO
-// ============================================================
 function _ligarPreviewReativoCupom() {
   const ids = [
     "cp-titulo", "cp-descricao", "cp-modalTitulo", "cp-modalDescricao",
-    "cp-valorDesconto", "cp-dataExpiracao", "cp-ativo"
+    "cp-valorDesconto", "cp-dataExpiracao", "cp-ativo", "cp-tagCupom"
   ];
   ids.forEach(id => {
     const el = document.getElementById(id);
@@ -3494,7 +3492,6 @@ function _ligarPreviewReativoCupom() {
 }
 
 function sincronizarCupomPreview() {
-  // Em modo visualização, usa os ver-values; em edição/criação, usa os inputs
   const emEdicao = _modoEdicaoCupom || _cupomAtual === null;
 
   const titulo         = emEdicao
@@ -3521,6 +3518,10 @@ function sincronizarCupomPreview() {
     ? document.getElementById("cp-dataExpiracao")?.value
     : (_cupomAtual?.dataExpiracao ?? "");
 
+  const tag = emEdicao
+    ? (document.getElementById("cp-tagCupom")?.value.trim() || "")
+    : (_cupomAtual?.tag ?? "");
+
   const dataFormatada = cpFormatarData(dataExpiracao);
 
   // Atualiza card
@@ -3529,6 +3530,10 @@ function sincronizarCupomPreview() {
   document.getElementById("cpv-titulo").textContent    = titulo;
   document.getElementById("cpv-descricao").textContent = descricao;
   document.getElementById("cpv-validade").textContent  = dataFormatada;
+
+  // Atualiza tag no preview (se existir o elemento)
+  const cpvMetaCat = document.getElementById("cpv-meta-cat");
+  if (cpvMetaCat) cpvMetaCat.textContent = tag || "Categoria";
 
   // Atualiza modal
   document.getElementById("cpv-modal-titulo").textContent    = modalTitulo;
@@ -3705,7 +3710,10 @@ function cpAtualizarPillsPreview() {
   document.getElementById("cpv-modal-pills").innerHTML = pillsModal || '<span style="color:#888;font-size:13px;">Nenhum selecionado</span>';
 }
 
-function abrirModalCupomPreview()  { document.getElementById("cpv-modal-wrap").style.display = "flex"; }
+function abrirModalCupomPreview()  { 
+
+  document.getElementById("cpv-modal-wrap").style.display = "flex"; 
+}
 function fecharModalCupomPreview() { document.getElementById("cpv-modal-wrap").style.display = "none"; }
 
 
