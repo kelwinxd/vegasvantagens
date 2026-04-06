@@ -3203,33 +3203,38 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
 
     mostrarLoader("Carregando cupom...", "Carregando cartões e estabelecimentos...");
 
-    // Popula cartões e estabelecimentos (precisam existir antes de marcar)
     await Promise.all([
       cpPopularCartoes(),
       cpPopularEstabelecimentos()
     ]);
 
-    // Preenche os ver-values (modo visualização)
     _popularVerValuesCupom(cupom);
-
-    // Preenche os inputs (para quando ativar edição)
     _preencherInputsCupom(cupom, nomeEstab);
 
-    // Imagem
+    // Separa imagens por tipo
     cpImgGaleriaUrl = null;
     cpImgModalUrl   = null;
     const imagens = cupom.imagens || [];
-    if (imagens.length > 0) {
-      const imgUrl = imagens[imagens.length - 1]?.url || imagens[imagens.length - 1] || null;
-      if (imgUrl) {
-        cpImgGaleriaUrl = imgUrl;
-        document.getElementById("cpv-card-img").src  = imgUrl;
-        document.getElementById("cpv-modal-img").src = imgUrl;
-        document.getElementById("cp-thumb-galeria").innerHTML = `<img src="${imgUrl}" alt="preview">`;
-      }
+
+    const imgGaleria = imagens.find(img => img.imagemTipoId === 1);
+    const imgModal   = imagens.find(img => img.imagemTipoId === 2);
+
+    // Imagem galeria (card)
+    if (imgGaleria?.url) {
+      cpImgGaleriaUrl = imgGaleria.url;
+      document.getElementById("cpv-card-img").src = imgGaleria.url;
+      document.getElementById("cp-thumb-galeria").innerHTML =
+        `<img src="${imgGaleria.url}" alt="preview">`;
     }
 
-    // Abre em modo VISUALIZAÇÃO
+    // Imagem modal
+    if (imgModal?.url) {
+      cpImgModalUrl = imgModal.url;
+      document.getElementById("cpv-modal-img").src = imgModal.url;
+      document.getElementById("cp-thumb-modal").innerHTML =
+        `<img src="${imgModal.url}" alt="preview">`;
+    }
+
     document.getElementById("cp-form-titulo").textContent = cupom.titulo || "Ver Cupom";
     _setCupomModoVisualizacao();
 
@@ -3643,6 +3648,9 @@ async function cpPreviewImagem(input, tipo) {
   const file = input.files[0];
   if (!file) return;
 
+  // imagemTipoId: 1 = Galeria (card), 2 = Modal
+  const imagemTipoId = tipo === "galeria" ? 1 : 2;
+
   // Atualiza preview local imediatamente
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -3662,7 +3670,25 @@ async function cpPreviewImagem(input, tipo) {
   // Se está editando um cupom existente, envia para a API
   if (_cupomAtual?.id) {
     try {
-      await substituirImagemCupom({ target: { files: [file], value: "" } }, _cupomAtual.id);
+      const imagens = _cupomAtual?.imagens || [];
+      const imagemExistente = imagens.find(img => img.imagemTipoId === imagemTipoId);
+      const imagemId = imagemExistente?.id || null;
+
+      if (imagemId) {
+        // Substitui a imagem existente do mesmo tipo
+        await substituirImagemCupom(
+          { target: { files: [file], value: "" } },
+          _cupomAtual.id,
+          imagemId
+        );
+      } else {
+        // Adiciona nova imagem com o tipo correto
+        await adicionarImagemNovaCupom(
+          { target: { files: [file], value: "" } },
+          _cupomAtual.id,
+          imagemTipoId
+        );
+      }
     } catch (err) {
       console.error("Erro ao enviar imagem:", err);
     } finally {
