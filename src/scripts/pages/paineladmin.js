@@ -3268,6 +3268,10 @@ function fecharPreviewCupom() {
     _modoEdicaoCupom = false;
     fecharModalCupomPreview();
     document.querySelector('[data-open-subpage="lista-cupom"]').classList.add("active")
+    document.querySelector('[data-subpage="lista-cupom"]').classList.add("active")
+    document.querySelector('[data-open-subpage="criar-cupom"]').classList.remove("active")
+
+
   }, 300);
 
 
