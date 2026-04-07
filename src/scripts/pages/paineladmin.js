@@ -2509,7 +2509,7 @@ async function excluirCupomPromocao(id) {
   if (!confirmar) return;
 
   const token = localStorage.getItem("token");
-
+  mostrarLoader("Excluindo Cupom...", "Acessando o Banco");
   try {
     const res = await fetch(`${API_BASE}/api/Cupons/${id}`, {
       method: "DELETE",
@@ -2531,6 +2531,8 @@ async function excluirCupomPromocao(id) {
   } catch (err) {
     console.error("Erro ao excluir cupom:", err);
     alert("Erro ao excluir cupom.");
+  } finally {
+        ocultarLoader(); 
   }
 }
 
@@ -2956,6 +2958,7 @@ async function cadastrarCupom() {
 */
 
 async function cadastrarCupom() {
+  if (getBotaoCupom()?.disabled) return;
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado.");
@@ -3021,7 +3024,8 @@ async function cadastrarCupom() {
 
   // 👇 LOG para conferir o payload antes de enviar
   console.log("Payload enviado:", JSON.stringify(data, null, 2));
-
+  mostrarLoader("Cadastrando cupom...", "Salvando dados e enviando imagens...");
+  travarBotaoCupom();
   try {
     const res = await fetch(`${API_BASE}/api/Cupons`, {
       method: "POST",
@@ -3068,7 +3072,31 @@ if (modalFile)   { await enviarImagemCupom(cupomId, modalFile,   true, 2); conso
   } catch (err) {
     alert("Erro: " + err.message);
     console.error(err);
+  } finally {
+    ocultarLoader(); 
+     destravarBotaoCupom();
   }
+}
+
+function getBotaoCupom() {
+  return document.querySelector(".btn-salvar-preview");
+}
+
+function travarBotaoCupom() {
+  const btn = getBotaoCupom();
+  if (!btn) return;
+
+  btn.disabled = true;
+  btn.dataset.originalText = btn.innerHTML;
+  btn.innerHTML = "⏳ Cadastrando...";
+}
+
+function destravarBotaoCupom() {
+  const btn = getBotaoCupom();
+  if (!btn) return;
+
+  btn.disabled = false;
+  btn.innerHTML = btn.dataset.originalText || "💾 Cadastrar Cupom";
 }
 
 
@@ -3207,7 +3235,7 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     const imagens = cupom.imagens || [];
 
     const imgGaleria = imagens.find(img => img.imagemTipoId === 1);
-    const imgModal   = imagens.find(img => img.imagemTipoId === 2);
+    const imgModal   = imagens.find(img => img.imagemTipoId === 2 || 3);
 
     // Imagem galeria (card)
     if (imgGaleria?.url) {
