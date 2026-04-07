@@ -1337,12 +1337,12 @@ async function carregarCuponsPromocoes() {
     
     // 6️⃣ Inicializar filtros
     inicializarFiltrosCupons();
-    alert("Cupom Excluido com sucesso")
+    
 
   } catch (err) {
     console.error("Erro ao carregar cupons:", err);
   } finally {
-    ocultarLoader(); 
+    alert("Cupom Excluido com sucesso")
   }
 }
 
@@ -1487,6 +1487,8 @@ article.querySelector(".switch-cupom-admin input").addEventListener("change", as
     console.error("❌ Erro ao atualizar status:", err);
     alert("Erro ao atualizar status do cupom.");
     e.target.checked = !isChecked;
+  } finally {
+    ocultarLoader(); 
   }
 });
   });
