@@ -3055,7 +3055,7 @@ if (ativo) {
 
     // imagemTipoId: 1 = Galeria, 3 = Modal (conforme a entidade que você mostrou)
 if (galeriaFile) { await enviarImagemCupom(cupomId, galeriaFile, true, 1); console.log("Imagem Galeria enviada!"); }
-if (modalFile)   { await enviarImagemCupom(cupomId, modalFile,   true, 3); console.log("Imagem Modal enviada!"); }
+if (modalFile)   { await enviarImagemCupom(cupomId, modalFile,   true, 2); console.log("Imagem Modal enviada!"); }
 
     alert("Cupom criado com sucesso!");
      carregarCuponsPromocoes({ ignoreCache: true });
