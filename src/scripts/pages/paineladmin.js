@@ -3015,7 +3015,8 @@ async function cadastrarCupom() {
     ativo: ativo,
     estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
     status:               ativo ? "Publicado" : "Rascunho",
-    cartoesAceitosIds:    cartoesSelecionados
+    cartoesAceitosIds:    cartoesSelecionados,
+    tag: document.getElementById("cp-tagCupom")
   };
 
   // 👇 LOG para conferir o payload antes de enviar
@@ -3266,7 +3267,10 @@ function fecharPreviewCupom() {
     _cupomAtual      = null;
     _modoEdicaoCupom = false;
     fecharModalCupomPreview();
+    document.querySelector('[data-open-subpage="lista-cupom"]').classList.add("active")
   }, 300);
+
+
 }
 
 function fecharModalEditarCupom() { fecharPreviewCupom(); }
@@ -3524,8 +3528,8 @@ function sincronizarCupomPreview() {
     : (_cupomAtual?.dataExpiracao ?? "");
 
   const tag = emEdicao
-    ? (document.getElementById("cp-tagCupom")?.value.trim() || "")
-    : (_cupomAtual?.tag ?? "");
+    ? (document.getElementById("cp-tagCupom")?.value.trim() || "Tag de Desconto")
+    : (_cupomAtual?.tag ?? "Tag de Desconto");
 
   const dataFormatada = cpFormatarData(dataExpiracao);
 
