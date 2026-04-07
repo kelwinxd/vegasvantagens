@@ -1342,7 +1342,7 @@ async function carregarCuponsPromocoes() {
   } catch (err) {
     console.error("Erro ao carregar cupons:", err);
   } finally {
-    alert("Cupom Excluido com sucesso")
+  
   }
 }
 
@@ -2963,12 +2963,14 @@ async function cadastrarCupom() {
 */
 
 async function cadastrarCupom() {
-  if (getBotaoCupom()?.disabled) return;
+  
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado.");
     return;
   }
+
+  if (getBotaoCupom()?.disabled) return;
 
   const estabelecimentosSelecionados = obterEstabelecimentosSelecionados();
   if (!estabelecimentosSelecionados || estabelecimentosSelecionados.length === 0) {
@@ -3240,7 +3242,7 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
     const imagens = cupom.imagens || [];
 
     const imgGaleria = imagens.find(img => img.imagemTipoId === 1);
-    const imgModal   = imagens.find(img => img.imagemTipoId === 2 || 3);
+    const imgModal = imagens.find(img => img.imagemTipoId === 2 || img.imagemTipoId === 3);
 
     // Imagem galeria (card)
     if (imgGaleria?.url) {
