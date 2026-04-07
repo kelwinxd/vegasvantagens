@@ -3016,7 +3016,7 @@ async function cadastrarCupom() {
     estabelecimentoId:    parseInt(estabelecimentosSelecionados[0].id),
     status:               ativo ? "Publicado" : "Rascunho",
     cartoesAceitosIds:    cartoesSelecionados,
-    tag: document.getElementById("cp-tagCupom")
+    tag: document.getElementById("cp-tagCupom").value.trim()
   };
 
   // 👇 LOG para conferir o payload antes de enviar
