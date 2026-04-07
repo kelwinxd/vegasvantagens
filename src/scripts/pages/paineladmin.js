@@ -3053,7 +3053,7 @@ if (ativo) {
     const galeriaFile = document.getElementById("cp-imgGaleria").files[0];
     const modalFile   = document.getElementById("cp-imgModal").files[0];
 
-    // imagemTipoId: 1 = Galeria, 3 = Modal (conforme a entidade que você mostrou)
+    // imagemTipoId: 1 = Galeria, 2 = Modal (conforme a entidade que você mostrou)
 if (galeriaFile) { await enviarImagemCupom(cupomId, galeriaFile, true, 1); console.log("Imagem Galeria enviada!"); }
 if (modalFile)   { await enviarImagemCupom(cupomId, modalFile,   true, 2); console.log("Imagem Modal enviada!"); }
 
@@ -3195,6 +3195,8 @@ async function abrirModalEditarCupom(id, nomeEstab, estabelecimentoId) {
       cpPopularCartoes(),
       cpPopularEstabelecimentos()
     ]);
+
+    _marcarCartoesDoCupom(cupom);
 
     _popularVerValuesCupom(cupom);
     _preencherInputsCupom(cupom, nomeEstab);
@@ -3491,6 +3493,21 @@ function _ligarPreviewReativoCupom() {
   });
 }
 
+function _marcarCartoesDoCupom(cupom) {
+  const cartoesCupom = cupom.cartoesAceitos || [];
+
+  const idsSelecionados = cartoesCupom.map(c => c.id);
+
+  const inputs = document.querySelectorAll('#cp-cards-row-preview input[type="checkbox"]');
+
+  inputs.forEach(input => {
+    const id = Number(input.dataset.id);
+    input.checked = idsSelecionados.includes(id);
+  });
+
+  sincronizarCupomPreview();
+}
+
 function sincronizarCupomPreview() {
   const emEdicao = _modoEdicaoCupom || _cupomAtual === null;
 
@@ -3553,7 +3570,8 @@ function sincronizarCupomPreview() {
 async function cpPopularCartoes() {
   const container = document.getElementById("cp-cards-row-preview");
   if (!container) return;
-  if (container.children.length > 0) return; // já populado
+
+  container.innerHTML = ""; // 🔥 limpa antes
 
   const token = localStorage.getItem("token");
   if (!token) return;

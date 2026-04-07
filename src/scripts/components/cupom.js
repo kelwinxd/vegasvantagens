@@ -136,7 +136,7 @@ function criarModais(cupons, mapaUrl) {
 
         // imagemTipoId === 2 → Modal
         const imagens = cupom.imagens || [];
-        const imgModal   = imagens.find(img => img.imagemTipoId === 2);
+        const imgModal   = imagens.find(img => img.imagemTipoId === 2 || 3);
         const imgGaleria = imagens.find(img => img.imagemTipoId === 1);
         const imgModalUrl = imgModal?.url || imgGaleria?.url || './imgs/woman-card.png';
 
