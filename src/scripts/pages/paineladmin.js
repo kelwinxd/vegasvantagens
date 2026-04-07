@@ -1337,9 +1337,12 @@ async function carregarCuponsPromocoes() {
     
     // 6️⃣ Inicializar filtros
     inicializarFiltrosCupons();
+    alert("Cupom Excluido com sucesso")
 
   } catch (err) {
     console.error("Erro ao carregar cupons:", err);
+  } finally {
+    ocultarLoader(); 
   }
 }
 
@@ -2523,7 +2526,7 @@ async function excluirCupomPromocao(id) {
       throw new Error(erro);
     }
 
-    alert("Cupom excluído com sucesso!");
+    console.log("Cupom Excluido com sucesso")
 
     // 🔄 Força recarregar ignorando cache
     carregarCuponsPromocoes({ ignoreCache: true });
@@ -2532,7 +2535,7 @@ async function excluirCupomPromocao(id) {
     console.error("Erro ao excluir cupom:", err);
     alert("Erro ao excluir cupom.");
   } finally {
-        ocultarLoader(); 
+        
   }
 }
 
