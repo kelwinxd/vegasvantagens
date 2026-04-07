@@ -3053,22 +3053,9 @@ if (ativo) {
     const galeriaFile = document.getElementById("cp-imgGaleria").files[0];
     const modalFile   = document.getElementById("cp-imgModal").files[0];
 
-    async function enviarImagem(tipo, file) {
-      const form = new FormData();
-      form.append("imagem", file);
-      form.append("tipo", tipo);
-
-      const imgRes = await fetch(`${API_BASE}/api/Cupons/${cupomId}/imagens`, {
-        method: "POST",
-        headers: { "Authorization": "Bearer " + token },
-        body: form
-      });
-
-      if (!imgRes.ok) throw new Error("Erro ao enviar imagem " + tipo);
-    }
-
-    if (galeriaFile) { await enviarImagem("Galeria", galeriaFile); console.log("Imagem Galeria enviada!"); }
-    if (modalFile)   { await enviarImagem("Modal",   modalFile);   console.log("Imagem Modal enviada!"); }
+    // imagemTipoId: 1 = Galeria, 3 = Modal (conforme a entidade que você mostrou)
+if (galeriaFile) { await enviarImagemCupom(cupomId, galeriaFile, true, 1); console.log("Imagem Galeria enviada!"); }
+if (modalFile)   { await enviarImagemCupom(cupomId, modalFile,   true, 3); console.log("Imagem Modal enviada!"); }
 
     alert("Cupom criado com sucesso!");
      carregarCuponsPromocoes({ ignoreCache: true });
