@@ -56,7 +56,38 @@ export async function buscarEstabelecimentos() {
     
   }
 
-  
+ function carregarCategorias() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Você precisa estar logado para carregar as categorias.");
+    return;
+  }
+
+  fetch(`${API_BASE}/api/CategoriasEstabelecimentos`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao buscar categorias: " + res.status);
+    return res.json();
+  })
+  .then(data => {
+    const select = document.getElementById("categoriaId2");
+    select.innerHTML = "";
+
+    data.forEach(categoria => {
+      const option = document.createElement("option");
+      option.value = categoria.id;
+      option.textContent = categoria.nome;
+      select.appendChild(option);
+    });
+  })
+  .catch(err => {
+    alert("Erro ao carregar categorias: " + err.message);
+    console.error(err);
+  });
+}
 
 window.onload = async () => {
   carregarCategorias();
@@ -1168,6 +1199,28 @@ if (document.readyState === 'loading') {
   inicializarFiltros();
 }
 
+// ========== FUNÇÕES DO LOADER ==========
+function mostrarLoader(texto = "Carregando cupom...", subtexto = "Aguarde um momento") {
+  const loader = document.getElementById("modalLoader");
+  const loaderText = loader.querySelector(".loader-text");
+  const loaderSubtext = loader.querySelector(".loader-subtext");
+  
+  if (loaderText) loaderText.textContent = texto;
+  if (loaderSubtext) loaderSubtext.textContent = subtexto;
+  
+  loader.classList.add("active");
+  
+  // Desabilita scroll do body
+  document.body.style.overflow = "hidden";
+}
+
+function ocultarLoader() {
+  const loader = document.getElementById("modalLoader");
+  loader.classList.remove("active");
+  
+  // Reabilita scroll do body
+  document.body.style.overflow = "";
+}
 
 async function carregarCidades() {
   const estadoId = document.getElementById("estadoId2").value;
@@ -1473,38 +1526,7 @@ async function cadastrarEstabelecimento2() {
   });
 }
 
-export function carregarCategorias() {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Você precisa estar logado para carregar as categorias.");
-    return;
-  }
 
-  fetch(`${API_BASE}/api/CategoriasEstabelecimentos`, {
-    headers: {
-      "Authorization": "Bearer " + token
-    }
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Erro ao buscar categorias: " + res.status);
-    return res.json();
-  })
-  .then(data => {
-    const select = document.getElementById("categoriaId2");
-    select.innerHTML = "";
-
-    data.forEach(categoria => {
-      const option = document.createElement("option");
-      option.value = categoria.id;
-      option.textContent = categoria.nome;
-      select.appendChild(option);
-    });
-  })
-  .catch(err => {
-    alert("Erro ao carregar categorias: " + err.message);
-    console.error(err);
-  });
-}
 
 
 async function salvarEdicaoEstabelecimento(e) {
