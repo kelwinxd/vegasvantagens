@@ -1,4 +1,6 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
+import {popularSelectGrupos, gruposCache} from './grupos.js'
+
 
 let estabelecimentosCache = [];
 
@@ -2535,38 +2537,13 @@ function setViewport(mode) {
 }
 
 
-async function popularSelectGrupos(selectId = "grupo2") {
-  try {
-    // Se não tem cache, carrega
-    if (gruposCache.length === 0) {
-      await carregarGrupos();
-    }
 
-    const select = document.getElementById(selectId);
-    if (!select) {
-      console.warn(`Select #${selectId} não encontrado`);
-      return;
-    }
-
-    select.innerHTML = '<option value="">Selecione</option>';
-
-    gruposCache.forEach(grupo => {
-      const option = document.createElement("option");
-      option.value = grupo.id;
-      option.textContent = grupo.nome;
-      select.appendChild(option);
-    });
-  } catch (error) {
-    console.error("Erro ao popular select de grupos:", error);
-  }
-}
 
 
 btnDesktopP.addEventListener('click', () => setViewport('desktop'));
 btnTabletP.addEventListener('click',  () => setViewport('tablet'));
 btnMobileP.addEventListener('click',  () => setViewport('mobile'));
 
-// Abrir modal de preview do estab
 // Abrir modal de preview do estab
 async function abrirPreview() {
   const modal = document.getElementById('modal-preview');
