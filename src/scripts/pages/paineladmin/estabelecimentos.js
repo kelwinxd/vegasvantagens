@@ -1387,7 +1387,7 @@ function obterCartoesSelecionados() {
 
 
 //Estabelecimento Section
-async function cadastrarEstabelecimento2() {
+export async function cadastrarEstabelecimento2() {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado.");

@@ -1,5 +1,6 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../auth.js';
 import {gruposCache} from './paineladmin/grupos.js'
+import { cadastrarEstabelecimento2 } from './paineladmin/estabelecimentos.js'
 
 
 
@@ -2885,6 +2886,8 @@ window.abrirPreviewCupom = abrirPreviewCupom;
 window.fecharPreviewCupom = fecharPreviewCupom;
 window.limparFiltrosCupons = limparFiltrosCupons;
 window.renderizarCheckboxesEstabelecimentos = renderizarCheckboxesEstabelecimentos;
+
+window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 
 
 // ===================== GRUPO =====================
