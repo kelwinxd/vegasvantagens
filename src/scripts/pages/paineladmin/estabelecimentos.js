@@ -56,6 +56,8 @@ export async function buscarEstabelecimentos() {
     
   }
 
+  
+
 window.onload = async () => {
   carregarCategorias();
   await carregarEstados();
