@@ -95,6 +95,59 @@ function inicializarFiltrosGrafico() {
   }
 }
 
+function renderizarCardsEstatisticas() {
+  const statsContainer = document.getElementById('statsGrid');
+  if (!statsContainer) {
+    console.error('Container de estatísticas não encontrado');
+    return;
+  }
+
+  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
+    statsContainer.innerHTML = '<div class="no-data">Nenhum dado disponível</div>';
+    return;
+  }
+
+  const totalEstab = estabelecimentosCache.length;
+  
+  // Cupons podem não existir em todos os estabelecimentos
+  const totalCupons = estabelecimentosCache.reduce((sum, e) => 
+    sum + (e.cupons?.filter(c => c.ativo).length || 0), 0);
+  
+  // Cidades únicas
+  const totalCidades = new Set(
+    estabelecimentosCache
+      .map(e => e.cidade)
+      .filter(Boolean)
+  ).size;
+  
+  // Categorias únicas (flat das arrays de categorias)
+  const todasCategorias = estabelecimentosCache
+    .flatMap(e => e.categorias || [])
+    .filter(Boolean);
+  const totalCategorias = new Set(todasCategorias).size;
+
+  const statsHTML = `
+    <div class="stat-card">
+      <h3>Total de Estabelecimentos</h3>
+      <div class="value">${totalEstab}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Cupons Ativos</h3>
+      <div class="value">${totalCupons}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Cidades</h3>
+      <div class="value">${totalCidades}</div>
+    </div>
+    <div class="stat-card">
+      <h3>Categorias</h3>
+      <div class="value">${totalCategorias}</div>
+    </div>
+  `;
+
+  statsContainer.innerHTML = statsHTML;
+}
+
 function atualizarDashboardCompleto() {
   if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
     console.warn('⚠️ Tentando atualizar dashboard sem dados');
@@ -2478,3 +2531,4 @@ window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.excluirEstabDoModal = excluirEstabDoModal;
 window.abrirModalEditar = abrirModalEditar;
+window.inicializarPaginaEstabelecimentos = inicializarPaginaEstabelecimentos;

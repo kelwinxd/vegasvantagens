@@ -1,7 +1,5 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../auth.js';
-import {buscarEstabelecimentos, carregarCategorias, carregarCartoes, inicializarPaginaEstabelecimentos
-
- } from './paineladmin/estabelecimentos.js'
+import {buscarEstabelecimentos } from './paineladmin/estabelecimentos.js'
 
 
 
