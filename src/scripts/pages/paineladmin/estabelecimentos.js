@@ -54,6 +54,12 @@ export async function buscarEstabelecimentos() {
     
   }
 
+window.onload = async () => {
+  carregarCategorias();
+  await carregarEstados();
+  carregarCartoes();
+};
+
 let graficoPizzaEstab = null;
 
 // Processar dados dos estabelecimentos por tipo
@@ -1268,11 +1274,7 @@ async function carregarCidades2(nomeCidadeSelecionada = null) {
 }
 
 
-window.onload = async () => {
-  carregarCategorias();
-  await carregarEstados();
-  carregarCartoes();
-};
+
 
 async function enviarImagemEstabelecimento(estabelecimentoId, file, principal, fachada) {
   const token = localStorage.getItem("token");
@@ -2531,6 +2533,92 @@ function setViewport(mode) {
     btnDesktopP.classList.add('active');
   }
 }
+
+async function carregarGrupos(forcarRecarregar = false) {
+  const token = localStorage.getItem("token");
+
+  // Se já tem cache e não está forçando recarregar, usa o cache
+  if (gruposCache.length > 0 && !forcarRecarregar) {
+    console.log("Usando grupos do cache");
+    renderizarListaGrupos(gruposCache);
+    return gruposCache;
+  }
+
+  try {
+    console.log("Buscando grupos da API...");
+    
+    const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Erro na resposta:", response.status, errorText);
+      throw new Error(`Erro ${response.status}: ${errorText || "Erro ao buscar grupos"}`);
+    }
+
+    const grupos = await response.json();
+    
+    // Atualiza o cache
+    gruposCache = grupos;
+    
+    console.log(`${grupos.length} grupos carregados`);
+    
+    renderizarListaGrupos(grupos);
+    
+    return grupos;
+
+  } catch (error) {
+    console.error("Erro ao carregar grupos:", error);
+    
+    // Se for erro de CORS ou rede, tenta usar cache antigo se existir
+    if (gruposCache.length > 0) {
+      console.warn("Usando cache antigo devido ao erro");
+      renderizarListaGrupos(gruposCache);
+      return gruposCache;
+    }
+    
+    // Se for erro de fetch (CORS/rede), mostra mensagem mais clara
+    if (error.message.includes("Failed to fetch")) {
+      alert("Erro de conexão com o servidor. Verifique se o backend está rodando e configurado corretamente.");
+    } else {
+      alert("Não foi possível carregar os grupos: " + error.message);
+    }
+    
+    return [];
+  }
+}
+
+async function popularSelectGrupos(selectId = "grupo2") {
+  try {
+    // Se não tem cache, carrega
+    if (gruposCache.length === 0) {
+      await carregarGrupos();
+    }
+
+    const select = document.getElementById(selectId);
+    if (!select) {
+      console.warn(`Select #${selectId} não encontrado`);
+      return;
+    }
+
+    select.innerHTML = '<option value="">Selecione</option>';
+
+    gruposCache.forEach(grupo => {
+      const option = document.createElement("option");
+      option.value = grupo.id;
+      option.textContent = grupo.nome;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Erro ao popular select de grupos:", error);
+  }
+}
+
 
 btnDesktopP.addEventListener('click', () => setViewport('desktop'));
 btnTabletP.addEventListener('click',  () => setViewport('tablet'));
