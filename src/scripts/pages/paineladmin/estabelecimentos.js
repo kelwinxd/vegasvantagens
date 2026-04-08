@@ -1408,7 +1408,7 @@ async function cadastrarEstabelecimento2() {
     "emailContato": document.getElementById("emailContato2").value.trim(),
     "ativo": ativo,
 
-    "categoriaId": Number(document.getElementById("categoriaId2").value),
+    "categoriaId": categoriaId,
     "cidadeId": Number(document.getElementById("cidadeId2").value),
 
     "rua": document.getElementById("rua2").value.trim(),
