@@ -319,7 +319,28 @@ function inicializarFiltrosGrafico() {
 }
 
 // Inicializar todo o dashboard de gráficos
+function inicializarDashboardGraficos() {
+  console.log('📊 Inicializando dashboard...', {
+    totalEstabelecimentos: estabelecimentosCache?.length || 0
+  });
 
+  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    if (chartWrapper) {
+      chartWrapper.innerHTML = '<div class="no-data">Nenhum estabelecimento encontrado</div>';
+    }
+    
+    const statsContainer = document.getElementById('statsGrid');
+    if (statsContainer) {
+      statsContainer.innerHTML = '<div class="no-data">Nenhum dado disponível</div>';
+    }
+    return;
+  }
+
+  renderizarCardsEstatisticas();
+  inicializarFiltrosGrafico();
+  renderizarGraficoPizza();
+}
 
 // Atualizar dashboard completo (chamado após mudanças nos dados)
 function atualizarDashboardCompleto() {
