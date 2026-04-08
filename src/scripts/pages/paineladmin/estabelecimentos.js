@@ -44,8 +44,6 @@ export async function buscarEstabelecimentos() {
       //Grafico
       inicializarDashboardGraficos();
          
-      // Dashboard
-      atualizarDashboard();
      
 
     } catch (err) {
