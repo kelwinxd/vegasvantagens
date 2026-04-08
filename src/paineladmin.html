@@ -109,31 +109,17 @@
     <div class="page" data-page="dashboard">
      <h1>Dashboard</h1>
 
-       <div class="cards-container-dash">
-            <div class="cards-dashboard with-icons">
-                <div class="card-info">
-                    <div class="card-icon">🏢</div>
-                    <h3 id="totalEstab">0</h3>
-                    <p>Estabelecimentos cadastrados</p>
-                </div>
-
-                <div class="card-info">
-                    <div class="card-icon">🎫</div>
-                    <h3 id="totalCupons">0</h3>
-                    <p>Cupons</p>
-                </div>
-
-                <div class="card-info">
-                    <div class="card-icon">👥</div>
-                    <h3 class="">2</h3>
-                    <p>Grupos</p>
-                </div>
-            </div>
-        </div>
+     
 
         <!--GRAFICO-->
 
-        <div class="filtros">
+       
+
+         <div class="stats-grid" id="statsGrid">
+      <!-- Cards de estatísticas serão inseridos aqui -->
+    </div>
+
+     <div class="filtros">
         <div class="filtro-group">
           <label for="filtroTipo">Visualizar por:</label>
           <select id="filtroTipo">
@@ -143,27 +129,8 @@
           </select>
         </div>
 
-        <div class="filtro-group">
-          <label for="filtroOrdem">Ordenar:</label>
-          <select id="filtroOrdem">
-            <option value="desc">Maior para Menor</option>
-            <option value="asc">Menor para Maior</option>
-          </select>
-        </div>
-
-        <div class="filtro-group">
-          <label for="filtroLimite">Mostrar:</label>
-          <select id="filtroLimite">
-            <option value="5">Top 5</option>
-            <option value="10">Top 10</option>
-            <option value="0">Todos</option>
-          </select>
-        </div>
+    
       </div>
-
-         <div class="stats-grid" id="statsGrid">
-      <!-- Cards de estatísticas serão inseridos aqui -->
-    </div>
 
     <div class="chart-container">
       <div class="chart-wrapper">

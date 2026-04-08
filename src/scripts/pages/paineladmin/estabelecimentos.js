@@ -147,8 +147,8 @@ function renderizarGraficoPizza() {
   }
 
   const tipo = document.getElementById('filtroTipo')?.value || 'cidade';
-  const ordem = document.getElementById('filtroOrdem')?.value || 'desc';
-  const limite = parseInt(document.getElementById('filtroLimite')?.value || '0');
+
+
 
   const dadosProcessados = processarDadosGrafico(tipo);
   
@@ -300,20 +300,16 @@ function renderizarCardsEstatisticas() {
 // Configurar eventos dos filtros do dashboard
 function inicializarFiltrosGrafico() {
   const filtroTipo = document.getElementById('filtroTipo');
-  const filtroOrdem = document.getElementById('filtroOrdem');
-  const filtroLimite = document.getElementById('filtroLimite');
+
+
 
   if (filtroTipo) {
     filtroTipo.addEventListener('change', renderizarGraficoPizza);
   }
 
-  if (filtroOrdem) {
-    filtroOrdem.addEventListener('change', renderizarGraficoPizza);
-  }
 
-  if (filtroLimite) {
-    filtroLimite.addEventListener('change', renderizarGraficoPizza);
-  }
+
+
 }
 
 // Inicializar todo o dashboard de gráficos
