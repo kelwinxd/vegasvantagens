@@ -1395,6 +1395,7 @@ async function cadastrarEstabelecimento2() {
   }
 
   console.log('peguei o token e...')
+  console.log("API_BASE:", API_BASE);
 
   const categoriaId = parseInt(document.getElementById("categoriaId2").value) || null;
   const ativo = document.getElementById("ativoEstab2").checked;
@@ -2744,3 +2745,4 @@ window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.excluirEstabDoModal = excluirEstabDoModal;
 window.abrirModalEditar = abrirModalEditar;
 window.inicializarPaginaEstabelecimentos = inicializarPaginaEstabelecimentos;
+window.atualizarPreview = atualizarPreview;
