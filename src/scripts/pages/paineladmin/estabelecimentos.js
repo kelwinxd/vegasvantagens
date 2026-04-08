@@ -164,20 +164,7 @@ function renderizarGraficoPizza() {
     value
   }));
 
-  // Aplicar ordenação
-  dadosArray.sort((a, b) => {
-    return ordem === 'desc' ? b.value - a.value : a.value - b.value;
-  });
-
-  // Aplicar limite e agrupar "Outros"
-  if (limite > 0 && dadosArray.length > limite) {
-    const outros = dadosArray.slice(limite);
-    const somaOutros = outros.reduce((sum, item) => sum + item.value, 0);
-    dadosArray = dadosArray.slice(0, limite);
-    if (somaOutros > 0) {
-      dadosArray.push({ label: 'Outros', value: somaOutros });
-    }
-  }
+  
 
   const labels = dadosArray.map(d => d.label);
   const valores = dadosArray.map(d => d.value);
