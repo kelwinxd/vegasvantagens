@@ -55,6 +55,56 @@ let estabelecimentosCache = [];
 
     
   }
+function inicializarDashboardGraficos() {
+  console.log('📊 Inicializando dashboard...', {
+    totalEstabelecimentos: estabelecimentosCache?.length || 0
+  });
+
+  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    if (chartWrapper) {
+      chartWrapper.innerHTML = '<div class="no-data">Nenhum estabelecimento encontrado</div>';
+    }
+    
+    const statsContainer = document.getElementById('statsGrid');
+    if (statsContainer) {
+      statsContainer.innerHTML = '<div class="no-data">Nenhum dado disponível</div>';
+    }
+    return;
+  }
+
+  renderizarCardsEstatisticas();
+  inicializarFiltrosGrafico();
+  renderizarGraficoPizza();
+}
+function inicializarFiltrosGrafico() {
+  const filtroTipo = document.getElementById('filtroTipo');
+  const filtroOrdem = document.getElementById('filtroOrdem');
+  const filtroLimite = document.getElementById('filtroLimite');
+
+  if (filtroTipo) {
+    filtroTipo.addEventListener('change', renderizarGraficoPizza);
+  }
+
+  if (filtroOrdem) {
+    filtroOrdem.addEventListener('change', renderizarGraficoPizza);
+  }
+
+  if (filtroLimite) {
+    filtroLimite.addEventListener('change', renderizarGraficoPizza);
+  }
+}
+
+function atualizarDashboardCompleto() {
+  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
+    console.warn('⚠️ Tentando atualizar dashboard sem dados');
+    return;
+  }
+  
+  renderizarCardsEstatisticas();
+  renderizarGraficoPizza();
+}
+
 
   // 🔹 IMPORTANTE: Chamar apenas UMA VEZ quando abrir a subpage
 document.addEventListener('DOMContentLoaded', () => {
