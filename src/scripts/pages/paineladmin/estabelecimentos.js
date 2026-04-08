@@ -2578,6 +2578,9 @@ async function abrirPreview() {
 
   // Carrega grupos e popula o select
   await popularSelectGrupos('grupo2');
+  await carregarEstados()
+  await carregarCidades()
+  await carregarCategorias();
 
   // Inicializar preview vazio
   atualizarPreview();
