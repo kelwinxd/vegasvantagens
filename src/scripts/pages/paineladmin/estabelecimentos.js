@@ -1394,6 +1394,8 @@ async function cadastrarEstabelecimento2() {
     return;
   }
 
+  console.log('peguei o token e...')
+
   const categoriaId = parseInt(document.getElementById("categoriaId2").value) || null;
   const ativo = document.getElementById("ativoEstab2").checked;
 
@@ -1504,6 +1506,7 @@ async function cadastrarEstabelecimento2() {
     if (fachada) {
       await enviarImagemEstabelecimento(estab.id, fachada, false, true);
     }
+     console.log('cheguei ate o final antes de sucesso')
 
     alert("Estabelecimento cadastrado com sucesso!");
     document.getElementById("formCadastro2").reset();
@@ -2705,7 +2708,6 @@ document.addEventListener('click', function(e) {
 });
 
 
-
 // Tecla ESC para fechar
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
@@ -2718,7 +2720,7 @@ document.addEventListener('keydown', function(e) {
 
 buscarEstabelecimentos()
 
-
+window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window._verTrocarImagem = _verTrocarImagem;
 window._verAdicionarImagem = _verAdicionarImagem;
 window._verExcluirImagem = _verExcluirImagem;
@@ -2738,7 +2740,6 @@ window.fecharModalEditar = fecharModalEditar;
 window.voltarEstabelecimentos = voltarEstabelecimentos;
 window.carregarCidades2 = carregarCidades2;
 window.estabelecimentosCache = estabelecimentosCache;
-window.cadastrarEstabelecimento2 = cadastrarEstabelecimento2;
 window.salvarEdicaoEstabelecimento = salvarEdicaoEstabelecimento;
 window.excluirEstabDoModal = excluirEstabDoModal;
 window.abrirModalEditar = abrirModalEditar;
