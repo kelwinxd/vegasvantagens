@@ -496,6 +496,29 @@ async function popularEstabelecimentosParaGrupo() {
   }
 }
 
+window.onload = async () => {
+  
+  const btnMapa = document.querySelector(".btn-map");
+  const map = document.getElementById("mapurl");
+
+  document.querySelector('[data-open-subpage="lista-grupo"]')
+  .addEventListener("click", () => {
+    carregarGrupos();
+    popularEstabelecimentosParaGrupo() 
+  });
+
+
+  if (btnMapa && map) {
+    btnMapa.addEventListener("click", () => {
+      const coordenadas = extrairLatLngGoogleMaps(map.value);
+      if (!coordenadas) return;
+
+      document.querySelector(".lat").value = coordenadas.latitude;
+      document.querySelector(".long").value = coordenadas.longitude;
+    });
+  }
+};
+
 
 window.cadastrarGrupo = cadastrarGrupo;
 window.deletarGrupo = deletarGrupo;
@@ -505,5 +528,4 @@ window.abrirModalVincular = abrirModalVincular;
 window.fecharModalVincular = fecharModalVincular;
 
 window.renderizarListaGrupos  = renderizarListaGrupos;
-window.gruposCache = gruposCache;
 window.carregarGrupos = carregarGrupos;

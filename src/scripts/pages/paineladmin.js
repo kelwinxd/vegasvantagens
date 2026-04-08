@@ -1,5 +1,5 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../auth.js';
-
+import {gruposCache} from './paineladmin/grupos.js'
 
 
 
@@ -2576,28 +2576,7 @@ btnMapa.addEventListener("click", () => {
 
 
 
-window.onload = async () => {
-  
-  const btnMapa = document.querySelector(".btn-map");
-  const map = document.getElementById("mapurl");
 
-  document.querySelector('[data-open-subpage="lista-grupo"]')
-  .addEventListener("click", () => {
-    carregarGrupos();
-    popularEstabelecimentosParaGrupo() 
-  });
-
-
-  if (btnMapa && map) {
-    btnMapa.addEventListener("click", () => {
-      const coordenadas = extrairLatLngGoogleMaps(map.value);
-      if (!coordenadas) return;
-
-      document.querySelector(".lat").value = coordenadas.latitude;
-      document.querySelector(".long").value = coordenadas.longitude;
-    });
-  }
-};
 
 
 //---------------- ^ ESTAB ACIMA ------------------------------------
