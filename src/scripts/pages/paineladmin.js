@@ -2607,7 +2607,7 @@ window.onload = async () => {
 
 let grupoSelecionadoId = null;
 
-let gruposCache = [];
+export let gruposCache = [];
 
 async function deletarGrupo(grupoId) {
   // Confirmação antes de deletar
@@ -3412,4 +3412,4 @@ window.abrirModalVincular = abrirModalVincular;
 window.fecharModalVincular = fecharModalVincular;
 
 
-
+window.gruposCache = gruposCache;
