@@ -3411,5 +3411,6 @@ window.confirmarVinculo = confirmarVinculo;
 window.abrirModalVincular = abrirModalVincular;
 window.fecharModalVincular = fecharModalVincular;
 
-
+window.renderizarListaGrupos  = renderizarListaGrupos;
 window.gruposCache = gruposCache;
+window.carregarGrupos = carregarGrupos;
