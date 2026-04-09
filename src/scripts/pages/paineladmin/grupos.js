@@ -1,5 +1,5 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
-import {buscarEstabelecimentos } from './estabelecimentos.js'
+import {buscarEstabelecimentos,  estabelecimentosCache  } from './estabelecimentos.js'
 
 let grupoSelecionadoId = null;
 

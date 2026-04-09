@@ -1,10 +1,9 @@
 import {estabelecimentosCache} from './estabelecimentos.js'
+import {cuponsCache} from './cupomPainel.js'
 
 let graficoPizzaEstab = null;
 
-// Processar dados dos estabelecimentos por tipo
 function processarDadosGrafico(tipo) {
-  // Verificar se o cache existe
   if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
     console.warn('❌ estabelecimentosCache vazio ou não existe');
     return {};
@@ -12,42 +11,48 @@ function processarDadosGrafico(tipo) {
 
   const dados = {};
 
+  // 🔥 usa cuponsCache global
+  const cuponsAtivos = (cuponsCache || []).filter(
+    c => c.status === "Publicado"
+  );
+
   estabelecimentosCache.forEach(estab => {
     let chave;
 
-    switch(tipo) {
+    switch (tipo) {
       case 'cidade':
         chave = estab.cidade || 'Sem Cidade';
         break;
-        
+
       case 'categoria':
-        // Categorias vem como array: ['Farmácia']
         if (estab.categorias && estab.categorias.length > 0) {
-          // Para cada categoria do estabelecimento
           estab.categorias.forEach(cat => {
             const categoria = cat || 'Sem Categoria';
             dados[categoria] = (dados[categoria] || 0) + 1;
           });
-          return; // Pula o incremento padrão no final
+          return;
         } else {
           chave = 'Sem Categoria';
         }
         break;
-        
+
       case 'cupons':
-        // Verificar se cupons existe (pode não existir no objeto)
-        const qtdCupons = estab.cupons?.filter(c => c.ativo).length || 0;
+        // 🔥 contar cupons por estabelecimento usando cache global
+        const qtdCupons = cuponsAtivos.filter(
+          c => c.estabelecimentoId === estab.id
+        ).length;
+
         if (qtdCupons === 0) chave = 'Sem cupons';
         else if (qtdCupons <= 5) chave = '1-5 cupons';
         else if (qtdCupons <= 10) chave = '6-10 cupons';
         else if (qtdCupons <= 20) chave = '11-20 cupons';
         else chave = '20+ cupons';
         break;
-        
+
       case 'bairro':
         chave = estab.bairro || 'Sem Bairro';
         break;
-        
+
       case 'status':
         chave = estab.status || 'Sem Status';
         break;

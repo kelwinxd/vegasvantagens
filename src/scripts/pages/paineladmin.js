@@ -1,8 +1,9 @@
 
 import "./paineladmin/estabelecimentos.js";
 import "./paineladmin/grupos.js";
-import "./paineladmin/grafico.js";
 import "./paineladmin/cupomPainel.js";
+import "./paineladmin/grafico.js";
+
 
 
 class GerenciadorSubPages {

@@ -2,15 +2,49 @@ import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '
 import {gruposCache} from './grupos.js'
 import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
+
+// 🔥 cache em memória (módulo)
+export let cuponsCache = [];
+
+// 🔥 expõe global para gráficos
+window.cuponsCache = cuponsCache;
+
 //-------------------------CUPOM----------------------------------------
-async function carregarCuponsPromocoes() {
+export async function carregarCuponsPromocoes(forcarRecarregar = false) {
   const token = localStorage.getItem("token");
+
   if (!token) {
     alert("Você precisa estar logado.");
-    return;
+    return [];
+  }
+
+  // 🔥 1. tenta carregar do localStorage
+  if (cuponsCache.length === 0) {
+    const cacheLocal = localStorage.getItem("cache_cupons_promocoes");
+    if (cacheLocal) {
+      try {
+        cuponsCache = JSON.parse(cacheLocal);
+        window.cuponsCache = cuponsCache;
+        console.log("Cupons carregados do localStorage");
+      } catch {
+        localStorage.removeItem("cache_cupons_promocoes");
+      }
+    }
+  }
+
+  // 🔥 2. usa cache se existir
+  if (cuponsCache.length > 0 && !forcarRecarregar) {
+    console.log("Usando cupons do cache");
+
+    renderizarPromocoes(cuponsCache);
+    inicializarFiltrosCupons();
+
+    return cuponsCache;
   }
 
   try {
+    console.log("Buscando cupons da API...");
+
     // 1️⃣ Buscar estabelecimentos
     const resEstab = await fetch(`${API_BASE}/api/Estabelecimentos`, {
       headers: { Authorization: "Bearer " + token }
@@ -22,13 +56,13 @@ async function carregarCuponsPromocoes() {
 
     const estabelecimentos = await resEstab.json();
 
-    // 2️⃣ Buscar IDs dos cupons por estabelecimento
+    // 2️⃣ Buscar cupons por estabelecimento
     const cuponsPorEstab = await Promise.all(
       estabelecimentos.map(estab =>
         fetch(`${API_BASE}/api/Cupons/por-estabelecimento/${estab.id}`, {
           headers: { Authorization: "Bearer " + token }
         })
-          .then(res => res.ok ? res.json() : [])
+          .then(res => (res.ok ? res.json() : []))
           .then(cupons =>
             cupons.map(c => ({
               id: c.id,
@@ -42,20 +76,23 @@ async function carregarCuponsPromocoes() {
     const cuponsBasicos = cuponsPorEstab.flat();
 
     if (!cuponsBasicos.length) {
-      renderizarPromocoes([]);
-      window._cuponsPromocoes = [];
+      cuponsCache = [];
+      window.cuponsCache = [];
       localStorage.setItem("cache_cupons_promocoes", JSON.stringify([]));
-      inicializarFiltrosCupons(); // ✅ Inicializa mesmo vazio
-      return;
+
+      renderizarPromocoes([]);
+      inicializarFiltrosCupons();
+
+      return [];
     }
 
-    // 3️⃣ Buscar DADOS COMPLETOS de cada cupom
+    // 3️⃣ Buscar detalhes dos cupons
     const cuponsCompletos = await Promise.all(
       cuponsBasicos.map(cupomBase =>
         fetch(`${API_BASE}/api/Cupons/${cupomBase.id}`, {
           headers: { Authorization: "Bearer " + token }
         })
-          .then(res => res.ok ? res.json() : null)
+          .then(res => (res.ok ? res.json() : null))
           .then(cupomCompleto =>
             cupomCompleto
               ? {
@@ -70,21 +107,52 @@ async function carregarCuponsPromocoes() {
 
     const cuponsFiltrados = cuponsCompletos.filter(Boolean);
 
-    // 4️⃣ Atualizar cache global e localStorage
-    window._cuponsPromocoes = cuponsFiltrados;
-    localStorage.setItem("cache_cupons_promocoes", JSON.stringify(cuponsFiltrados));
-    
-    // 5️⃣ Renderizar
+    // 🔥 4. atualizar cache
+    cuponsCache = cuponsFiltrados;
+    window.cuponsCache = cuponsFiltrados;
+
+    localStorage.setItem(
+      "cache_cupons_promocoes",
+      JSON.stringify(cuponsFiltrados)
+    );
+
+    console.log(`${cuponsFiltrados.length} cupons carregados`);
+
+    // 🔥 5. render
     renderizarPromocoes(cuponsFiltrados);
-    
-    // 6️⃣ Inicializar filtros
     inicializarFiltrosCupons();
-    
+
+    return cuponsFiltrados;
 
   } catch (err) {
     console.error("Erro ao carregar cupons:", err);
-  } finally {
-  
+
+    // 🔥 fallback memória
+    if (cuponsCache.length > 0) {
+      console.warn("Usando cache em memória");
+      renderizarPromocoes(cuponsCache);
+      inicializarFiltrosCupons();
+      return cuponsCache;
+    }
+
+    // 🔥 fallback localStorage
+    const cacheLocal = localStorage.getItem("cache_cupons_promocoes");
+    if (cacheLocal) {
+      try {
+        const dados = JSON.parse(cacheLocal);
+        window.cuponsCache = dados;
+
+        console.warn("Usando cache do localStorage");
+
+        renderizarPromocoes(dados);
+        inicializarFiltrosCupons();
+
+        return dados;
+      } catch {}
+    }
+
+    alert("Erro ao carregar cupons");
+    return [];
   }
 }
 
@@ -1086,7 +1154,7 @@ async function excluirCupomPromocao(id) {
     console.log("Cupom Excluido com sucesso")
 
     // 🔄 Força recarregar ignorando cache
-    carregarCuponsPromocoes({ ignoreCache: true });
+    carregarCuponsPromocoes(true);
 
   } catch (err) {
     console.error("Erro ao excluir cupom:", err);
@@ -1465,7 +1533,7 @@ if (galeriaFile) { await enviarImagemCupom(cupomId, galeriaFile, true, 1); conso
 if (modalFile)   { await enviarImagemCupom(cupomId, modalFile,   true, 2); console.log("Imagem Modal enviada!"); }
 
     alert("Cupom criado com sucesso!");
-     carregarCuponsPromocoes({ ignoreCache: true });
+     carregarCuponsPromocoes(true);
 
     // Reset — usa o ID correto do form novo
     document.getElementById("formCupomPreview").reset();

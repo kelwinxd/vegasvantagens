@@ -6,57 +6,115 @@ import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
 export let estabelecimentosCache = [];
 
-export async function buscarEstabelecimentos() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Você precisa estar logado.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
-        headers: { Authorization: "Bearer " + token }
-      });
-
-      if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
-      const data = await res.json();
-
-      const detalhes = await Promise.all(
-        data.map(e =>
-          fetch(`${API_BASE}/api/Estabelecimentos/${e.id}`, {
-            headers: { Authorization: "Bearer " + token }
-          })
-            .then(r => r.ok ? r.json() : null)
-            .catch(() => null)
-        )
-      );
-
-      console.log(detalhes)
-
-      estabelecimentosCache = detalhes.filter(Boolean);
-
-      
 
 
-   
-      
+// ========== BUSCAR ESTABELECIMENTOS COM CACHE ==========
+export async function buscarEstabelecimentos(forcarRecarregar = false) {
+  const token = localStorage.getItem("token");
 
-      // Página de gerenciamento
-      renderizarLista(estabelecimentosCache, "listaCards");
-      inicializarFiltroDashboard()
-
-      //Grafico
-      inicializarDashboardGraficos();
-         
-     
-
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao carregar estabelecimentos");
-    }
-
-    
+  if (!token) {
+    alert("Você precisa estar logado.");
+    return [];
   }
+
+  // 🔥 1. carregar cache do localStorage se memória estiver vazia
+  if (estabelecimentosCache.length === 0) {
+    const cacheLocal = localStorage.getItem("estabelecimentosCache");
+    if (cacheLocal) {
+      try {
+        estabelecimentosCache = JSON.parse(cacheLocal);
+        console.log("Estabelecimentos carregados do localStorage");
+      } catch (e) {
+        console.warn("Erro ao parsear cache local", e);
+        localStorage.removeItem("estabelecimentosCache");
+      }
+    }
+  }
+
+  // 🔥 2. usar cache (se não forçar recarregar)
+  if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
+    console.log("Usando estabelecimentos do cache");
+
+    renderizarLista(estabelecimentosCache, "listaCards");
+    inicializarFiltroDashboard();
+    inicializarDashboardGraficos();
+
+    return estabelecimentosCache;
+  }
+
+  try {
+    console.log("Buscando estabelecimentos da API...");
+
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+
+    if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+
+    const data = await res.json();
+
+    // 🔥 busca detalhes em paralelo
+    const detalhes = await Promise.all(
+      data.map(e =>
+        fetch(`${API_BASE}/api/Estabelecimentos/${e.id}`, {
+          headers: { Authorization: "Bearer " + token }
+        })
+          .then(r => (r.ok ? r.json() : null))
+          .catch(() => null)
+      )
+    );
+
+    const estabelecimentosValidos = detalhes.filter(Boolean);
+
+    // 🔥 atualiza cache memória
+    estabelecimentosCache = estabelecimentosValidos;
+
+    // 🔥 salva no localStorage
+    localStorage.setItem(
+      "estabelecimentosCache",
+      JSON.stringify(estabelecimentosValidos)
+    );
+
+    console.log(`${estabelecimentosValidos.length} estabelecimentos carregados`);
+
+    // mantém suas funções
+    renderizarLista(estabelecimentosCache, "listaCards");
+    inicializarFiltroDashboard();
+    inicializarDashboardGraficos();
+
+    return estabelecimentosCache;
+
+  } catch (err) {
+    console.error("Erro ao carregar estabelecimentos:", err);
+
+    // 🔥 fallback: tenta usar cache memória
+    if (estabelecimentosCache.length > 0) {
+      console.warn("Usando cache em memória");
+      renderizarLista(estabelecimentosCache, "listaCards");
+      inicializarFiltroDashboard();
+      inicializarDashboardGraficos();
+      return estabelecimentosCache;
+    }
+
+    // 🔥 fallback: tenta localStorage
+    const cacheLocal = localStorage.getItem("estabelecimentosCache");
+    if (cacheLocal) {
+      try {
+        const dados = JSON.parse(cacheLocal);
+        console.warn("Usando cache do localStorage");
+
+        renderizarLista(dados, "listaCards");
+        inicializarFiltroDashboard();
+        inicializarDashboardGraficos();
+
+        return dados;
+      } catch {}
+    }
+
+    alert("Erro ao carregar estabelecimentos");
+    return [];
+  }
+}
 
  function carregarCategorias() {
   const token = localStorage.getItem("token");
