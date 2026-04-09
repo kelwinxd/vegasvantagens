@@ -1,11 +1,72 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {gruposCache} from './grupos.js'
-import { estabelecimentosCache  } from './estabelecimentos.js'
+import { estabelecimentosCache, buscarEstabelecimentos  } from './estabelecimentos.js'
 import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
 
 // 🔥 cache em memória (módulo)
 export let cuponsCache = [];
+async function loadEstabelecimentosCache() {
+  try {
+    // 🔹 1. Tenta pegar do localStorage
+    const cache = localStorage.getItem("estabelecimentosCache");
+
+    if (cache) {
+      try {
+        const parsed = JSON.parse(cache);
+
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log("✅ Cache de estabelecimentos carregado do localStorage");
+
+          // opcional (se seu código usa window)
+          window.estabelecimentosCache = parsed;
+
+          return parsed;
+        }
+      } catch (e) {
+        console.warn("⚠️ Cache inválido, será recarregado");
+      }
+    } else {
+        
+
+       try {
+    console.log("Buscando estabelecimentos da API...");
+
+    const res = await fetch(`${API_BASE}/api/Estabelecimentos`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+
+    if (!res.ok) throw new Error("Erro ao buscar estabelecimentos");
+
+    const data = await res.json();
+
+  
+
+  }catch (e) {
+        console.warn("⚠️Resposta da API não é um array");
+      }
+    }
+
+   
+   
+
+    // 🔹 3. Salva no localStorage
+    localStorage.setItem("estabelecimentosCache", JSON.stringify(data));
+
+    // opcional
+    window.estabelecimentosCache = data;
+
+    console.log("✅ Cache salvo com sucesso");
+
+    return data;
+
+  } catch (error) {
+    console.error("❌ Erro ao carregar estabelecimentos:", error);
+
+    // fallback seguro
+    return [];
+  }
+}
 
 
 //-------------------------CUPOM----------------------------------------
