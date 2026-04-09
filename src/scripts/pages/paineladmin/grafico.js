@@ -38,9 +38,9 @@ function processarDadosGrafico(tipo) {
 
       case 'cupons':
         // 🔥 contar cupons por estabelecimento usando cache global
-        const qtdCupons = cuponsAtivos.filter(
-          c => c.estabelecimentoId === estab.id
-        ).length;
+       const qtdCupons = cuponsAtivos.filter(
+  c => c.nomeEstabelecimento === estab.nome
+).length;
 
         if (qtdCupons === 0) chave = 'Sem cupons';
         else if (qtdCupons <= 5) chave = '1-5 cupons';
