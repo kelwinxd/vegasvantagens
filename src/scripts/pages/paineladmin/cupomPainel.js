@@ -665,23 +665,23 @@ function aplicarFiltrosGenerico(listaBase) {
   }
 
   // 📊 STATUS (CORRIGIDO)
-  if (filtrosCuponsAtivos.status === "publicados") {
-    resultado = resultado.filter(c =>
-      c.status === "Publicado" &&
-      (c.ativo === true || c.ativo === "true") &&
-      !cupomEstaExpirado(c)
-    );
+// 📊 STATUS
+if (!filtrosCuponsAtivos.status || filtrosCuponsAtivos.status === "todos") {
+  // 🔥 NÃO filtra nada (reset real)
+} 
+else if (filtrosCuponsAtivos.status === "publicados") {
+  resultado = resultado.filter(c => c.status === "Publicado");
 
-  } else if (filtrosCuponsAtivos.status === "expirados") {
-    resultado = resultado.filter(c =>
-      cupomEstaExpirado(c) || c.status === "Expirado"
-    );
+} else if (filtrosCuponsAtivos.status === "expirados") {
+  resultado = resultado.filter(c =>
+    cupomEstaExpirado(c) || c.status === "Expirado"
+  );
 
-  } else if (filtrosCuponsAtivos.status === "rascunhos") {
-    resultado = resultado.filter(c =>
-      c.status === "Rascunho"
-    );
-  }
+} else if (filtrosCuponsAtivos.status === "rascunhos") {
+  resultado = resultado.filter(c =>
+    c.status === "Rascunho"
+  );
+}
 
   // 👥 GRUPO
   if (filtrosCuponsAtivos.grupo && filtrosCuponsAtivos.grupo !== 'Todos') {
@@ -691,7 +691,12 @@ function aplicarFiltrosGenerico(listaBase) {
       .filter(e => e.grupoId === grupoId)
       .map(e => e.id);
 
-    resultado = resultado.filter(c => estabs.includes(c.estabelecimentoId));
+   resultado = resultado.filter(c => {
+  const estab = (window.estabelecimentosCache || [])
+    .find(e => e.nome === c.nomeEstabelecimento);
+
+  return estab && estabs.includes(estab.id);
+});
   }
 
   console.log(`✅ Resultado final: ${resultado.length}`);
