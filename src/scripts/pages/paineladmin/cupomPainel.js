@@ -23,7 +23,11 @@ export async function carregarCuponsPromocoes(forcarRecarregar = false) {
     if (cacheLocal) {
       try {
         cuponsCache = JSON.parse(cacheLocal);
-        window.cuponsCache = cuponsCache;
+window.cuponsCache = cuponsCache;
+
+// 🔥 compatibilidade
+window._cuponsPromocoes = cuponsCache;
+window._cuponsPromocoesAtual = cuponsCache;
         console.log("Cupons carregados do localStorage");
       } catch {
         localStorage.removeItem("cache_cupons_promocoes");
@@ -32,14 +36,19 @@ export async function carregarCuponsPromocoes(forcarRecarregar = false) {
   }
 
   // 🔥 2. usa cache se existir
-  if (cuponsCache.length > 0 && !forcarRecarregar) {
-    console.log("Usando cupons do cache");
+if (cuponsCache.length > 0 && !forcarRecarregar) {
+  console.log("Usando cupons do cache");
 
-    renderizarPromocoes(cuponsCache);
-    inicializarFiltrosCupons();
+  // 🔥 garantir compatibilidade
+  window.cuponsCache = cuponsCache;
+  window._cuponsPromocoes = cuponsCache;
+  window._cuponsPromocoesAtual = cuponsCache;
 
-    return cuponsCache;
-  }
+  renderizarPromocoes(cuponsCache);
+  inicializarFiltrosCupons();
+
+  return cuponsCache;
+}
 
   try {
     console.log("Buscando cupons da API...");
@@ -168,9 +177,13 @@ function renderizarPromocoes(cupons) {
     return;
   }
 
-  // 🔥 Atualiza o cache principal
-  cuponsCache.length = 0;
-  cuponsCache.push(...cupons);
+  // 🔥 Atualiza cache corretamente (sem quebrar referência global)
+cuponsCache = [...cupons];
+window.cuponsCache = cuponsCache;
+
+// 🔥 Compatibilidade com código antigo (IMPORTANTE)
+window._cuponsPromocoes = cuponsCache;
+window._cuponsPromocoesAtual = cuponsCache;
 
   // 🔹 Cache rápido por ID
   const cuponsCacheMap = new Map();
@@ -534,7 +547,7 @@ function aplicarFiltrosCuponsAtual() {
   // Se há um estabelecimento selecionado, usa a lista atual filtrada
   // Senão, usa o cache completo
   if (filtrosCuponsAtivos.estabelecimento && filtrosCuponsAtivos.estabelecimento !== 'Todos') {
-    // Já tem cupons filtrados por estabelecimento em _cuponsPromocoesAtual
+
     aplicarFiltrosNaListaAtual();
   } else {
     // Usa o cache completo
