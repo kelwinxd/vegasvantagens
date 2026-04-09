@@ -1,13 +1,12 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {gruposCache} from './grupos.js'
+import { estabelecimentosCache  } from './estabelecimentos.js'
 import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
 
 // 🔥 cache em memória (módulo)
 export let cuponsCache = [];
 
-// 🔥 expõe global para gráficos
-window.cuponsCache = cuponsCache;
 
 //-------------------------CUPOM----------------------------------------
 export async function carregarCuponsPromocoes(forcarRecarregar = false) {
@@ -110,6 +109,7 @@ export async function carregarCuponsPromocoes(forcarRecarregar = false) {
     // 🔥 4. atualizar cache
     cuponsCache = cuponsFiltrados;
     window.cuponsCache = cuponsFiltrados;
+    window._cuponsPromocoes = cuponsFiltrados; // 🔥 ESSENCIAL
 
     localStorage.setItem(
       "cache_cupons_promocoes",
@@ -156,6 +156,7 @@ export async function carregarCuponsPromocoes(forcarRecarregar = false) {
   }
 }
 
+
 function renderizarPromocoes(cupons) {
   const container = document.getElementById("listaPromocoes");
   if (!container) return;
@@ -167,22 +168,25 @@ function renderizarPromocoes(cupons) {
     return;
   }
 
-  // 🔹 CRIAR CACHE DOS CUPONS
+  // 🔥 Atualiza o cache principal
+  cuponsCache.length = 0;
+  cuponsCache.push(...cupons);
+
+  // 🔹 Cache rápido por ID
   const cuponsCacheMap = new Map();
 
   cupons.forEach(c => {
-    // 🔹 GUARDAR NO CACHE
     cuponsCacheMap.set(c.id.toString(), c);
 
-    const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPjwvc3ZnPg==';
+    const PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZSIvPg==';
 
     const imagem = (c.imagens && c.imagens.length)
-  ? (c.imagens.find(img => img.imagemTipoId === 1)?.url || PLACEHOLDER)
-  : PLACEHOLDER;
+      ? (c.imagens.find(img => img.imagemTipoId === 1)?.url || PLACEHOLDER)
+      : PLACEHOLDER;
 
-    // Badges de cartões (máximo 2 + contador)
-    const cartoesVisiveis = c.cartoesAceitos ? c.cartoesAceitos.slice(0, 2) : [];
-    const cartoesExtras   = c.cartoesAceitos ? c.cartoesAceitos.length - 2 : 0;
+    const cartoesVisiveis = c.cartoesAceitos?.slice(0, 2) || [];
+    const cartoesExtras   = (c.cartoesAceitos?.length || 0) - 2;
+
     const cartoesHTML = cartoesVisiveis.length > 0
       ? cartoesVisiveis.map(cartao => `<span class="badge-cartao">${cartao.nome}</span>`).join('')
         + (cartoesExtras > 0 ? `<span class="badge-cartao badge-cartao-extra">+${cartoesExtras}</span>` : '')
@@ -191,17 +195,15 @@ function renderizarPromocoes(cupons) {
     const isPublicado = c.status === "Publicado";
 
     container.insertAdjacentHTML("beforeend", `
-      <article class="cupom-card-admin" style="cursor:pointer;" title="Clique para ver detalhes">
+      <article class="cupom-card-admin" style="cursor:pointer;">
         <div class="cupom-media-admin">
-          <img src="${imagem}" alt="Imagem do cupom" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+          <img src="${imagem}" loading="lazy">
         </div>
 
-        <div class="cartoes-cp">
-          ${cartoesHTML}
-        </div>
+        <div class="cartoes-cp">${cartoesHTML}</div>
 
         <div class="header-cp-admin">
-          <h2 class="cupom-title-admin">${c.titulo}</h2>
+          <h2>${c.titulo}</h2>
           <label class="switch-cupom-admin">
             <input type="checkbox" ${isPublicado ? "checked" : ""} data-cupom-id="${c.id}">
             <span class="slider-cupom-admin"></span>
@@ -209,17 +211,11 @@ function renderizarPromocoes(cupons) {
         </div>
 
         <div class="cupom-content-admin">
-          <h3 class="nome-estab">${c.nomeEstabelecimento}</h3>
-          <p class="expira-admin">
-            <strong>Validade:</strong> ${new Date(c.dataExpiracao).toLocaleDateString()}
-          </p>
-          <div class="cupom-actions-admin">
-            <button class="btn-action-admin btn-editar-cupom-admin" data-id="${c.id}" title="Editar">
-              <img src="./imgs/icons/edit-e.svg" alt="Editar">
-            </button>
-            <button class="btn-action-admin btn-excluir-cupom-admin" data-id="${c.id}" title="Excluir">
-              <img src="./imgs/icons/trash-02.svg" alt="Excluir">
-            </button>
+          <h3>${c.nomeEstabelecimento}</h3>
+          <p><strong>Validade:</strong> ${new Date(c.dataExpiracao).toLocaleDateString()}</p>
+          <div>
+            <button class="btn-editar-cupom-admin" data-id="${c.id}">Editar</button>
+            <button class="btn-excluir-cupom-admin" data-id="${c.id}">Excluir</button>
           </div>
         </div>
       </article>
@@ -227,87 +223,58 @@ function renderizarPromocoes(cupons) {
 
     const article = container.lastElementChild;
 
-    // ── Clique no card (fora de botões e toggle) → abre modal unificado ──
+    // CLICK CARD
     article.addEventListener("click", (e) => {
-      if (
-        e.target.closest(".btn-action-admin") ||
-        e.target.closest(".switch-cupom-admin")
-      ) return;
-      const cupom = cuponsCacheMap.get(c.id.toString());
-      if (cupom) abrirModalEditarCupom(cupom.id, cupom.nomeEstabelecimento, cupom.estabelecimentoId);
+      if (e.target.closest("button") || e.target.closest("input")) return;
+      abrirModalEditarCupom(c.id, c.nomeEstabelecimento, c.estabelecimentoId);
     });
 
-    // ── Botão editar ──────────────────────────────────────────────────
+    // EDITAR
     article.querySelector(".btn-editar-cupom-admin").addEventListener("click", (e) => {
       e.stopPropagation();
-      const cupom = cuponsCacheMap.get(c.id.toString());
-      if (cupom) abrirModalEditarCupom(cupom.id, cupom.nomeEstabelecimento, cupom.estabelecimentoId);
+      abrirModalEditarCupom(c.id, c.nomeEstabelecimento, c.estabelecimentoId);
     });
 
-    // ── Botão excluir ─────────────────────────────────────────────────
+    // EXCLUIR
     article.querySelector(".btn-excluir-cupom-admin").addEventListener("click", (e) => {
       e.stopPropagation();
       excluirCupomPromocao(c.id);
     });
 
-    // ── Toggle publicação ─────────────────────────────────────────────
-   // ── Toggle publicação ─────────────────────────────────────────────
-article.querySelector(".switch-cupom-admin input").addEventListener("change", async (e) => {
-  e.stopPropagation();
-  const cupomId    = e.target.dataset.cupomId;
-  const isChecked  = e.target.checked;
-  const novoStatus = isChecked ? "Publicado" : "Rascunho";
+    // 🔥 TOGGLE CORRIGIDO (centralizado)
+    article.querySelector("input").addEventListener("change", async (e) => {
+      e.stopPropagation();
 
-  try {
-    await atualizarStatusCupomPatch(cupomId, novoStatus);
+      const cupomId    = e.target.dataset.cupomId;
+      const isChecked  = e.target.checked;
+      const novoStatus = isChecked ? "Publicado" : "Rascunho";
 
-    // ✅ Atualiza cache local do card
-    const cupom = cuponsCacheMap.get(cupomId);
-    if (cupom) {
-      cupom.status = novoStatus;
-      cupom.ativo  = isChecked; // 🔧 FIX 1: sincroniza o campo ativo
-    }
+      try {
+        await atualizarStatusCupomPatch(cupomId, novoStatus);
 
-    // ✅ Atualiza cache global _cuponsPromocoes
-    if (window._cuponsPromocoes) {
-      const index = window._cuponsPromocoes.findIndex(cp => cp.id.toString() === cupomId);
-      if (index !== -1) {
-        window._cuponsPromocoes[index].status = novoStatus;
-        window._cuponsPromocoes[index].ativo  = isChecked; // 🔧 FIX 1
+        // 🔥 Atualiza fonte única
+        const index = cuponsCache.findIndex(cp => cp.id.toString() === cupomId);
+
+        if (index !== -1) {
+          cuponsCache[index].status = novoStatus;
+          cuponsCache[index].ativo  = isChecked;
+        }
+
+        // 🔄 Re-render baseado no cache
+        if (typeof aplicarFiltrosCupons === "function") {
+          aplicarFiltrosCupons();
+        }
+
+        console.log(`✅ Cupom ${cupomId} atualizado`);
+
+      } catch (err) {
+        console.error("❌ Erro:", err);
+        e.target.checked = !isChecked;
       }
-    }
-
-    // 🔧 FIX 3: Atualiza também _cuponsPromocoesAtual (quando há filtro de estabelecimento)
-    if (window._cuponsPromocoesAtual) {
-      const index = window._cuponsPromocoesAtual.findIndex(cp => cp.id.toString() === cupomId);
-      if (index !== -1) {
-        window._cuponsPromocoesAtual[index].status = novoStatus;
-        window._cuponsPromocoesAtual[index].ativo  = isChecked;
-      }
-    }
-
-    // 🔧 FIX 2: Re-aplica os filtros ativos para atualizar lista + contadores
-    if (typeof aplicarFiltrosCuponsAtual === "function") {
-      aplicarFiltrosCuponsAtual();
-    }
-
-    console.log(`✅ Status do cupom ${cupomId} → ${novoStatus}`);
-
-  } catch (err) {
-    console.error("❌ Erro ao atualizar status:", err);
-    alert("Erro ao atualizar status do cupom.");
-    e.target.checked = !isChecked;
-  } finally {
-    ocultarLoader(); 
-  }
-});
+    });
   });
 
-  cupons.forEach(c => {
-    console.log(`Cupom: ${c.titulo} | status: "${c.status}" | ativo: ${c.ativo} (${typeof c.ativo})`);
-  });
-
-  // 🔹 SALVAR O CACHE GLOBALMENTE
+  // 🔹 expõe o map se precisar
   window._cuponsCacheMap = cuponsCacheMap;
 }
 
@@ -380,35 +347,36 @@ function cupomEstaExpirado(cupom) {
 }
 
 // ========== INICIALIZAR FILTROS DE CUPONS ==========
+
 function inicializarFiltrosCupons() {
   console.log("🎟️ INICIANDO FILTROS DE CUPONS...");
-  
-  // Verifica se os cupons existem
+
+  // ✅ Fonte única de verdade
+  if (!cuponsCache || cuponsCache.length === 0) {
+    console.warn("⚠️ cuponsCache vazio ou não existe!");
+    return;
+  }
+
+  console.log(`✅ ${cuponsCache.length} cupons encontrados`);
+
+  // 🔥 (opcional) compatibilidade com código antigo
   if (!window._cuponsPromocoes) {
-    console.warn("⚠️ _cuponsPromocoes não existe ainda!");
-    return;
+    window._cuponsPromocoes = cuponsCache;
   }
-  
-  if (!Array.isArray(window._cuponsPromocoes)) {
-    console.error("❌ _cuponsPromocoes não é um array!");
-    return;
-  }
-  
-  console.log(`✅ ${window._cuponsPromocoes.length} cupons encontrados`);
-  
-  // Popula os filtros (usando caches existentes)
+
+  // Popula filtros
   _popularFiltroEstabelecimentosCupom();
   _popularFiltroGruposCupom();
-  
-  // Configura event listeners
+
+  // Listeners
   _configurarEventListenersCupons();
-  
-  // Atualiza contadores
+
+  // Contadores
   _atualizarContadoresCupons();
-  
-  // Aplica filtros iniciais
+
+  // 🔥 agora sempre baseado no cuponsCache
   aplicarFiltrosCupons();
-  
+
   console.log("✅ FILTROS DE CUPONS INICIALIZADOS!");
 }
 
