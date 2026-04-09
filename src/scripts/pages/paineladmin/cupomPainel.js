@@ -1134,7 +1134,7 @@ async function excluirCupomPromocao(id) {
     console.error("Erro ao excluir cupom:", err);
     alert("Erro ao excluir cupom.");
   } finally {
-        
+        ocultarLoader()
   }
 }
 
