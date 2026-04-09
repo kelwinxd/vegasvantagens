@@ -197,8 +197,9 @@ function renderizarCardsEstatisticas() {
   const totalEstab = estabelecimentosCache.length;
   
   // Cupons podem não existir em todos os estabelecimentos
-  const totalCupons = estabelecimentosCache.reduce((sum, e) => 
-    sum + (e.cupons?.filter(c => c.ativo).length || 0), 0);
+ const totalCupons = Array.isArray(cuponsCache)
+  ? cuponsCache.filter(c => c.status === "Publicado").length
+  : 0;
   
   // Cidades únicas
   const totalCidades = new Set(
