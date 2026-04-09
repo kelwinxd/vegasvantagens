@@ -1,8 +1,10 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {popularSelectGrupos, gruposCache} from './grupos.js'
+import {inicializarDashboardGraficos} from './grafico.js'
+import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
 
-let estabelecimentosCache = [];
+export let estabelecimentosCache = [];
 
 export async function buscarEstabelecimentos() {
     const token = localStorage.getItem("token");
@@ -94,286 +96,6 @@ window.onload = async () => {
   await carregarEstados();
   carregarCartoes();
 };
-
-let graficoPizzaEstab = null;
-
-// Processar dados dos estabelecimentos por tipo
-function processarDadosGrafico(tipo) {
-  // Verificar se o cache existe
-  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
-    console.warn('❌ estabelecimentosCache vazio ou não existe');
-    return {};
-  }
-
-  const dados = {};
-
-  estabelecimentosCache.forEach(estab => {
-    let chave;
-
-    switch(tipo) {
-      case 'cidade':
-        chave = estab.cidade || 'Sem Cidade';
-        break;
-        
-      case 'categoria':
-        // Categorias vem como array: ['Farmácia']
-        if (estab.categorias && estab.categorias.length > 0) {
-          // Para cada categoria do estabelecimento
-          estab.categorias.forEach(cat => {
-            const categoria = cat || 'Sem Categoria';
-            dados[categoria] = (dados[categoria] || 0) + 1;
-          });
-          return; // Pula o incremento padrão no final
-        } else {
-          chave = 'Sem Categoria';
-        }
-        break;
-        
-      case 'cupons':
-        // Verificar se cupons existe (pode não existir no objeto)
-        const qtdCupons = estab.cupons?.filter(c => c.ativo).length || 0;
-        if (qtdCupons === 0) chave = 'Sem cupons';
-        else if (qtdCupons <= 5) chave = '1-5 cupons';
-        else if (qtdCupons <= 10) chave = '6-10 cupons';
-        else if (qtdCupons <= 20) chave = '11-20 cupons';
-        else chave = '20+ cupons';
-        break;
-        
-      case 'bairro':
-        chave = estab.bairro || 'Sem Bairro';
-        break;
-        
-      case 'status':
-        chave = estab.status || 'Sem Status';
-        break;
-    }
-
-    dados[chave] = (dados[chave] || 0) + 1;
-  });
-
-  return dados;
-}
-
-// Gerar paleta de cores para o gráfico
-function gerarPaletaCores(quantidade) {
-  const cores = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-    '#FF9F40', '#E74C3C', '#3498DB', '#2ECC71', '#F39C12',
-    '#9B59B6', '#1ABC9C', '#E67E22', '#34495E', '#16A085'
-  ];
-  
-  // Se precisar de mais cores, gerar aleatórias
-  while (cores.length < quantidade) {
-    const r = Math.floor(Math.random() * 255);
-    const g = Math.floor(Math.random() * 255);
-    const b = Math.floor(Math.random() * 255);
-    cores.push(`rgb(${r}, ${g}, ${b})`);
-  }
-  
-  return cores.slice(0, quantidade);
-}
-
-// Renderizar gráfico de pizza
-function renderizarGraficoPizza() {
-  // Verificar se elementos existem
-  const ctx = document.getElementById('graficoEstabelecimentos');
-  if (!ctx) {
-    console.error('Canvas do gráfico não encontrado');
-    return;
-  }
-
-  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
-    ctx.parentElement.innerHTML = '<div class="no-data">Nenhum estabelecimento encontrado</div>';
-    return;
-  }
-
-  const tipo = document.getElementById('filtroTipo')?.value || 'cidade';
-
-
-
-  const dadosProcessados = processarDadosGrafico(tipo);
-  
-  // Verificar se há dados
-  if (Object.keys(dadosProcessados).length === 0) {
-    ctx.parentElement.innerHTML = '<div class="no-data">Nenhum dado disponível para este filtro</div>';
-    return;
-  }
-
-  // Converter para array e ordenar
-  let dadosArray = Object.entries(dadosProcessados).map(([label, value]) => ({
-    label,
-    value
-  }));
-
-  
-
-  const labels = dadosArray.map(d => d.label);
-  const valores = dadosArray.map(d => d.value);
-  const cores = gerarPaletaCores(labels.length);
-
-  // Destruir gráfico anterior se existir
-  if (graficoPizzaEstab) {
-    graficoPizzaEstab.destroy();
-  }
-
-  // Criar novo gráfico
-  graficoPizzaEstab = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: valores,
-        backgroundColor: cores,
-        borderWidth: 2,
-        borderColor: '#fff',
-        hoverOffset: 10
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: {
-            padding: 15,
-            font: {
-              size: 13
-            },
-            usePointStyle: true
-          }
-        },
-        tooltip: {
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          padding: 12,
-          titleFont: {
-            size: 14
-          },
-          bodyFont: {
-            size: 13
-          },
-          callbacks: {
-            label: function(context) {
-              const label = context.label || '';
-              const value = context.parsed || 0;
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = ((value / total) * 100).toFixed(1);
-              return `${label}: ${value} (${percentage}%)`;
-            }
-          }
-        }
-      },
-      animation: {
-        animateRotate: true,
-        animateScale: true
-      }
-    }
-  });
-}
-
-// Atualizar cards de estatísticas gerais
-function renderizarCardsEstatisticas() {
-  const statsContainer = document.getElementById('statsGrid');
-  if (!statsContainer) {
-    console.error('Container de estatísticas não encontrado');
-    return;
-  }
-
-  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
-    statsContainer.innerHTML = '<div class="no-data">Nenhum dado disponível</div>';
-    return;
-  }
-
-  const totalEstab = estabelecimentosCache.length;
-  
-  // Cupons podem não existir em todos os estabelecimentos
-  const totalCupons = estabelecimentosCache.reduce((sum, e) => 
-    sum + (e.cupons?.filter(c => c.ativo).length || 0), 0);
-  
-  // Cidades únicas
-  const totalCidades = new Set(
-    estabelecimentosCache
-      .map(e => e.cidade)
-      .filter(Boolean)
-  ).size;
-  
-  // Categorias únicas (flat das arrays de categorias)
-  const todasCategorias = estabelecimentosCache
-    .flatMap(e => e.categorias || [])
-    .filter(Boolean);
-  const totalCategorias = new Set(todasCategorias).size;
-
-  const statsHTML = `
-    <div class="stat-card">
-      <h3>Total de Estabelecimentos</h3>
-      <div class="value">${totalEstab}</div>
-    </div>
-    <div class="stat-card">
-      <h3>Cupons Ativos</h3>
-      <div class="value">${totalCupons}</div>
-    </div>
-    <div class="stat-card">
-      <h3>Cidades</h3>
-      <div class="value">${totalCidades}</div>
-    </div>
-    <div class="stat-card">
-      <h3>Categorias</h3>
-      <div class="value">${totalCategorias}</div>
-    </div>
-  `;
-
-  statsContainer.innerHTML = statsHTML;
-}
-
-// Configurar eventos dos filtros do dashboard
-function inicializarFiltrosGrafico() {
-  const filtroTipo = document.getElementById('filtroTipo');
-
-
-
-  if (filtroTipo) {
-    filtroTipo.addEventListener('change', renderizarGraficoPizza);
-  }
-
-
-
-
-}
-
-// Inicializar todo o dashboard de gráficos
-function inicializarDashboardGraficos() {
-  console.log('📊 Inicializando dashboard...', {
-    totalEstabelecimentos: estabelecimentosCache?.length || 0
-  });
-
-  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
-    const chartWrapper = document.querySelector('.chart-wrapper');
-    if (chartWrapper) {
-      chartWrapper.innerHTML = '<div class="no-data">Nenhum estabelecimento encontrado</div>';
-    }
-    
-    const statsContainer = document.getElementById('statsGrid');
-    if (statsContainer) {
-      statsContainer.innerHTML = '<div class="no-data">Nenhum dado disponível</div>';
-    }
-    return;
-  }
-
-  renderizarCardsEstatisticas();
-  inicializarFiltrosGrafico();
-  renderizarGraficoPizza();
-}
-
-// Atualizar dashboard completo (chamado após mudanças nos dados)
-function atualizarDashboardCompleto() {
-  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
-    console.warn('⚠️ Tentando atualizar dashboard sem dados');
-    return;
-  }
-  
-  renderizarCardsEstatisticas();
-  renderizarGraficoPizza();
-}
 
 
 
@@ -1141,7 +863,7 @@ function inicializarFiltrosEstabelecimentos() {
   });
 }
 
-function popularFiltros() {
+async function popularFiltros() {
   console.log("📋 Populando filtros...");
   
   // Popula cada filtro individualmente
@@ -1199,47 +921,41 @@ if (document.readyState === 'loading') {
   inicializarFiltros();
 }
 
-// ========== FUNÇÕES DO LOADER ==========
-function mostrarLoader(texto = "Carregando cupom...", subtexto = "Aguarde um momento") {
-  const loader = document.getElementById("modalLoader");
-  const loaderText = loader.querySelector(".loader-text");
-  const loaderSubtext = loader.querySelector(".loader-subtext");
-  
-  if (loaderText) loaderText.textContent = texto;
-  if (loaderSubtext) loaderSubtext.textContent = subtexto;
-  
-  loader.classList.add("active");
-  
-  // Desabilita scroll do body
-  document.body.style.overflow = "hidden";
-}
 
-function ocultarLoader() {
-  const loader = document.getElementById("modalLoader");
-  loader.classList.remove("active");
-  
-  // Reabilita scroll do body
-  document.body.style.overflow = "";
-}
 
 async function carregarCidades() {
   const estadoId = document.getElementById("estadoId2").value;
+  const selectCidade = document.getElementById("cidadeId2");
   const token = localStorage.getItem("token");
 
-  if (!estadoId || !token) return;
+  selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
+
+  if (!estadoId) return;
+
+  if (!token) {
+    console.error("Token não encontrado");
+    selectCidade.innerHTML = '<option value="">Erro de autenticação</option>';
+    return;
+  }
 
   try {
+    selectCidade.innerHTML = '<option value="">Carregando cidades...</option>';
+
     const res = await fetch(`${API_BASE}/api/Cidades/por-estado/${estadoId}`, {
       headers: {
         Authorization: "Bearer " + token
       }
     });
 
-    if (!res.ok) throw new Error("Erro ao buscar cidades");
+    if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
 
     const cidades = await res.json();
 
-    const selectCidade = document.getElementById("cidadeId2");
+    if (!Array.isArray(cidades) || cidades.length === 0) {
+      selectCidade.innerHTML = '<option value="">Nenhuma cidade disponível</option>';
+      return;
+    }
+
     selectCidade.innerHTML = '<option value="">Selecione uma cidade</option>';
 
     cidades.forEach(cidade => {
@@ -1249,37 +965,54 @@ async function carregarCidades() {
       selectCidade.appendChild(option);
     });
 
-    console.log("Cidades carregadas para estado:", estadoId);
-
   } catch (err) {
-    alert("Erro ao carregar cidades");
-    console.error(err);
+    console.error("Erro ao carregar cidades:", err);
+    selectCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>';
   }
 }
 
 async function carregarEstados() {
-  const estados = [
-    { id: 1, nome: "São Paulo" },
-    { id: 2, nome: "Rio de Janeiro" },
-    { id: 3, nome: "Minas Gerais" }
-  ];
-
   const selectEstado = document.getElementById("estadoId2");
+  selectEstado.innerHTML = '<option value="">Carregando estados...</option>';
 
-  // limpa antes
-  selectEstado.innerHTML = '<option value="">Selecione um estado</option>';
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Token não encontrado");
 
-  estados.forEach(estado => {
-    const option = document.createElement("option");
-    option.value = estado.id;
-    option.textContent = estado.nome;
-    selectEstado.appendChild(option);
-  });
+    const res = await fetch(`${API_BASE}/api/UnidadesFederativas/por-estabelecimento`, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
 
-  console.log("Estados carregados");
+    if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
 
-  // 🔑 só chama cidades quando o estado mudar
-  selectEstado.addEventListener("change", carregarCidades);
+    const estados = await res.json();
+
+    if (!Array.isArray(estados) || estados.length === 0) {
+      selectEstado.innerHTML = '<option value="">Nenhum estado disponível</option>';
+      return;
+    }
+
+    selectEstado.innerHTML = '<option value="">Selecione um estado</option>';
+
+    estados.forEach(estado => {
+      const option = document.createElement("option");
+      option.value = estado.id;
+      option.textContent = `${estado.nome} (${estado.sigla})`;
+      selectEstado.appendChild(option);
+    });
+
+    // evita duplicação de evento
+    selectEstado.removeEventListener("change", carregarCidades);
+    selectEstado.addEventListener("change", carregarCidades);
+
+    console.log("Estados carregados (por estabelecimento)");
+
+  } catch (error) {
+    console.error("Erro ao carregar estados:", error);
+    selectEstado.innerHTML = '<option value="">Erro ao carregar estados</option>';
+  }
 }
 
 async function carregarCidades2(nomeCidadeSelecionada = null) {
@@ -1387,7 +1120,7 @@ function obterCartoesSelecionados() {
 
 
 //Estabelecimento Section
-export async function cadastrarEstabelecimento2() {
+async function cadastrarEstabelecimento2() {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Você precisa estar logado.");
@@ -1529,8 +1262,6 @@ export async function cadastrarEstabelecimento2() {
     body: JSON.stringify([categoriaId]) // ← continua um array
   });
 }
-
-
 
 
 async function salvarEdicaoEstabelecimento(e) {
