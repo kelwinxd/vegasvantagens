@@ -1,4 +1,4 @@
-import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../auth.js';
+import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {gruposCache} from './grupos.js'
 import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
