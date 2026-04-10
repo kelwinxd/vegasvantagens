@@ -3,7 +3,10 @@ import {buscarEstabelecimentos,  estabelecimentosCache  } from './estabeleciment
 
 let grupoSelecionadoId = null;
 
-export let gruposCache = [];
+// Em grupos.js — troca reatribuição por mutação
+export const gruposCache = []; // const, não let
+
+
 
 let abaGruposAtiva = false;
 
@@ -65,7 +68,6 @@ async function deletarGrupo(grupoId) {
   }
 }
 
-// ========== CARREGAR GRUPOS COM CACHE REAL ==========
 export async function carregarGrupos(forcarRecarregar = false) {
   const token = localStorage.getItem("token");
 
@@ -74,7 +76,9 @@ export async function carregarGrupos(forcarRecarregar = false) {
     const cacheLocal = localStorage.getItem("gruposCache");
     if (cacheLocal) {
       try {
-        gruposCache = JSON.parse(cacheLocal);
+        const dados = JSON.parse(cacheLocal);
+        gruposCache.length = 0;
+        gruposCache.push(...dados);
         console.log("Cache carregado do localStorage");
       } catch (e) {
         console.warn("Erro ao parsear cache local", e);
@@ -92,7 +96,7 @@ export async function carregarGrupos(forcarRecarregar = false) {
 
   try {
     console.log("Buscando grupos da API...");
-    
+
     const response = await fetch(`${API_BASE}/api/Grupos/grupos-ativos`, {
       method: "GET",
       headers: {
@@ -108,22 +112,22 @@ export async function carregarGrupos(forcarRecarregar = false) {
 
     const grupos = await response.json();
 
-    // 🔥 atualiza cache memória
-    gruposCache = grupos;
+    // 🔥 atualiza cache memória (mutação, não reatribuição)
+    gruposCache.length = 0;
+    gruposCache.push(...grupos);
 
     // 🔥 salva no localStorage
     localStorage.setItem("gruposCache", JSON.stringify(grupos));
 
     console.log(`${grupos.length} grupos carregados`);
 
-    renderizarListaGrupos(grupos);
+    renderizarListaGrupos(gruposCache);
 
-    return grupos;
+    return gruposCache;
 
   } catch (error) {
     console.error("Erro ao carregar grupos:", error);
 
-    // 🔥 fallback: tenta usar cache (memória ou localStorage)
     if (gruposCache.length > 0) {
       console.warn("Usando cache devido ao erro");
       renderizarListaGrupos(gruposCache);
@@ -133,10 +137,12 @@ export async function carregarGrupos(forcarRecarregar = false) {
     const cacheLocal = localStorage.getItem("gruposCache");
     if (cacheLocal) {
       try {
-        const grupos = JSON.parse(cacheLocal);
+        const dados = JSON.parse(cacheLocal);
+        gruposCache.length = 0;
+        gruposCache.push(...dados);
         console.warn("Usando cache do localStorage");
-        renderizarListaGrupos(grupos);
-        return grupos;
+        renderizarListaGrupos(gruposCache);
+        return gruposCache;
       } catch {}
     }
 

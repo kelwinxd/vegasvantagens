@@ -1,5 +1,5 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
-import {gruposCache} from './grupos.js'
+import {gruposCache, carregarGrupos} from './grupos.js'
 import { estabelecimentosCache, buscarEstabelecimentos  } from './estabelecimentos.js'
 import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
@@ -409,7 +409,7 @@ function cupomEstaExpirado(cupom) {
 
 // ========== INICIALIZAR FILTROS DE CUPONS ==========
 
-function inicializarFiltrosCupons() {
+async function inicializarFiltrosCupons() {
   console.log("🎟️ INICIANDO FILTROS DE CUPONS...");
 
   // ✅ Fonte única de verdade
@@ -426,7 +426,7 @@ function inicializarFiltrosCupons() {
   }
 
   // Popula filtros
-  _popularFiltroEstabelecimentosCupom();
+  await _popularFiltroEstabelecimentosCupom();
   _popularFiltroGruposCupom();
 
   // Listeners
@@ -441,38 +441,32 @@ function inicializarFiltrosCupons() {
   console.log("✅ FILTROS DE CUPONS INICIALIZADOS!");
 }
 
-// ========== POPULAR ESTABELECIMENTOS (USA CACHE EXISTENTE) ==========
-function _popularFiltroEstabelecimentosCupom() {
+async function _popularFiltroEstabelecimentosCupom() {
   console.log("🏢 Populando estabelecimentos nos filtros de cupom...");
-  
+
   const select = document.getElementById("filtroCupomEstabelecimento");
   if (!select) {
     console.error("❌ Select filtroCupomEstabelecimento não encontrado!");
     return;
   }
-  
-  // Limpa o select
+
+  // Garante que o cache está populado antes de continuar
+  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
+    console.log("Cache vazio, buscando da API...");
+    await buscarEstabelecimentos(false); // usa cache se válido, senão busca
+  }
+
+  if (!Array.isArray(estabelecimentosCache) || estabelecimentosCache.length === 0) {
+    console.warn("⚠️ Nenhum estabelecimento disponível");
+    return;
+  }
+
   select.innerHTML = '<option value="Todos">Todos</option>';
-  
-  // Verifica se estabelecimentosCache existe e está populado
-  if (!window.estabelecimentosCache || !Array.isArray(estabelecimentosCache)) {
-    console.warn("⚠️ estabelecimentosCache não existe ou não é um array");
-    return;
-  }
-  
-  if (estabelecimentosCache.length === 0) {
-    console.warn("⚠️ estabelecimentosCache está vazio");
-    return;
-  }
-  
-  // Ordena estabelecimentos por nome
-  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) => 
+
+  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) =>
     (a.nome || '').localeCompare(b.nome || '')
   );
-  
-  console.log(`  Encontrados ${estabelecimentosOrdenados.length} estabelecimentos no cache`);
-  
-  // Adiciona as opções
+
   estabelecimentosOrdenados.forEach(estab => {
     if (estab && estab.id && estab.nome) {
       const option = document.createElement("option");
@@ -481,38 +475,40 @@ function _popularFiltroEstabelecimentosCupom() {
       select.appendChild(option);
     }
   });
-  
+
   console.log(`✅ ${estabelecimentosOrdenados.length} estabelecimentos adicionados ao select`);
 }
-
 // ========== POPULAR GRUPOS (USA CACHE EXISTENTE) ==========
-function _popularFiltroGruposCupom() {
+async function _popularFiltroGruposCupom() {
   console.log("👥 Populando grupos nos filtros de cupom...");
-  
+
   const select = document.getElementById("filtroCupomGrupo");
   if (!select) {
     console.error("❌ Select filtroCupomGrupo não encontrado!");
     return;
   }
-  
-  // Limpa o select
+
+  // Garante que o cache está populado
+  if (!gruposCache || gruposCache.length === 0) {
+    console.log("Cache vazio, buscando da API...");
+    await carregarGrupos(false);
+  }
+
+  // Após o await, lê direto do localStorage como fallback garantido
+  let grupos = gruposCache;
+  if (!Array.isArray(grupos) || grupos.length === 0) {
+    const cacheLocal = localStorage.getItem("gruposCache");
+    grupos = cacheLocal ? JSON.parse(cacheLocal) : [];
+  }
+
+  if (grupos.length === 0) {
+    console.warn("⚠️ Nenhum grupo disponível");
+    return;
+  }
+
   select.innerHTML = '<option value="Todos">Todos</option>';
-  
-  // Verifica se gruposCache existe e está populado
-  if (!window.gruposCache || !Array.isArray(gruposCache)) {
-    console.warn("⚠️ gruposCache não existe ou não é um array");
-    return;
-  }
-  
-  if (gruposCache.length === 0) {
-    console.warn("⚠️ gruposCache está vazio");
-    return;
-  }
-  
-  console.log(`  Encontrados ${gruposCache.length} grupos no cache`);
-  
-  // Adiciona as opções (grupos já vêm ordenados da API)
-  gruposCache.forEach(grupo => {
+
+  grupos.forEach(grupo => {
     if (grupo && grupo.id && grupo.nome) {
       const option = document.createElement("option");
       option.value = grupo.id;
@@ -520,8 +516,8 @@ function _popularFiltroGruposCupom() {
       select.appendChild(option);
     }
   });
-  
-  console.log(`✅ ${gruposCache.length} grupos adicionados ao select`);
+
+  console.log(`✅ ${grupos.length} grupos adicionados ao select`);
 }
 
 // ========== CONFIGURAR EVENT LISTENERS ========== 
