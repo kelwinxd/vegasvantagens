@@ -1252,7 +1252,12 @@ async function cadastrarEstabelecimento2() {
     console.log('depois do try');
 
     if (!res.ok) {
+
+       console.log("Status:", res.status);
+      console.log("Headers:", [...res.headers.entries()]);
+
       const erro = await res.text();
+      console.log("Corpo do erro:", erro)
       throw new Error(erro);
     }
 
