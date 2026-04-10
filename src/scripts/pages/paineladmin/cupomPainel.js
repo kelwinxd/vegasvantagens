@@ -1,6 +1,6 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {gruposCache, carregarGrupos} from './grupos.js'
-import { estabelecimentosCache, buscarEstabelecimentos  } from './estabelecimentos.js'
+import { buscarEstabelecimentos  } from './estabelecimentos.js'
 import {mostrarLoader, ocultarLoader} from '../../utils/loader.js'
 
 
