@@ -5,7 +5,7 @@ import {mostrarLoader, ocultarLoader} from '../../utils/loader.js'
 const API_BASE = "https://apivegasvantagens-production.up.railway.app"
 
 // estabelecimentos.js
-export const estabelecimentosCache = []; // const, não let
+export let estabelecimentosCache = []; // const, não let
 
 
 
