@@ -450,24 +450,21 @@ async function _popularFiltroEstabelecimentosCupom() {
     return;
   }
 
-  // Garante que o cache está populado antes de continuar
-  if (!estabelecimentosCache || estabelecimentosCache.length === 0) {
-    console.log("Cache vazio, buscando da API...");
-    await buscarEstabelecimentos(false); // usa cache se válido, senão busca
-  }
+  // Busca do cache ou API, e usa o retorno diretamente
+  const estabelecimentos = await buscarEstabelecimentos(false);
 
-  if (!Array.isArray(estabelecimentosCache) || estabelecimentosCache.length === 0) {
+  if (!Array.isArray(estabelecimentos) || estabelecimentos.length === 0) {
     console.warn("⚠️ Nenhum estabelecimento disponível");
     return;
   }
 
   select.innerHTML = '<option value="Todos">Todos</option>';
 
-  const estabelecimentosOrdenados = [...estabelecimentosCache].sort((a, b) =>
+  const ordenados = [...estabelecimentos].sort((a, b) =>
     (a.nome || '').localeCompare(b.nome || '')
   );
 
-  estabelecimentosOrdenados.forEach(estab => {
+  ordenados.forEach(estab => {
     if (estab && estab.id && estab.nome) {
       const option = document.createElement("option");
       option.value = estab.id;
@@ -476,7 +473,7 @@ async function _popularFiltroEstabelecimentosCupom() {
     }
   });
 
-  console.log(`✅ ${estabelecimentosOrdenados.length} estabelecimentos adicionados ao select`);
+  console.log(`✅ ${ordenados.length} estabelecimentos adicionados ao select`);
 }
 // ========== POPULAR GRUPOS (USA CACHE EXISTENTE) ==========
 async function _popularFiltroGruposCupom() {
