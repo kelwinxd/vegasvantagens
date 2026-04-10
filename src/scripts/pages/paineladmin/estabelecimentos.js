@@ -1370,7 +1370,7 @@ const data = {
 
     alert("Estabelecimento atualizado com sucesso!");
     fecharModalEditarVer();
-    buscarEstabelecimentos();
+    await buscarEstabelecimentos(true);
 
   } catch (err) {
     console.error(err);
@@ -2089,7 +2089,7 @@ async function _recarregarEstabVer(estabId) {
   ativarModoEdicao();
 }
 
-// ── CARTÕES ───────────────────────────────────────────────────
+// ── CARTÕES EDICAO ───────────────────────────────────────────────────
 
 async function _renderizarCartoesVer(estab) {
   const listaContainer = document.getElementById("ver-cartoes-container");
