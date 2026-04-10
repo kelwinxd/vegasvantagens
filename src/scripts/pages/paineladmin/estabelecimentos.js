@@ -1,8 +1,8 @@
-import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {popularSelectGrupos, gruposCache} from './grupos.js'
 import {inicializarDashboardGraficos} from './grafico.js'
 import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
+const API_BASE = "https://apivegasvantagens-production.up.railway.app"
 
 export let estabelecimentosCache = [];
 
