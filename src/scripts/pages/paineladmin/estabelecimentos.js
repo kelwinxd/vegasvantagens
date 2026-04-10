@@ -17,30 +17,32 @@ export async function buscarEstabelecimentos(forcarRecarregar = false) {
     return [];
   }
 
-  // 🔥 1. carregar cache do localStorage se memória estiver vazia
-  if (estabelecimentosCache.length === 0) {
-    const cacheLocal = localStorage.getItem("estabelecimentosCache");
-    if (cacheLocal) {
-      try {
-        estabelecimentosCache = JSON.parse(cacheLocal);
-        console.log("Estabelecimentos carregados do localStorage");
-      } catch (e) {
-        console.warn("Erro ao parsear cache local", e);
-        localStorage.removeItem("estabelecimentosCache");
-      }
+ // 🔥 1. carregar cache do localStorage se memória estiver vazia
+if (estabelecimentosCache.length === 0) {
+  const cacheLocal = localStorage.getItem("estabelecimentosCache");
+  const cacheTime = localStorage.getItem("estabelecimentosCacheTime");
+  const cacheExpirado = !cacheTime || (Date.now() - Number(cacheTime)) > 5 * 60 * 1000;
+
+  if (cacheLocal && !cacheExpirado) {
+    try {
+      estabelecimentosCache = JSON.parse(cacheLocal);
+      console.log("Estabelecimentos carregados do localStorage");
+    } catch (e) {
+      console.warn("Erro ao parsear cache local", e);
+      localStorage.removeItem("estabelecimentosCache");
+      localStorage.removeItem("estabelecimentosCacheTime");
     }
   }
+}
 
-  // 🔥 2. usar cache (se não forçar recarregar)
-  if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
-    console.log("Usando estabelecimentos do cache");
-
-    renderizarLista(estabelecimentosCache, "listaCards");
-    inicializarFiltroDashboard();
-    inicializarDashboardGraficos();
-
-    return estabelecimentosCache;
-  }
+// 🔥 2. usar cache (se não forçar recarregar)
+if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
+  console.log("Usando estabelecimentos do cache");
+  renderizarLista(estabelecimentosCache, "listaCards");
+  inicializarFiltroDashboard();
+  inicializarDashboardGraficos();
+  return estabelecimentosCache;
+}
 
   try {
     console.log("Buscando estabelecimentos da API...");
@@ -1309,7 +1311,9 @@ async function cadastrarEstabelecimento2() {
     document.getElementById("formCadastro2").reset();
 
   } catch (err) {
+
     console.error(err);
+
     alert("Erro ao cadastrar: " + err.message);
   }
 }
@@ -1375,6 +1379,12 @@ const data = {
 
     alert("Estabelecimento atualizado com sucesso!");
     fecharModalEditarVer();
+
+    // limpa o cache antes de recarregar
+localStorage.removeItem("estabelecimentosCache");
+localStorage.removeItem("estabelecimentosCacheTime");
+
+await new Promise(r => setTimeout(r, 500)); // aguarda 500ms
     await buscarEstabelecimentos(true);
 
   } catch (err) {
