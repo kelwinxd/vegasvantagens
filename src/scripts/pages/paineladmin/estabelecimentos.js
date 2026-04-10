@@ -1,6 +1,6 @@
 import {popularSelectGrupos, gruposCache} from './grupos.js'
 import {inicializarDashboardGraficos} from './grafico.js'
-import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
+import {mostrarLoader, ocultarLoader} from '../../utils/loader.js'
 
 const API_BASE = "https://apivegasvantagens-production.up.railway.app"
 
