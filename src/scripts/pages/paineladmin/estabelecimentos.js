@@ -4,11 +4,11 @@ import {mostrarLoader, ocultarLoader} from '../paineladmin.js'
 
 const API_BASE = "https://apivegasvantagens-production.up.railway.app"
 
-export let estabelecimentosCache = [];
+// estabelecimentos.js
+export const estabelecimentosCache = []; // const, não let
 
 
 
-// ========== BUSCAR ESTABELECIMENTOS COM CACHE ==========
 export async function buscarEstabelecimentos(forcarRecarregar = false) {
   const token = localStorage.getItem("token");
 
@@ -17,32 +17,34 @@ export async function buscarEstabelecimentos(forcarRecarregar = false) {
     return [];
   }
 
- // 🔥 1. carregar cache do localStorage se memória estiver vazia
-if (estabelecimentosCache.length === 0) {
-  const cacheLocal = localStorage.getItem("estabelecimentosCache");
-  const cacheTime = localStorage.getItem("estabelecimentosCacheTime");
-  const cacheExpirado = !cacheTime || (Date.now() - Number(cacheTime)) > 5 * 60 * 1000;
+  // 🔥 1. carregar cache do localStorage se memória estiver vazia
+  if (estabelecimentosCache.length === 0) {
+    const cacheLocal = localStorage.getItem("estabelecimentosCache");
+    const cacheTime = localStorage.getItem("estabelecimentosCacheTime");
+    const cacheExpirado = !cacheTime || (Date.now() - Number(cacheTime)) > 5 * 60 * 1000;
 
-  if (cacheLocal && !cacheExpirado) {
-    try {
-      estabelecimentosCache = JSON.parse(cacheLocal);
-      console.log("Estabelecimentos carregados do localStorage");
-    } catch (e) {
-      console.warn("Erro ao parsear cache local", e);
-      localStorage.removeItem("estabelecimentosCache");
-      localStorage.removeItem("estabelecimentosCacheTime");
+    if (cacheLocal && !cacheExpirado) {
+      try {
+        const dados = JSON.parse(cacheLocal);
+        estabelecimentosCache.length = 0;
+        estabelecimentosCache.push(...dados);
+        console.log("Estabelecimentos carregados do localStorage");
+      } catch (e) {
+        console.warn("Erro ao parsear cache local", e);
+        localStorage.removeItem("estabelecimentosCache");
+        localStorage.removeItem("estabelecimentosCacheTime");
+      }
     }
   }
-}
 
-// 🔥 2. usar cache (se não forçar recarregar)
-if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
-  console.log("Usando estabelecimentos do cache");
-  renderizarLista(estabelecimentosCache, "listaCards");
-  inicializarFiltroDashboard();
-  inicializarDashboardGraficos();
-  return estabelecimentosCache;
-}
+  // 🔥 2. usar cache (se não forçar recarregar)
+  if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
+    console.log("Usando estabelecimentos do cache");
+    renderizarLista(estabelecimentosCache, "listaCards");
+    inicializarFiltroDashboard();
+    inicializarDashboardGraficos();
+    return estabelecimentosCache;
+  }
 
   try {
     console.log("Buscando estabelecimentos da API...");
@@ -55,7 +57,6 @@ if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
 
     const data = await res.json();
 
-    // 🔥 busca detalhes em paralelo
     const detalhes = await Promise.all(
       data.map(e =>
         fetch(`${API_BASE}/api/Estabelecimentos/${e.id}`, {
@@ -68,18 +69,16 @@ if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
 
     const estabelecimentosValidos = detalhes.filter(Boolean);
 
-    // 🔥 atualiza cache memória
-    estabelecimentosCache = estabelecimentosValidos;
+    // 🔥 atualiza cache memória (mutação, não reatribuição)
+    estabelecimentosCache.length = 0;
+    estabelecimentosCache.push(...estabelecimentosValidos);
 
-    // 🔥 salva no localStorage
-    localStorage.setItem(
-      "estabelecimentosCache",
-      JSON.stringify(estabelecimentosValidos)
-    );
+    // 🔥 salva no localStorage com timestamp
+    localStorage.setItem("estabelecimentosCache", JSON.stringify(estabelecimentosValidos));
+    localStorage.setItem("estabelecimentosCacheTime", Date.now());
 
     console.log(`${estabelecimentosValidos.length} estabelecimentos carregados`);
 
-    // mantém suas funções
     renderizarLista(estabelecimentosCache, "listaCards");
     inicializarFiltroDashboard();
     inicializarDashboardGraficos();
@@ -89,7 +88,6 @@ if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
   } catch (err) {
     console.error("Erro ao carregar estabelecimentos:", err);
 
-    // 🔥 fallback: tenta usar cache memória
     if (estabelecimentosCache.length > 0) {
       console.warn("Usando cache em memória");
       renderizarLista(estabelecimentosCache, "listaCards");
@@ -98,18 +96,17 @@ if (estabelecimentosCache.length > 0 && !forcarRecarregar) {
       return estabelecimentosCache;
     }
 
-    // 🔥 fallback: tenta localStorage
     const cacheLocal = localStorage.getItem("estabelecimentosCache");
     if (cacheLocal) {
       try {
         const dados = JSON.parse(cacheLocal);
+        estabelecimentosCache.length = 0;
+        estabelecimentosCache.push(...dados);
         console.warn("Usando cache do localStorage");
-
-        renderizarLista(dados, "listaCards");
+        renderizarLista(estabelecimentosCache, "listaCards");
         inicializarFiltroDashboard();
         inicializarDashboardGraficos();
-
-        return dados;
+        return estabelecimentosCache;
       } catch {}
     }
 
