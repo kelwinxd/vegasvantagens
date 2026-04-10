@@ -1,6 +1,6 @@
 import { getClientToken, loginToken, API_BASE, CLIENT_ID, CLIENT_SECRET } from '../../auth.js';
 import {gruposCache, carregarGrupos} from './grupos.js'
-import { buscarEstabelecimentos  } from './estabelecimentos.js'
+import { estabelecimentosCache, buscarEstabelecimentos  } from './estabelecimentos.js'
 import {mostrarLoader, ocultarLoader} from '../../utils/loader.js'
 
 
@@ -426,7 +426,10 @@ async function inicializarFiltrosCupons() {
   }
 
   // Popula filtros
-  await _popularFiltroEstabelecimentosCupom();
+  setTimeout(async () => {
+     await _popularFiltroEstabelecimentosCupom();
+  }, 3000);
+ 
   _popularFiltroGruposCupom();
 
   // Listeners
@@ -449,7 +452,7 @@ async function _popularFiltroEstabelecimentosCupom() {
     console.error("❌ Select filtroCupomEstabelecimento não encontrado!");
     return;
   }
-
+  
   // Busca do cache ou API, e usa o retorno diretamente
   const estabelecimentos = await buscarEstabelecimentos(false);
 
